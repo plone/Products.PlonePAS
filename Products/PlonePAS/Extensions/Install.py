@@ -3,8 +3,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS import config
 from Products.Archetypes.Extensions.utils import install_subskin
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
-from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
-from Products.PlonePAS.interfaces.plugins import IUserDeleterPlugin
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 
 from Acquisition import aq_base
 
@@ -41,13 +40,15 @@ def setupRoles( portal ):
 
 def setupPlugins( portal, out ):
     pas = portal.acl_users
-    pas.plugins._plugin_type_info[IUserDeleterPlugin] = \
-        { 'id': 'IUserDeleterPlugin'
-        , 'title': 'user_deleter'
-        , 'description': "User Deleter plugins allow the Pluggable Auth " +\
-                         "Service to delete users."
+    
+    pas.plugins._plugin_type_info[IUserManagement] = \
+        { 'id': 'IUserManagement'
+        , 'title': 'user_management'
+        , 'description': "The User Management plugins allow the Pluggable Auth " +\
+                         "Service to add/delete/modify users"
         }
-    pas.plugins._plugin_types.append(IUserDeleterPlugin)
+    
+    pas.plugins._plugin_types.append(IUserManagement)
 
     pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('cookie_auth', cookie_name='__ac')
     activatePluginInterfaces(portal, 'cookie_auth', out)
@@ -58,9 +59,9 @@ def setupPlugins( portal, out ):
     activatePluginInterfaces(portal, 'basic_auth', out)
     print >> out, "Added Basic Auth Helper."
 
-    pas.manage_addProduct['PlonePAS'].addPloneUserManager('plone_users')
-    activatePluginInterfaces(portal, 'plone_users', out)
-    print >> out, "Added Plone User Manager."
+    pas.manage_addProduct['PlonePAS'].manage_addUserManager('users')
+    activatePluginInterfaces(portal, 'users', out)
+    print >> out, "Added User Manager."
 
     pas.manage_addProduct['PlonePAS'].manage_addGroupAwareRoleManager('role_manager')
     activatePluginInterfaces(portal, 'role_manager', out)

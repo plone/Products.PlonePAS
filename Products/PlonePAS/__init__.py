@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.9 2005/02/03 19:28:42 k_vertigo Exp $
+$Id: __init__.py,v 1.10 2005/02/04 07:56:59 k_vertigo Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -8,19 +8,18 @@ from Products.PluggableAuthService import registerMultiPlugin
 
 from plugins import GroupAwareRoleManager
 from plugins import GRUFBridge
-from plugins import PloneUserManager    # plugins
+from plugins import UserManager    # plugins
 import pas                              # pas monkies
 
 registerDirectory('skins', globals())
 
 try:
     registerMultiPlugin( GRUFBridge.GRUFBridge.meta_type )
-    registerMultiPlugin( PloneUserManager.PloneUserManager.meta_type )
+    registerMultiPlugin( UserManager.UserManager.meta_type )
     registerMultiPlugin( GroupAwareRoleManager.GroupAwareRoleManager.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
-
 
 def initialize(context):
     context.registerClass( GroupAwareRoleManager.GroupAwareRoleManager,
@@ -37,9 +36,9 @@ def initialize(context):
                            visibility = None
                            )
 
-    context.registerClass( PloneUserManager.PloneUserManager,
+    context.registerClass( UserManager.UserManager,
                            permission = add_user_folders,
-                           constructors = ( PloneUserManager.manage_addPloneUserManagerForm,
-                                            PloneUserManager.addPloneUserManager ),
+                           constructors = ( UserManager.manage_addUserManagerForm,
+                                            UserManager.manage_addUserManager ),
                            visibility = None
                            )

@@ -1,0 +1,18 @@
+
+items for consideration to upstream pas development
+
+ - default plugin for user, to ease migration.
+
+ - implement aliases for standard apis that are implemented.
+
+ - implement plugins and plugin types for standard operations.
+ 
+ - introspection api search and count..
+
+ - qualified id api distinct from getid
+
+ - local role plugins
+
+ - role manager w/ g
+
+ - plugin type registration?

@@ -1,17 +1,19 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.8 2005/02/03 19:28:42 k_vertigo Exp $
+$Id: pas.py,v 1.9 2005/02/04 07:56:59 k_vertigo Exp $
 """
+
+from sets import Set
 
 from Products.PluggableAuthService.PropertiedUser import \
      PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, MANGLE_DELIMITER
-from Products.PlonePAS.interfaces.plugins import IUserDeleterPlugin
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 
 
 #################################
-# user monkies
+# pas user monkies
 
 def _safeUnmangleId(self, mangled_id):
     """
@@ -35,23 +37,75 @@ PropertiedUser.getId = getId
 PropertiedUser.getQualifiedId = getQualifiedId
 
 #################################
-# pas monkies
+# pas folder monkies - standard zope user folder api
 
 def _doDelUser(self, login):
-    """ given a login, hand off to a deleter plugin if available;
-    return a boolean"""
+    """
+    given a login, hand off to a deleter plugin if available;
+    return a boolean
+    """
 
     plugins = self._getOb( 'plugins' )
-    userdeleters = plugins.listPlugins( IUserDeleterPlugin )
+    userdeleters = plugins.listPlugins( IUserManagement )
 
-    if not (userdeleters):
+    if not userdeleters:
         raise NotImplementedError( "There is no plugin that can "
                                    " delete users." )
 
     for userdeleter_id, userdeleter in userdeleters:
         if userdeleter.doDelUser( login ):
             return True
+        
 PluggableAuthService._doDelUser = _doDelUser
+PluggableAuthService.userFolderDelUser = PluggableAuthService._doDelUser
+
+def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
+    """
+    given a principal id, change its password, roles, domains, iff
+    respective plugins for such exist.
+
+    XXX domains are currently ignored.
+    """
+
+    plugins = self._getOb('plugins')
+    managers = plugins.listPlugins( IUserManagement )
+    rmanagers = plugins.listPlugins( IRoleAssignerPlugin )
+    
+    
+    if not ( managers and rmanagers ):
+        raise NotImplementedError( "There is no plugin that can modify users" )
+
+    modified = False
+    for mid, manager in managers:
+        if manager.doChangeUser( principal_id, password ):
+            modified = True
+
+    if not modified:
+        raise RuntimeError("no user management plugins were able to successfully modify the user")
+
+    sroles = Set() # keep track that we set all the requested roles
+    for rid, rmanager in rmanagers:
+        
+        for role in roles:
+            if rmanager.addRoleToPrincipal( principal_id, role):
+                sroles.add( role )
+
+    roles_not_set = sroles.intersection( Set( roles ) )
+    
+    if not len( roles_not_set ) == 0:
+        raise RuntimeError("not all roles were set - %s"%roles_not_set)
+
+    return True
+
+PluggableAuthService._doChangeUser = _doChangeUser
+PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser 
+
+
+#
+PluggableAuthService.userFolderAddUser = PluggableAuthService._doAddUser
+
+#################################
+# non standard gruf --- junk method  XXX remove me
 
 def _doDelUsers(self, names):
     """Delete one or more users. This should be implemented by subclasses
@@ -62,46 +116,4 @@ def _doDelUsers(self, names):
 PluggableAuthService._doDelUsers = _doDelUsers
 
 
-#################################
-# the following are junk
 
-def getUserSourceId(self,):
-    """
-    getUserSourceId(self,) => string
-    Return the GRUF's GRUFUsers folder used to fetch this user.
-    """
-    return self._source_id
-
-PluggableAuthService.getUserSourceId = getUserSourceId
-
-def userFolderAddGroup(self, groupname, roles = [], groups = (), **kw):
-    """
-    Add a group.
-    """
-    return self._doAddGroup(groupname, roles, groups, **kw)
-
-PluggableAuthService.userFolderAddGroup = userFolderAddGroup
-
-def _doAddGroup(self, name, roles, groups = (), **kw):
-    """
-    Create a new group. Password will be randomly created, and domain will be None.
-    Supports nested groups.
-    """
-PluggableAuthService._doAddGroup = _doAddGroup
-
-def _updateUser(self, name, password = None, roles = None, domains = None, groups = None):
-    """
-    _updateUser(self, name, password = None, roles = None, domains = None, groups = None)
-    Front-end to _doChangeUser, but with a better default value support.
-    We guarantee that None values will let the underlying UF keep the original ones.
-    This is not true for the password: some buggy UF implementation may not
-    handle None password correctly :-(
-    """
-
-PluggableAuthService._updateUser = _updateUser
-
-
-# give pas the userfolder public api
-PluggableAuthService.userFolderAddUser = PluggableAuthService._doAddUser
-PluggableAuthService.userFolderDelUser = PluggableAuthService._doDelUser
-PluggableAuthService.userFolderEditUser = PluggableAuthService._updateUser

@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.3 2005/02/04 04:49:56 whit537 Exp $
+$Id: groups.py,v 1.4 2005/02/04 07:57:01 k_vertigo Exp $
 """
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
@@ -155,12 +155,6 @@ class GroupsTool(PloneBaseTool):
     def _getGroupManagers(self):
         return self.acl_users.plugins.listPlugins(
             igroup.IGroupManagement
-            )
-
-    security.declarePrivate('_getRoleManagers')
-    def _getRoleManagers(self):
-        return self.acl_users.plugins.listPlugins(
-            igroup.IRoleManager
             )
 
     security.declarePrivate('_getGroupIntrospecters')
