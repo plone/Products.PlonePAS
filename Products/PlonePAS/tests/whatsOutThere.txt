@@ -1,8 +1,8 @@
 File                                                         GRUFisms
 ===============================================================================
-CatalogTool.py                                                   4
+CatalogTool.py                                                   - all clear
 CVSLOG                                                           - who cares
-FactoryTool.py                                                   3
+FactoryTool.py                                                   - all clear
 GroupsTool.py                                                    1
 HISTORY.txt                                                      - n/a
 MemberDataTool.py                                                1
