@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.5 2005/02/01 18:48:49 whit537 Exp $
+# $Id: PloneTestCase.py,v 1.6 2005/02/01 22:11:51 pupq Exp $
 
 from Testing import ZopeTestCase
 
@@ -16,16 +16,16 @@ ZopeTestCase.installProduct('CMFQuickInstallerTool')
 ZopeTestCase.installProduct('CMFFormController')
 ZopeTestCase.installProduct('GroupUserFolder')
 ZopeTestCase.installProduct('ZCTextIndex')
+if ZopeTestCase.hasProduct('TextIndexNG2'):
+    ZopeTestCase.installProduct('TextIndexNG2')
+ZopeTestCase.installProduct('SecureMailHost')
 ZopeTestCase.installProduct('CMFPlone')
+ZopeTestCase.installProduct('PluggableAuthService')
+ZopeTestCase.installProduct('PluginRegistry')
 ZopeTestCase.installProduct('MailHost', quiet=1)
 ZopeTestCase.installProduct('PageTemplates', quiet=1)
 ZopeTestCase.installProduct('PythonScripts', quiet=1)
 ZopeTestCase.installProduct('ExternalMethod', quiet=1)
-
-# Install PAS related Products
-ZopeTestCase.installProduct('PluggableAuthService')
-ZopeTestCase.installProduct('PluginRegistry')
-
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
@@ -43,7 +43,7 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
 
     def getPortal(self):
         '''Returns the portal object to the bootstrap code.
-           DO NOT CALL THIS METHOD! Use the self.portal
+           DO NOT CALL THIS METHOD! Use the self.portal 
            attribute to access the portal object from tests.
         '''
         return self.app[portal_name]
@@ -95,7 +95,8 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
     '''Creates a Plone site.'''
     if not hasattr(aq_base(app), id):
         _start = time.time()
-        if not quiet: ZopeTestCase._print('Adding Plone PAS Site ... ')
+        if not quiet: ZopeTestCase._print('Adding PAS Plone Site ... ')
+
         # Add user and log in
         app.acl_users._doAddUser(portal_owner, '', ['Manager'], [])
         user = app.acl_users.getUserById(portal_owner).__of__(app.acl_users)
@@ -103,11 +104,10 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
         # Add Plone Site
         factory = app.manage_addProduct['CMFPlone']
         factory.manage_addSite(id, '', create_userfolder=1)
-
         # replace acl_users with a PAS uf
         app.portal.manage_delObjects(['acl_users'])
         app.portal.portal_quickinstaller.installProduct('PlonePAS')
-
+        
         # Precreate default memberarea for performance reasons
         if with_default_memberarea:
             _setupHomeFolder(app[id], default_user)
