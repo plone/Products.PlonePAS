@@ -3,7 +3,7 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: GroupAwareRoleManager.py,v 1.1 2005/02/03 19:43:21 k_vertigo Exp $
+$Id: GroupAwareRoleManager.py,v 1.2 2005/02/04 04:23:01 whit537 Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -18,7 +18,7 @@ def unique( iterable ):
         d[i] = None
     return d.keys()
 
-def manage_addGroupAwareRoleManager( self, id, title, RESPONSE=None):
+def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
     """
     this is a doc string
     """
@@ -27,7 +27,7 @@ def manage_addGroupAwareRoleManager( self, id, title, RESPONSE=None):
 
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
-        
+
 manage_addGroupAwareRoleManagerForm = DTMLFile(
     '../zmi/GroupAwareRoleManagerForm', globals())
 
@@ -48,7 +48,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         for pid in principal_ids:
             roles.extend( self._principal_roles.get( pid, () ) )
         return tuple( unique( roles ) )
-            
 
-InitializeClass( GroupAwareRoleManager )            
-            
+InitializeClass( GroupAwareRoleManager )
+

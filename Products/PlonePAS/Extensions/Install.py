@@ -57,9 +57,9 @@ def setupPlugins( portal, out ):
     activatePluginInterfaces(portal, 'plone_users', out)
     print >> out, "Added Plone User Manager."
 
-    pas.manage_addProduct['PluggableAuthService'].addZODBRoleManager('role_manager')
+    pas.manage_addProduct['PlonePAS'].manage_addGroupAwareRoleManager('role_manager')
     activatePluginInterfaces(portal, 'role_manager', out)
-    print >> out, "Added ZODB Role Manager."
+    print >> out, "Added Group Aware Role Manager."
 
     pas.manage_addProduct['PluggableAuthService'].addZODBGroupManager('zodb_groups')
     print >> out, "Added ZODB Group Manager."
