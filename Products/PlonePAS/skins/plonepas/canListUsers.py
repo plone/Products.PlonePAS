@@ -4,7 +4,7 @@ is able to list all users
 pas = context.acl_users
 
 # Do we have multiple user plugins?
-if len(pas.listPlugins('IUserEnumerationPlugin')) > 1:
+if len(pas.plugins.listPlugins('IUserEnumerationPlugin')) > 1:
     return False
 
 # Does our single user enumerator support the needed API?
