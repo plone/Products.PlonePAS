@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: GroupManager.py,v 1.3 2005/02/19 20:03:50 k_vertigo Exp $
+$Id: group.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
 """
 
 from BTrees.OOBTree import OOBTree, OOSet
@@ -59,19 +59,23 @@ class GroupManager( ZODBGroupManager ):
     def addGroup(self, group_id, *args, **kw):
         ZODBGroupManager.addGroup( self, group_id, *args, **kw)
         self._group_principal_map[ group_id ] = OOSet()
+        return True
         
     def removeGroup(self, group_id):
         ZODBGroupManager.removeGroup( self, group_id )
         del self._group_principal_map[ group_id ]
+        return True
 
     def addPrincipalToGroup(self, principal_id, group_id):
         ZODBGroupManager.addPrincipalToGroup( self, principal_id, group_id)
         self._group_principal_map[ group_id ].insert( principal_id )
+        return True
 
     def removePrincipalFromGroup(self, principal_id, group_id):
         ZODBGroupManager.removePrincipalFromGroup( self, principal_id, group_id)
         self._group_principal_map[ group_id ].remove( principal_id )
-
+        return True
+    
     #################################
     # overrides for api matching/massage
 
@@ -79,7 +83,8 @@ class GroupManager( ZODBGroupManager ):
         kw['title'].setdefault('')
         kw['description'].setdefault('')
         ZODBGroupManager.updateGroup(self, group_id, **kw)
-
+        return True
+    
     #################################
     # introspection interface
     

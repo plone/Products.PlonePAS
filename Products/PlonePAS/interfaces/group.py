@@ -15,7 +15,7 @@
 """
 group interfaces for plone, based off existing group usage pre pas. 
 
-$Id: group.py,v 1.6 2005/02/19 20:03:49 k_vertigo Exp $
+$Id: group.py,v 1.7 2005/02/24 15:13:32 k_vertigo Exp $
 """
 
 from Products.PluggableAuthService.interfaces import plugins
@@ -27,31 +27,37 @@ class IGroupManagement(Interface):
     def addGroup(id, **kw):
         """
         Create a group with the supplied id, roles, and groups.
+        return True if the operation suceeded
         """
 
     def addPrincipalToGroup(self, principal_id, group_id):
         """
         Add a given principal to the group.
+        return True on success
         """
 
     def updateGroup(id, **kw):
         """
-        Edit the given group. plugin specific 
+        Edit the given group. plugin specific
+        return True on success        
         """
 
     def setRolesForGroup( group_id, roles=() ):
         """
         set roles for group
+        return True on success        
         """
 
     def removeGroup( group_id ):
         """
         Remove the given group
+        return True on success        
         """
 
     def removePrincipalFromGroup( principal_id, group_id ):
         """
         remove the given principal from the group
+        return True on success        
         """
 
 class IGroupIntrospection(Interface):

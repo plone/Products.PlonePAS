@@ -15,7 +15,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: UserManager.py,v 1.3 2005/02/19 20:03:50 k_vertigo Exp $
+$Id: user.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding

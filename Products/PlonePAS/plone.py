@@ -1,12 +1,19 @@
 """
 local roles blocking api, maintains compatibility with gruf from instance
-space pov, moves api to plone tool (plone_utils)
+space pov, moves api to plone tool (plone_utils).
 
-$Id: plone.py,v 1.2 2005/02/19 20:03:48 k_vertigo Exp $
+patches for memberdata to allow for delegation to pas property providers,
+falling back to default impl else.
+
+$Id: plone.py,v 1.3 2005/02/24 15:13:31 k_vertigo Exp $
 """
 
 from AccessControl import getSecurityManager, Permissions
-from Products.CMFPlone import PloneTool
+from Products.CMFPlone.PloneTool import PloneTool
+from Products.CMFCore.MemberDataTool import MemberData
+from Products.CMFCore.utils import getToolByName
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
 def acquireLocalRoles(self, folder, status):
     """
@@ -26,22 +33,48 @@ def acquireLocalRoles(self, folder, status):
 
 PloneTool.acquireLocalRoles = acquireLocalRoles
 
-
 def setMemberProperties( self, mapping):
-        # Sets the properties given in the MemberDataTool.
-        tool = self.getTool()
-        for id in tool.propertyIds():
-            if mapping.has_key(id):
-                if not self.__class__.__dict__.has_key(id):
-                    value = mapping[id]
-                    if type(value)==type(''):
-                        proptype = tool.getPropertyType(id) or 'string'
-                        if type_converters.has_key(proptype):
-                            value = type_converters[proptype](value)
-                    setattr(self, id, value)
-        # Hopefully we can later make notifyModified() implicit.
-        self.notifyModified()
+    # Sets the properties given in the MemberDataTool.
+    tool = self.getTool()
 
+    if IPluggableAuthService.isImplementedBy(self.acl_users):
+        user = self.getUser()
+        sheets = user.getOrderedPropertySheets()
+
+        # xxx track values set to defer to default impl
+        # property routing
+        for k,v in mapping.items():
+            for sheet in sheets:
+                if sheet.hasProperty( k ):
+                    if IMutablePropertySheet.isImplementedBy(sheet):
+                        sheet.setProperty( k, v )
+                    else:
+                        raise RuntimeError("mutable property provider shadowed by read only provider")
+        self.notifyModified()
+        return
+
+    # defer to base impl in absence of pas
+    return self.baseSetProperties( mapping )
+
+MemberData.baseSetProperties__roles__ = ()
+MemberData.baseSetProperties = MemberData.setMemberProperties
+MemberData.setMemberProperties = setMemberProperties
 
 def getProperty(self, id):
-    pass
+    if PluggableAuthService.isImplementedBy( self.acl_users ):
+        user = self.getUser()
+        for sheet in user.getOrderedPropertySheets():
+            if sheet.hasProperty( id ):
+                return sheet.getProperty( id )
+    return self.baseGetProperty( id )
+
+MemberData.baseGetProperty__roles__ = ()
+MemberData.baseGetProperty = MemberData.getProperty
+MemberData.getProperty = getProperty
+
+
+def searchFulltextForMembers(self, s):
+    """
+    """
+    acl_users = getToolByName( self, 'acl_users')
+    return acl_users.searchUsers( name=s, exact_match=False)

@@ -1,2 +1,5 @@
 PROJECTNAME = 'PlonePAS'
 GLOBALS = globals()
+
+
+PAS_INSIDE_GRUF = True

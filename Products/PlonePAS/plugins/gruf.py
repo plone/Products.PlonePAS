@@ -1,10 +1,24 @@
+##############################################################################
+#
+# Copyright (c) 2005 Kapil Thangavelu
+# Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """
 
 acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id: GRUFBridge.py,v 1.3 2005/02/08 06:44:04 k_vertigo Exp $
+$Id: gruf.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
 """
 
 from Globals import DTMLFile

@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: plugins.py,v 1.4 2005/02/19 20:03:49 k_vertigo Exp $
+$Id: plugins.py,v 1.5 2005/02/24 15:13:33 k_vertigo Exp $
 """
 
 from Interface import Interface
@@ -92,7 +92,7 @@ class IUserManagement( plugins.IUserAdderPlugin ):
         """
 
 
-class IMutablePropertiesPlugin( Interfaces ):
+class IMutablePropertiesPlugin( Interface ):
 
     """
     return a property set for a user. property set can either an object
@@ -115,7 +115,9 @@ class IMutablePropertiesPlugin( Interfaces ):
 
     def setPropertiesForUser( user, propertysheet ):
         """
-        set modified properties on the user persistently
+        set modified properties on the user persistently.
+
+        raise a ValueError if the property or property value is invalid
         """
 
 

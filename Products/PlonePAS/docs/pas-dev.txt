@@ -29,3 +29,12 @@ items for consideration to upstream pas development
 
  - group as rich objects.. currently handled as strings in the system.
    using getId w/ an isinstance check.
+
+ - property schema type definition
+
+ - mutable property sheet providers
+
+ - schema mutable property sheet providers
+
+ - get rid of junk plugins
+
