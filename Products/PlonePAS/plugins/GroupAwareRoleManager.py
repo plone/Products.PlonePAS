@@ -3,14 +3,13 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: GroupAwareRoleManager.py,v 1.2 2005/02/04 04:23:01 whit537 Exp $
+$Id: GroupAwareRoleManager.py,v 1.3 2005/02/06 08:18:52 k_vertigo Exp $
 """
 
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
-
 
 def unique( iterable ):
     d = {}

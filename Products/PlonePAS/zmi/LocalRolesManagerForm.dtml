@@ -1,0 +1,34 @@
+<dtml-var manage_page_header>
+
+<h2> Add A Local Roles Manager For PAS </h2>
+
+<p class="form-help">
+ This local roles manager checks for both user and the user's groups
+ local roles as well allowing for local roles blocking on containers.
+</p>
+
+<form action="manage_addLocalRolesManager" method="POST">
+
+<table>
+<tr>
+   <td class="form-label"> Id </td>
+   <td> <input type="text" name="id" /> </td>
+</tr>
+<tr>
+   <td class="form-label"> Title </td>
+   <td> <input type="text" name="title" /> </td>
+</tr>
+<tr>
+   <td colspan="2"> 
+    <div class="form-element">
+     <input type="submit" value="submit"/>
+     </div>
+   </td>
+</tr>
+
+</table>
+
+</form>
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.11 2005/02/04 23:23:30 k_vertigo Exp $
+$Id: __init__.py,v 1.12 2005/02/06 08:18:49 k_vertigo Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -13,6 +13,7 @@ from plugins import GRUFBridge
 from plugins import UserManager
 from plugins import GroupManager
 from plugins import GroupAwareRoleManager
+from plugins import LocalRolesManager
 
 #################################
 # pas monkies
@@ -37,6 +38,7 @@ try:
     registerMultiPlugin( UserManager.UserManager.meta_type )
     registerMultiPlugin( GroupManager.GroupManager.meta_type )    
     registerMultiPlugin( GroupAwareRoleManager.GroupAwareRoleManager.meta_type )
+    registerMultiPlugin( LocalRolesManager.LocalRolesManager.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass

@@ -1,17 +1,25 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.10 2005/02/04 23:39:29 k_vertigo Exp $
+$Id: pas.py,v 1.11 2005/02/06 08:18:49 k_vertigo Exp $
 """
 
 from sets import Set
+
+from Acquisition import aq_inner, aq_parent
+from AccessControl.PermissionRole import _what_not_even_god_should_do
 
 from Products.PluggableAuthService.PropertiedUser import \
      PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, MANGLE_DELIMITER
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
-from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 
+def unique( iterable ):
+    d = {}
+    for i in iterable:
+        d[i] = None
+    return d.keys()
 
 #################################
 # pas user monkies
@@ -32,10 +40,63 @@ def getId( self ):
 def getQualifiedId(self):
     return self._id
 
+def getRolesInContext(self, object):
+    lrmanagers = aq_parent( aq_inner( self ) ).plugins.listPlugins( ILocalRolesPlugin )
+    roles = []
+    for lrid, lrmanager in lrmanagers:
+        roles.extend( lrmanager.getRolesInContext( self, object ) )
+    return unique( roles )
+
+def allowed( self, object, object_roles = None ):
+    if object_roles is _what_not_even_god_should_do:
+        return 0
+
+    # Short-circuit the common case of anonymous access.
+    if object_roles is None or 'Anonymous' in object_roles:
+        return 1
+
+    # Provide short-cut access if object is protected by 'Authenticated'
+    # role and user is not nobody
+    if 'Authenticated' in object_roles and (
+        self.getUserName() != 'Anonymous User'):
+        return 1
+
+    # Check for ancient role data up front, convert if found.
+    # This should almost never happen, and should probably be
+    # deprecated at some point.
+    if 'Shared' in object_roles:
+        object_roles = self._shared_roles(object)
+        if object_roles is None or 'Anonymous' in object_roles:
+            return 1
+
+    # Check for a role match with the normal roles given to
+    # the user, then with local roles only if necessary. We
+    # want to avoid as much overhead as possible.
+    user_roles = self.getRoles()
+    for role in object_roles:
+        if role in user_roles:
+            if self._check_context(object):
+                return 1
+            return None
+
+    # check for local roles
+    lrmanagers = aq_parent( aq_inner( self ) ).plugins.listPlugins( ILocalRolesPlugin )
+
+    for lrid, lrmanager in lrmanagers:
+        access_allowed = lrmanager.allowed( self, object, object_roles )
+        # return values
+        # 0,1,None - 1 success, 0 object context violation - None - failure
+        if access_allowed is None: 
+            continue
+        return access_allowed
+
+    return None
 
 PropertiedUser._safeUnmangleId = _safeUnmangleId
 PropertiedUser.getId = getId
 PropertiedUser.getQualifiedId = getQualifiedId
+#PropertiedUser.getRolesInContext = getRolesInContext
+#PropertiedUser.allowed = allowed
 
 #################################
 # pas folder monkies - standard zope user folder api

@@ -1,5 +1,21 @@
-""" 
-$Id: UserManager.py,v 1.1 2005/02/04 07:57:01 k_vertigo Exp $
+##############################################################################
+#
+# Copyright (c) 2005 Plone Foundation
+# Reserved.
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
+"""
+ZODB based user manager with introspection and management interfaces.
+
+$Id: UserManager.py,v 1.2 2005/02/06 08:18:52 k_vertigo Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding

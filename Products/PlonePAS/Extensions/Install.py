@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.16 2005/02/04 23:23:30 k_vertigo Exp $
+$Id: Install.py,v 1.17 2005/02/06 08:18:50 k_vertigo Exp $
 """
 
 from StringIO import StringIO
@@ -9,7 +9,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
 
 from Products.PlonePAS import config
-from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.tools.groups import GroupsTool
 
@@ -69,7 +69,12 @@ def registerPluginTypes( pas ):
                    }
 
     registerPluginType( pas, igroup.IGroupIntrospection, PluginInfo )
-    
+
+    PluginInfo = { 'id' : 'ILocalRolesPlugin',
+                   'title':'local_roles',
+                   'description':"Defines Policy for getting Local Roles" }
+
+    registerPluginType( pas, igroup.ILocalRolesPlugin, PluginInfo )    
 
 def setupPlugins( portal, out ):
     pas = portal.acl_users
