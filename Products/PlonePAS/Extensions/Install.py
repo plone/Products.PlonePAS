@@ -52,6 +52,11 @@ def setupPlugins( portal, out ):
     pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('cookie_auth', cookie_name='__ac')
     activatePluginInterfaces(portal, 'cookie_auth', out)
     print >> out, "Added Cookie Auth Helper."
+    
+    pas.manage_addProduct['PluggableAuthService'].addHTTPBasicAuthHelper('basic_auth',
+            title="HTTP Basic Auth")
+    activatePluginInterfaces(portal, 'basic_auth', out)
+    print >> out, "Added Basic Auth Helper."
 
     pas.manage_addProduct['PlonePAS'].addPloneUserManager('plone_users')
     activatePluginInterfaces(portal, 'plone_users', out)
