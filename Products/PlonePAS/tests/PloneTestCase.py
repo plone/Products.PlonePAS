@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.6 2005/02/01 22:11:51 pupq Exp $
+# $Id: PloneTestCase.py,v 1.7 2005/02/02 00:10:19 whit537 Exp $
 
 from Testing import ZopeTestCase
 
@@ -27,6 +27,9 @@ ZopeTestCase.installProduct('PageTemplates', quiet=1)
 ZopeTestCase.installProduct('PythonScripts', quiet=1)
 ZopeTestCase.installProduct('ExternalMethod', quiet=1)
 
+ZopeTestCase.installProduct('PlonePAS')
+
+
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from Acquisition import aq_base
@@ -43,7 +46,7 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
 
     def getPortal(self):
         '''Returns the portal object to the bootstrap code.
-           DO NOT CALL THIS METHOD! Use the self.portal 
+           DO NOT CALL THIS METHOD! Use the self.portal
            attribute to access the portal object from tests.
         '''
         return self.app[portal_name]
@@ -107,7 +110,7 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
         # replace acl_users with a PAS uf
         app.portal.manage_delObjects(['acl_users'])
         app.portal.portal_quickinstaller.installProduct('PlonePAS')
-        
+
         # Precreate default memberarea for performance reasons
         if with_default_memberarea:
             _setupHomeFolder(app[id], default_user)

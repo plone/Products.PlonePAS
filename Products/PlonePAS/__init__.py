@@ -1,30 +1,37 @@
 """
-$Id: __init__.py,v 1.5 2005/02/01 19:28:32 k_vertigo Exp $
+$Id: __init__.py,v 1.6 2005/02/02 00:10:15 whit537 Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.PluggableAuthService import registerMultiPlugin
 
-import gruf  # gruf bridge plugin
-import pas   # pas monkies
+from plugins import GRUFBridge          # plugins
+from plugins import PloneUserManager    # plugins
+import pas                              # pas monkies
 
 registerDirectory('skins', globals())
 
 
 try:
-    registerMultiPlugin( gruf.GRUFBridge.meta_type ) 
+    registerMultiPlugin( GRUFBridge.GRUFBridge.meta_type )
+    registerMultiPlugin( PloneUserManager.PloneUserManager.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
 
 def initialize(context):
 
-    context.registerClass( gruf.GRUFBridge,
+    context.registerClass( GRUFBridge.GRUFBridge,
                            permission = add_user_folders,
-                           constructors = ( gruf.manage_addGRUFBridgeForm,
-                                            gruf.manage_addGRUFBridge ),
+                           constructors = ( GRUFBridge.manage_addGRUFBridgeForm,
+                                            GRUFBridge.manage_addGRUFBridge ),
                            visibility = None
                            )
 
-
+    context.registerClass( PloneUserManager.PloneUserManager,
+                           permission = add_user_folders,
+                           constructors = ( PloneUserManager.manage_addPloneUserManagerForm,
+                                            PloneUserManager.addPloneUserManager ),
+                           visibility = None
+                           )

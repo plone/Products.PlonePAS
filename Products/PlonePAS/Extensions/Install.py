@@ -2,6 +2,9 @@ from StringIO import StringIO
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS import config
 from Products.Archetypes.Extensions.utils import install_subskin
+from Products.PluginRegistry.PluginRegistry import PluginRegistry
+from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
+from Products.PlonePAS.interfaces.plugins import IUserDeleterPlugin
 
 from Acquisition import aq_base
 
@@ -38,14 +41,22 @@ def setupRoles( portal ):
 
 def setupPlugins( portal, out ):
     pas = portal.acl_users
+    pas.plugins._plugin_type_info[IUserDeleterPlugin] = \
+        { 'id': 'IUserDeleterPlugin'
+        , 'title': 'user_deleter'
+        , 'description': "User Deleter plugins allow the Pluggable Auth " +\
+                         "Service to delete users."
+        }
+    pas.plugins._plugin_types.append(IUserDeleterPlugin)
+
     pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('cookie_auth', cookie_name='__ac')
-    activatePluginInterfaces(portal, 'cookie_auth', out)    
+    activatePluginInterfaces(portal, 'cookie_auth', out)
     print >> out, "Added Cookie Auth Helper."
-    
-    pas.manage_addProduct['PluggableAuthService'].addZODBUserManager('zodb_users')
-    activatePluginInterfaces(portal, 'zodb_users', out)    
-    print >> out, "Added ZODB User Manager."
-    
+
+    pas.manage_addProduct['PlonePAS'].addPloneUserManager('plone_users')
+    activatePluginInterfaces(portal, 'plone_users', out)
+    print >> out, "Added Plone User Manager."
+
     pas.manage_addProduct['PluggableAuthService'].addZODBRoleManager('role_manager')
     activatePluginInterfaces(portal, 'role_manager', out)
     print >> out, "Added ZODB Role Manager."
@@ -64,7 +75,7 @@ def install(self):
 
     if not hasattr(aq_base(portal), 'acl_users'):
         portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
-    
+
     configurePlonePAS(portal, out)
 
 

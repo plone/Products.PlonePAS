@@ -4,7 +4,7 @@ acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id: gruf.py,v 1.1 2005/02/01 01:20:17 k_vertigo Exp $
+$Id: GRUFBridge.py,v 1.1 2005/02/02 00:10:36 whit537 Exp $
 """
 
 from Globals import DTMLFile
