@@ -1,8 +1,8 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.12 2005/02/10 05:50:19 k_vertigo Exp $
+$Id: pas.py,v 1.13 2005/02/16 22:55:51 k_vertigo Exp $
 """
-
+import sys
 from sets import Set
 
 from Acquisition import aq_inner, aq_parent
@@ -11,8 +11,8 @@ from AccessControl.PermissionRole import _what_not_even_god_should_do
 from Products.PluggableAuthService.PropertiedUser import \
      PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
-     PluggableAuthService, MANGLE_DELIMITER
-from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+     PluggableAuthService, MANGLE_DELIMITER, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 
 def unique( iterable ):
@@ -118,7 +118,11 @@ def _doDelUser(self, login):
             return True
         
 PluggableAuthService._doDelUser = _doDelUser
+
 PluggableAuthService.userFolderDelUser = PluggableAuthService._doDelUser
+# XXX need to security restrict these methods, no base class sec decl
+# see App/class_init.py
+#PluggableAuthService.userFolderDelUser__roles__ = 
 
 def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
     """
@@ -161,9 +165,53 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 PluggableAuthService._doChangeUser = _doChangeUser
 PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser 
 
-
-#
+# ttw alias
 PluggableAuthService.userFolderAddUser = PluggableAuthService._doAddUser
+
+def authenticate(self, name, password, request):
+
+    plugins = self.plugins
+
+    try:
+        authenticators = plugins.listPlugins( IAuthenticationPlugin )
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        authenticators = ()
+    
+    credentials = { 'login':name,
+                    'password':password }
+
+    user_id = None
+    
+    for authenticator_id, auth in authenticators:
+        try:
+            uid_and_name = auth.authenticateCredentials(
+                credentials )
+            
+            if uid_and_name is None:
+                continue
+            
+            user_id, name = uid_and_name
+            
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            LOG('PluggableAuthService', BLATHER,
+                'AuthenticationPlugin %s error' %
+                authenticator_id, error=sys.exc_info())
+            continue
+
+    if not user_id:
+        return 
+
+    return self._findUser( plugins, user_id, name, request )
+    
+PluggableAuthService.authenticate = authenticate
+PluggableAuthService.authenticate__roles__ = ()
+
+#################################
+# give interested parties some apriori way of noticing pas is a user folder impl
+PluggableAuthService.isAUserFolder = 1
 
 #################################
 # non standard gruf --- junk method  XXX remove me
