@@ -23,8 +23,10 @@ import unittest
 TestRunner = unittest.TextTestRunner
 suite = unittest.TestSuite()
 
-tests = os.listdir(CMFPLONE_TESTS)
-tests = [n[:-3] for n in tests if n.startswith('test') and n.endswith('.py')]
+tests = sys.argv[1:]
+if not tests:
+    tests = os.listdir(CMFPLONE_TESTS)
+    tests = [n[:-3] for n in tests if n.startswith('test') and n.endswith('.py')]
 
 for test in tests:
     g = globals()
