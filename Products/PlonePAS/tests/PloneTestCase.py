@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.1 2005/02/01 00:28:43 whit537 Exp $
+# $Id: PloneTestCase.py,v 1.2 2005/02/01 00:36:30 whit537 Exp $
 
 from Testing import ZopeTestCase
 
@@ -38,7 +38,7 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
 
     def getPortal(self):
         '''Returns the portal object to the bootstrap code.
-           DO NOT CALL THIS METHOD! Use the self.portal 
+           DO NOT CALL THIS METHOD! Use the self.portal
            attribute to access the portal object from tests.
         '''
         return self.app[portal_name]
