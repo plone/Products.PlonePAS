@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.3 2005/02/01 01:20:16 k_vertigo Exp $
+$Id: __init__.py,v 1.4 2005/02/01 02:42:40 webmaven Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -8,7 +8,12 @@ from Products.PluggableAuthService import registerMultiPlugin
 import gruf
 
 registerDirectory('skins', globals())
-registerMultiPlugin( gruf.GRUFBridge.meta_type ) 
+try:
+    
+    registerMultiPlugin( gruf.GRUFBridge.meta_type ) 
+except RuntimeError:
+    # make refresh users happy
+    pass
 
 def initialize(context):
 
