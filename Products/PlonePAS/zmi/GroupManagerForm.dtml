@@ -1,0 +1,35 @@
+<dtml-var manage_page_header>
+
+<h2> Add A Group Manager For PAS </h2>
+
+<p class="form-help">
+ This group manager allows for zodb based storage of groups, as well
+ exposing a management interface for adding, deleting, modifying, and
+ introspecting groups. 
+</p>
+
+<form action="manage_addGroupManager" method="POST">
+
+<table>
+<tr>
+   <td class="form-label"> Id </td>
+   <td> <input type="text" name="id" /> </td>
+</tr>
+<tr>
+   <td class="form-label"> Title </td>
+   <td> <input type="text" name="title" /> </td>
+</tr>
+<tr>
+   <td colspan="2"> 
+    <div class="form-element">
+     <input type="submit" value="submit"/>
+     </div>
+   </td>
+</tr>
+
+</table>
+
+</form>
+
+</body>
+</html>

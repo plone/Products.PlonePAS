@@ -1,27 +1,57 @@
 """
-$Id: __init__.py,v 1.10 2005/02/04 07:56:59 k_vertigo Exp $
+$Id: __init__.py,v 1.11 2005/02/04 23:23:30 k_vertigo Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.PluggableAuthService import registerMultiPlugin
+from Products.CMFPlone import PloneUtilities as plone_utils
 
-from plugins import GroupAwareRoleManager
+#################################
+# plugins
 from plugins import GRUFBridge
-from plugins import UserManager    # plugins
-import pas                              # pas monkies
+from plugins import UserManager
+from plugins import GroupManager
+from plugins import GroupAwareRoleManager
+
+#################################
+# pas monkies
+import pas                              
+
+#################################
+# plone monkies
+import plone
+
+#################################
+# new groups tool
+from tools.groups import GroupsTool
+
 
 registerDirectory('skins', globals())
 
+
+#################################
+# register plugins with pas
 try:
     registerMultiPlugin( GRUFBridge.GRUFBridge.meta_type )
     registerMultiPlugin( UserManager.UserManager.meta_type )
+    registerMultiPlugin( GroupManager.GroupManager.meta_type )    
     registerMultiPlugin( GroupAwareRoleManager.GroupAwareRoleManager.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
 
 def initialize(context):
+
+    tools = ( GroupsTool, )
+
+    plone_utils.ToolInit('PlonePAS Tools',
+                         tools=tools,
+                         product_name='PlonePAS',
+                         icon='tool.gif',
+                         ).initialize(context)
+                         
+    
     context.registerClass( GroupAwareRoleManager.GroupAwareRoleManager,
                            permission = add_user_folders,
                            constructors = ( GroupAwareRoleManager.manage_addGroupAwareRoleManagerForm,
@@ -42,3 +72,10 @@ def initialize(context):
                                             UserManager.manage_addUserManager ),
                            visibility = None
                            )
+
+    context.registerClass( GroupManager.GroupManager,
+                           permission = add_user_folders,
+                           constructors = ( GroupManager.manage_addGroupManagerForm,
+                                            GroupManager.manage_addGroupManager ),
+                           visibility = None
+                           )                           

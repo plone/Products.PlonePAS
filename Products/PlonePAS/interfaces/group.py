@@ -2,7 +2,7 @@
 
 group interfaces for plone, based off existing group usage pre pas. 
 
-$Id: group.py,v 1.2 2005/02/03 00:09:48 k_vertigo Exp $
+$Id: group.py,v 1.3 2005/02/04 23:23:31 k_vertigo Exp $
 """
 
 from Products.PluggableAuthService.interfaces import plugins
@@ -21,9 +21,9 @@ class IGroupManagement(Interface):
         Add a given principal to the group.
         """
 
-    def updateGroup(id, roles=(), **kw):
+    def updateGroup(id, **kw):
         """
-        Edit the given group with the supplied roles.
+        Edit the given group. plugin specific 
         """
 
     def setRolesForGroup( group_id, roles=() ):

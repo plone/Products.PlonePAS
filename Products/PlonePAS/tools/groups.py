@@ -1,34 +1,35 @@
 """
-$Id: groups.py,v 1.4 2005/02/04 07:57:01 k_vertigo Exp $
+$Id: groups.py,v 1.5 2005/02/04 23:23:32 k_vertigo Exp $
 """
-from AccessControl import ClassSecurityInfo
+from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
 
 from Products.CMFPlone import ToolNames
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import getToolByName, UniqueObject
+from OFS.SimpleItem import SimpleItem
 from Products.PlonePAS.interfaces import group as igroup
 
 class NotSupported(Exception): pass
 
-class GroupsTool(PloneBaseTool):
+class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
     """
     for the groupie in you
     """
 
+    id = 'portal_groups'
     meta_type = ToolNames.GroupsTool
     security = ClassSecurityInfo()
     toolicon = 'skins/plone_images/group.gif'
 
     __implements__ = ( PloneBaseTool.__implements__,
-                       igroup.GroupTool )
-
+                       igroup.IGroupTool )
 
     ##
     # basic group mgmt
     ##
 
-    security.declareProtected(ManageGroups, 'addGroup')
+    security.declareProtected(Permissions.manage_users, 'addGroup')
     def addGroup(self, id, **kw):
         group = None
         managers = self._getGroupManagers()
@@ -40,7 +41,7 @@ class GroupsTool(PloneBaseTool):
                 break
         return group
 
-    security.declareProtected(ManageGroups, 'removeGroup')
+    security.declareProtected(Permissions.manage_users, 'removeGroup')
     def removeGroup(self, group_id):
         managers = self._getGroupManagers()
         if not managers:
@@ -50,7 +51,7 @@ class GroupsTool(PloneBaseTool):
                 return True
         return False
 
-    security.declareProtected(ManageGroups, 'setRolesForGroup')
+    security.declareProtected(Permissions.manage_users, 'setRolesForGroup')
     def setRolesForGroup(self, group_id, roles=() ):
         # XXXX
         managers = self._getGroupManagers()
@@ -66,7 +67,7 @@ class GroupsTool(PloneBaseTool):
     # basic principal mgmt
     ##
 
-    security.declareProtected(ManageGroups, 'addPrincipalToGroup')
+    security.declareProtected(Permissions.manage_users, 'addPrincipalToGroup')
     def addPrincipalToGroup(self, principal_id, group_id):
         managers = self._getGroupManagers()
         if not managers:
@@ -76,7 +77,7 @@ class GroupsTool(PloneBaseTool):
                 return True
         return False
 
-    security.declareProtected(ManageGroups, 'removePrincipalFromGroup')
+    security.declareProtected(Permissions.manage_users, 'removePrincipalFromGroup')
     def removePrincipalFromGroup( self, principal_id, group_id):
         managers = self._getGroupManagers()
         if not managers:
@@ -92,7 +93,7 @@ class GroupsTool(PloneBaseTool):
     # group getters
     ##
 
-    security.declareProtected(ManageGroups, 'getGroupById')
+    security.declareProtected(Permissions.manage_users, 'getGroupById')
     def getGroupById( group_id ):
         group = None
         introspecters = self._getGroupIntrospecters()
@@ -104,12 +105,12 @@ class GroupsTool(PloneBaseTool):
                 break
         return group
 
-    security.declareProtected(ManageGroups, 'searchGroups')
+    security.declareProtected(Permissions.manage_users, 'searchGroups')
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups( *args, **kw )
 
-    security.declareProtected(ManageGroups, 'getGroups')
+    security.declareProtected(Permissions.manage_users, 'getGroups')
     def getGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
@@ -119,7 +120,7 @@ class GroupsTool(PloneBaseTool):
             groups.extend( introspecters.getGroups() )
         return groups
 
-    security.declareProtected(ManageGroups, 'getGroupIds')
+    security.declareProtected(Permissions.manage_users, 'getGroupIds')
     def getGroupIds(self):
         groups = []
         introspecters = self._getGroupIntrospecters()
@@ -127,7 +128,7 @@ class GroupsTool(PloneBaseTool):
             groups.extend( introspecters.getGroupIds() )
         return groups
 
-    security.declareProtected(ManageGroups, 'getGroupMembers')
+    security.declareProtected(Permissions.manage_users, 'getGroupMembers')
     def getGroupMembers(self, group_id):
         members = []
         introspecters = self._getGroupIntrospecters()
@@ -137,11 +138,9 @@ class GroupsTool(PloneBaseTool):
                 break
         return members
 
-    security.declareProtected(ManageGroups, 'getGroupsForPrincipal')
+    security.declareProtected(Permissions.manage_users, 'getGroupsForPrincipal')
     def getGroupsForPrincipal( principal_id, request=None ):
         return self.acl_users._getGroupsForPrincipal( principal_id, request )
-
-
 
     ##
     # plugin getters
