@@ -16,10 +16,6 @@ def configurePlonePAS(portal, out):
     print >> out, "Added ZODB Role Manager."
     pas.manage_addProduct['PluggableAuthService'].addZODBGroupManager('zodb_groups')
     print >> out, "Added ZODB Group Manager."
-    pas.manage_addProduct['PluggableAuthService'].addLocalRolePlugin('local_roles')
-    print >> out, "Added Local Role Plugin."
-    pas.manage_addProduct['PluggableAuthService'].addScriptablePlugin('scriptables')
-    print >> out, "Added Scriptable Plugin."
 
 
 def install(self):
