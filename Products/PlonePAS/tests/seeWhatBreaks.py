@@ -58,10 +58,12 @@ elif not tests:
         devnull = StringIO()
 
         # output a header
+        print
         print "Module                        Errors  Failures"
         print "=" * 79
         template = "%(module)s  %(errors)s    %(failures)s"
         data = {}
+        totalerrors = totalfailures = 0
 
         # run our tests
         for test in tests:
@@ -72,14 +74,24 @@ elif not tests:
             else:
                 continue
             results = TestRunner(devnull,False,0).run(suite)
+
             data['module'] = test[:28].ljust(28)
+
             numerrors = len(results.errors)
+            totalerrors += numerrors
             data['errors'] = str(numerrors).rjust(4)
+
             numfailures = len(results.failures)
+            totalfailures += numfailures
             data['failures'] = str(numfailures).rjust(4)
+
             if numerrors + numfailures > 0:
                 # don't talk about working tests
                 print template % data
+
+        totals = (str(totalerrors).rjust(4), str(totalfailures).rjust(4))
+        print "-" * 79
+        print "TOTAL                         %s    %s" % totals
 
 
 # ... and run them!
