@@ -4,7 +4,7 @@ acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id: GRUFBridge.py,v 1.2 2005/02/03 19:28:43 k_vertigo Exp $
+$Id: GRUFBridge.py,v 1.3 2005/02/08 06:44:04 k_vertigo Exp $
 """
 
 from Globals import DTMLFile
@@ -87,6 +87,50 @@ class GRUFBridge( DelegatingMultiPlugin ):
         gruf_principal = gruf.getUser( pid )
         return gruf_principal.getGroupsWithoutPrefix()
 
+
+    #################################
+    # group management
+
+    # gruf assumes it is the canonical source for both users and groups
+    def addGroup(self, group_id):
+        self._getUserFolder().userFolderAddGroup( group_id, (), () )
+        return True
+    
+    def addPrincipalToGroup(self, principal_id, group_id):
+        group = self._getUserFolder().getGroupById( group_id )
+        group.addMember( principal_id )
+
+    # XXX need to fix this api, its too ambigious
+    def updateGroup(self, group_id, **kw):
+        pass
+
+    def setRolesForGroup(self, group_id, roles=() ):
+        # doing it this way will lose subgroups..
+        self._getUserFolder().userFolderEditGroup( group_id, roles )
+
+    def removeGroup(self, group_id):
+        return self._getUserFolder().userFolderDelGroups( (group_id, ) )
+
+    def removePrincipalFromGroup(self, principal_id, group_id):
+        group = self._getUserFolder().getGroupById( group_id )
+        group.removeMember( principal_id )
+        return True
+
+    #################################
+    # group introspection
+
+    def getGroupById( self, group_id ):
+        return self._getUserFolder().getGroupById( group_id )
+
+    def getGroupIds(self):
+        # gruf returns these prefixed
+        return self._getUserFolder().getGroupIds()
+
+    def getGroups(self):
+        return self._getUserFolder().getGroups()
+
+    def getGroupMembers(self, group_id):
+        return self._getUserFolder().getMemberIds(group_id)
 
     #################################
     def getGroupInfo(self, group):
