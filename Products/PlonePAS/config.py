@@ -1,0 +1,2 @@
+PROJECTNAME = 'PlonePAS'
+GLOBALS = globals()
