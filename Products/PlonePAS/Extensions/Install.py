@@ -32,7 +32,7 @@ def setupRoles( portal ):
     rmanager.addRole('Member', title="portal member")
     rmanager.addRole('Reviewer', title="content reviewer")
 
-def setupPlugins( portal )
+def setupPlugins( portal ):
     pas = portal.acl_users
     pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('cookie_auth', cookie_name='__ac')
     pas.cookie_auth.manage_activateInterfaces( pas.cookie_auth.listInterfaces() )
