@@ -13,12 +13,16 @@ def activatePluginInterfaces(portal, plugin, out):
 
     activatable = []
 
-    for info in plugin_obj.plugins.listPluginTypeInfo():
-        interface = info['interface']
-        interface_name = info['id']
-        if plugin_obj.testImplements(interface):
-            activatable.append(interface_name)
-            print >> out, "  Activating: " + info['title']
+    try:
+        for info in plugin_obj.plugins.listPluginTypeInfo():
+            interface = info['interface']
+            interface_name = info['id']
+            if plugin_obj.testImplements(interface):
+                activatable.append(interface_name)
+                print >> out, "  Activating: " + info['title']
+    except AttributeError:
+        print >> out, "It looks like you have a non-PAS acl_users folder. "
+        print >> out, "Please remove it before installing PlonePAS."
     plugin_obj.manage_activateInterfaces(activatable)
     print >> out, plugin + " activated."
 
