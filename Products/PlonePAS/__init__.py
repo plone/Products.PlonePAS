@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.6 2005/02/02 00:10:15 whit537 Exp $
+$Id: __init__.py,v 1.7 2005/02/02 05:28:59 bcsaller Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -20,8 +20,9 @@ except RuntimeError:
     # make refresh users happy
     pass
 
-def initialize(context):
 
+
+def initialize(context):
     context.registerClass( GRUFBridge.GRUFBridge,
                            permission = add_user_folders,
                            constructors = ( GRUFBridge.manage_addGRUFBridgeForm,

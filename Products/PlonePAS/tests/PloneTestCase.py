@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.7 2005/02/02 00:10:19 whit537 Exp $
+# $Id: PloneTestCase.py,v 1.8 2005/02/02 05:28:59 bcsaller Exp $
 
 from Testing import ZopeTestCase
 
@@ -26,6 +26,7 @@ ZopeTestCase.installProduct('MailHost', quiet=1)
 ZopeTestCase.installProduct('PageTemplates', quiet=1)
 ZopeTestCase.installProduct('PythonScripts', quiet=1)
 ZopeTestCase.installProduct('ExternalMethod', quiet=1)
+ZopeTestCase.installProduct('SecureMailHost', quiet=1)
 
 ZopeTestCase.installProduct('PlonePAS')
 

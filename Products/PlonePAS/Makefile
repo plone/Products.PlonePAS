@@ -6,10 +6,10 @@ all: test
 test: 
 	@${MAKE} -C tests test
 
+regression:
+	@${MAKE} -C tests regression
+
 clean: 
 	@find . -name "*.pyc" -exec rm {} \;
 	@find . -name "*~" -exec rm {} \;
-	@find src -name "*.c" -exec rm {} \;
 	@rm -rf build	
-	@${MAKE} -C docs clean
-
