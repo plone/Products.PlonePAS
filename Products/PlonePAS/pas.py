@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.9 2005/02/04 07:56:59 k_vertigo Exp $
+$Id: pas.py,v 1.10 2005/02/04 23:39:29 k_vertigo Exp $
 """
 
 from sets import Set
@@ -9,6 +9,7 @@ from Products.PluggableAuthService.PropertiedUser import \
      PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, MANGLE_DELIMITER
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 
 
