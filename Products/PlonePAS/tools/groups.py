@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.1 2005/02/03 00:09:49 k_vertigo Exp $
+$Id: groups.py,v 1.2 2005/02/03 19:28:44 k_vertigo Exp $
 """
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
@@ -8,6 +8,8 @@ from Products.CMFPlone import ToolNames
 from Products.CMFPlone.PloneBaseTool import PloneBaseTool
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces import group as igroup
+
+class NotSupported(Exception): pass
 
 class GroupsTool(PloneBaseTool):
     """
@@ -24,6 +26,8 @@ class GroupsTool(PloneBaseTool):
     def addGroup(self, id, **kw):
         group = None
         managers = self._getGroupManagers()
+        if not managers:
+            raise NotSupported("no plugins allow for group management")
         for mid, manager in managers:
             group =  manager.addGroup( id, **kw )
             if group is not None:
@@ -32,6 +36,8 @@ class GroupsTool(PloneBaseTool):
 
     def addPrincipalToGroup(self, principal_id, group_id):
         managers = self._getGroupManagers()
+        if not managers:
+            raise NotSupported("no plugins allow for group management")
         for mid, manager in managers:
             if manager.addPrincipalToGroup( principal_id, group_id):
                 return True
@@ -40,10 +46,10 @@ class GroupsTool(PloneBaseTool):
     def setRolesForGroup(self, group_id, roles=() ):
         # XXXX
         managers = self._getGroupManagers()
+
         for mid, manager in managers:
             if manager.setRolesForGroup( group_id, roles ):
                 return True
-
 
     def removeGroup(self, group_id):
         managers = self._getGroupManagers()
@@ -107,6 +113,9 @@ class GroupsTool(PloneBaseTool):
         return self.acl_users.plugins.listPlugins(
             igroup.IGroupManagement
             )
+
+    def _getRoleManagers(self):
+        pass
 
     def _getGroupIntrospecters(self):
         return self.acl_users.plugins.listPlugins(

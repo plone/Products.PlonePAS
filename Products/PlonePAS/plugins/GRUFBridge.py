@@ -4,7 +4,7 @@ acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id: GRUFBridge.py,v 1.1 2005/02/02 00:10:36 whit537 Exp $
+$Id: GRUFBridge.py,v 1.2 2005/02/03 19:28:43 k_vertigo Exp $
 """
 
 from Globals import DTMLFile
@@ -26,7 +26,7 @@ def manage_addGRUFBridge(self, id, title='', RESPONSE=None ):
         RESPONSE.redirect('manage_workspace')
 
 
-manage_addGRUFBridgeForm = DTMLFile('zmi/GRUFBridgeForm', globals())
+manage_addGRUFBridgeForm = DTMLFile('../zmi/GRUFBridgeForm', globals())
 
 class GroupFilter( object ):
 

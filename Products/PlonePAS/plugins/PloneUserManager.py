@@ -14,7 +14,7 @@
 ##############################################################################
 """ Classes: PloneUserManager
 
-$Id: PloneUserManager.py,v 1.1 2005/02/02 00:10:36 whit537 Exp $
+$Id: PloneUserManager.py,v 1.2 2005/02/03 19:28:43 k_vertigo Exp $
 """
 from AccessControl import ClassSecurityInfo, AuthEncoding
 from AccessControl.SecurityManagement import getSecurityManager
@@ -28,7 +28,7 @@ from Products.PluggableAuthService.interfaces.plugins import \
 from Products.PlonePAS.interfaces.plugins import IUserDeleterPlugin
 
 from Globals import DTMLFile
-manage_addPloneUserManagerForm = DTMLFile('zmi/PloneUserManagerForm', globals())
+manage_addPloneUserManagerForm = DTMLFile('../zmi/PloneUserManagerForm', globals())
 
 def addPloneUserManager( dispatcher, id, title=None, REQUEST=None ):
     """ Add a PloneUserManager to a Pluggable Auth Service. """
@@ -43,7 +43,7 @@ def addPloneUserManager( dispatcher, id, title=None, REQUEST=None ):
                                 'PloneUserManager+added.'
                             % dispatcher.absolute_url())
 
-class PloneUserManager( BasePlugin, Cacheable ):
+class PloneUserManager( BasePlugin ):
 
     """ PAS plugin for managing users in Plone. (adds deletion
     API) """

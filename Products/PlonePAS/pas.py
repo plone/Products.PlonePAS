@@ -1,10 +1,17 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.7 2005/02/03 00:09:47 k_vertigo Exp $
+$Id: pas.py,v 1.8 2005/02/03 19:28:42 k_vertigo Exp $
 """
 
 from Products.PluggableAuthService.PropertiedUser import \
      PropertiedUser
+from Products.PluggableAuthService.PluggableAuthService import \
+     PluggableAuthService, MANGLE_DELIMITER
+from Products.PlonePAS.interfaces.plugins import IUserDeleterPlugin
+
+
+#################################
+# user monkies
 
 def _safeUnmangleId(self, mangled_id):
     """
@@ -27,9 +34,8 @@ PropertiedUser._safeUnmangleId = _safeUnmangleId
 PropertiedUser.getId = getId
 PropertiedUser.getQualifiedId = getQualifiedId
 
-from Products.PluggableAuthService.PluggableAuthService import \
-     PluggableAuthService, MANGLE_DELIMITER
-from Products.PlonePAS.interfaces.plugins import IUserDeleterPlugin
+#################################
+# pas monkies
 
 def _doDelUser(self, login):
     """ given a login, hand off to a deleter plugin if available;
@@ -55,6 +61,9 @@ def _doDelUsers(self, names):
 
 PluggableAuthService._doDelUsers = _doDelUsers
 
+
+#################################
+# the following are junk
 
 def getUserSourceId(self,):
     """
