@@ -2,9 +2,8 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.4 2005/02/01 17:50:05 whit537 Exp $
+# $Id: PloneTestCase.py,v 1.5 2005/02/01 18:48:49 whit537 Exp $
 
-print "our tests"
 from Testing import ZopeTestCase
 
 ZopeTestCase.installProduct('CMFCore')
@@ -104,11 +103,10 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
         # Add Plone Site
         factory = app.manage_addProduct['CMFPlone']
         factory.manage_addSite(id, '', create_userfolder=1)
-        #raise 'hrm', app.portal.acl_users.getUsers()
+
         # replace acl_users with a PAS uf
         app.portal.manage_delObjects(['acl_users'])
-        factory = app.portal.manage_addProduct['PluggableAuthService']
-        factory.addPluggableAuthService()
+        app.portal.portal_quickinstaller.installProduct('PlonePAS')
 
         # Precreate default memberarea for performance reasons
         if with_default_memberarea:
