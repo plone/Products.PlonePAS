@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.4 2005/02/02 21:34:08 thraxil Exp $
+$Id: pas.py,v 1.5 2005/02/02 22:08:26 thraxil Exp $
 """
 
 from Products.PluggableAuthService.PropertiedUser import \
@@ -63,6 +63,32 @@ def getUserSourceId(self,):
     """
     return self._source_id
 PluggableAuthService.getUserSourceId = getUserSourceId
+
+def userFolderAddGroup(self, groupname, roles = [], groups = (), **kw):
+    """
+    Add a group.
+    """
+    return self._doAddGroup(groupname, roles, groups, **kw)
+
+PluggableAuthService.userFolderAddGroup = userFolderAddGroup
+
+def _doAddGroup(self, name, roles, groups = (), **kw):
+    """
+    Create a new group. Password will be randomly created, and domain will be None.
+    Supports nested groups.
+    """
+PluggableAuthService._doAddGroup = _doAddGroup
+
+def _updateUser(self, name, password = None, roles = None, domains = None, groups = None):
+    """
+    _updateUser(self, name, password = None, roles = None, domains = None, groups = None)
+    Front-end to _doChangeUser, but with a better default value support.
+    We guarantee that None values will let the underlying UF keep the original ones.
+    This is not true for the password: some buggy UF implementation may not
+    handle None password correctly :-(
+    """
+
+PluggableAuthService._updateUser = _updateUser
 
 # give pas the userfolder public api
 PluggableAuthService.userFolderAddUser = PluggableAuthService._doAddUser
