@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.9 2005/02/03 00:09:48 k_vertigo Exp $
+# $Id: PloneTestCase.py,v 1.10 2005/02/03 18:16:56 webmaven Exp $
 
 from Testing import ZopeTestCase
 
@@ -27,6 +27,7 @@ ZopeTestCase.installProduct('PageTemplates', quiet=1)
 ZopeTestCase.installProduct('PythonScripts', quiet=1)
 ZopeTestCase.installProduct('ExternalMethod', quiet=1)
 ZopeTestCase.installProduct('SecureMailHost', quiet=1)
+ZopeTestCase.installProduct('ExternalEditor', quiet=1)
 ZopeTestCase.installProduct('PlonePAS')
 
 
