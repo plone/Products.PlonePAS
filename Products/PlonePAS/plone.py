@@ -2,7 +2,7 @@
 local roles blocking api, maintains compatibility with gruf from instance
 space pov, moves api to plone tool (plone_utils)
 
-$Id: plone.py,v 1.1 2005/02/04 23:23:30 k_vertigo Exp $
+$Id: plone.py,v 1.2 2005/02/19 20:03:48 k_vertigo Exp $
 """
 
 from AccessControl import getSecurityManager, Permissions
@@ -25,3 +25,23 @@ def acquireLocalRoles(self, folder, status):
     return self._acquireLocalRoles(folder, status)
 
 PloneTool.acquireLocalRoles = acquireLocalRoles
+
+
+def setMemberProperties( self, mapping):
+        # Sets the properties given in the MemberDataTool.
+        tool = self.getTool()
+        for id in tool.propertyIds():
+            if mapping.has_key(id):
+                if not self.__class__.__dict__.has_key(id):
+                    value = mapping[id]
+                    if type(value)==type(''):
+                        proptype = tool.getPropertyType(id) or 'string'
+                        if type_converters.has_key(proptype):
+                            value = type_converters[proptype](value)
+                    setattr(self, id, value)
+        # Hopefully we can later make notifyModified() implicit.
+        self.notifyModified()
+
+
+def getProperty(self, id):
+    pass

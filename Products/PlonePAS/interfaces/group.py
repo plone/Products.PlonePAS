@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Plone Foundation
+# Copyright (c) 2005 Kapil Thangavelu
 # Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -15,7 +15,7 @@
 """
 group interfaces for plone, based off existing group usage pre pas. 
 
-$Id: group.py,v 1.5 2005/02/08 06:44:04 k_vertigo Exp $
+$Id: group.py,v 1.6 2005/02/19 20:03:49 k_vertigo Exp $
 """
 
 from Products.PluggableAuthService.interfaces import plugins

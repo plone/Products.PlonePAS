@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Plone Foundation
+# Copyright (c) 2005 Kapil Thangavelu
 # Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: plugins.py,v 1.3 2005/02/06 08:18:51 k_vertigo Exp $
+$Id: plugins.py,v 1.4 2005/02/19 20:03:49 k_vertigo Exp $
 """
 
 from Interface import Interface
@@ -23,7 +23,11 @@ class IUserIntrospection( Interface ):
     """
     introspect users in a user source, api users need to be
     careful as all sources may or not support this interface.
+
+    realistically this can only be done by authentication sources,
+    or plugins which have intimate knowledge of such.
     """
+    
     def getUserIds(self):
         """
         return a list of user ids
@@ -68,7 +72,8 @@ class ILocalRolesPlugin( Interface ):
 
 class IUserManagement( plugins.IUserAdderPlugin ):
 
-    """ Manage users 
+    """
+    Manage users 
     """
 
     def doChangeUser( login, password, **kw):
@@ -85,3 +90,39 @@ class IUserManagement( plugins.IUserAdderPlugin ):
 
         o Return a Boolean indicating whether a user was removed or not
         """
+
+
+class IMutablePropertiesPlugin( Interfaces ):
+
+    """
+    return a property set for a user. property set can either an object
+    conforming to the imutable property sheet interface or a dictionary
+    (in which case the properties are not persistently mutable ).
+    """
+
+    def getPropertiesForUser( user, request=None ):
+        """
+        user -> IMutablePropertySheet || {}
+        
+        o User will implement IPropertiedUser.
+
+        o Plugin may scribble on the user, if needed (but must still
+          return a mapping, even if empty).
+
+        o May assign properties based on values in the REQUEST object, if
+          present        
+        """
+
+    def setPropertiesForUser( user, propertysheet ):
+        """
+        set modified properties on the user persistently
+        """
+
+
+class ISchemaMutablePropertiesPlugin( Interface ):
+
+    def addProperty( property_type, property_name, default=None ):
+        """
+        add a new property to a property provider.
+        """
+

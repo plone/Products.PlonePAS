@@ -1,7 +1,7 @@
 ##############################################################################
 #
 # Portions Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-# Portions Copyright (c) 2005 Plone Foundation. All Rights Reserved.
+# Portions Copyright (c) 2005 Kapil Thangavelu. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this
@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: LocalRolesManager.py,v 1.2 2005/02/16 23:52:26 k_vertigo Exp $
+$Id: LocalRolesManager.py,v 1.3 2005/02/19 20:03:50 k_vertigo Exp $
 """
 
 from AccessControl import ClassSecurityInfo

@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.14 2005/02/16 23:52:10 k_vertigo Exp $
+$Id: pas.py,v 1.15 2005/02/19 20:03:48 k_vertigo Exp $
 """
 import sys
 from sets import Set
@@ -128,6 +128,18 @@ def authenticate(self, name, password, request):
     
 PluggableAuthService.authenticate = authenticate
 PluggableAuthService.authenticate__roles__ = ()
+
+
+#################################
+# monkies for the diehard introspection.. all these should die, imho - kt
+def getUsers(self):
+    return ()
+
+def getUserNames(self):
+    return ()
+
+PluggableAuthService.getUsers = getUsers
+PluggableAuthService.getUserNames = getUserNames
 
 #################################
 # give interested parties some apriori way of noticing pas is a user folder impl

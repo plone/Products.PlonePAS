@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Plone Foundation
+# Copyright (c) 2005 Kapil Thangavelu
 # Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -15,7 +15,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: UserManager.py,v 1.2 2005/02/06 08:18:52 k_vertigo Exp $
+$Id: UserManager.py,v 1.3 2005/02/19 20:03:50 k_vertigo Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding

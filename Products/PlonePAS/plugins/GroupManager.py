@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Plone Foundation
+# Copyright (c) 2005 Kapil Thangavelu
 # Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: GroupManager.py,v 1.2 2005/02/06 08:18:52 k_vertigo Exp $
+$Id: GroupManager.py,v 1.3 2005/02/19 20:03:50 k_vertigo Exp $
 """
 
 from BTrees.OOBTree import OOBTree, OOSet
