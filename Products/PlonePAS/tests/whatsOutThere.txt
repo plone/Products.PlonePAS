@@ -1,18 +1,25 @@
-GroupsTool.py                                                    1
-MembershipTool.py                                                9
-PloneTool.py                                                     2
-skins\plone_forms\folder_localrole_form.pt                       1
-skins\plone_form_scripts\register.cpy                            2
-skins\plone_prefs\prefs_group_edit.py                            1
-skins\plone_prefs\prefs_group_members.pt                         2
-skins\plone_prefs\prefs_group_members_edit.py                    1
-skins\plone_prefs\prefs_user_manage.cpy                          2
-skins\plone_prefs\prefs_user_memberships.pt                      4
-skins\plone_scripts\computeRoleMap.py                            1
-tests\PloneTestCase.py                                           1
-tests\testCatalogTool.py                                         3
-tests\testGroupDataTool.py                                       4
-tests\testGroupsTool.py                                          9
-tests\testGroupUserFolder.py                                    14
-tests\testMembershipTool.py                                      6
-tests\testUserFolderBasics.py                                    6
+These are the files in CMFPlone that (almost certainly) have GRUFisms in them.
+You can run seeWhatsOutThere.py against them for some hints on what those
+GRUFisms might be.
+
+THEN IT IS YOUR MISSION TO MERCILESSLY DESTROY ALL GRUFISMS!!!!!!!!!!!!
+
+
+GroupsTool.py
+MembershipTool.py
+PloneTool.py
+skins\plone_forms\folder_localrole_form.pt
+skins\plone_form_scripts\register.cpy
+skins\plone_prefs\prefs_group_edit.py
+skins\plone_prefs\prefs_group_members.pt
+skins\plone_prefs\prefs_group_members_edit.py
+skins\plone_prefs\prefs_user_manage.cpy
+skins\plone_prefs\prefs_user_memberships.pt
+skins\plone_scripts\computeRoleMap.py
+tests\PloneTestCase.py
+tests\testCatalogTool.py
+tests\testGroupDataTool.py
+tests\testGroupsTool.py
+tests\testGroupUserFolder.py
+tests\testMembershipTool.py
+tests\testUserFolderBasics.py
