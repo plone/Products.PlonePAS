@@ -25,7 +25,7 @@ def activatePluginInterfaces(portal, plugin, out):
 def configurePlonePAS(portal, out):
     """Add the necessary objects to make a usable PAS instance"""
     setupPlugins( portal, out )
-    setupRoles( portal )
+#    setupRoles( portal )
 
 def setupRoles( portal ):
     rmanager = portal.acl_users.role_manager
