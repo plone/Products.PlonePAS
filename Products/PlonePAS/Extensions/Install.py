@@ -24,7 +24,7 @@ def activatePluginInterfaces(portal, plugin, out):
 
 def configurePlonePAS(portal, out):
     """Add the necessary objects to make a usable PAS instance"""
-    setupPlugins( portal )
+    setupPlugins( portal, out )
     setupRoles( portal )
 
 def setupRoles( portal ):
@@ -32,7 +32,7 @@ def setupRoles( portal ):
     rmanager.addRole('Member', title="portal member")
     rmanager.addRole('Reviewer', title="content reviewer")
 
-def setupPlugins( portal ):
+def setupPlugins( portal, out ):
     pas = portal.acl_users
     pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('cookie_auth', cookie_name='__ac')
     activatePluginInterfaces(portal, 'cookie_auth', out)    
