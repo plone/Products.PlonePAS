@@ -55,24 +55,35 @@ skins\plone_scripts\folder_paste.cpy                             1
 skins\plone_scripts\quick_undo.py                                1
 skins\plone_scripts\renderBase.py                                1
 skins\plone_scripts\selectedTabs.py                              1
+
 tests\PloneTestCase.py                                           1
 tests\testCatalogTool.py                                         3
-tests\testCheckId.py                                             1
-tests\testContentPublishing.py                                   1
-tests\testContentSecurity.py                                     1
-tests\testCutPasteSecurity.py                                    1
+tests\testCheckId.py                                             - all clear
+tests\testContentPublishing.py                                   - all clear
+tests\testContentSecurity.py                                     - all clear
+tests\testCutPasteSecurity.py                                    - all clear
 tests\testGroupDataTool.py                                       4
 tests\testGroupsTool.py                                          9
 tests\testGroupUserFolder.py                                    14
-tests\testInterfaces.py                                          1
-tests\testMemberDataTool.py                                      1
+tests\testInterfaces.py                                          - all clear
+tests\testMemberDataTool.py                                      - all clear
 tests\testMembershipTool.py                                      6
-tests\testPortalCreation.py                                      1
-tests\testPortalFactory.py                                       2
-tests\testRegistrationTool.py                                    1
-tests\testSecurityDeclarations.py                                1
+tests\testPortalCreation.py                                      - all clear
+tests\testPortalFactory.py                                       - all clear
+tests\testRegistrationTool.py                                    - all clear
+tests\testSecurityDeclarations.py                                - all clear
 tests\testUserFolderBasics.py                                    6
-www\editPloneConfiglets.dtml                                     3
-www\migrationResults.dtml                                        1
+www\editPloneConfiglets.dtml                                     - all clear
+www\migrationResults.dtml                                        - all clear
 -------------------------------------------------------------------------------
 TOTAL: 74 files                                                166
+
+
+
+tests\PloneTestCase.py                                           1
+tests\testCatalogTool.py                                         3
+tests\testGroupDataTool.py                                       4
+tests\testGroupsTool.py                                          9
+tests\testGroupUserFolder.py                                    14
+tests\testMembershipTool.py                                      6
+tests\testUserFolderBasics.py                                    6
