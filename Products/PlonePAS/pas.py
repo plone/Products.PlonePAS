@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.5 2005/02/02 22:08:26 thraxil Exp $
+$Id: pas.py,v 1.6 2005/02/02 23:04:37 thraxil Exp $
 """
 
 from Products.PluggableAuthService.PropertiedUser import \
@@ -90,6 +90,8 @@ def _updateUser(self, name, password = None, roles = None, domains = None, group
 
 PluggableAuthService._updateUser = _updateUser
 
+
 # give pas the userfolder public api
 PluggableAuthService.userFolderAddUser = PluggableAuthService._doAddUser
 PluggableAuthService.userFolderDelUser = PluggableAuthService._doDelUser
+PluggableAuthService.userFolderEditUser = PluggableAuthService._updateUser
