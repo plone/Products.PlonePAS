@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.11 2005/02/06 08:18:49 k_vertigo Exp $
+$Id: pas.py,v 1.12 2005/02/10 05:50:19 k_vertigo Exp $
 """
 
 from sets import Set
@@ -30,7 +30,6 @@ def _safeUnmangleId(self, mangled_id):
     """
     parts = mangled_id.split(MANGLE_DELIMITER, 1)
     return parts[-1]
-
 
 def getId( self ):
     """ -> user ID

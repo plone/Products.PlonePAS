@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.17 2005/02/06 08:18:50 k_vertigo Exp $
+$Id: Install.py,v 1.18 2005/02/10 05:50:20 k_vertigo Exp $
 """
 
 from StringIO import StringIO
@@ -74,7 +74,7 @@ def registerPluginTypes( pas ):
                    'title':'local_roles',
                    'description':"Defines Policy for getting Local Roles" }
 
-    registerPluginType( pas, igroup.ILocalRolesPlugin, PluginInfo )    
+    registerPluginType( pas, ILocalRolesPlugin, PluginInfo )    
 
 def setupPlugins( portal, out ):
     pas = portal.acl_users

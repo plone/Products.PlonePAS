@@ -10,11 +10,14 @@ The arguments are module names in CMFPlone/tests. They are imported (as opposed
 to execfile'd) so you don't need the '.py' extension. If no args are given, all
 tests will be run, and a summary of broken test modules will be output.
 
-$Id: seeWhatBreaks.py,v 1.8 2005/02/04 08:03:39 whit537 Exp $
+$Id: seeWhatBreaks.py,v 1.9 2005/02/10 05:50:20 k_vertigo Exp $
 """
 
 # framework is copied over from CMFPlone/tests
 import os, sys
+tests = sys.argv[1:]
+sys.argv = sys.argv[:1]
+
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
@@ -27,7 +30,6 @@ BaseModule.PloneTestCase = PloneTestCase.PloneTestCase
 import unittest
 TestRunner = unittest.TextTestRunner
 g = globals()
-tests = sys.argv[1:]
 
 if tests:
     # if we are given args, only run those tests; build one big suite and
