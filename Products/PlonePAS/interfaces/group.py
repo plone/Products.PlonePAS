@@ -2,14 +2,16 @@
 
 group interfaces for plone, based off existing group usage pre pas. 
 
-$Id: group.py,v 1.1 2005/02/02 04:35:38 k_vertigo Exp $
+$Id: group.py,v 1.2 2005/02/03 00:09:48 k_vertigo Exp $
 """
 
+from Products.PluggableAuthService.interfaces import plugins
 from Interface import Interface
+
 
 class IGroupManagement(Interface):
 
-    def addGroup(id, roles=(), groups=(), **kw):
+    def addGroup(id, **kw):
         """
         Create a group with the supplied id, roles, and groups.
         """
@@ -19,9 +21,14 @@ class IGroupManagement(Interface):
         Add a given principal to the group.
         """
 
-    def updateGroup(id, roles=(), groups=(), **kw):
+    def updateGroup(id, roles=(), **kw):
         """
         Edit the given group with the supplied roles.
+        """
+
+    def setRolesForGroup( group_id, roles=() ):
+        """
+        set roles for group
         """
 
     def removeGroup( group_id ):
@@ -36,16 +43,10 @@ class IGroupManagement(Interface):
 
 class IGroupIntrospection(Interface):
 
-    def getGroupById( id ):
+    def getGroupById( group_id ):
         """
         Returns the portal_groupdata-ish object for a group
         corresponding to this id.
-        """
-
-    def getGroupsForPrincipal( principal_id ):
-        """
-        Returns a list of the groups where a principal denoted by
-        principal id is a member.
         """
 
     def searchGroups( **kw ):
@@ -110,6 +111,7 @@ class IGroupDataTool( Interface ):
 
 class IGroupTool( IGroupIntrospection,
                   IGroupManagement,
+                  plugins.IGroupsPlugin,
                   IGroupSpaceManagement ):
 
     """

@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.6 2005/02/02 23:04:37 thraxil Exp $
+$Id: pas.py,v 1.7 2005/02/03 00:09:47 k_vertigo Exp $
 """
 
 from Products.PluggableAuthService.PropertiedUser import \
@@ -62,6 +62,7 @@ def getUserSourceId(self,):
     Return the GRUF's GRUFUsers folder used to fetch this user.
     """
     return self._source_id
+
 PluggableAuthService.getUserSourceId = getUserSourceId
 
 def userFolderAddGroup(self, groupname, roles = [], groups = (), **kw):

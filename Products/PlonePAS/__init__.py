@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.7 2005/02/02 05:28:59 bcsaller Exp $
+$Id: __init__.py,v 1.8 2005/02/03 00:09:46 k_vertigo Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -11,7 +11,6 @@ from plugins import PloneUserManager    # plugins
 import pas                              # pas monkies
 
 registerDirectory('skins', globals())
-
 
 try:
     registerMultiPlugin( GRUFBridge.GRUFBridge.meta_type )
