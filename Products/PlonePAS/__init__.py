@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.12 2005/02/06 08:18:49 k_vertigo Exp $
+$Id: __init__.py,v 1.13 2005/02/16 23:52:10 k_vertigo Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -14,7 +14,7 @@ from plugins import UserManager
 from plugins import GroupManager
 from plugins import GroupAwareRoleManager
 from plugins import LocalRolesManager
-
+from plugins import PloneUserFactory
 #################################
 # pas monkies
 import pas                              
@@ -39,6 +39,8 @@ try:
     registerMultiPlugin( GroupManager.GroupManager.meta_type )    
     registerMultiPlugin( GroupAwareRoleManager.GroupAwareRoleManager.meta_type )
     registerMultiPlugin( LocalRolesManager.LocalRolesManager.meta_type )
+    registerMultiPlugin( PloneUserFactory.PloneUserFactory.meta_type )
+    
 except RuntimeError:
     # make refresh users happy
     pass
@@ -79,5 +81,12 @@ def initialize(context):
                            permission = add_user_folders,
                            constructors = ( GroupManager.manage_addGroupManagerForm,
                                             GroupManager.manage_addGroupManager ),
+                           visibility = None
+                           )                           
+
+    context.registerClass( PloneUserFactory.PloneUserFactory,
+                           permission = add_user_folders,
+                           constructors = ( PloneUserFactory.manage_addPloneUserFactoryForm,
+                                            PloneUserFactory.manage_addPloneUserFactory ),
                            visibility = None
                            )                           

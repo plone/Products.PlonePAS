@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: LocalRolesManager.py,v 1.1 2005/02/06 08:18:52 k_vertigo Exp $
+$Id: LocalRolesManager.py,v 1.2 2005/02/16 23:52:26 k_vertigo Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -143,3 +143,4 @@ class LocalRolesManager( BasePlugin ):
 
     
 
+InitializeClass( LocalRolesManager )

@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.18 2005/02/10 05:50:20 k_vertigo Exp $
+$Id: Install.py,v 1.19 2005/02/16 23:52:11 k_vertigo Exp $
 """
 
 from StringIO import StringIO
@@ -104,6 +104,9 @@ def setupPlugins( portal, out ):
     print >> out, "Added ZODB Group Manager."
     activatePluginInterfaces(portal, 'source_groups', out)
 
+    pas.manage_addProduct['PlonePAS'].manage_addPloneUserFactory('user_factory')
+    print >> out, "Added Plone User Factory."
+    activatePluginInterfaces(portal, "user_factory", out)
 
 
 def configurePlonePAS(portal, out):
