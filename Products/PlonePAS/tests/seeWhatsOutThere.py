@@ -12,12 +12,11 @@ walk all of CMFPlone and will return a summary count of GRUFisms per file
 
 GRUFisms are API in GRUF that aren't in our implementation of PAS.
 
-$Id: seeWhatsOutThere.py,v 1.1 2005/02/04 08:03:39 whit537 Exp $
+$Id: seeWhatsOutThere.py,v 1.2 2005/02/04 10:43:51 whit537 Exp $
 """
 from pprint import pprint
 from sets import Set
 from os.path import join
-import re
 
 
 # framework is copied over from CMFPlone/tests
@@ -65,7 +64,7 @@ results of our inspections:
 % (len(gruf), len(pas), len(diff))
 
 
-# walk all of CMFPlone and look for anything in the diff set
+# get ready to search through some files
 INSTANCE_HOME = os.environ['INSTANCE_HOME']
 CMFPLOME = join(INSTANCE_HOME, 'Products', 'CMFPlone')
 
@@ -103,7 +102,7 @@ else:
     # print the header
     print "no args given, walking all of %s ..." % CMFPLOME
     print
-    print "%s  GRUFisms" % ("File".ljust(69))
+    print "%s  GRUFisms" % ("File".ljust(59))
     print "=" * 79
 
     # walk the tree
@@ -122,11 +121,11 @@ else:
                     numattrs = len(attrs)
                     totalattrs += numattrs
                     print "%s  %s" %\
-                        (plonepath.ljust(70), str(numattrs).rjust(4))
+                        (plonepath[:60].ljust(60), str(numattrs).rjust(4))
 
 
     # print the footer
     foo = "TOTAL: %s files" % totalGRUFiles
     bar = str(totalattrs)
     print "-" * 79
-    print "%s  %s" % (foo.ljust(70), bar.rjust(4))
+    print "%s  %s" % (foo.ljust(60), bar.rjust(4))
