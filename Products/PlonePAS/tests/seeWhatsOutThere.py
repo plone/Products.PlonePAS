@@ -14,9 +14,9 @@ GRUFisms are API in GRUF that aren't in our implementation of PAS. The set of
 difference between GRUF and PAS are cached; if PAS changes and you need to
 refresh, just delete whatsOutThere.dat or pass in 'refresh' as the first arg.
 
-$Id: seeWhatsOutThere.py,v 1.3 2005/02/04 19:31:02 whit537 Exp $
+$Id: seeWhatsOutThere.py,v 1.4 2005/02/04 20:22:44 thraxil Exp $
 """
-import os, sys
+import os, sys, re
 from pprint import pprint
 from sets import Set
 from os.path import join, isfile
@@ -85,8 +85,9 @@ def sniffFile(abspath):
     """ given an abspath, return a list of GRUFisms """
     text = file(abspath).read()
     attrs = []
+
     for attr in diff:
-        if text.count(attr) > 0:
+        if re.findall(r"\b%s\b" % attr, text):
             if attr not in attrs:
                 attrs.append(attr)
     return attrs
