@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.14 2005/02/24 15:13:31 k_vertigo Exp $
+$Id: __init__.py,v 1.15 2005/04/15 21:58:48 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -63,35 +63,35 @@ def initialize(context):
     
     context.registerClass( role.GroupAwareRoleManager,
                            permission = add_user_folders,
-                           constructors = ( GroupAwareRoleManager.manage_addGroupAwareRoleManagerForm,
-                                            GroupAwareRoleManager.manage_addGroupAwareRoleManager ),
+                           constructors = ( role.manage_addGroupAwareRoleManagerForm,
+                                            role.manage_addGroupAwareRoleManager ),
                            visibility = None
                            )
     
     context.registerClass( gruf.GRUFBridge,
                            permission = add_user_folders,
-                           constructors = ( GRUFBridge.manage_addGRUFBridgeForm,
-                                            GRUFBridge.manage_addGRUFBridge ),
+                           constructors = ( gruf.manage_addGRUFBridgeForm,
+                                            gruf.manage_addGRUFBridge ),
                            visibility = None
                            )
 
     context.registerClass( user.UserManager,
                            permission = add_user_folders,
-                           constructors = ( UserManager.manage_addUserManagerForm,
-                                            UserManager.manage_addUserManager ),
+                           constructors = ( user.manage_addUserManagerForm,
+                                            user.manage_addUserManager ),
                            visibility = None
                            )
 
     context.registerClass( group.GroupManager,
                            permission = add_user_folders,
-                           constructors = ( GroupManager.manage_addGroupManagerForm,
-                                            GroupManager.manage_addGroupManager ),
+                           constructors = ( group.manage_addGroupManagerForm,
+                                            group.manage_addGroupManager ),
                            visibility = None
                            )                           
 
     context.registerClass( ufactory.PloneUserFactory,
                            permission = add_user_folders,
-                           constructors = ( PloneUserFactory.manage_addPloneUserFactoryForm,
-                                            PloneUserFactory.manage_addPloneUserFactory ),
+                           constructors = ( ufactory.manage_addPloneUserFactoryForm,
+                                            ufactory.manage_addPloneUserFactory ),
                            visibility = None
                            )                           
