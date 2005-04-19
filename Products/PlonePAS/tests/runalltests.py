@@ -10,7 +10,7 @@
 
 import os, sys
 if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
+    execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 
 import unittest

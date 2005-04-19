@@ -4,7 +4,7 @@ from sets import Set
 import traceback
 
 if __name__ == '__main__':
-    execfile(os.path.join(sys.path[0], 'framework.py'))
+    execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from Testing                 import ZopeTestCase
 from Products.CMFCore.utils  import getToolByName
