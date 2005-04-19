@@ -5,7 +5,7 @@ space pov, moves api to plone tool (plone_utils).
 patches for memberdata to allow for delegation to pas property providers,
 falling back to default impl else.
 
-$Id: plone.py,v 1.3 2005/02/24 15:13:31 k_vertigo Exp $
+$Id: plone.py,v 1.4 2005/04/19 19:37:53 jccooper Exp $
 """
 
 from AccessControl import getSecurityManager, Permissions
@@ -60,8 +60,8 @@ MemberData.baseSetProperties__roles__ = ()
 MemberData.baseSetProperties = MemberData.setMemberProperties
 MemberData.setMemberProperties = setMemberProperties
 
-def getProperty(self, id):
-    if PluggableAuthService.isImplementedBy( self.acl_users ):
+def getProperty(self, id, default=None):
+    if IPluggableAuthService.isImplementedBy(self.acl_users):
         user = self.getUser()
         for sheet in user.getOrderedPropertySheets():
             if sheet.hasProperty( id ):
