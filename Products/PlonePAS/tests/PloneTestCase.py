@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.11 2005/04/19 19:27:04 jccooper Exp $
+# $Id: PloneTestCase.py,v 1.12 2005/04/19 19:36:13 jccooper Exp $
 
 from Testing import ZopeTestCase
 
@@ -30,7 +30,7 @@ ZopeTestCase.installProduct('ExternalMethod', quiet=1)
 ZopeTestCase.installProduct('SecureMailHost', quiet=1)
 ZopeTestCase.installProduct('ExternalEditor', quiet=1)
 ZopeTestCase.installProduct('Archetypes')
-ZopeTestCase.installProduct('validator')
+ZopeTestCase.installProduct('validation')
 ZopeTestCase.installProduct('generator')
 ZopeTestCase.installProduct('MimetypesRegistry')
 ZopeTestCase.installProduct('PortalTransforms')
