@@ -2,10 +2,11 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.10 2005/02/03 18:16:56 webmaven Exp $
+# $Id: PloneTestCase.py,v 1.11 2005/04/19 19:27:04 jccooper Exp $
 
 from Testing import ZopeTestCase
 
+#ZopeTestCase.installProduct('SiteErrorLog')
 ZopeTestCase.installProduct('CMFCore')
 ZopeTestCase.installProduct('CMFDefault')
 ZopeTestCase.installProduct('CMFCalendar')
@@ -28,8 +29,15 @@ ZopeTestCase.installProduct('PythonScripts', quiet=1)
 ZopeTestCase.installProduct('ExternalMethod', quiet=1)
 ZopeTestCase.installProduct('SecureMailHost', quiet=1)
 ZopeTestCase.installProduct('ExternalEditor', quiet=1)
+ZopeTestCase.installProduct('Archetypes')
+ZopeTestCase.installProduct('validator')
+ZopeTestCase.installProduct('generator')
+ZopeTestCase.installProduct('MimetypesRegistry')
+ZopeTestCase.installProduct('PortalTransforms')
+ZopeTestCase.installProduct('ATContentTypes')
 ZopeTestCase.installProduct('PlonePAS')
 
+ZopeTestCase.utils.setupSiteErrorLog()
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
