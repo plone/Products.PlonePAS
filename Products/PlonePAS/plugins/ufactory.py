@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
+$Id: ufactory.py,v 1.2 2005/04/19 19:38:42 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -24,6 +24,7 @@ from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PlonePAS.utils import unique
 
 manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals() )
