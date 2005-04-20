@@ -5,7 +5,7 @@ space pov, moves api to plone tool (plone_utils).
 patches for memberdata to allow for delegation to pas property providers,
 falling back to default impl else.
 
-$Id: plone.py,v 1.5 2005/04/19 22:24:31 jccooper Exp $
+$Id: plone.py,v 1.6 2005/04/20 23:45:24 jccooper Exp $
 """
 
 from AccessControl import getSecurityManager, Permissions
@@ -77,13 +77,61 @@ MemberData.getProperty = getProperty
 
 
 def searchFulltextForMembers(self, s):
-    """
+    """PAS-specific search for members by id, email, full name.
     """
     acl_users = getToolByName( self, 'acl_users')
     return acl_users.searchUsers( name=s, exact_match=False)
+    # I don't think this is right: we need to return Members
 
 MemberDataTool.baseSearchFulltextForMembers = MemberDataTool.searchFulltextForMembers
 MemberDataTool.searchFulltextForMembers = searchFulltextForMembers
+
+
+def searchForMembers(self, REQUEST=None, **kw):
+    """Hacked up version of Plone searchForMembers. Only takes 'name' as keyword
+    (or in REQUEST) and searches on Full name and id.
+    """
+    acl_users = self.acl_users
+    md = self.portal_memberdata
+    groups_tool = self.portal_groups
+    if REQUEST:
+        dict = REQUEST
+    else:
+        dict = kw
+
+    name = dict.get('name', None)
+    if name:
+        name = name.strip().lower()
+
+    is_manager = self.checkPermission('Manage portal', self)
+
+    md_users = None
+    uf_users = None
+    if name:
+        # We first find in MemberDataTool users whose _full_ name match what we want.
+        lst = md.searchMemberDataContents('fullname', name)
+        md_users = [ x['username'] for x in lst]
+
+        # This will allow us to retreive users by their _id_ (not name).
+        uf_users = acl_users.searchUsers(name=name)
+
+    # build final list
+    members = []
+    wrap = self.wrapUser
+    getUser = acl_users.getUser
+
+    for userid in md_users:
+        members.append(wrap(getUser(userid)))
+    for user in uf_users:
+        userid = user['userid']
+        if userid in md_users:
+            continue             # Kill dupes
+        members.append(wrap(getUser(userid)))
+    
+    return members
+
+MembershipTool.baseSearchForMembers = MembershipTool.searchForMembers
+MembershipTool.searchForMembers = searchForMembers
 
 
 def addMember(self, id, password, roles, domains, properties=None):
