@@ -6,13 +6,14 @@ experimenting with pas flexibility on an existing system.
 
 open question if this mode will be supported at all 
 
-$Id: gruf_support.py,v 1.1 2005/02/24 15:13:31 k_vertigo Exp $
+$Id: gruf_support.py,v 1.2 2005/04/20 21:11:51 jccooper Exp $
 """
 
 import sys
 
 from Products.PluggableAuthService.PluggableAuthService import \
-          PluggableAuthService, MANGLE_DELIMITER, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
+          PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
+#from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
 
 

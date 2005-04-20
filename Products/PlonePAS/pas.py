@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.16 2005/02/24 15:13:31 k_vertigo Exp $
+$Id: pas.py,v 1.17 2005/04/20 21:11:51 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -11,7 +11,8 @@ from AccessControl.PermissionRole import _what_not_even_god_should_do
 from Products.PluggableAuthService.PropertiedUser import \
      PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
-     PluggableAuthService, MANGLE_DELIMITER, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
+     PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
+#from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 
