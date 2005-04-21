@@ -17,7 +17,7 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: role.py,v 1.1 2005/02/24 15:22:48 k_vertigo Exp $
+$Id: role.py,v 1.2 2005/04/21 00:27:34 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -25,6 +25,8 @@ from Globals import DTMLFile, InitializeClass
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
 from Products.PlonePAS.utils import unique
+from Products.PluggableAuthService.permissions import ManageUsers
+
 
 def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
     """
@@ -45,6 +47,20 @@ class GroupAwareRoleManager( ZODBRoleManager ):
     __implements__ = ZODBRoleManager.__implements__
 
     security = ClassSecurityInfo()
+
+    security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
+    def assignRolesToPrincipal( self, roles, principal_id ):
+        """ Assign a specific set of roles, and only those roles, to a principal.
+
+        o no return value
+
+        o Raise KeyError if a role_id is unknown.
+        """
+        for role_id in roles:
+            role_info = self._roles[ role_id ] # raise KeyError if unknown!
+
+        self._principal_roles[ principal_id ] = roles
+
 
     security.declarePrivate( 'getRolesForPrincipal' )
     def getRolesForPrincipal( self, principal, request=None ):

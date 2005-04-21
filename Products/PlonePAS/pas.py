@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.17 2005/04/20 21:11:51 jccooper Exp $
+$Id: pas.py,v 1.18 2005/04/21 00:27:33 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -14,6 +14,7 @@ from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
 #from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
+
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 
 
@@ -61,23 +62,27 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 
     modified = False
     for mid, manager in managers:
-        if manager.doChangeUser( principal_id, password ):
+        try:
+            manager.doChangeUser( principal_id, password )
             modified = True
+        except RuntimeError:
+            pass
 
     if not modified:
         raise RuntimeError("no user management plugins were able to successfully modify the user")
 
     sroles = Set() # keep track that we set all the requested roles
     for rid, rmanager in rmanagers:
-        
-        for role in roles:
-            if rmanager.addRoleToPrincipal( principal_id, role):
-                sroles.add( role )
+        rmanager.assignRolesToPrincipal( roles, principal_id)   
 
-    roles_not_set = sroles.difference( Set( roles ) )
+#        for role in roles:
+#            if rmanager.assignRolesToPrincipal( principal_id, role):
+#                sroles.add( role )
+
+#    roles_not_set = sroles.difference( Set( roles ) )
     
-    if not len( roles_not_set ) == 0:
-        raise RuntimeError("not all roles were set - %s"%roles_not_set)
+#    if not len( roles_not_set ) == 0:
+#        raise RuntimeError("not all roles were set - %s"%roles_not_set)
 
     return True
 
