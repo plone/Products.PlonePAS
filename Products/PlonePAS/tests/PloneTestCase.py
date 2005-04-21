@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.12 2005/04/19 19:36:13 jccooper Exp $
+# $Id: PloneTestCase.py,v 1.13 2005/04/21 22:18:30 rochael Exp $
 
 from Testing import ZopeTestCase
 
@@ -35,6 +35,9 @@ ZopeTestCase.installProduct('generator')
 ZopeTestCase.installProduct('MimetypesRegistry')
 ZopeTestCase.installProduct('PortalTransforms')
 ZopeTestCase.installProduct('ATContentTypes')
+ZopeTestCase.installProduct('ExtendedPathIndex')
+ZopeTestCase.installProduct('ATReferenceBrowserWidget')
+ZopeTestCase.installProduct('CSSRegistry')
 ZopeTestCase.installProduct('PlonePAS')
 
 ZopeTestCase.utils.setupSiteErrorLog()
@@ -85,7 +88,7 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
         personal.manage_setLocalRoles(member_id, ['Owner'])
 
     def setGroups(self, groups, name=default_user):
-        '''Changes the specified user's groups. Assumes GRUF.'''
+        '''Changes the specified user's groups. Assumes GRUF.''' #' emacs
         self.assertEqual(type(groups), types.ListType)
         uf = self.portal.acl_users
         uf._updateUser(name, groups=groups, domains=[])
