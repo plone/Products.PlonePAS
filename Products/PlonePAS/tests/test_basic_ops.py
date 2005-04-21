@@ -23,7 +23,6 @@ class BasicOpsTestCase(PloneTestCase):
     def afterSetUp(self):
         self.loginPortalOwner()
         self.acl_users = self.portal.acl_users
-        self.portal._addRole('r1')
 
     def compareRoles(self, target, user, roles):
         """
@@ -72,6 +71,19 @@ class BasicOpsTestCase(PloneTestCase):
             domains = (),
             )
         self.compareRoles(None, "created_user", ['Member',], )
+
+    def test_edit_userDefinedRole(self):
+        self.portal._addRole('r1')
+        self.createUser()
+        self.compareRoles(None, "created_user", [], )
+        self.acl_users.userFolderEditUser(
+            "created_user", # name 
+            "secret2", # password
+            roles = ["r1", ],
+            groups = ["g1", ],
+            domains = (),
+            )
+        self.compareRoles(None, "created_user", ['r1',], )
 
 def test_suite():
     suite = unittest.TestSuite()
