@@ -85,6 +85,15 @@ class BasicOpsTestCase(PloneTestCase):
             )
         self.compareRoles(None, "created_user", ['r1',], )
 
+    def test_del(self):
+        self.createUser()
+        self.failUnless(self.acl_users.getUser("created_user"))
+        self.acl_users.userFolderDelUsers(['created_user', ])
+        self.failIf(self.acl_users.getUser("created_user"))
+
+
+        
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(BasicOpsTestCase))
