@@ -1,0 +1,6 @@
+
+Write tests for adding, setting, deleting properties on users.
+
+Identify group API used by plone (mostly groups tool) and write tests exercising it
+
+Verify why user records just created are marked as "orphaned" in portal_memberdata. It could just be that they never logged in.
