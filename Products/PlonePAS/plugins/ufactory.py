@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.3 2005/04/20 21:11:51 jccooper Exp $
+$Id: ufactory.py,v 1.4 2005/04/22 22:29:19 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -62,24 +62,6 @@ class PloneUser( PropertiedUser ):
 
     security = ClassSecurityInfo()
 
-#    def _safeUnmangleId( self, mangled_id ):
-#        """
-#        safely unmangle an id
-#        """
-#        parts = mangled_id.split(MANGLE_DELIMITER, 1)
-#        return parts[-1]
-
-#    def getId( self ):
-#        """ -> user ID
-#        """
-#	return self._safeUnmangleId(self._id)
-#	#return self._id
-
-#    security.declarePrivate('getQualifiedId')
-#    def getQualifiedId( self ):
-#        """ -> user source plugin id mangled user id
-#        """
-#        return self._id
 
     #################################
     # acquisition aware
