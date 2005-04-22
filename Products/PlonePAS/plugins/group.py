@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
+$Id: group.py,v 1.2 2005/04/22 20:51:33 jccooper Exp $
 """
 
 from BTrees.OOBTree import OOBTree, OOSet
@@ -89,7 +89,10 @@ class GroupManager( ZODBGroupManager ):
     # introspection interface
     
     def getGroupById(self, group_id):
-        return self.getGroupInfo( group_id )
+        try:
+            return self.getGroupInfo( group_id )
+        except KeyError:
+            return None
 
     def getGroups(self):
         return map( self.getGroupById, self.getGroupIds() )

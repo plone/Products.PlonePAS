@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.5 2005/02/04 23:23:32 k_vertigo Exp $
+$Id: groups.py,v 1.6 2005/04/22 20:51:34 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
@@ -94,13 +94,13 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
     ##
 
     security.declareProtected(Permissions.manage_users, 'getGroupById')
-    def getGroupById( group_id ):
+    def getGroupById(self, group_id ):
         group = None
-        introspecters = self._getGroupIntrospecters()
+        introspectors = self._getGroupIntrospectors()
         if not introspectors:
             raise NotSupported("no plugins allow for group management")
-        for iid, introspecter in introspecters:
-            group = introspecters.getGroupById( group_id )
+        for iid, introspector in introspectors:
+            group = introspector.getGroupById( group_id )
             if group is None:
                 break
         return group
@@ -115,25 +115,25 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
         groups = []
-        introspecters = self._getGroupIntrospecters()
-        for iid, introspecter in introspecters:
-            groups.extend( introspecters.getGroups() )
+        introspectors = self._getGroupIntrospectors()
+        for iid, introspector in introspectors:
+            groups.extend( introspector.getGroups() )
         return groups
 
     security.declareProtected(Permissions.manage_users, 'getGroupIds')
     def getGroupIds(self):
         groups = []
-        introspecters = self._getGroupIntrospecters()
-        for iid, introspecter in introspecters:
-            groups.extend( introspecters.getGroupIds() )
+        introspectors = self._getGroupIntrospectors()
+        for iid, introspector in introspectors:
+            groups.extend( introspector.getGroupIds() )
         return groups
 
     security.declareProtected(Permissions.manage_users, 'getGroupMembers')
     def getGroupMembers(self, group_id):
         members = []
-        introspecters = self._getGroupIntrospecters()
-        for iid, introspecter in introspecters:
-            members = introspecters.getGroupMembers( group_id )
+        introspectors = self._getGroupIntrospectors()
+        for iid, introspector in introspectors:
+            members = introspector.getGroupMembers( group_id )
             if members:
                 break
         return members
@@ -156,8 +156,8 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
             igroup.IGroupManagement
             )
 
-    security.declarePrivate('_getGroupIntrospecters')
-    def _getGroupIntrospecters(self):
+    security.declarePrivate('_getGroupIntrospectors')
+    def _getGroupIntrospectors(self):
         return self.acl_users.plugins.listPlugins(
             igroup.IGroupIntrospection
             )

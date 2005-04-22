@@ -17,7 +17,7 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: role.py,v 1.2 2005/04/21 00:27:34 jccooper Exp $
+$Id: role.py,v 1.3 2005/04/22 20:51:33 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -57,7 +57,8 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         o Raise KeyError if a role_id is unknown.
         """
         for role_id in roles:
-            role_info = self._roles[ role_id ] # raise KeyError if unknown!
+            if role_id not in ('Authenticated','Anonymous','Owner'):
+                role_info = self._roles[ role_id ] # raise KeyError if unknown!
 
         self._principal_roles[ principal_id ] = roles
 
