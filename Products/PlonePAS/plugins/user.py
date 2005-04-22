@@ -15,7 +15,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: user.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
+$Id: user.py,v 1.2 2005/04/22 19:52:57 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
@@ -50,9 +50,9 @@ class UserManager( BasePlugin ):
     security = ClassSecurityInfo()
 
     security.declarePrivate('doDeleteUser')
-    def doDeleteUser(self, login):
-        """ given a login, delete a user """
-        self.removeUser(login)
+    def doDeleteUser(self, userid):
+        """ given a user id, delete that user"""
+        return self.removeUser(userid)
 
     security.declarePrivate('doChangeUser')
     def doChangeUser(self, principal_id, password ):

@@ -1,18 +1,19 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.18 2005/04/21 00:27:33 jccooper Exp $
+$Id: pas.py,v 1.19 2005/04/22 19:52:57 jccooper Exp $
 """
 import sys
 from sets import Set
 
 from Acquisition import aq_inner, aq_parent
 from AccessControl.PermissionRole import _what_not_even_god_should_do
+from AccessControl.Permissions import manage_users as ManageUsers
 
-from Products.PluggableAuthService.PropertiedUser import \
-     PropertiedUser
+from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
-#from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
+from Products.PluggableAuthService.PluggableAuthService import security
+
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
@@ -21,10 +22,10 @@ from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlu
 #################################
 # pas folder monkies - standard zope user folder api
 
-def _doDelUser(self, login):
+def _doDelUsers(self, ids):
     """
-    given a login, hand off to a deleter plugin if available;
-    return a boolean
+    given a list of user ids, hand off to a deleter plugin if available;
+    has no return value, like the original
     """
 
     plugins = self._getOb( 'plugins' )
@@ -35,13 +36,13 @@ def _doDelUser(self, login):
                                    " delete users." )
 
     for userdeleter_id, userdeleter in userdeleters:
-        if userdeleter.doDelUser( login ):
-            return True
+        for id in ids:
+            userdeleter.doDeleteUser(id)
         
-PluggableAuthService._doDelUser = _doDelUser
-# XXX need to security restrict these methods, no base class sec decl
-#PluggableAuthService.userFolderDelUser__roles__ = 
-PluggableAuthService.userFolderDelUser = PluggableAuthService._doDelUser
+PluggableAuthService._doDelUsers = _doDelUsers
+
+security.declareProtected( ManageUsers, 'userFolderDelUsers' )
+PluggableAuthService.userFolderDelUsers = PluggableAuthService._doDelUsers
 
 
 def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
@@ -87,8 +88,8 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
     return True
 
 PluggableAuthService._doChangeUser = _doChangeUser
-# XXX need to security restrict these methods, no base class sec decl
-#PluggableAuthService.userFolderEditUser__roles__ = ()
+
+security.declareProtected( ManageUsers, 'userFolderEditUser' )
 PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser 
 
 # ttw alias
