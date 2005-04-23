@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.6 2005/04/22 20:51:34 jccooper Exp $
+$Id: groups.py,v 1.7 2005/04/23 00:14:23 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
@@ -26,20 +26,27 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
                        igroup.IGroupTool )
 
     ##
+    # mechanics
+    ##
+
+
+
+
+    ##
     # basic group mgmt
     ##
 
     security.declareProtected(Permissions.manage_users, 'addGroup')
-    def addGroup(self, id, **kw):
+    def addGroup(self, id, *args, **kw):
         group = None
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported("no plugins allow for group management")
         for mid, manager in managers:
-            group =  manager.addGroup( id, **kw )
+            group =  manager.addGroup( id, *args, **kw )
             if group is not None:
                 break
-        return group
+        #return group
 
     security.declareProtected(Permissions.manage_users, 'removeGroup')
     def removeGroup(self, group_id):
@@ -103,6 +110,8 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
             group = introspector.getGroupById( group_id )
             if group is None:
                 break
+        if group is not None:
+            group = self.wrapGroup(group)
         return group
 
     security.declareProtected(Permissions.manage_users, 'searchGroups')
