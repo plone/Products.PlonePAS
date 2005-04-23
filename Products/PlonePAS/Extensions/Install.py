@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.19 2005/02/16 23:52:11 k_vertigo Exp $
+$Id: Install.py,v 1.20 2005/04/23 00:16:54 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -98,6 +98,10 @@ def setupPlugins( portal, out ):
     pas.manage_addProduct['PlonePAS'].manage_addGroupAwareRoleManager('portal_role_manager')
     print >> out, "Added Group Aware Role Manager."
     activatePluginInterfaces(portal, 'portal_role_manager', out)
+
+    pas.manage_addProduct['PlonePAS'].manage_addLocalRolesManager('local_roles')
+    print >> out, "Added Group Aware Role Manager."
+    activatePluginInterfaces(portal, 'local_roles', out)
 
 
     pas.manage_addProduct['PlonePAS'].manage_addGroupManager('source_groups')

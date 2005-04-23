@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.15 2005/04/15 21:58:48 jccooper Exp $
+$Id: __init__.py,v 1.16 2005/04/23 00:16:54 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -93,5 +93,12 @@ def initialize(context):
                            permission = add_user_folders,
                            constructors = ( ufactory.manage_addPloneUserFactoryForm,
                                             ufactory.manage_addPloneUserFactory ),
+                           visibility = None
+                           )                           
+
+    context.registerClass( local_role.LocalRolesManager,
+                           permission = add_user_folders,
+                           constructors = ( local_role.manage_addLocalRolesManagerForm,
+                                            local_role.manage_addLocalRolesManager ),
                            visibility = None
                            )                           

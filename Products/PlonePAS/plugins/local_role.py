@@ -19,14 +19,15 @@ A Local Roles Plugin Implementation that respects Black Listing markers.
 ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
-$Id: local_role.py,v 1.1 2005/02/24 15:22:48 k_vertigo Exp $
+$Id: local_role.py,v 1.2 2005/04/23 00:16:55 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 
-def manage_addLocalRolesManager( dispatcher, id, title=None, REQUEST=None):
+def manage_addLocalRolesManager( dispatcher, id, title=None, RESPONSE=None):
     """
     add a local roles manager
     """
@@ -39,10 +40,19 @@ def manage_addLocalRolesManager( dispatcher, id, title=None, REQUEST=None):
 
 manage_addLocalRolesManagerForm = DTMLFile('../zmi/LocalRolesManagerForm', globals())
 
-class LocalRolesManager( BasePlugin ):
+class LocalRolesManager(BasePlugin):
+
+    __implements__ = BasePlugin.__implements__ + ( ILocalRolesPlugin, )
 
     meta_type = "Local Roles Manager"
+    security = ClassSecurityInfo()
 
+    def __init__(self, id, title=None):
+        self._id = self.id = id
+        self.title = title
+
+
+    #security.declarePrivate( 'getRolesInContext' )
     def getRolesInContext( self, user, object):
         user_id = user.getId()
         group_ids = user.getGroups()
@@ -90,6 +100,7 @@ class LocalRolesManager( BasePlugin ):
         return list( user.getRoles() ) + local.keys()
 
 
+    #security.declarePrivate( 'checkLocalRolesAllowed' )
     def checkLocalRolesAllowed( self, user, object, object_roles ):
         # Still have not found a match, so check local roles. We do
         # this manually rather than call getRolesInContext so that
@@ -146,6 +157,5 @@ class LocalRolesManager( BasePlugin ):
 
         return None        
 
-    
 
 InitializeClass( LocalRolesManager )

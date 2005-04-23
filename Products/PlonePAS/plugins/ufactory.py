@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.4 2005/04/22 22:29:19 jccooper Exp $
+$Id: ufactory.py,v 1.5 2005/04/23 00:16:55 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -143,7 +143,7 @@ class PloneUser( PropertiedUser ):
         lrmanagers = aq_parent( aq_inner( self ) ).plugins.listPlugins( ILocalRolesPlugin )
 
         for lrid, lrmanager in lrmanagers:
-            access_allowed = lrmanager.allowed( self, object, object_roles )
+            access_allowed = lrmanager.checkLocalRolesAllowed( self, object, object_roles )
             # return values
             # 0,1,None - 1 success, 0 object context violation - None - failure
             if access_allowed is None: 
