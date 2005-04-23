@@ -9,3 +9,7 @@ Verify why user records just created are marked as "orphaned" in portal_memberda
 jcc:
 
  - PasswordResetTool needed for reset password thing
+
+ - password reset and deletion UI needs to be determined by availability of plugins
+
+  - PlonePAS groups tool: assure API implementation
