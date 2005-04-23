@@ -3,10 +3,11 @@ Write tests for adding, setting, deleting properties on users.
 
 Write tests checking function of global roles (users and groups) and local roles (users and groups).
 
-Identify group API used by plone (mostly groups tool) and write tests exercising it
+Write tests to groups tool.
 
 Verify why user records just created are marked as "orphaned" in portal_memberdata. It could just be that they never logged in.
 
+PlonePAS groups tool: assure API implementation
 
 jcc:
 
@@ -14,4 +15,3 @@ jcc:
 
  - password reset and deletion UI needs to be determined by availability of plugins
 
-  - PlonePAS groups tool: assure API implementation
