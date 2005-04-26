@@ -1,11 +1,16 @@
 """
-$Id: __init__.py,v 1.17 2005/04/26 01:34:11 rochael Exp $
+$Id: __init__.py,v 1.18 2005/04/26 22:59:26 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.PluggableAuthService import registerMultiPlugin
-from Products.CMFPlone import utils as plone_utils
+try:
+  from Products.CMFPlone import utils as plone_utils
+except ImportError:
+  # rename didn't happen until after 2.1a1, which is current packaged version
+  # can probably ditch the condition at a2 or so
+  from Products.CMFPlone import PloneUtilities as plone_utils
 
 import config
 

@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.6 2005/04/26 22:32:36 jccooper Exp $
+$Id: ufactory.py,v 1.7 2005/04/26 22:59:27 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -60,14 +60,23 @@ InitializeClass( PloneUserFactory )
 
 class PloneUser( PropertiedUser ):
 
-    _isGroup = False
-
     security = ClassSecurityInfo()
+
+    #################################
+    # GRUF API
+    _isGroup = False
 
     security.declarePublic('isGroup')
     def isGroup(self,):
         """Return 1 if this user is a group abstraction"""
         return self._isGroup
+
+    security.declarePublic("getName")
+    def getName(self,):
+        """Get user's or group's name.
+        This is the id. PAS doesn't do prefixes and such like GRUF.
+        """
+        return self.getId()
 
 
     #################################
