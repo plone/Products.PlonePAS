@@ -91,8 +91,26 @@ class BasicOpsTestCase(PloneTestCase):
         self.acl_users.userFolderDelUsers(['created_user', ])
         self.failIf(self.acl_users.getUser("created_user"))
 
+    def test_search(self):
+        self.createUser()
+        mt = self.portal.portal_membership
+        retlist = mt.searchForMembers(REQUEST=None, name="created_user")
+        usernames = [user.getUserName() for user in retlist]
+        self.failUnless("created_user" in usernames,
+                        "'created_user' not in %s" % usernames)
 
-        
+    def test_getpw(self):
+        # both pw reset functionality in control panel and "mail me my
+        # pw" on the mail_password_form (accessible from the login
+        # form) use MemberData.getPassword() to mail the password the
+        # user already has. This is wrong, as some user sources don't
+        # have the ability to recover a user password (think
+        # /etc/passwd or /etc/shadow, for starters), but this is what Plone
+        # does so here is a test
+        self.createUser()
+        mt = self.portal.portal_membership
+        member = mt.getMemberById("created_user")
+        self.assertEquals("secret", member.getPassword())
 
 def test_suite():
     suite = unittest.TestSuite()
