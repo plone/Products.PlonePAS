@@ -7,7 +7,13 @@ Write tests to groups tool.
 
 Verify why user records just created are marked as "orphaned" in portal_memberdata. It could just be that they never logged in.
 
-PlonePAS groups tool: assure API implementation
+PlonePAS groups tool: assure API implementation; move common bits into Plone GroupsTool, also interface
+
+PlonePAS ZODBMutableProperties plugin not installed
+
+Group properties support?
+
+Should probably define group factory plugin
 
 jcc:
 
@@ -15,3 +21,4 @@ jcc:
 
  - password reset and deletion UI needs to be determined by availability of plugins
 
+ - does title not get to wrapped group

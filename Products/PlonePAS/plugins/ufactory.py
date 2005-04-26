@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.5 2005/04/23 00:16:55 jccooper Exp $
+$Id: ufactory.py,v 1.6 2005/04/26 22:32:36 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -60,7 +60,14 @@ InitializeClass( PloneUserFactory )
 
 class PloneUser( PropertiedUser ):
 
+    _isGroup = False
+
     security = ClassSecurityInfo()
+
+    security.declarePublic('isGroup')
+    def isGroup(self,):
+        """Return 1 if this user is a group abstraction"""
+        return self._isGroup
 
 
     #################################

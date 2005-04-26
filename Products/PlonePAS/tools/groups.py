@@ -1,18 +1,18 @@
 """
-$Id: groups.py,v 1.7 2005/04/23 00:14:23 jccooper Exp $
+$Id: groups.py,v 1.8 2005/04/26 22:32:36 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
 
 from Products.CMFPlone import ToolNames
-from Products.CMFPlone.PloneBaseTool import PloneBaseTool
+from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 from Products.CMFCore.utils import getToolByName, UniqueObject
 from OFS.SimpleItem import SimpleItem
 from Products.PlonePAS.interfaces import group as igroup
 
 class NotSupported(Exception): pass
 
-class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
+class GroupsTool(PloneGroupsTool):
     """
     for the groupie in you
     """
@@ -22,15 +22,8 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
     security = ClassSecurityInfo()
     toolicon = 'skins/plone_images/group.gif'
 
-    __implements__ = ( PloneBaseTool.__implements__,
+    __implements__ = ( PloneGroupsTool.__implements__,
                        igroup.IGroupTool )
-
-    ##
-    # mechanics
-    ##
-
-
-
 
     ##
     # basic group mgmt
@@ -101,13 +94,13 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
     ##
 
     security.declareProtected(Permissions.manage_users, 'getGroupById')
-    def getGroupById(self, group_id ):
+    def getGroupById(self, group_id):
         group = None
         introspectors = self._getGroupIntrospectors()
         if not introspectors:
             raise NotSupported("no plugins allow for group management")
         for iid, introspector in introspectors:
-            group = introspector.getGroupById( group_id )
+            group = introspector.getGroupById(group_id)
             if group is None:
                 break
         if group is not None:
@@ -120,14 +113,14 @@ class GroupsTool(UniqueObject, SimpleItem, PloneBaseTool):
         return self.acl_users.searchGroups( *args, **kw )
 
     security.declareProtected(Permissions.manage_users, 'getGroups')
-    def getGroups(self):
+    def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
         groups = []
         introspectors = self._getGroupIntrospectors()
         for iid, introspector in introspectors:
             groups.extend( introspector.getGroups() )
-        return groups
+        return [self.wrapGroup(elt) for elt in groups]
 
     security.declareProtected(Permissions.manage_users, 'getGroupIds')
     def getGroupIds(self):

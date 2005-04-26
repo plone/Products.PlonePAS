@@ -15,7 +15,7 @@
 """
 group interfaces for plone, based off existing group usage pre pas. 
 
-$Id: group.py,v 1.7 2005/02/24 15:13:32 k_vertigo Exp $
+$Id: group.py,v 1.8 2005/04/26 22:32:35 jccooper Exp $
 """
 
 from Products.PluggableAuthService.interfaces import plugins
@@ -72,7 +72,7 @@ class IGroupIntrospection(Interface):
     # these interface methods are suspect for scalability.
     #################################
     
-    def getGroups():
+    def listGroups():
         """
         Returns an iteration of the available groups
         """

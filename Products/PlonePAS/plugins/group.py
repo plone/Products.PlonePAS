@@ -16,15 +16,21 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.2 2005/04/22 20:51:33 jccooper Exp $
+$Id: group.py,v 1.3 2005/04/26 22:32:36 jccooper Exp $
 """
 
+from Acquisition import Implicit, aq_parent, aq_base, aq_inner
 from BTrees.OOBTree import OOBTree, OOSet
 from Globals import DTMLFile
+from Globals import InitializeClass
+from AccessControl import ClassSecurityInfo
 
 from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
+from Products.PluggableAuthService.utils import createViewName
 from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
+from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
 
@@ -48,6 +54,7 @@ class GroupManager( ZODBGroupManager ):
     __implements__ = ( IGroupsPlugin, IGroupEnumerationPlugin,
                        IGroupManagement, IGroupIntrospection )
 
+    security = ClassSecurityInfo()
 
     def __init__(self, *args, **kw):
         ZODBGroupManager.__init__(self, *args, **kw)
@@ -88,18 +95,171 @@ class GroupManager( ZODBGroupManager ):
     #################################
     # introspection interface
     
-    def getGroupById(self, group_id):
-        try:
-            return self.getGroupInfo( group_id )
-        except KeyError:
-            return None
+    def getGroupById(self, group_id, default=None):
+        plugins = self.acl_users._getOb('plugins')
+
+        group_id = self._verifyGroup(plugins, group_id=group_id)
+        title = None
+
+        if not group_id:
+            return default
+
+        return self._findGroup(plugins, group_id, title)
+            
 
     def getGroups(self):
-        return map( self.getGroupById, self.getGroupIds() )
+        return map(self.getGroupById, self.getGroupIds())
 
     def getGroupIds(self):
         return self.listGroupIds()
 
     def getGroupMembers(self, group_id):
         return tuple( self._group_principal_map[ group_id ] )
-        
+
+
+    #################################
+    # group wrapping mechanics
+
+    security.declarePrivate('_createGroup')
+    def _createGroup(self, plugins, group_id, name):
+        """ Create group object. For users, this can be done with a plugin, but
+        I don't care to define one for that now. Just uses PloneGroup.
+        But, the code's still here, just commented out.
+        This method based on PluggableAuthService._createUser
+        """
+
+        #factories = plugins.listPlugins( IUserFactoryPlugin )
+
+        #for factory_id, factory in factories:
+
+        #    user = factory.createUser(user_id, name)
+
+        #    if user is not None:
+        #        return user.__of__( self )
+
+        return PloneGroup(group_id, name).__of__(self)
+
+
+    security.declarePrivate( '_findGroup' )
+    def _findGroup(self, plugins, group_id, title=None, request=None):
+        """ group_id -> decorated_group
+        This method based on PluggableAuthService._findGroup
+        """
+
+        # See if the group can be retrieved from the cache
+        view_name = '_findGroup-%s' % group_id
+        keywords = { 'group_id' : group_id
+                   , 'title' : title
+                   }
+        group = self.ZCacheable_get(view_name=view_name
+                                  , keywords=keywords
+                                  , default=None
+                                  )
+
+        if group is None:
+
+            group = self._createGroup(plugins, group_id, title)
+
+            ## group properties not supported
+            #propfinders = plugins.listPlugins(IPropertiesPlugin)
+            #for propfinder_id, propfinder in propfinders:
+
+            #    data = propfinder.getPropertiesForGroup(user, request)
+            #    if data:
+            #        user.addPropertysheet(propfinder_id, data)
+
+            groups = self.acl_users._getGroupsForPrincipal( group, request
+                                                , plugins=plugins )
+            group._addGroups(groups)
+
+            rolemakers = plugins.listPlugins(IRolesPlugin)
+
+            for rolemaker_id, rolemaker in rolemakers:
+
+                roles = rolemaker.getRolesForPrincipal(group, request)
+
+                if roles:
+                    group._addRoles(roles)
+
+            group._addRoles( ['Authenticated'] )
+
+            # Cache the group if caching is enabled
+            base_group = aq_base(group)
+            if getattr(base_group, '_p_jar', None) is None:
+                self.ZCacheable_set( base_group
+                                   , view_name=view_name
+                                   , keywords=keywords
+                                   )
+
+        return group.__of__( self )
+
+    security.declarePrivate( '_verifyGroup' )
+    def _verifyGroup( self, plugins, group_id=None, title=None ):
+
+        """ group_id -> boolean
+        This method based on PluggableAuthService._verifyUser
+        """
+        criteria = {}
+
+        if group_id is not None:
+            criteria[ 'id' ] = group_id
+            criteria[ 'exact_match' ] = True
+
+        if title is not None:
+            criteria[ 'title' ] = title
+
+        if criteria:
+            view_name = createViewName('_verifyGroup', group_id or login)
+            cached_info = self.ZCacheable_get( view_name=view_name
+                                             , keywords=criteria
+                                             , default=None
+                                             )
+
+            if cached_info is not None:
+                return cached_info
+
+
+            enumerators = plugins.listPlugins( IGroupEnumerationPlugin )
+
+            for enumerator_id, enumerator in enumerators:
+                try:
+                    info = enumerator.enumerateGroups( **criteria )
+
+                    if info:
+                        id = info[0]['id']
+                        # Put the computed value into the cache
+                        self.ZCacheable_set( id
+                                           , view_name=view_name
+                                           , keywords=criteria
+                                           )
+                        return id
+
+                except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                    LOG('PluggableAuthService', BLATHER,
+                        'GroupEnumerationPlugin %s error' % enumerator_id,
+                        error=sys.exc_info())
+
+        return 0
+
+
+
+InitializeClass(GroupManager)
+
+
+class PloneGroup(PloneUser):
+    """Plone expects a user to come, with approximately the same behavior as a user."""
+
+    _isGroup = True
+
+
+    def getRolesInContext( self, object ):
+        """Since groups can't actually log in, do nothing."""
+        return []
+
+    def allowed( self, object, object_roles=None ):
+        """Since groups can't actually log in, do nothing."""
+        return 0
+
+
+InitializeClass(PloneGroup)
+
