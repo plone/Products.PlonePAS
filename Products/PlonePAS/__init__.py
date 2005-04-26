@@ -1,11 +1,11 @@
 """
-$Id: __init__.py,v 1.16 2005/04/23 00:16:54 jccooper Exp $
+$Id: __init__.py,v 1.17 2005/04/26 01:34:11 rochael Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.PluggableAuthService import registerMultiPlugin
-from Products.CMFPlone import PloneUtilities as plone_utils
+from Products.CMFPlone import utils as plone_utils
 
 import config
 
