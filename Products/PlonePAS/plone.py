@@ -5,7 +5,7 @@ space pov, moves api to plone tool (plone_utils).
 patches for memberdata to allow for delegation to pas property providers,
 falling back to default impl else.
 
-$Id: plone.py,v 1.7 2005/04/27 01:24:21 jccooper Exp $
+$Id: plone.py,v 1.8 2005/04/27 17:43:35 rochael Exp $
 """
 
 from AccessControl import getSecurityManager, Permissions
@@ -106,8 +106,8 @@ def searchForMembers(self, REQUEST=None, **kw):
 
     is_manager = self.checkPermission('Manage portal', self)
 
-    md_users = None
-    uf_users = None
+    md_users = []
+    uf_users = []
     if name:
         # We first find in MemberDataTool users whose _full_ name match what we want.
         lst = md.searchMemberDataContents('fullname', name)
@@ -128,7 +128,7 @@ def searchForMembers(self, REQUEST=None, **kw):
         if userid in md_users:
             continue             # Kill dupes
         members.append(wrap(getUser(userid)))
-    
+
     return members
 
 MembershipTool.baseSearchForMembers = MembershipTool.searchForMembers
