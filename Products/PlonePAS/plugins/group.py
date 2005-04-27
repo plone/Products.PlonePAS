@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.6 2005/04/27 01:24:22 jccooper Exp $
+$Id: group.py,v 1.7 2005/04/27 01:35:12 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -254,6 +254,12 @@ class PloneGroup(PloneUser):
     security = ClassSecurityInfo()    
 
     _isGroup = True
+
+    def getId(self, unprefixed=None):
+        """ -> user ID
+        Modified to accept silly GRUF param.
+        """
+        return self._id
 
     security.declarePrivate("getMemberIds")
     def getMemberIds(self, transitive = 1, ):
