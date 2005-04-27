@@ -5,13 +5,14 @@ space pov, moves api to plone tool (plone_utils).
 patches for memberdata to allow for delegation to pas property providers,
 falling back to default impl else.
 
-$Id: plone.py,v 1.6 2005/04/20 23:45:24 jccooper Exp $
+$Id: plone.py,v 1.7 2005/04/27 01:24:21 jccooper Exp $
 """
 
 from AccessControl import getSecurityManager, Permissions
 from Products.CMFPlone.PloneTool import PloneTool
 from Products.CMFPlone.MemberDataTool import MemberData, MemberDataTool
 from Products.CMFPlone.MembershipTool import MembershipTool
+from Products.GroupUserFolder.GroupDataTool import GroupData
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -149,3 +150,12 @@ def addMember(self, id, password, roles, domains, properties=None):
 
 MembershipTool.baseAddMember = MembershipTool.addMember
 MembershipTool.addMember = addMember
+
+
+def _getGroup(self):
+    """Get the underlying group object
+    """
+    return self.getGroup()
+
+GroupData.base_getGroup = GroupData._getGroup
+GroupData._getGroup = _getGroup

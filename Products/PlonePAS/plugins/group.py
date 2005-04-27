@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.5 2005/04/27 00:04:27 jccooper Exp $
+$Id: group.py,v 1.6 2005/04/27 01:24:22 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -259,6 +259,17 @@ class PloneGroup(PloneUser):
     def getMemberIds(self, transitive = 1, ):
         "Return member ids of this group, including or not transitive groups."
         return self.getGroupMembers(self.getId())  # acquired from the groups_source
+
+    security.declarePublic('addMember')
+    def addMember(self, id):
+        """ Add the existing member with the given id to the group"""
+        self.addPrincipalToGroup(id, self.getId())
+
+    security.declarePublic('removeMember')
+    def removeMember(self, id):
+        """Remove the member with the provided id from the group.
+        """
+        self.removePrincipalFromGroup(id, self.getId())
 
     def getRolesInContext(self, object):
         """Since groups can't actually log in, do nothing."""

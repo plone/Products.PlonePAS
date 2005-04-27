@@ -11,9 +11,14 @@ PlonePAS groups tool: assure API implementation; move common bits into Plone Gro
 
 PlonePAS ZODBMutableProperties plugin not installed
 
-Group properties support?
+Group properties support in PAS (a plugin, not the GroupData properties)?
 
 Should probably define group factory plugin
+
+I don't like where prefs_group_details form ends up. Should go back to prefs_group_members or itself. But,
+this is not a regression.
+
+Plone should include GroupData in its GroupDataTool.py. After this, our GroupData or monkey-patch can use the Plone one.
 
 jcc:
 
