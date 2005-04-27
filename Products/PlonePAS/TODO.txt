@@ -10,7 +10,7 @@ Verify why user records just created are marked as "orphaned" in portal_memberda
 
 PlonePAS groups tool: assure API implementation; move common bits into Plone GroupsTool, also interface
 
-PlonePAS ZODBMutableProperties plugin not installed
+PlonePAS ZODBMutableProperties plugin not installed (nor any properties plugin) - MemberData is default
 
 Group properties support in PAS (a plugin, not the GroupData properties)?
 
