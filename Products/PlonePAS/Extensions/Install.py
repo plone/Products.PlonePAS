@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.20 2005/04/23 00:16:54 jccooper Exp $
+$Id: Install.py,v 1.21 2005/04/27 23:45:46 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -11,7 +11,11 @@ from Products.PluginRegistry.PluginRegistry import PluginRegistry
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces import group as igroup
+
 from Products.PlonePAS.tools.groups import GroupsTool
+from Products.PlonePAS.tools.groupdata import GroupDataTool
+from Products.PlonePAS.tools.membership import MembershipTool
+from Products.PlonePAS.tools.plonetool import PloneTool
 
 from Acquisition import aq_base
 
@@ -120,11 +124,30 @@ def configurePlonePAS(portal, out):
 #    setupRoles( portal )
 
 def setupTools(portal, out):
-    print >> out, "Removing Default Groups Tool"
+    print >> out, "Groups Tool (portal_groups)"
+    print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_groups'])
-
-    print >> out, "Installing PAS Aware Groups Tool"
+    print >> out, " - Installing PAS Aware"
     portal._setObject( GroupsTool.id, GroupsTool() )
+
+    print >> out, "GroupData Tool (portal_groupdata)"
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['portal_groupdata'])
+    # XXX TODO: data migration
+    print >> out, " - Installing PAS Aware"
+    portal._setObject( GroupDataTool.id, GroupDataTool() )
+
+    print >> out, "Plone Tool (plone_utils)"
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['plone_utils'])
+    print >> out, " - Installing PAS Aware"
+    portal._setObject( PloneTool.id, PloneTool() )
+
+    print >> out, "Membership Tool (portal_membership)"
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['portal_membership'])
+    print >> out, " - Installing PAS Aware"
+    portal._setObject( MembershipTool.id, MembershipTool() )
 
 def install(self):
     out = StringIO()

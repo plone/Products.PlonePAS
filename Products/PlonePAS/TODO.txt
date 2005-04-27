@@ -20,6 +20,15 @@ I don't like where prefs_group_details form ends up. Should go back to prefs_gro
 this is not a regression.
 
 Plone should include GroupData in its GroupDataTool.py. After this, our GroupData or monkey-patch can use the Plone one.
+Relatedly, wrapUsers and wrapGroups should have a way of specifying the wrapping object so it's easier to over-ride.
+
+Memberdata tool migration in install
+
+We're dependent on GRUF for groups tools. 
+
+PAS.plugins.ZODBGroupManager.removeGroup tries to remove every user from group. Probably bad!
+
+_doChangeGroup ignores groups to add. This doesn't bother Plone.
 
 jcc:
 
@@ -27,4 +36,6 @@ jcc:
 
  - password reset and deletion UI needs to be determined by availability of plugins
 
- - does title not get to wrapped group
+ - does title not get to wrapped group?
+
+ - fix MembershipTool.searchForMembers, MemberDataTool searchFulltextForMembers

@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.7 2005/04/27 01:35:12 jccooper Exp $
+$Id: group.py,v 1.8 2005/04/27 23:45:46 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -79,8 +79,8 @@ class GroupManager( ZODBGroupManager ):
         return True
 
     def removePrincipalFromGroup(self, principal_id, group_id):
-        ZODBGroupManager.removePrincipalFromGroup( self, principal_id, group_id)
-        self._group_principal_map[ group_id ].remove( principal_id )
+        already = ZODBGroupManager.removePrincipalFromGroup( self, principal_id, group_id)
+        if already: self._group_principal_map[ group_id ].remove( principal_id )
         return True
     
     #################################

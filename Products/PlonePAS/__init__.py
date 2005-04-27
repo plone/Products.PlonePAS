@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.18 2005/04/26 22:59:26 jccooper Exp $
+$Id: __init__.py,v 1.19 2005/04/27 23:45:46 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -38,7 +38,10 @@ import plone
 
 #################################
 # new groups tool
+from tools.plonetool import PloneTool
+from tools.membership import MembershipTool
 from tools.groups import GroupsTool
+from tools.groupdata import GroupDataTool
 
 registerDirectory('skins', globals())
 
@@ -57,7 +60,7 @@ except RuntimeError:
 
 def initialize(context):
 
-    tools = ( GroupsTool, )
+    tools = ( GroupsTool, GroupDataTool, MembershipTool, PloneTool )
 
     plone_utils.ToolInit('PlonePAS Tools',
                          tools=tools,
