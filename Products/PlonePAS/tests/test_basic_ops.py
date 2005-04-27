@@ -61,6 +61,7 @@ class BasicOpsTestCase(PloneTestCase):
         self.failUnless(self.acl_users.getUser("created_user"))
 
     def test_edit(self):
+        # this will fail unless the PAS role plugin is told it manages the new role.
         self.createUser()
         self.compareRoles(None, "created_user", [], )
         self.acl_users.userFolderEditUser(
