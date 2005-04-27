@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.3 2005/04/26 22:32:36 jccooper Exp $
+$Id: group.py,v 1.4 2005/04/27 00:02:33 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -249,14 +249,22 @@ InitializeClass(GroupManager)
 class PloneGroup(PloneUser):
     """Plone expects a user to come, with approximately the same behavior as a user."""
 
+    # __implements__ = (IGroup, )  # this should be made true
+
+    security = ClassSecurityInfo()    
+
     _isGroup = True
 
+    security.declarePrivate("getMemberIds")
+    def getMemberIds(self, transitive = 1, ):
+        "Return member ids of this group, including or not transitive groups."
+        return self.getGroupMembers(self.getId())  # inherited from the groups_source
 
-    def getRolesInContext( self, object ):
+    def getRolesInContext(self, object):
         """Since groups can't actually log in, do nothing."""
         return []
 
-    def allowed( self, object, object_roles=None ):
+    def allowed(self, object, object_roles=None):
         """Since groups can't actually log in, do nothing."""
         return 0
 
