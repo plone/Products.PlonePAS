@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.19 2005/04/27 23:45:46 jccooper Exp $
+$Id: __init__.py,v 1.20 2005/04/28 00:29:43 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -40,6 +40,7 @@ import plone
 # new groups tool
 from tools.plonetool import PloneTool
 from tools.membership import MembershipTool
+from tools.memberdata import MemberDataTool
 from tools.groups import GroupsTool
 from tools.groupdata import GroupDataTool
 
@@ -60,7 +61,7 @@ except RuntimeError:
 
 def initialize(context):
 
-    tools = ( GroupsTool, GroupDataTool, MembershipTool, PloneTool )
+    tools = ( GroupsTool, GroupDataTool, MembershipTool, MemberDataTool, PloneTool )
 
     plone_utils.ToolInit('PlonePAS Tools',
                          tools=tools,

@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.21 2005/04/27 23:45:46 jccooper Exp $
+$Id: Install.py,v 1.22 2005/04/28 00:29:43 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -15,6 +15,7 @@ from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.tools.groups import GroupsTool
 from Products.PlonePAS.tools.groupdata import GroupDataTool
 from Products.PlonePAS.tools.membership import MembershipTool
+from Products.PlonePAS.tools.memberdata import MemberDataTool
 from Products.PlonePAS.tools.plonetool import PloneTool
 
 from Acquisition import aq_base
@@ -82,6 +83,7 @@ def registerPluginTypes( pas ):
 
 def setupPlugins( portal, out ):
     pas = portal.acl_users
+    print >> out, "\nPlugin setup"
 
     pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('credentials_cookie', cookie_name='__ac')
     print >> out, "Added Cookie Auth Helper."
@@ -124,6 +126,8 @@ def configurePlonePAS(portal, out):
 #    setupRoles( portal )
 
 def setupTools(portal, out):
+    print >> out, "\nTools:"
+
     print >> out, "Groups Tool (portal_groups)"
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_groups'])
@@ -148,6 +152,13 @@ def setupTools(portal, out):
     portal.manage_delObjects(['portal_membership'])
     print >> out, " - Installing PAS Aware"
     portal._setObject( MembershipTool.id, MembershipTool() )
+
+    print >> out, "MemberData Tool (portal_memberdata)"
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['portal_memberdata'])
+    # XXX TODO: data migration
+    print >> out, " - Installing PAS Aware"
+    portal._setObject( MemberDataTool.id, MemberDataTool() )
 
 def install(self):
     out = StringIO()
