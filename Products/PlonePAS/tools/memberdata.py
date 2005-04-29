@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.2 2005/04/29 22:08:48 jccooper Exp $
+$Id: memberdata.py,v 1.3 2005/04/29 22:33:32 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -8,6 +8,7 @@ from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataToo
 from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData   # this actually isn't used in Plone
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.MemberDataTool import CleanupTemp
 
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin

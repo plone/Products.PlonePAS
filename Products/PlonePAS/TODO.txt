@@ -39,3 +39,5 @@ jcc:
  - does title not get to wrapped group?
 
  - fix MembershipTool.searchForMembers, MemberDataTool searchFulltextForMembers
+
+ - prefs_group_details and prefs_group_edit don't need to be customized for Plone 2.1 versions after 29 Apr 2005
