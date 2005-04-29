@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.7 2005/04/26 22:59:27 jccooper Exp $
+$Id: ufactory.py,v 1.8 2005/04/29 21:16:40 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -23,6 +23,7 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 #from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PlonePAS.utils import unique
@@ -72,7 +73,7 @@ class PloneUser( PropertiedUser ):
         return self._isGroup
 
     security.declarePublic("getName")
-    def getName(self,):
+    def getName(self):
         """Get user's or group's name.
         This is the id. PAS doesn't do prefixes and such like GRUF.
         """
@@ -105,7 +106,7 @@ class PloneUser( PropertiedUser ):
 
         self._propertysheets[ id ] = UserPropertySheet( id, **data )
 
-    security.declarePrivate('getOrderedSheets')
+    security.declarePrivate('getOrderedPropertySheets')
     def getOrderedPropertySheets(self):
         # ordered
         source_provider_keys = [plugin_id for plugin_id, plugin in self.acl_users.plugins.listPlugins( IPropertiesPlugin )]
