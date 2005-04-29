@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.1 2005/04/29 21:16:40 jccooper Exp $
+$Id: memberdata.py,v 1.2 2005/04/29 22:08:48 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -64,15 +64,17 @@ class MemberData(BaseMemberData):
 
     ## XXX: should we also have setProperties?
 
-    def setMemberProperties(self, mapping):
+    def setMemberProperties(self, mapping, force_local = 0):
         # Sets the properties given in the MemberDataTool.
         tool = self.getTool()
 
+        # we could pay attention to force_local here...
         if IPluggableAuthService.isImplementedBy(self.acl_users):
             user = self.getUser()
-            if hasattr(user, 'getOrderedPropertySheets'):        # we won't always have PlonePAS users, due to acquisition
-                sheets = user.getOrderedPropertySheets()
+            sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
 
+            # we won't always have PlonePAS users, due to acquisition, nor are guaranteed property sheets
+            if sheets:
                 # xxx track values set to defer to default impl
                 # property routing
                 for k,v in mapping.items():
@@ -85,13 +87,16 @@ class MemberData(BaseMemberData):
                 self.notifyModified()
                 return
 
-        # defer to base impl in absence of pas
-        return BaseMemberData.setProperties(self, mapping)
+        # defer to base impl in absence of PAS, a PAS user, or property sheets
+        return BaseMemberData.setMemberProperties(self, mapping, force_local)
 
     def getProperty(self, id, default=None):
         if IPluggableAuthService.isImplementedBy(self.acl_users):
             user = self.getUser()
-            if hasattr(user, 'getOrderedPropertySheets'):        # we won't always have PlonePAS users, due to acquisition
+            sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
+
+            # we won't always have PlonePAS users, due to acquisition, nor are guaranteed property sheets
+            if sheets:
                 for sheet in user.getOrderedPropertySheets():
                     if sheet.hasProperty(id):
                         return sheet.getProperty(id)

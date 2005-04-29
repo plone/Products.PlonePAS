@@ -22,7 +22,7 @@ this is not a regression.
 Plone should include GroupData in its GroupDataTool.py. After this, our GroupData or monkey-patch can use the Plone one.
 Relatedly, wrapUsers and wrapGroups should have a way of specifying the wrapping object so it's easier to over-ride.
 
-Memberdata tool migration in install
+Memberdata tool migration in install, both users and properties
 
 We're dependent on GRUF for groups tools. 
 
