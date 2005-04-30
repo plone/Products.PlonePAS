@@ -8,6 +8,8 @@ Write tests to groups tool.
 
 Verify why user records just created are marked as "orphaned" in portal_memberdata. It could just be that they never logged in.
 
+Make sure local roles searching works.
+
 PlonePAS groups tool: assure API implementation; move common bits into Plone GroupsTool, also interface
 
 PlonePAS ZODBMutableProperties plugin not installed (nor any properties plugin) - MemberData is default
