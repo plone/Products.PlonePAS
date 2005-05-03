@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.22 2005/04/28 00:29:43 jccooper Exp $
+$Id: Install.py,v 1.23 2005/05/03 21:34:21 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -117,6 +117,11 @@ def setupPlugins( portal, out ):
     pas.manage_addProduct['PlonePAS'].manage_addPloneUserFactory('user_factory')
     print >> out, "Added Plone User Factory."
     activatePluginInterfaces(portal, "user_factory", out)
+
+
+    pas.manage_addProduct['PlonePAS'].manage_addZODBMutablePropertyProvider('mutable_properties')
+    print >> out, "Added Mutable Property Manager."
+    activatePluginInterfaces(portal, "mutable_properties", out)
 
 
 def configurePlonePAS(portal, out):

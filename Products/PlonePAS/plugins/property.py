@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.1 2005/02/24 15:22:48 k_vertigo Exp $
+$Id: property.py,v 1.2 2005/05/03 21:34:21 jccooper Exp $
 """
 from sets import Set
 
@@ -23,13 +23,26 @@ from BTrees.OOBTree import OOBTree
 from Globals import DTMLFile
 
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
+from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 
-manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
+def manage_addZODBMutablePropertyProvider(self, id, title='', RESPONSE=None):
+    """
+    Create an instance of a mutable property manager.
+    """
+    o = ZODBMutablePropertyProvider(id, title)
+    self._setObject(o.getId(), o)
 
-class ZODBMutablePropertyProvider(  BasePlugin ):
+    if RESPONSE is not None:
+        RESPONSE.redirect('manage_workspace')
+
+manage_addZODBMutablePropertyProviderForm = DTMLFile("../zmi/MutablePropertyProviderForm", globals())
+
+class ZODBMutablePropertyProvider(BasePlugin):
 
     meta_type = 'ZODB Mutable Property Provider'
+    __implements__ = ( IPropertiesPlugin, IMutablePropertiesPlugin, )
 
     def __init__(self, id, title=''):
         self.id = id

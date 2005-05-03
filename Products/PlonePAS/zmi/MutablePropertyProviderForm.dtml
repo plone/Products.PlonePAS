@@ -1,0 +1,34 @@
+<dtml-var manage_page_header>
+
+<h2> Add A Mutable Property Provider For PAS </h2>
+
+<p class="form-help">
+  install a ZODB-based mutable property provider. provides property sheets like
+  a regular property manager, but allows writing as well.
+</p>
+
+<form action="manage_addZODBMutablePropertyProvider" method="POST">
+
+<table>
+
+<tr>
+   <td class="form-label"> Id </td>
+   <td> <input type="text" name="id" /> </td>
+</tr>
+<tr>
+   <td class="form-label"> Title </td>
+   <td> <input type="text" name="title" /> </td>
+</tr>
+<tr>
+   <td colspan="2"> 
+   <div class="form-element">
+    <input type="submit" value="add mutable property provider"/>
+   </div>
+   </td>
+</tr>
+</table>   
+
+</form>
+
+</body>
+</html>

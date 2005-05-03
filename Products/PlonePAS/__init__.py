@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.20 2005/04/28 00:29:43 jccooper Exp $
+$Id: __init__.py,v 1.21 2005/05/03 21:34:21 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -22,6 +22,7 @@ from plugins import group
 from plugins import role
 from plugins import local_role
 from plugins import ufactory
+from plugins import property
 
 #################################
 # pas monkies
@@ -55,6 +56,7 @@ try:
     registerMultiPlugin( role.GroupAwareRoleManager.meta_type )
     registerMultiPlugin( local_role.LocalRolesManager.meta_type )
     registerMultiPlugin( ufactory.PloneUserFactory.meta_type )
+    registerMultiPlugin( property.ZODBMutablePropertyProvider.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
@@ -109,5 +111,12 @@ def initialize(context):
                            permission = add_user_folders,
                            constructors = ( local_role.manage_addLocalRolesManagerForm,
                                             local_role.manage_addLocalRolesManager ),
+                           visibility = None
+                           )                           
+
+    context.registerClass( property.ZODBMutablePropertyProvider,
+                           permission = add_user_folders,
+                           constructors = ( property.manage_addZODBMutablePropertyProviderForm,
+                                            property.manage_addZODBMutablePropertyProvider ),
                            visibility = None
                            )                           

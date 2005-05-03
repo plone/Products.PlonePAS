@@ -3,11 +3,11 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.1 2005/02/24 15:13:31 k_vertigo Exp $
+$Id: sheet.py,v 1.2 2005/05/03 21:34:21 jccooper Exp $
 """
 
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
-from Products.PlonePAS.interfaces.plugins import IMutablePropertySheet
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
 class PropertyValueError( ValueError ): pass
 
@@ -25,17 +25,17 @@ class PropertySchemaTypeMap(object):
             self.tmap_order.append( type_name )
                 
     def getTypeFor(self, value):
-        for [ (ptype, self.tmap[ptype]) for ptype in self.tmap_order ]:
-            if inspector( value ):
+        for ptype, inspector in [ (ptype, self.tmap[ptype]) for ptype in self.tmap_order ]:
+            if inspector(value):
                 return ptype
-        raise TypeError("invalid prop type %s"%(type(value)))
+        raise TypeError("invalid property type %s"%(type(value)))
 
     def validate(self, property_type, value):
         inspector = self.tmap[ property_type ]
         return inspector( value )
 
 PropertySchema = PropertySchemaTypeMap()
-validateProperty = PropertySchemaTypeMap.validate
+validateValue = PropertySchemaTypeMap.validate
 
 
 class MutablePropertySheet( UserPropertySheet ):
@@ -64,7 +64,7 @@ class MutablePropertySheet( UserPropertySheet ):
             if key not in prop_keys:
                 prop_update.pop( key )
                 continue
-            if not validateProperty( value ):
+            if not validateValue(value):
                 raise PropertyValueError("invalid value for property %s"%key)
 
         self._properties.update( prop_update )
