@@ -32,6 +32,9 @@ PAS.plugins.ZODBGroupManager.removeGroup tries to remove every user from group. 
 
 _doChangeGroup ignores groups to add. This doesn't bother Plone.
 
+hooked up ZODBMutableProperties plugin schema to MemberData properties. Should probably note that other plugins
+may not do this. also: do we want another schema-setting mechanism?
+
 jcc:
 
  - PasswordResetTool needed for reset password thing

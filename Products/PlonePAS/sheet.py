@@ -3,8 +3,10 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.2 2005/05/03 21:34:21 jccooper Exp $
+$Id: sheet.py,v 1.3 2005/05/04 18:36:44 jccooper Exp $
 """
+
+from types import StringTypes, BooleanType, IntType, LongType
 
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -35,6 +37,10 @@ class PropertySchemaTypeMap(object):
         return inspector( value )
 
 PropertySchema = PropertySchemaTypeMap()
+PropertySchema.addType('string', lambda x: type(x) in StringTypes)
+PropertySchema.addType('boolean', lambda x: type(x) in BooleanType)
+PropertySchema.addType('int', lambda x: type(x) in IntType)
+PropertySchema.addType('long', lambda x: type(x) in LongType)
 validateValue = PropertySchemaTypeMap.validate
 
 
