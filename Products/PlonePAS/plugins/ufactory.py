@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.8 2005/04/29 21:16:40 jccooper Exp $
+$Id: ufactory.py,v 1.9 2005/05/04 18:27:18 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -82,7 +82,7 @@ class PloneUser( PropertiedUser ):
 
     #################################
     # acquisition aware
-    def getPropertySheet( self, id):
+    def getPropertysheet( self, id):
         """ -> propertysheet (wrapped if supported)
         """
         sheet = self._propertysheets[ id ]
@@ -91,8 +91,8 @@ class PloneUser( PropertiedUser ):
         except AttributeError:
             return sheet
 
-    security.declarePrivate('addPropertySheet')
-    def addPropertySheet( self, id, data):
+    security.declarePrivate('addPropertysheet')
+    def addPropertysheet( self, id, data):
         """ -> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
         """ 

@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.2 2005/05/03 21:34:21 jccooper Exp $
+$Id: property.py,v 1.3 2005/05/04 18:27:18 jccooper Exp $
 """
 from sets import Set
 
@@ -54,7 +54,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
     def getPropertiesForUser(self, user, request=None):
         data = self._storage.get( user.getId() )
         if data is None:
-            return None
+            return None     # should return something so a property sheet is created
         return self.id, MutablePropertySheet( self.id, self._schema, **data )
 
     def setPropertiesForUser(self, user, propertysheet):
@@ -69,9 +69,12 @@ class ZODBMutablePropertyProvider(BasePlugin):
             prop_names = Set( properties.keys() ) - Set( allowed_prop_keys )
             if prop_names:
                 raise ValueError("Unknown Properties")
-            
-        storage = self._storage.get( user.getId() )
-        storage.update( properties )
+
+        userprops = self._storage.get(user.getId())
+        if userprops is not None:
+            userprops.update(properties)
+        else:
+            self._storage.insert(user.getId(), properties)
 
 class PersistentProperties( PersistentMapping ): pass
 
