@@ -35,6 +35,16 @@ _doChangeGroup ignores groups to add. This doesn't bother Plone.
 hooked up ZODBMutableProperties plugin schema to MemberData properties. Should probably note that other plugins
 may not do this. also: do we want another schema-setting mechanism?
 
+note: schema changes with ZODBMutableProperties (as through MemberData) may not take place on all existing users
+unless the server is restarted. (we could clear the ZCache to fix this.)
+
+sheet.py has the MutablePropertySheet schema coded in for several basic types. is this all we need?
+
+join_form manages to call addPropertySheet (probably through _findUser, through getUserById) like six times.
+may be for Anonymous.
+
+I've seen some strange lag on property updates on ZOGBMutablePropertyManager. Dunno if it'll repeat. A caching thing?
+
 jcc:
 
  - PasswordResetTool needed for reset password thing

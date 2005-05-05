@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.3 2005/04/29 22:33:32 jccooper Exp $
+$Id: memberdata.py,v 1.4 2005/05/05 00:15:03 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -63,31 +63,36 @@ InitializeClass(MemberDataTool)
 
 class MemberData(BaseMemberData):
 
-    ## XXX: should we also have setProperties?
+    ## setProperties uses setMemberProperties. no need to override.
 
     def setMemberProperties(self, mapping, force_local = 0):
         # Sets the properties given in the MemberDataTool.
         tool = self.getTool()
-
+        print "setMemberProperties"
         # we could pay attention to force_local here...
         if IPluggableAuthService.isImplementedBy(self.acl_users):
             user = self.getUser()
             sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
-
+            print " PAS present. user is:", user.__class__
             # we won't always have PlonePAS users, due to acquisition, nor are guaranteed property sheets
             if sheets:
+                print "  sheets present" # --
                 # xxx track values set to defer to default impl
                 # property routing
                 for k,v in mapping.items():
                     for sheet in sheets:
-                        if sheet.hasProperty( k ):
+                        print "    looking at", k, "=", v, "on", sheet
+                        #import pdb; pdb.set_trace()
+                        if sheet.hasProperty(k):
+                            print '     hasProperty', k, 'sheet', sheet
                             if IMutablePropertySheet.isImplementedBy(sheet):
                                 sheet.setProperty( k, v )
+                                print "     Set", k, v, sheet
                             else:
                                 raise RuntimeError("mutable property provider shadowed by read only provider")
                 self.notifyModified()
                 return
-
+        print " PAS fails, using MemberData"
         # defer to base impl in absence of PAS, a PAS user, or property sheets
         return BaseMemberData.setMemberProperties(self, mapping, force_local)
 

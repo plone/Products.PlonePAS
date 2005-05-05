@@ -13,20 +13,20 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.9 2005/05/04 18:27:18 jccooper Exp $
+$Id: ufactory.py,v 1.10 2005/05/05 00:15:03 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass, DTMLFile
 
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
-from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-#from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
+
 from Products.PlonePAS.utils import unique
+from Products.PlonePAS.sheet import MutablePropertySheet
 
 manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals() )
 
@@ -59,7 +59,7 @@ class PloneUserFactory( BasePlugin ):
 InitializeClass( PloneUserFactory )
 
 
-class PloneUser( PropertiedUser ):
+class PloneUser(PropertiedUser):
 
     security = ClassSecurityInfo()
 
@@ -68,7 +68,7 @@ class PloneUser( PropertiedUser ):
     _isGroup = False
 
     security.declarePublic('isGroup')
-    def isGroup(self,):
+    def isGroup(self):
         """Return 1 if this user is a group abstraction"""
         return self._isGroup
 
@@ -95,16 +95,18 @@ class PloneUser( PropertiedUser ):
     def addPropertysheet( self, id, data):
         """ -> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
-        """ 
-        if IPropertySheet.isImplementedBy( data ):
+        """
+        print "addPropertySheet: data=", data
+        #import pdb; pdb.set_trace()
+        if IPropertySheet.isImplementedBy(data):
             sheet = data
         else:
-            sheet = UserPropertySheet( id, **data )
+            sheet = MutablePropertySheet(id, self, **data)
 
-        if self._propertysheets.get( id ) is not None:
+        if self._propertysheets.get(id) is not None:
             raise KeyError, "Duplicate property sheet: %s" % id
 
-        self._propertysheets[ id ] = UserPropertySheet( id, **data )
+        self._propertysheets[id] = sheet
 
     security.declarePrivate('getOrderedPropertySheets')
     def getOrderedPropertySheets(self):

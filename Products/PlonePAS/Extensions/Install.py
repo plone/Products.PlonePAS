@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.23 2005/05/03 21:34:21 jccooper Exp $
+$Id: Install.py,v 1.24 2005/05/05 00:15:02 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -47,7 +47,7 @@ def setupRoles( portal ):
     rmanager.addRole('Reviewer', title="content reviewer")
 
 def registerPluginType( pas, plugin_type, plugin_info ):
-    pas.plugins._plugin_type_info[ plugin_type] =  plugin_info 
+    pas.plugins._plugin_type_info[plugin_type] =  plugin_info 
     pas.plugins._plugin_types.append(plugin_type)
 
     
@@ -118,7 +118,6 @@ def setupPlugins( portal, out ):
     print >> out, "Added Plone User Factory."
     activatePluginInterfaces(portal, "user_factory", out)
 
-
     pas.manage_addProduct['PlonePAS'].manage_addZODBMutablePropertyProvider('mutable_properties')
     print >> out, "Added Mutable Property Manager."
     activatePluginInterfaces(portal, "mutable_properties", out)
@@ -169,11 +168,14 @@ def install(self):
     out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
-    install_subskin(self, out, config.GLOBALS)
-    print >> out, "Installed skins."
-
     if not hasattr(aq_base(portal), 'acl_users'):
         portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+    else:
+        raise AttributeError, "acl_users already exists. As there is no upgrade at this time, " + \
+                              "you must delete it before installing PlonePAS."
+
+    install_subskin(self, out, config.GLOBALS)
+    print >> out, "Installed skins."
 
     configurePlonePAS(portal, out)
 

@@ -3,10 +3,12 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.3 2005/05/04 18:36:44 jccooper Exp $
+$Id: sheet.py,v 1.4 2005/05/05 00:15:02 jccooper Exp $
 """
 
-from types import StringTypes, BooleanType, IntType, LongType
+from types import StringTypes, BooleanType, IntType, LongType, FloatType
+from DateTime.DateTime import DateTime
+from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -33,36 +35,47 @@ class PropertySchemaTypeMap(object):
         raise TypeError("invalid property type %s"%(type(value)))
 
     def validate(self, property_type, value):
-        inspector = self.tmap[ property_type ]
-        return inspector( value )
+        inspector = self.tmap[property_type]
+        return inspector(value)
 
 PropertySchema = PropertySchemaTypeMap()
 PropertySchema.addType('string', lambda x: type(x) in StringTypes)
-PropertySchema.addType('boolean', lambda x: type(x) in BooleanType)
-PropertySchema.addType('int', lambda x: type(x) in IntType)
-PropertySchema.addType('long', lambda x: type(x) in LongType)
-validateValue = PropertySchemaTypeMap.validate
+PropertySchema.addType('boolean', lambda x: 1)  # anything can be boolean
+PropertySchema.addType('int', lambda x: type(x) is IntType)
+PropertySchema.addType('long', lambda x: type(x) is LongType)
+PropertySchema.addType('float', lambda x: type(x) is FloatType)
+PropertySchema.addType('lines', lambda x: type(x) in _SequenceTypes)
+PropertySchema.addType('date', lambda x: type(x) is InstanceType and isinstance(x, DateTime))
+validateValue = PropertySchema.validate
 
 
-class MutablePropertySheet( UserPropertySheet ):
+class MutablePropertySheet(UserPropertySheet):
 
-    __implements__ = ( IMutablePropertySheet, )
+    __implements__ = (IMutablePropertySheet,)
 
-    def setProperty( self, id, value ):
-        if not PropertySchema.validate( value ):
-            raise PropertyValueError("invalid value for property %s"%id)
+    def __init__(self, id, user, **kw ):
+        UserPropertySheet.__init__(self, id, **kw)
+        self._user = user   # have to have a handle on container, since we're not acquisition-aware
+
+    def validateProperty(self, id, value):
+        if not self._properties.has_key(id): 
+            raise PropertyValueError("no such property found on this schema")
+
+        proptype = self.getPropertyType(id)
+        if not validateValue(proptype, value):
+            raise PropertyValueError("invalid value (%s) for property '%s' of type %s" % (value,id, proptype))
         
-        if not self._properties.has_key( value ): 
-            raise PropertyValueError("invalid property for schema")
+    def setProperty(self, id, value):
+        self.validateProperty(id, value)
         
-        self._properties[ id ] = value
+        self._properties[id] = value
         
         # cascade to plugin
         provider = self.getPropertyProvider()
         user = self.getPropertiedUser()
-        provider.setPropertiesForUser( user, self )
+        provider.setPropertiesForUser(user, self)
         
-    def setProperties( self, mapping ):
+    def setProperties(self, mapping):
         prop_keys = self._properties.keys()
         prop_update = mapping.copy()
         
@@ -70,24 +83,23 @@ class MutablePropertySheet( UserPropertySheet ):
             if key not in prop_keys:
                 prop_update.pop( key )
                 continue
-            if not validateValue(value):
-                raise PropertyValueError("invalid value for property %s"%key)
+            self.validateProperty(key, value)
 
-        self._properties.update( prop_update )
+        self._properties.update(prop_update)
         
         # cascade to plugin
         provider = self.getPropertyProvider()
-        user = self.getPropertiedUser()        
-        provider.setPropertiesForUser( user, self )
+        user = self.getPropertiedUser()
+        provider.setPropertiesForUser(user, self)
 
     def getPropertiedUser(self):
-        return self.aq_inner.aq_parent
+        return self._user
 
     def getPropertyProvider(self, context=None):
-        context = context or self
-        return self.acl_users.plugins._getOb( self._id )
+        context = context or self._user
+        return context.acl_users._getOb(self._id)
     
-class SchemaMutablePropertySheet( MutablePropertySheet ):
+class SchemaMutablePropertySheet(MutablePropertySheet):
 
     __implements__ = ( IMutablePropertySheet, )
 
