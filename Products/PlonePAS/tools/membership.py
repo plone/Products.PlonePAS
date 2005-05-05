@@ -1,10 +1,10 @@
 """
-$Id: membership.py,v 1.1 2005/04/27 23:45:47 jccooper Exp $
+$Id: membership.py,v 1.2 2005/05/05 03:56:07 jccooper Exp $
 """
 from Globals import InitializeClass
 
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
-
+from urllib import quote as url_quote
 
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool. Uses CMFPlone's as base."""
@@ -65,5 +65,34 @@ class MembershipTool(BaseMembershipTool):
             members.append(wrap(getUser(userid)))
     
         return members
+
+    #############
+    ## sanitize home folders (we may get URL-illegal ids)
+
+    def createMemberarea(self, member_id=None, minimal=0):
+        """
+        Create a member area for 'member_id' or the authenticated user.
+        Specially instrumented to for URL-quoted-member-id folder names.
+        """
+        if not member_id:
+            # member_id is optional (see CMFCore.interfaces.portal_membership:
+            #     Create a member area for 'member_id' or authenticated user.)
+            member = membership.getAuthenticatedMember()
+            member_id = member.getId()
+        member_id = url_quote(member_id, '')  # we provide the 'safe' param because want '/' encoded
+        return BaseMembershipTool.createMemberarea(self, member_id, minimal)
+
+    def getHomeFolder(self, id=None, verifyPermission=0):
+        """ Return a member's home folder object, or None.
+        Specially instrumented to for URL-quoted-member-id folder names.
+        """
+        if id is None:
+            member = self.getAuthenticatedMember()
+            if not hasattr(member, 'getMemberId'):
+                return None
+            id = member.getMemberId()
+        id = url_quote(id, '')  # we provide the 'safe' param because want '/' encoded
+        return BaseMembershipTool.getHomeFolder(self, id, verifyPermission)
+
 
 InitializeClass(MembershipTool)
