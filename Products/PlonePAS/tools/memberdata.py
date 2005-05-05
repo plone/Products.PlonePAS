@@ -1,11 +1,14 @@
 """
-$Id: memberdata.py,v 1.5 2005/05/05 00:16:44 jccooper Exp $
+$Id: memberdata.py,v 1.6 2005/05/05 00:26:43 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
 
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
-from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData   # this actually isn't used in Plone
+from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData
+try: BaseMemberData(1)
+except: from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData   # Plone 2.0.x is broken
+
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
