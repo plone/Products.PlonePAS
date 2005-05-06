@@ -1,5 +1,5 @@
 """
-$Id: plonetool.py,v 1.1 2005/04/27 23:45:47 jccooper Exp $
+$Id: plonetool.py,v 1.2 2005/05/06 18:40:07 jccooper Exp $
 """
 from Globals import InitializeClass
 
@@ -8,6 +8,8 @@ from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
 
 class PloneTool(BasePloneTool):
     """PAS-based customization of PloneTool. Uses CMFPlone's as base."""
+
+    meta_type = "PlonePAS Utilities Tool"
 
     def acquireLocalRoles(self, folder, status):
         """

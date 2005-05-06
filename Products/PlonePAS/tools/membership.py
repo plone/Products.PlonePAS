@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.2 2005/05/05 03:56:07 jccooper Exp $
+$Id: membership.py,v 1.3 2005/05/06 18:40:07 jccooper Exp $
 """
 from Globals import InitializeClass
 
@@ -9,6 +9,7 @@ from urllib import quote as url_quote
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool. Uses CMFPlone's as base."""
 
+    meta_type = "PlonePAS Membership Tool"
 
     def addMember(self, id, password, roles, domains, properties=None):
         """Adds a new member to the user folder.  Security checks will have

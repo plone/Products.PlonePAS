@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.8 2005/04/26 22:32:36 jccooper Exp $
+$Id: groups.py,v 1.9 2005/05/06 18:40:07 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
@@ -18,7 +18,7 @@ class GroupsTool(PloneGroupsTool):
     """
 
     id = 'portal_groups'
-    meta_type = ToolNames.GroupsTool
+    meta_type = "PlonePAS Groups Tool"
     security = ClassSecurityInfo()
     toolicon = 'skins/plone_images/group.gif'
 

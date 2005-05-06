@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.6 2005/05/05 00:26:43 jccooper Exp $
+$Id: memberdata.py,v 1.7 2005/05/06 18:40:07 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -20,6 +20,8 @@ from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
 class MemberDataTool(BaseMemberDataTool):
     """PAS-specific implementation of memberdata tool. Uses Plone MemberDataTool as a base."""
+
+    meta_type = "PlonePAS MemberData Tool"
 
     #### an exact copy from the base, so that we pick up the new MemberData.
     #### wrapUser should have a MemberData factory method to over-ride (or even

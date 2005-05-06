@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.1 2005/04/27 23:45:47 jccooper Exp $
+$Id: groupdata.py,v 1.2 2005/05/06 18:40:07 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -15,6 +15,8 @@ except:
 
 class GroupDataTool(BaseGroupDataTool):
     """PAS-specific implementation of groupdata tool. Uses Plone GroupDataTool as a base."""
+
+    meta_type = "PlonePAS GroupData Tool"
 
     #### an exact copy from the base, so that we pick up the new GroupData.
     #### wrapGroup should have a GroupData factory method to over-ride (or even
