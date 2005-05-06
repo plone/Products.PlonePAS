@@ -3,10 +3,10 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.4 2005/05/05 00:15:02 jccooper Exp $
+$Id: sheet.py,v 1.5 2005/05/06 22:10:03 jccooper Exp $
 """
 
-from types import StringTypes, BooleanType, IntType, LongType, FloatType
+from types import StringTypes, BooleanType, IntType, LongType, FloatType, InstanceType
 from DateTime.DateTime import DateTime
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 
@@ -39,13 +39,13 @@ class PropertySchemaTypeMap(object):
         return inspector(value)
 
 PropertySchema = PropertySchemaTypeMap()
-PropertySchema.addType('string', lambda x: type(x) in StringTypes)
+PropertySchema.addType('string', lambda x: x is None or type(x) in StringTypes)
 PropertySchema.addType('boolean', lambda x: 1)  # anything can be boolean
-PropertySchema.addType('int', lambda x: type(x) is IntType)
-PropertySchema.addType('long', lambda x: type(x) is LongType)
-PropertySchema.addType('float', lambda x: type(x) is FloatType)
-PropertySchema.addType('lines', lambda x: type(x) in _SequenceTypes)
-PropertySchema.addType('date', lambda x: type(x) is InstanceType and isinstance(x, DateTime))
+PropertySchema.addType('int', lambda x:  x is None or type(x) is IntType)
+PropertySchema.addType('long', lambda x:  x is None or type(x) is LongType)
+PropertySchema.addType('float', lambda x:  x is None or type(x) is FloatType)
+PropertySchema.addType('lines', lambda x:  x is None or type(x) in _SequenceTypes)
+PropertySchema.addType('date', lambda x:  x is None or type(x) is InstanceType and isinstance(x, DateTime))
 validateValue = PropertySchema.validate
 
 

@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.25 2005/05/06 19:03:58 jccooper Exp $
+$Id: Install.py,v 1.26 2005/05/06 22:10:04 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -129,6 +129,43 @@ def configurePlonePAS(portal, out):
     setupPlugins( portal, out )
 #    setupRoles( portal )
 
+def grabUserData(portal, out):
+    """Return a list of (id, password, roles, domains, properties) tuples for the users of the system.
+    Password may be encypted or not: addUser will figure it out.
+    """
+    print >> out, "\nExtract Member information..."
+
+    userdata = ()
+    mdtool = portal.portal_memberdata
+    mtool = portal.portal_membership
+
+    props = mdtool.propertyIds()
+    members = mtool.listMembers()
+    for member in members:
+        id = member.getId()
+        password = member.getPassword()
+        roles = [role for role in member.getRoles() if role != 'Authenticated']
+        domains = member.getDomains()
+        properties = {}
+        for propid in props:
+            properties[propid] = member.getProperty(id, None)
+        userdata += ((id, password, roles, domains, properties),)
+
+    print >> out, "...extract done"
+    return userdata
+
+def restoreUserData(portal, out, userdata):
+    print >> out, "\nRestoring Member information..."
+
+    # re-add users
+    # Password may be encypted or not: addUser will figure it out.
+    mtool = portal.portal_membership
+    for u in userdata:
+        mtool.addMember(*u)
+
+    print >> out, "...restore done"
+
+
 def setupTools(portal, out):
     print >> out, "\nTools:"
 
@@ -161,10 +198,37 @@ def setupTools(portal, out):
     portal._setObject( MembershipTool.id, MembershipTool() )
     print >> out, " ...done"
 
-    migrateMemberdata(portal, out)
+    migrateMemberDataTool(portal, out)
+
+
+def migrateMemberDataTool(portal, out):
+    print >> out, "MemberData Tool (portal_memberdata)"    
+
+    print >> out, "  ...extracting data"
+    mdtool = portal.portal_memberdata
+    properties = mdtool._properties
+    for elt in properties:
+        elt['value'] = mdtool.getProperty(elt['id'])
+
+    mdtool = None
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['portal_memberdata'])
+
+    print >> out, " - Installing PAS Aware"
+    portal._setObject(MemberDataTool.id, MemberDataTool())
+
+    print >> out, " ...restoring data"
+    mdtool = portal.portal_memberdata
+    for prop in properties:
+        updateProp(mdtool, prop)
+
+    print >> out, " ...done"
+
 
 def updateProp(prop_manager, prop_dict):
-    """Provided a PropertyManager and a property dict of {id, value, type}, set or update that property as applicable."""
+    """Provided a PropertyManager and a property dict of {id, value, type}, set or update that property as applicable.
+    Doesn't deal with existing properties changing type.
+    """
     id = prop_dict['id']
     value = prop_dict['value']
     type = prop_dict['type']
@@ -173,39 +237,35 @@ def updateProp(prop_manager, prop_dict):
     else:
         prop_manager._setProperty(id, value, type)
 
-def migrateMemberdata(portal, out):
-    print >> out, "MemberData Tool (portal_memberdata)"
-    
-    print >> out, "  ...extracting data"
-    md_tool = portal.portal_memberdata
-    properties = md_tool._properties
-    for elt in properties:
-        elt['value'] = md_tool.getProperty(elt['id'])
-
-    md_tool = None
-    print >> out, " - Removing Default"
-    portal.manage_delObjects(['portal_memberdata'])
-
-    print >> out, " - Installing PAS Aware"
-    portal._setObject(MemberDataTool.id, MemberDataTool())
-
-    print >> out, " ...restoring data"
-    md_tool = portal.portal_memberdata
-    for prop in properties:
-        updateProp(md_tool, prop)
-    print >> out, " ...done"
-
 
 def installUserFolder(portal, out):
-    if not hasattr(aq_base(portal), 'acl_users'):
-        portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
-    else:
-        raise AttributeError, "acl_users already exists. As there is no upgrade at this time, " + \
-                              "you must delete it before installing PlonePAS."
+    # XXX: this should probably check if it's GRUF + basic UserFolder, although...
+    # other configurations might work. The migration code it pretty generic.
+
+    print >> out, "\nUser folder replacement:"
+
+    print >> out, " - Removing existing user folder"
+    portal.manage_delObjects(['acl_users'])
+
+    print >> out, " - Adding PAS user folder"
+    portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+
+#    if not hasattr(aq_base(portal), 'acl_users'):
+#        portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+#    else:
+#        raise AttributeError, "acl_users already exists. As there is no upgrade at this time, " + \
+#                              "you must delete it before installing PlonePAS."
+
+    print >> out, "...replace done"
+
 
 def install(self):
     out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
+
+    userdata = grabUserData(portal, out)
+
+    #print >> out, userdata
 
     installUserFolder(portal, out)
 
@@ -215,6 +275,8 @@ def install(self):
     configurePlonePAS(portal, out)
 
     setupTools(portal, out)
+
+    restoreUserData(portal, out, userdata)
 
     print >> out, "Successfully installed %s." % config.PROJECTNAME
     return out.getvalue()

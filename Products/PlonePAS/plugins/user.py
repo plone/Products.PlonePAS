@@ -15,15 +15,15 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: user.py,v 1.2 2005/04/22 19:52:57 jccooper Exp $
+$Id: user.py,v 1.3 2005/05/06 22:10:04 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
 from Globals import InitializeClass, DTMLFile
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement
-from Products.PluggableAuthService.plugins.ZODBUserManager \
-     import ZODBUserManager as BasePlugin
+from Products.PluggableAuthService.utils import createViewName
+from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
 
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
                                           globals())
@@ -48,6 +48,27 @@ class UserManager( BasePlugin ):
     __implements__ = BasePlugin.__implements__ + (IUserManagement,)
     
     security = ClassSecurityInfo()
+
+    def addUser( self, user_id, login_name, password ):
+        """Original ZODBUserManager.addUser, modified to check if incoming password is already encypted.
+        This support clean migration from default user source.
+        Should go into PAS.
+        """
+        if self._user_passwords.get( user_id ) is not None:
+            raise KeyError, 'Duplicate user ID: %s' % user_id
+
+        if self._login_to_userid.get( login_name ) is not None:
+            raise KeyError, 'Duplicate login name: %s' % login_name
+
+        if not AuthEncoding.is_encrypted(password):
+            password = AuthEncoding.pw_encrypt(password)
+        self._user_passwords[ user_id ] = password
+        self._login_to_userid[ login_name ] = user_id
+        self._userid_to_login[ user_id ] = login_name
+
+        # enumerateUsers return value has changed
+        view_name = createViewName('enumerateUsers')
+        self.ZCacheable_invalidate(view_name=view_name)
 
     security.declarePrivate('doDeleteUser')
     def doDeleteUser(self, userid):

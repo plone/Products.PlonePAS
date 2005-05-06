@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.10 2005/05/05 00:15:03 jccooper Exp $
+$Id: ufactory.py,v 1.11 2005/05/06 22:10:04 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -96,8 +96,6 @@ class PloneUser(PropertiedUser):
         """ -> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
         """
-        print "addPropertySheet: data=", data
-        #import pdb; pdb.set_trace()
         if IPropertySheet.isImplementedBy(data):
             sheet = data
         else:

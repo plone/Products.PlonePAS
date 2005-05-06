@@ -45,6 +45,8 @@ may be for Anonymous.
 
 I've seen some strange lag on property updates on ZOGBMutablePropertyManager. Dunno if it'll repeat. A caching thing?
 
+plugins.user.UserManager.addUser changes should go into PAS
+
 jcc:
 
  - PasswordResetTool needed for reset password thing
@@ -56,3 +58,5 @@ jcc:
  - fix MembershipTool.searchForMembers, MemberDataTool searchFulltextForMembers
 
  - prefs_group_details and prefs_group_edit don't need to be customized for Plone 2.1 versions after 29 Apr 2005
+
+ - install: setupRoles?
