@@ -23,7 +23,8 @@ You should be doing this anyway, but it is especially important here. Repeat
 
 YOU MUST BACK UP BEFORE INSTALLATION.
 
-And don't throw the backup away until you're really really sure that PlonePAS works for you.
+And don't throw the backup away until you're really really sure that PlonePAS works for you. Please note:
+there is no automatic restoration on uninstall.
 
 After installation, you may replace or reconfigure any of PAS's plugins.
 
