@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.24 2005/05/05 00:15:02 jccooper Exp $
+$Id: Install.py,v 1.25 2005/05/06 19:03:58 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -137,6 +137,7 @@ def setupTools(portal, out):
     portal.manage_delObjects(['portal_groups'])
     print >> out, " - Installing PAS Aware"
     portal._setObject( GroupsTool.id, GroupsTool() )
+    print >> out, " ...done"
 
     print >> out, "GroupData Tool (portal_groupdata)"
     print >> out, " - Removing Default"
@@ -144,35 +145,69 @@ def setupTools(portal, out):
     # XXX TODO: data migration
     print >> out, " - Installing PAS Aware"
     portal._setObject( GroupDataTool.id, GroupDataTool() )
+    print >> out, " ...done"
 
     print >> out, "Plone Tool (plone_utils)"
     print >> out, " - Removing Default"
     portal.manage_delObjects(['plone_utils'])
     print >> out, " - Installing PAS Aware"
     portal._setObject( PloneTool.id, PloneTool() )
+    print >> out, " ...done"
 
     print >> out, "Membership Tool (portal_membership)"
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_membership'])
     print >> out, " - Installing PAS Aware"
     portal._setObject( MembershipTool.id, MembershipTool() )
+    print >> out, " ...done"
 
+    migrateMemberdata(portal, out)
+
+def updateProp(prop_manager, prop_dict):
+    """Provided a PropertyManager and a property dict of {id, value, type}, set or update that property as applicable."""
+    id = prop_dict['id']
+    value = prop_dict['value']
+    type = prop_dict['type']
+    if prop_manager.hasProperty(id):
+        prop_manager._updateProperty(id, value)
+    else:
+        prop_manager._setProperty(id, value, type)
+
+def migrateMemberdata(portal, out):
     print >> out, "MemberData Tool (portal_memberdata)"
+    
+    print >> out, "  ...extracting data"
+    md_tool = portal.portal_memberdata
+    properties = md_tool._properties
+    for elt in properties:
+        elt['value'] = md_tool.getProperty(elt['id'])
+
+    md_tool = None
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_memberdata'])
-    # XXX TODO: data migration
+
     print >> out, " - Installing PAS Aware"
-    portal._setObject( MemberDataTool.id, MemberDataTool() )
+    portal._setObject(MemberDataTool.id, MemberDataTool())
 
-def install(self):
-    out = StringIO()
-    portal = getToolByName(self, 'portal_url').getPortalObject()
+    print >> out, " ...restoring data"
+    md_tool = portal.portal_memberdata
+    for prop in properties:
+        updateProp(md_tool, prop)
+    print >> out, " ...done"
 
+
+def installUserFolder(portal, out):
     if not hasattr(aq_base(portal), 'acl_users'):
         portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
     else:
         raise AttributeError, "acl_users already exists. As there is no upgrade at this time, " + \
                               "you must delete it before installing PlonePAS."
+
+def install(self):
+    out = StringIO()
+    portal = getToolByName(self, 'portal_url').getPortalObject()
+
+    installUserFolder(portal, out)
 
     install_subskin(self, out, config.GLOBALS)
     print >> out, "Installed skins."
