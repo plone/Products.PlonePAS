@@ -9,9 +9,7 @@ PlonePAS implements a good deal of the API expected of a UserFolder and of GRUF.
 no systematic determination of interface fulfillment has been made, beyond that used by the
 UI. If you find something missing that is needed, please report.
 
-PlonePAS will currently migrate the users of a default Plone setup. Other setups may work.
+PlonePAS will currently migrate the users and groups of a default Plone setup. Other setups may work.
 Please see the README.
-
-PlonePAS will NOT currently migrate groups.
 
 Using GRUF as a multi-source may work, but hasn't been looked at recently.

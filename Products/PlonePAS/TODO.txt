@@ -24,8 +24,6 @@ this is not a regression.
 Plone should include GroupData in its GroupDataTool.py. After this, our GroupData or monkey-patch can use the Plone one.
 Relatedly, wrapUsers and wrapGroups should have a way of specifying the wrapping object so it's easier to over-ride.
 
-Memberdata tool migration in install, both users and properties
-
 We're dependent on GRUF for groups tools. 
 
 PAS.plugins.ZODBGroupManager.removeGroup tries to remove every user from group. Probably bad!
@@ -46,6 +44,12 @@ may be for Anonymous.
 I've seen some strange lag on property updates on ZOGBMutablePropertyManager. Dunno if it'll repeat. A caching thing?
 
 plugins.user.UserManager.addUser changes should go into PAS
+
+Group properties on properties plugin, like member?
+
+UI should be set to do listing of users/groups on a limited basis
+
+listing of group-belonging by user broken
 
 jcc:
 

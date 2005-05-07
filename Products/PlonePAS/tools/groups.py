@@ -1,14 +1,17 @@
 """
-$Id: groups.py,v 1.9 2005/05/06 18:40:07 jccooper Exp $
+$Id: groups.py,v 1.10 2005/05/07 01:27:48 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
 
 from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 from Products.CMFCore.utils import getToolByName, UniqueObject
-from OFS.SimpleItem import SimpleItem
+
 from Products.PlonePAS.interfaces import group as igroup
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+
 
 class NotSupported(Exception): pass
 
@@ -30,16 +33,19 @@ class GroupsTool(PloneGroupsTool):
     ##
 
     security.declareProtected(Permissions.manage_users, 'addGroup')
-    def addGroup(self, id, *args, **kw):
+    def addGroup(self, id, roles = [], groups = [], properties=None, *args, **kw):
         group = None
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported("no plugins allow for group management")
         for mid, manager in managers:
-            group =  manager.addGroup( id, *args, **kw )
-            if group is not None:
-                break
-        #return group
+            manager.addGroup(id)
+            self.setRolesForGroup(id, roles)
+            for g in groups:
+                manager.addPrincipalToGroup(g.getId(), id)
+        group = self.getGroupById(id)
+        group.setGroupProperties(properties or kw)
+        self.createGrouparea(id)
 
     security.declareProtected(Permissions.manage_users, 'removeGroup')
     def removeGroup(self, group_id):
@@ -52,15 +58,12 @@ class GroupsTool(PloneGroupsTool):
         return False
 
     security.declareProtected(Permissions.manage_users, 'setRolesForGroup')
-    def setRolesForGroup(self, group_id, roles=() ):
-        # XXXX
-        managers = self._getGroupManagers()
-        if not managers:
-            raise NotSupported("no plugins allow for group management")
-        for mid, manager in managers:
-            if manager.setRolesForGroup( group_id, roles ):
-                return True
-
+    def setRolesForGroup(self, group_id, roles=()):
+        rmanagers = self._getPlugins().listPlugins(IRoleAssignerPlugin)
+        if not (rmanagers):
+            raise NotImplementedError("There is no plugin that can assign roles to groups")
+        for rid, rmanager in rmanagers:
+            rmanager.assignRolesToPrincipal(roles, group_id)
 
 
     ##

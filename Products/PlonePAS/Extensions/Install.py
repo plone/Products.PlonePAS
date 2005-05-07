@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.26 2005/05/06 22:10:04 jccooper Exp $
+$Id: Install.py,v 1.27 2005/05/07 01:27:48 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -148,7 +148,7 @@ def grabUserData(portal, out):
         domains = member.getDomains()
         properties = {}
         for propid in props:
-            properties[propid] = member.getProperty(id, None)
+            properties[propid] = member.getProperty(propid, None)
         userdata += ((id, password, roles, domains, properties),)
 
     print >> out, "...extract done"
@@ -165,24 +165,52 @@ def restoreUserData(portal, out, userdata):
 
     print >> out, "...restore done"
 
+def grabGroupData(portal, out):
+    """Return a list of (id, roles, groups, properties) tuples for the users of the system and
+    a mapping of group ids to a list of group members.
+    Password may be encypted or not: addUser will figure it out.
+    """
+    print >> out, "\nExtract Group information..."
+
+    groupdata = ()
+    groupmemberships = {}
+    gdtool = portal.portal_groupdata
+    gtool = portal.portal_groups
+
+    props = gdtool.propertyIds()
+    groups = gtool.listGroups()
+    for group in groups:
+        id = group.getGroupId()
+        roles = [role for role in group.getRoles() if role != 'Authenticated']
+        properties = {}
+        has_groups = []    # we take care of this with the groupmemberships stuff
+        for propid in props:
+            properties[propid] = group.getProperty(propid, None)
+        groupdata += ((id, roles, has_groups, properties),)
+        groupmemberships[id] = group.getGroupMemberIds()
+
+    print >> out, "...extract done"
+    return groupdata, groupmemberships
+
+def restoreGroupData(portal, out, groupdata, groupmemberships):
+    print >> out, "\nRestoring Group information..."
+
+    # re-add groups
+    gtool = portal.portal_groups
+    for g in groupdata:
+        gtool.addGroup(*g)
+
+        # restore group memberships
+        gid = g[0]
+        group = gtool.getGroupById(gid)
+        for mid in groupmemberships[gid]:
+            group.addMember(mid)
+
+    print >> out, "...restore done"
+
 
 def setupTools(portal, out):
     print >> out, "\nTools:"
-
-    print >> out, "Groups Tool (portal_groups)"
-    print >> out, " - Removing Default"
-    portal.manage_delObjects(['portal_groups'])
-    print >> out, " - Installing PAS Aware"
-    portal._setObject( GroupsTool.id, GroupsTool() )
-    print >> out, " ...done"
-
-    print >> out, "GroupData Tool (portal_groupdata)"
-    print >> out, " - Removing Default"
-    portal.manage_delObjects(['portal_groupdata'])
-    # XXX TODO: data migration
-    print >> out, " - Installing PAS Aware"
-    portal._setObject( GroupDataTool.id, GroupDataTool() )
-    print >> out, " ...done"
 
     print >> out, "Plone Tool (plone_utils)"
     print >> out, " - Removing Default"
@@ -198,8 +226,41 @@ def setupTools(portal, out):
     portal._setObject( MembershipTool.id, MembershipTool() )
     print >> out, " ...done"
 
-    migrateMemberDataTool(portal, out)
+    print >> out, "Groups Tool (portal_groups)"
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['portal_groups'])
+    print >> out, " - Installing PAS Aware"
+    portal._setObject( GroupsTool.id, GroupsTool() )
+    print >> out, " ...done"
 
+    migrateMemberDataTool(portal, out)
+    migrateGroupDataTool(portal, out)
+
+
+def migrateGroupDataTool(portal, out):
+    # this could be somewhat combined with migrateMemberDataTool, but I don't think it's worth it
+
+    print >> out, "GroupData Tool (portal_groupdata)"    
+
+    print >> out, "  ...extracting data"
+    gdtool = portal.portal_groupdata
+    properties = gdtool._properties
+    for elt in properties:
+        elt['value'] = gdtool.getProperty(elt['id'])
+
+    gdtool = None
+    print >> out, " - Removing Default"
+    portal.manage_delObjects(['portal_groupdata'])
+
+    print >> out, " - Installing PAS Aware"
+    portal._setObject(GroupDataTool.id, GroupDataTool())
+
+    print >> out, " ...restoring data"
+    gdtool = portal.portal_groupdata
+    for prop in properties:
+        updateProp(gdtool, prop)
+
+    print >> out, " ...done"
 
 def migrateMemberDataTool(portal, out):
     print >> out, "MemberData Tool (portal_memberdata)"    
@@ -250,12 +311,6 @@ def installUserFolder(portal, out):
     print >> out, " - Adding PAS user folder"
     portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
 
-#    if not hasattr(aq_base(portal), 'acl_users'):
-#        portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
-#    else:
-#        raise AttributeError, "acl_users already exists. As there is no upgrade at this time, " + \
-#                              "you must delete it before installing PlonePAS."
-
     print >> out, "...replace done"
 
 
@@ -264,19 +319,19 @@ def install(self):
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
     userdata = grabUserData(portal, out)
-
-    #print >> out, userdata
+    groupdata, memberships = grabGroupData(portal, out)
 
     installUserFolder(portal, out)
 
     install_subskin(self, out, config.GLOBALS)
-    print >> out, "Installed skins."
+    print >> out, "\nInstalled skins."
 
     configurePlonePAS(portal, out)
 
     setupTools(portal, out)
 
     restoreUserData(portal, out, userdata)
+    restoreGroupData(portal, out, groupdata, memberships)
 
     print >> out, "Successfully installed %s." % config.PROJECTNAME
     return out.getvalue()

@@ -15,8 +15,6 @@ in the ZODB, regardless of original user source.
 be attached to the database anymore. If you have plugins that will replicate your original functionality,
 it will not hurt to simply delete the existing plugins.)
 
-!! note: group migration not implemented just yet !!
-
 But whatever you do, if you decide to install this Product, please, please, please back up your site.
 The authors cannot guarantee that PlonePAS will not stomp your site into mush and then eat it.
 You should be doing this anyway, but it is especially important here. Repeat

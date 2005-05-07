@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.2 2005/05/06 18:40:07 jccooper Exp $
+$Id: groupdata.py,v 1.3 2005/05/07 01:27:48 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -63,5 +63,6 @@ class GroupData(BaseGroupData):
         """
         return self.getGroup()
 
+    # XXX group properties on PAS property provider like memberdata?
 
 InitializeClass(GroupData)
