@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.11 2005/05/06 22:10:04 jccooper Exp $
+$Id: ufactory.py,v 1.12 2005/05/07 02:15:13 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -79,6 +79,7 @@ class PloneUser(PropertiedUser):
         """
         return self.getId()
 
+    security.declarePublic("getGroups")
 
     #################################
     # acquisition aware

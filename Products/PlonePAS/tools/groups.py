@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.10 2005/05/07 01:27:48 jccooper Exp $
+$Id: groups.py,v 1.11 2005/05/07 02:15:13 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
@@ -144,8 +144,13 @@ class GroupsTool(PloneGroupsTool):
         return members
 
     security.declareProtected(Permissions.manage_users, 'getGroupsForPrincipal')
-    def getGroupsForPrincipal( principal_id, request=None ):
-        return self.acl_users._getGroupsForPrincipal( principal_id, request )
+    def getGroupsForPrincipal(self, principal):
+        introspectors = self._getGroupIntrospectors()
+        for iid, introspector in introspectors:
+            groups = introspector.getGroupsForPrincipal(principal)
+            if groups:
+                break
+        return groups
 
     ##
     # plugin getters

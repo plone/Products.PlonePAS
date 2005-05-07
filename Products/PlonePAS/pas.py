@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.20 2005/04/27 23:45:46 jccooper Exp $
+$Id: pas.py,v 1.21 2005/05/07 02:15:13 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -140,7 +140,6 @@ PluggableAuthService._doChangeGroup = _doChangeGroup
 
 security.declareProtected( ManageUsers, 'userFolderEditGroup' )
 PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup 
-
 
 
 #################################

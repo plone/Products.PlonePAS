@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.8 2005/04/27 23:45:46 jccooper Exp $
+$Id: group.py,v 1.9 2005/05/07 02:15:13 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -106,7 +106,6 @@ class GroupManager( ZODBGroupManager ):
 
         return self._findGroup(plugins, group_id, title)
             
-
     def getGroups(self):
         return map(self.getGroupById, self.getGroupIds())
 

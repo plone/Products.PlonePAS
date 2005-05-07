@@ -64,3 +64,5 @@ jcc:
  - prefs_group_details and prefs_group_edit don't need to be customized for Plone 2.1 versions after 29 Apr 2005
 
  - install: setupRoles?
+
+ - how does member.getRoles work in GRUF? what permission should it be in PlonePAS?
