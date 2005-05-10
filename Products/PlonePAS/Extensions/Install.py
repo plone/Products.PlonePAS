@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.27 2005/05/07 01:27:48 jccooper Exp $
+$Id: Install.py,v 1.28 2005/05/10 21:20:48 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -213,25 +213,73 @@ def setupTools(portal, out):
     print >> out, "\nTools:"
 
     print >> out, "Plone Tool (plone_utils)"
+    print >> out, " ...nothing to migrate"
     print >> out, " - Removing Default"
     portal.manage_delObjects(['plone_utils'])
     print >> out, " - Installing PAS Aware"
     portal._setObject( PloneTool.id, PloneTool() )
     print >> out, " ...done"
 
+
+
     print >> out, "Membership Tool (portal_membership)"
+
+    print >> out, " ...copying settings"
+    memberareaCreationFlag = portal.portal_membership.getMemberareaCreationFlag()
+    role_map = getattr(portal.portal_membership, 'role_map', None)
+    membersfolder_id = portal.portal_membership.membersfolder_id
+
+    print >> out, " ...copying actions"
+    actions = portal.portal_membership._actions
+
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_membership'])
+
     print >> out, " - Installing PAS Aware"
     portal._setObject( MembershipTool.id, MembershipTool() )
+
+    print >> out, " ...restoring settings"
+    portal.portal_membership.memberareaCreationFlag = memberareaCreationFlag
+    if role_map: portal.portal_membership.role_map = role_map
+    if membersfolder_id: portal.portal_membership.membersfolder_id = membersfolder_id
+
+    print >> out, " ...restoring actions"
+    portal.portal_membership._actions = actions
+
     print >> out, " ...done"
 
+
+
     print >> out, "Groups Tool (portal_groups)"
+
+    print >> out, " ...copying settings"
+    groupworkspaces_id = portal.portal_groups.getGroupWorkspacesFolderId()
+    groupworkspaces_title =  portal.portal_groups.getGroupWorkspacesFolderTitle()
+    groupWorkspacesCreationFlag =  portal.portal_groups.getGroupWorkspacesCreationFlag()
+    groupWorkspaceType =  portal.portal_groups.getGroupWorkspaceType()
+    groupWorkspaceContainerType =  portal.portal_groups.getGroupWorkspaceContainerType()
+
+    print >> out, " ...copying actions"
+    actions = portal.portal_groups._actions
+
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_groups'])
+
     print >> out, " - Installing PAS Aware"
     portal._setObject( GroupsTool.id, GroupsTool() )
+
+    print >> out, " ...restoring settings"
+    portal.portal_groups.setGroupWorkspacesFolder(groupworkspaces_id, groupworkspaces_title)
+    portal.portal_groups.groupWorkspacesCreationFlag = groupWorkspacesCreationFlag
+    portal.portal_groups.setGroupWorkspaceType(groupWorkspaceType)
+    portal.portal_groups.setGroupWorkspaceContainerType(groupWorkspaceContainerType)
+
+    print >> out, " ...restoring actions"
+    portal.portal_groups._actions = actions
+
     print >> out, " ...done"
+
+
 
     migrateMemberDataTool(portal, out)
     migrateGroupDataTool(portal, out)
@@ -242,7 +290,10 @@ def migrateGroupDataTool(portal, out):
 
     print >> out, "GroupData Tool (portal_groupdata)"    
 
-    print >> out, "  ...extracting data"
+    print >> out, " ...copying actions"
+    actions = portal.portal_groupdata._actions
+
+    print >> out, " ...extracting data"
     gdtool = portal.portal_groupdata
     properties = gdtool._properties
     for elt in properties:
@@ -255,6 +306,9 @@ def migrateGroupDataTool(portal, out):
     print >> out, " - Installing PAS Aware"
     portal._setObject(GroupDataTool.id, GroupDataTool())
 
+    print >> out, " ...restoring actions"
+    portal.portal_groupdata._actions = actions
+
     print >> out, " ...restoring data"
     gdtool = portal.portal_groupdata
     for prop in properties:
@@ -264,6 +318,9 @@ def migrateGroupDataTool(portal, out):
 
 def migrateMemberDataTool(portal, out):
     print >> out, "MemberData Tool (portal_memberdata)"    
+
+    print >> out, " ...copying actions"
+    actions = portal.portal_memberdata._actions
 
     print >> out, "  ...extracting data"
     mdtool = portal.portal_memberdata
@@ -277,6 +334,9 @@ def migrateMemberDataTool(portal, out):
 
     print >> out, " - Installing PAS Aware"
     portal._setObject(MemberDataTool.id, MemberDataTool())
+
+    print >> out, " ...restoring actions"
+    portal.portal_memberdata._actions = actions
 
     print >> out, " ...restoring data"
     mdtool = portal.portal_memberdata
@@ -333,5 +393,5 @@ def install(self):
     restoreUserData(portal, out, userdata)
     restoreGroupData(portal, out, groupdata, memberships)
 
-    print >> out, "Successfully installed %s." % config.PROJECTNAME
+    print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()

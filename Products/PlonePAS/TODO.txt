@@ -66,3 +66,6 @@ jcc:
  - install: setupRoles?
 
  - how does member.getRoles work in GRUF? what permission should it be in PlonePAS?
+
+ - memberarea quote needs to work right
+
