@@ -13,3 +13,7 @@ PlonePAS will currently migrate the users and groups of a default Plone setup. O
 Please see the README.
 
 Using GRUF as a multi-source may work, but hasn't been looked at recently.
+
+Using LDAPMultiPlugins will work.
+
+MembershipTool role mapping is currently broken. See README.
