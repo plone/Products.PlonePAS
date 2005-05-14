@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.21 2005/05/07 02:15:13 jccooper Exp $
+$Id: pas.py,v 1.22 2005/05/14 00:40:12 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -18,7 +18,7 @@ from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
-
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 #################################
 # pas folder monkies - standard zope user folder api
@@ -140,6 +140,46 @@ PluggableAuthService._doChangeGroup = _doChangeGroup
 
 security.declareProtected( ManageUsers, 'userFolderEditGroup' )
 PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup 
+
+
+
+security.declareProtected(ManageUsers, 'getGroup')
+def getGroup(self, group_id):
+    """Like getGroupById in groups tool, but doesn't wrap."""
+    group = None
+    introspectors = self.plugins.listPlugins(IGroupIntrospection)
+
+    if not introspectors:
+        raise NotSupported("no plugins allow for group management")
+    for iid, introspector in introspectors:
+        group = introspector.getGroupById(group_id)
+        if group is None:
+            break
+    return group
+PluggableAuthService.getGroup = getGroup
+
+
+security.declarePublic("getLocalRolesForDisplay")
+def getLocalRolesForDisplay(self, object):
+    """This is used for plone's local roles display
+    This method returns a tuple (massagedUsername, roles, userType, actualUserName).
+    This method is protected by the 'access content information' permission. We may
+    change that if it's too permissive...
+
+    A GRUF method originally.
+    """
+    result = []
+    local_roles = object.get_local_roles()   # we don't have a PAS-side way to get this
+    for one_user in local_roles:
+        username = one_user[0]
+        roles = one_user[1]
+        userType = 'user'
+        if self.getGroup(username):
+            userType = 'group'
+        result.append((username, roles, userType, username))
+    return tuple(result)
+PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+
 
 
 #################################

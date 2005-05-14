@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.7 2005/05/06 18:40:07 jccooper Exp $
+$Id: memberdata.py,v 1.8 2005/05/14 00:40:14 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -16,6 +16,11 @@ from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+
+
+from zLOG import LOG, INFO
+def log(msg):
+    LOG('PlonePAS',INFO,msg)
 
 
 class MemberDataTool(BaseMemberDataTool):
@@ -63,6 +68,7 @@ class MemberDataTool(BaseMemberDataTool):
         return acl_users.searchUsers( name=s, exact_match=False)
         # I don't think this is right: we need to return Members
 
+
 InitializeClass(MemberDataTool)
 
 
@@ -96,13 +102,14 @@ class MemberData(BaseMemberData):
         return BaseMemberData.setMemberProperties(self, mapping, force_local)
 
     def getProperty(self, id, default=None):
+        """PAS-specific method to fetch a user's properties. Looks through the ordered property sheets."""
         if IPluggableAuthService.isImplementedBy(self.acl_users):
             user = self.getUser()
             sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
 
             # we won't always have PlonePAS users, due to acquisition, nor are guaranteed property sheets
             if sheets:
-                for sheet in user.getOrderedPropertySheets():
+                for sheet in sheets:
                     if sheet.hasProperty(id):
                         return sheet.getProperty(id)
         return BaseMemberData.getProperty(self, id)

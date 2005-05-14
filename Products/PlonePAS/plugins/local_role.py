@@ -19,12 +19,12 @@ A Local Roles Plugin Implementation that respects Black Listing markers.
 ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
-$Id: local_role.py,v 1.2 2005/04/23 00:16:55 jccooper Exp $
+$Id: local_role.py,v 1.3 2005/05/14 00:40:13 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.plugins.LocalRolePlugin import LocalRolePlugin
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 
 def manage_addLocalRolesManager( dispatcher, id, title=None, RESPONSE=None):
@@ -40,9 +40,12 @@ def manage_addLocalRolesManager( dispatcher, id, title=None, RESPONSE=None):
 
 manage_addLocalRolesManagerForm = DTMLFile('../zmi/LocalRolesManagerForm', globals())
 
-class LocalRolesManager(BasePlugin):
+class LocalRolesManager(LocalRolePlugin):
+    """Class incorporating local role storage with
+    PlonePAS-specific local role permission checking.
+    """
 
-    __implements__ = BasePlugin.__implements__ + ( ILocalRolesPlugin, )
+    __implements__ = LocalRolePlugin.__implements__ + ( ILocalRolesPlugin, )
 
     meta_type = "Local Roles Manager"
     security = ClassSecurityInfo()

@@ -14,6 +14,8 @@ Make sure local roles searching works.
 
 PlonePAS groups tool: assure API implementation; move common bits into Plone GroupsTool, also interface
 
+Should groups.getGroupById use new acl_users.getGroup?
+
 Group properties support in PAS (a plugin, not the GroupData properties)?
 
 Should probably define group factory plugin
@@ -54,7 +56,11 @@ listing of group-belonging by user broken
 membership tool wrapUser stupidly uses roles attribute. we want it to use methods. until this is fixed,
 role mapping is broken
 
-LDAP: mapping for properties/ group-role not working yet
+LDAP: mapping for group-role not working yet
+
+LDAP: default property mappings?
+
+LDAP: ordering of property managers (and other plugins) to top
 
 jcc:
 

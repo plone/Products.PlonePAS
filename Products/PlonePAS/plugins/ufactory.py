@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.12 2005/05/07 02:15:13 jccooper Exp $
+$Id: ufactory.py,v 1.13 2005/05/14 00:40:13 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -27,6 +27,10 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.PlonePAS.utils import unique
 from Products.PlonePAS.sheet import MutablePropertySheet
+
+from zLOG import LOG, INFO
+def log(msg):
+    LOG('PlonePAS',INFO,msg)
 
 manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals() )
 

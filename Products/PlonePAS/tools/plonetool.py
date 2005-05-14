@@ -1,5 +1,5 @@
 """
-$Id: plonetool.py,v 1.2 2005/05/06 18:40:07 jccooper Exp $
+$Id: plonetool.py,v 1.3 2005/05/14 00:40:14 jccooper Exp $
 """
 from Globals import InitializeClass
 
@@ -26,5 +26,12 @@ class PloneTool(BasePloneTool):
         folder.__ac_local_roles_block__ = status
                 
         return self._acquireLocalRoles(folder, status)
+
+    def isLocalRoleAcquired(self, folder):
+        """Return true if the specified folder allows local role acquisition.
+        """
+        if getattr(folder, '__ac_local_roles_block__', None):
+            return 0
+        return 1
 
 InitializeClass(PloneTool)
