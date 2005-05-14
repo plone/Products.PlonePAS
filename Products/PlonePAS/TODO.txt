@@ -62,6 +62,8 @@ LDAP: default property mappings?
 
 LDAP: ordering of property managers (and other plugins) to top
 
+LDAP: need to set MultiPlugin.groupid_attr to cn
+
 jcc:
 
  - PasswordResetTool needed for reset password thing
