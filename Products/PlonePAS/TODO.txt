@@ -10,8 +10,6 @@ Write test to make sure we're not using a name mangling version.
 
 Verify why user records just created are marked as "orphaned" in portal_memberdata. It could just be that they never logged in.
 
-Make sure local roles searching works.
-
 PlonePAS groups tool: assure API implementation; move common bits into Plone GroupsTool, also interface
 
 Should groups.getGroupById use new acl_users.getGroup?
@@ -55,8 +53,6 @@ listing of group-belonging by user broken
 
 membership tool wrapUser stupidly uses roles attribute. we want it to use methods. until this is fixed,
 role mapping is broken
-
-LDAP: mapping for group-role not working yet
 
 LDAP: default property mappings?
 
