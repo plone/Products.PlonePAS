@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.28 2005/05/10 21:20:48 jccooper Exp $
+$Id: Install.py,v 1.29 2005/05/18 21:47:13 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -7,6 +7,9 @@ from StringIO import StringIO
 from Products.Archetypes.Extensions.utils import install_subskin
 from Products.CMFCore.utils import getToolByName
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
+
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
@@ -17,6 +20,8 @@ from Products.PlonePAS.tools.groupdata import GroupDataTool
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.tools.memberdata import MemberDataTool
 from Products.PlonePAS.tools.plonetool import PloneTool
+
+from Products.PlonePAS.MigrationCheck import canAutoMigrate
 
 from Acquisition import aq_base
 
@@ -156,12 +161,17 @@ def grabUserData(portal, out):
 
 def restoreUserData(portal, out, userdata):
     print >> out, "\nRestoring Member information..."
-
     # re-add users
     # Password may be encypted or not: addUser will figure it out.
     mtool = portal.portal_membership
     for u in userdata:
-        mtool.addMember(*u)
+        # be careful of non-ZODB member sources, like LDAP
+        member = mtool.getMemberById()
+        if member is None:
+            mtool.addMember(*u)
+        else:
+            # set any properties. do we need anything else? roles, maybe?
+            member.setMemberProperties(userdata[-1])
 
     print >> out, "...restore done"
 
@@ -359,10 +369,76 @@ def updateProp(prop_manager, prop_dict):
         prop_manager._setProperty(id, value, type)
 
 
-def installUserFolder(portal, out):
-    # XXX: this should probably check if it's GRUF + basic UserFolder, although...
-    # other configurations might work. The migration code it pretty generic.
+def grabLDAPFolders(portal, out):
+    """Get hold of any existing LDAPUserFolders so that we can put them into LDAPMultiPlugins later."""
+    print >> out, "\nPreserving LDAP folders, if any:"
 
+    user_sources = portal.acl_users.listUserSources()
+    group_source = portal.acl_users.Groups.acl_users
+
+    ldap_ufs = []
+    ldap_gf = None
+
+    for uf in user_sources:
+        if uf.meta_type == "LDAPUserFolder":
+            print >> out, " - LDAPUserFolder %s" % uf.title
+            ldap_ufs.append(uf)
+
+    if group_source.meta_type == "LDAPGroupFolder %s" % group_source.title:
+        print >> out, " - LDAPGroupFolder"
+        ldap_gf = group_source
+
+    print >> out, "...done"
+    return ldap_ufs, ldap_gf
+
+def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
+    """Create appropriate plugins to replace destroyed LDAP user folders."""
+    if not (ldap_ufs or ldap_gf):
+        print >> out, "\nNo LDAP auth sources to restore. Skipping."
+    else:    
+        print >> out, "\nRestoring LDAP auth sources:"
+        pas = portal.acl_users
+
+        x = ""
+        if len(ldap_ufs) > 1:
+            x = 0
+        for lduf in ldap_ufs:
+            id = 'ad_multi%s' % x
+            title = 'ActiveDirectory Multi-plugin %s' % x
+            LDAP_server = lduf.LDAP_server + ":" + `lduf.LDAP_port`
+            login_attr = lduf._login_attr
+            uid_attr = lduf._uid_attr
+            users_base = lduf.users_base
+            users_scope = lduf.users_scope
+            roles = lduf._roles
+            groups_base = lduf.groups_base
+            groups_scope = lduf.groups_scope
+            binduid = lduf._binduid
+            bindpwd = lduf._bindpwd
+            binduid_usage = lduf._binduid_usage
+            rdn_attr = lduf._rdnattr
+            local_groups = lduf._local_groups
+            use_ssl = lduf._conn_proto == 'ldaps'
+            encryption = lduf._pwd_encryption
+            read_only = lduf.read_only
+
+            pas.manage_addProduct['LDAPMultiPlugins'].manage_addActiveDirectoryMultiPlugin(id, title,
+                             LDAP_server, login_attr,
+                             uid_attr, users_base, users_scope, roles,
+                             groups_base, groups_scope, binduid, bindpwd,
+                             binduid_usage=1, rdn_attr='cn', local_groups=0,
+                             use_ssl=0 , encryption='SHA', read_only=0)
+            print >> out, "Added ActiveDirectoryMultiPlugin %s" % x
+            x = x or 0 + 1
+
+            activatePluginInterfaces(portal, id, out)
+            # turn off groups
+            pas.plugins.deactivatePlugin(IGroupsPlugin, id)
+            pas.plugins.deactivatePlugin(IGroupEnumerationPlugin, id)
+            # move properties up
+            pas.plugins.movePluginsUp(IPropertiesPlugin, [id])
+
+def replaceUserFolder(portal, out):
     print >> out, "\nUser folder replacement:"
 
     print >> out, " - Removing existing user folder"
@@ -374,14 +450,35 @@ def installUserFolder(portal, out):
     print >> out, "...replace done"
 
 
+def goForMigration(portal, out):
+    """Checks for supported configurations.
+    Other configurations might work. The migration code is pretty generic.
+
+    Should provide some way to extend this check.
+    """
+    if not canAutoMigrate(portal.acl_users):
+        msg = """Your user folder is in a configuration not supported by the migration script.
+Only GroupUserFolders with basic UserFolder and LDAPUserFolder sources can be migrated at this time.
+Any other setup will require custom migration. You may install PlonePAS empty by deleting you current
+UserFolder.
+"""
+        raise Exception, msg
+
+    return 1
+
+
 def install(self):
     out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
+    goForMigration(portal, out)
+
     userdata = grabUserData(portal, out)
     groupdata, memberships = grabGroupData(portal, out)
 
-    installUserFolder(portal, out)
+    ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
+
+    replaceUserFolder(portal, out)
 
     install_subskin(self, out, config.GLOBALS)
     print >> out, "\nInstalled skins."
@@ -390,8 +487,19 @@ def install(self):
 
     setupTools(portal, out)
 
+    restoreLDAP(portal, out, ldap_ufs, ldap_gf)
+
     restoreUserData(portal, out, userdata)
     restoreGroupData(portal, out, groupdata, memberships)
 
     print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()
+
+
+# Future refactor notes:
+#  we cannot tell automatically between LDAP and AD uses of LDAPUserFolder
+#    - except maybe sAMAAccountName
+#    - so some sort of UI is necessary
+#  should have some sort of facility for allowing easy extension of migration of UFs
+#    - register grab and restore methods, or something
+#  cannot currently handle GRUFGroupsFolder

@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.21 2005/05/03 21:34:21 jccooper Exp $
+$Id: __init__.py,v 1.22 2005/05/18 21:47:12 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -13,6 +13,7 @@ except ImportError:
   from Products.CMFPlone import PloneUtilities as plone_utils
 
 import config
+#import MigrationCheck
 
 #################################
 # plugins
