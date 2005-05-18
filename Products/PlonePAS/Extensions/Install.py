@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.29 2005/05/18 21:47:13 jccooper Exp $
+$Id: Install.py,v 1.30 2005/05/18 21:55:24 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -22,6 +22,13 @@ from Products.PlonePAS.tools.memberdata import MemberDataTool
 from Products.PlonePAS.tools.plonetool import PloneTool
 
 from Products.PlonePAS.MigrationCheck import canAutoMigrate
+
+CAN_LDAP = 0
+try:
+    import Products.LDAPMultiPlugins
+    CAN_LDAP = 1
+except ImportError:
+    pass
 
 from Acquisition import aq_base
 
@@ -477,6 +484,9 @@ def install(self):
     groupdata, memberships = grabGroupData(portal, out)
 
     ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
+    if ldap_ufs or ldap_gf and not CAN_LDAP:
+        raise Exception, """LDAPUserFolders present, but LDAPMultiPlugins not present. To successfully
+auto-migrate, the LDAPMultiPlugins product must be installed."""
 
     replaceUserFolder(portal, out)
 
@@ -487,7 +497,7 @@ def install(self):
 
     setupTools(portal, out)
 
-    restoreLDAP(portal, out, ldap_ufs, ldap_gf)
+    if CAN_LDAP: restoreLDAP(portal, out, ldap_ufs, ldap_gf)
 
     restoreUserData(portal, out, userdata)
     restoreGroupData(portal, out, groupdata, memberships)
@@ -503,3 +513,4 @@ def install(self):
 #  should have some sort of facility for allowing easy extension of migration of UFs
 #    - register grab and restore methods, or something
 #  cannot currently handle GRUFGroupsFolder
+#  can probably handle multiple LDAPUserFolders, but not tested
