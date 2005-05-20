@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.30 2005/05/18 21:55:24 jccooper Exp $
+$Id: Install.py,v 1.31 2005/05/20 23:00:24 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -155,6 +155,7 @@ def grabUserData(portal, out):
     members = mtool.listMembers()
     for member in members:
         id = member.getId()
+        portal.plone_log(member)
         password = member.getPassword()
         roles = [role for role in member.getRoles() if role != 'Authenticated']
         domains = member.getDomains()
@@ -173,7 +174,7 @@ def restoreUserData(portal, out, userdata):
     mtool = portal.portal_membership
     for u in userdata:
         # be careful of non-ZODB member sources, like LDAP
-        member = mtool.getMemberById()
+        member = mtool.getMemberById(u[0])
         if member is None:
             mtool.addMember(*u)
         else:

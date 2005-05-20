@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.8 2005/05/14 00:40:14 jccooper Exp $
+$Id: memberdata.py,v 1.9 2005/05/20 23:00:23 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -77,7 +77,9 @@ class MemberData(BaseMemberData):
     ## setProperties uses setMemberProperties. no need to override.
 
     def setMemberProperties(self, mapping, force_local = 0):
-        # Sets the properties given in the MemberDataTool.
+        """PAS-specific method to set the properties of a member. Ignores 'force_local',
+        which is not reliably present.
+        """
         tool = self.getTool()
 
         # we could pay attention to force_local here...
@@ -99,7 +101,7 @@ class MemberData(BaseMemberData):
                 self.notifyModified()
                 return
         # defer to base impl in absence of PAS, a PAS user, or property sheets
-        return BaseMemberData.setMemberProperties(self, mapping, force_local)
+        return BaseMemberData.setMemberProperties(self, mapping)
 
     def getProperty(self, id, default=None):
         """PAS-specific method to fetch a user's properties. Looks through the ordered property sheets."""
