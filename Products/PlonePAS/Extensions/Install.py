@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.31 2005/05/20 23:00:24 jccooper Exp $
+$Id: Install.py,v 1.32 2005/05/20 23:03:22 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -485,9 +485,9 @@ def install(self):
     groupdata, memberships = grabGroupData(portal, out)
 
     ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
-    if ldap_ufs or ldap_gf and not CAN_LDAP:
+    if (ldap_ufs or ldap_gf) and not CAN_LDAP:
         raise Exception, """LDAPUserFolders present, but LDAPMultiPlugins not present. To successfully
-auto-migrate, the LDAPMultiPlugins product must be installed."""
+auto-migrate, the LDAPMultiPlugins product must be installed. (%s, %s):%s""" % (ldap_ufs, ldap_gf, CAN_LDAP)
 
     replaceUserFolder(portal, out)
 
