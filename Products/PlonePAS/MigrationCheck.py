@@ -9,7 +9,6 @@ def canAutoMigrate(userfolder):
     Currently only true for GRUF with either UserFolder or
     LDAPUserFolder sources.
     """
-    import pdb;pdb.set_trace()
     retval = 1
     if userfolder.meta_type == "Group User Folder":
         user_sources = userfolder.listUserSources()
