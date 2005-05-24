@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.35 2005/05/24 19:54:56 dreamcatcher Exp $
+$Id: Install.py,v 1.36 2005/05/24 22:16:52 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -169,9 +169,10 @@ def grabUserData(portal, out):
     members = mtool.listMembers()
     for member in members:
         id = member.getId()
-        portal.plone_log(member)
+        print >> out, " : %s" % id
         password = member.getPassword()
         roles = [role for role in member.getRoles() if role != 'Authenticated']
+        print >> out, "with roles %s" % roles
         domains = member.getDomains()
         properties = {}
         for propid in props:
@@ -183,17 +184,26 @@ def grabUserData(portal, out):
 
 def restoreUserData(portal, out, userdata):
     print >> out, "\nRestoring Member information..."
+
     # re-add users
     # Password may be encypted or not: addUser will figure it out.
     mtool = portal.portal_membership
+    emerg = portal.acl_users._emergency_user
     for u in userdata:
+        if u[0] == str(emerg):
+            print >> out, " : WARNING! member '%s' has name of emergency user. Not migrated." % u[0]
+            print >> out, "You can undo the install if you want to fix this condition."
+            continue  # skip Emergency User, if present
+        
         # be careful of non-ZODB member sources, like LDAP
         member = mtool.getMemberById(u[0])
         if member is None:
             mtool.addMember(*u)
+            print >> out, " : adding member '%s'" % u[0]
         else:
             # set any properties. do we need anything else? roles, maybe?
             member.setMemberProperties(userdata[-1])
+            print >> out, " : setting props on member '%s'" % member.getId()
 
     print >> out, "...restore done"
 
@@ -223,7 +233,9 @@ def grabGroupData(portal, out):
         groups = gtool.listGroups()
         for group in groups:
             id = group.getGroupId()
+            print >> out, " : %s" % id
             roles = [role for role in group.getRoles() if role != 'Authenticated']
+            print >> out, "with roles %s" % roles
             properties = {}
             has_groups = [] # we take care of this with the
                             # groupmemberships stuff
@@ -241,6 +253,7 @@ def restoreGroupData(portal, out, groupdata, groupmemberships):
     # re-add groups
     gtool = portal.portal_groups
     for g in groupdata:
+        print >> out, " : adding group '%s' with members: " % g[0]
         gtool.addGroup(*g)
 
         # restore group memberships
@@ -248,6 +261,7 @@ def restoreGroupData(portal, out, groupdata, groupmemberships):
         group = gtool.getGroupById(gid)
         for mid in groupmemberships[gid]:
             group.addMember(mid)
+            print >> out, "%s " % mid
 
     print >> out, "...restore done"
 
