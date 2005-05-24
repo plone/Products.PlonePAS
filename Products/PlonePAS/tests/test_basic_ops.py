@@ -1,22 +1,20 @@
+"""
+$Id: test_basic_ops.py,v 1.6 2005/05/24 17:44:37 dreamcatcher Exp $
+"""
+
 import os, sys
 import unittest
-from sets import Set
-import traceback
 
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing                 import ZopeTestCase
-from Products.CMFCore.utils  import getToolByName
+from Testing import ZopeTestCase
+from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import PloneTestCase
 from PloneTestCase import PloneTestCase, setupPloneSite
 
-##for product in ('PlonePAS',
-##                ):
-##    PloneTestCase.installProduct(product)
-##del product
-
-from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice \
+     import IPluggableAuthService
 
 class BasicOpsTestCase(PloneTestCase):
 
@@ -26,22 +24,27 @@ class BasicOpsTestCase(PloneTestCase):
 
     def compareRoles(self, target, user, roles):
         """
-        compareRoles(self, target, user, roles) => do not raise if user has exactly the specified roles.
+        compareRoles(self, target, user, roles) => do not raise if
+        user has exactly the specified roles.
+
         If target is None, test user roles (no local roles)
         """
         u = self.acl_users.getUser(user)
         if not u:
             raise RuntimeError, "compareRoles: Invalid user: '%s'" % user
+        non_roles = ('Authenticated', 'Anonymous', '')
         if target is None:
-            actual_roles = filter(lambda x: x not in ('Authenticated', 'Anonymous', ''), list(u.getRoles()))
+            user_roles = list(u.getRoles())
         else:
-            actual_roles = filter(lambda x: x not in ('Authenticated', 'Anonymous', ''), list(u.getRolesInContext(target)))
+            user_roles = list(u.getRolesInContext(target))
+        actual_roles = filter(lambda x: x not in non_roles, user_roles)
         actual_roles.sort()
         wished_roles = list(roles)
         wished_roles.sort()
         if actual_roles == wished_roles:
             return 1
-        raise RuntimeError, "User %s: Whished roles: %s BUT current roles: %s" % (user, wished_roles, actual_roles)
+        raise RuntimeError, ("User %s: Whished roles: %s BUT current "
+                             "roles: %s" % (user, wished_roles, actual_roles))
 
     def createUser(self, name="created_user", password="secret",
                    roles=[], groups=[], domains=()):
@@ -61,35 +64,36 @@ class BasicOpsTestCase(PloneTestCase):
         self.failUnless(self.acl_users.getUser("created_user"))
 
     def test_edit(self):
-        # this will fail unless the PAS role plugin is told it manages the new role.
+        # this will fail unless the PAS role plugin is told it manages
+        # the new role.
         self.createUser()
-        self.compareRoles(None, "created_user", [], )
+        self.compareRoles(None, "created_user", [])
         self.acl_users.userFolderEditUser(
-            "created_user", # name 
+            "created_user", # name
             "secret2", # password
             roles = ["Member", ],
             groups = ["g1", ],
             domains = (),
             )
-        self.compareRoles(None, "created_user", ['Member',], )
+        self.compareRoles(None, "created_user", ['Member'])
 
     def test_edit_userDefinedRole(self):
         self.portal._addRole('r1')
         self.createUser()
-        self.compareRoles(None, "created_user", [], )
+        self.compareRoles(None, "created_user", [])
         self.acl_users.userFolderEditUser(
-            "created_user", # name 
+            "created_user", # name
             "secret2", # password
-            roles = ["r1", ],
-            groups = ["g1", ],
+            roles = ["r1"],
+            groups = ["g1"],
             domains = (),
             )
-        self.compareRoles(None, "created_user", ['r1',], )
+        self.compareRoles(None, "created_user", ['r1'])
 
     def test_del(self):
         self.createUser()
         self.failUnless(self.acl_users.getUser("created_user"))
-        self.acl_users.userFolderDelUsers(['created_user', ])
+        self.acl_users.userFolderDelUsers(['created_user'])
         self.failIf(self.acl_users.getUser("created_user"))
 
     def test_search(self):
@@ -106,8 +110,8 @@ class BasicOpsTestCase(PloneTestCase):
         # form) use MemberData.getPassword() to mail the password the
         # user already has. This is wrong, as some user sources don't
         # have the ability to recover a user password (think
-        # /etc/passwd or /etc/shadow, for starters), but this is what Plone
-        # does so here is a test
+        # /etc/passwd or /etc/shadow, for starters), but this is what
+        # Plone does so here is a test
         self.createUser()
         mt = self.portal.portal_membership
         member = mt.getMemberById("created_user")
