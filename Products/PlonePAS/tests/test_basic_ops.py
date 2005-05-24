@@ -1,5 +1,5 @@
 """
-$Id: test_basic_ops.py,v 1.7 2005/05/24 17:47:11 dreamcatcher Exp $
+$Id: test_basic_ops.py,v 1.8 2005/05/24 18:48:17 dreamcatcher Exp $
 """
 
 import os, sys
@@ -9,9 +9,11 @@ if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from Testing import ZopeTestCase
-from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase import PloneTestCase
-from PloneTestCase import PloneTestCase, setupPloneSite
+del PloneTestCase
+
+from Products.CMFCore.utils import getToolByName
+from Products.PlonePAS.tests.PloneTestCase import PloneTestCase
 
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService

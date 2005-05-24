@@ -1,5 +1,5 @@
 """
-$Id: test_membership.py,v 1.3 2005/05/24 17:44:37 dreamcatcher Exp $
+$Id: test_membership.py,v 1.4 2005/05/24 18:48:17 dreamcatcher Exp $
 """
 
 import os, sys
@@ -9,8 +9,11 @@ if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from Testing import ZopeTestCase
+from Products.PloneTestCase import PloneTestCase
+del PloneTestCase
+
 from Products.CMFCore.utils import getToolByName
-from PloneTestCase import PloneTestCase
+from Products.PlonePAS.tests.PloneTestCase import PloneTestCase
 
 class TestMemberFolder(PloneTestCase):
 

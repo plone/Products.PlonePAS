@@ -3,17 +3,19 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.7 2005/05/24 17:50:00 dreamcatcher Exp $
+$Id: sheet.py,v 1.8 2005/05/24 18:48:17 dreamcatcher Exp $
 """
 
-from types import StringTypes, BooleanType, IntType, LongType, FloatType, InstanceType
+from types import StringTypes, BooleanType, IntType
+from types import LongType, FloatType, InstanceType
+
 from DateTime.DateTime import DateTime
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
-class PropertyValueError( ValueError ): pass
+class PropertyValueError(ValueError): pass
 
 class PropertySchemaTypeMap(object):
 
@@ -22,14 +24,15 @@ class PropertySchemaTypeMap(object):
         self.tmap_order = []
 
     def addType(self, type_name, identifier, order=None):
-        self.tmap[ type_name ] = identifier
+        self.tmap[type_name] = identifier
         if order is not None and isinstance(order, int):
             self.tmap_order.insert( order, type_name )
         else:
             self.tmap_order.append( type_name )
 
     def getTypeFor(self, value):
-        for ptype, inspector in [ (ptype, self.tmap[ptype]) for ptype in self.tmap_order ]:
+        ptypes = [(ptype, self.tmap[ptype]) for ptype in self.tmap_order]
+        for ptype, inspector in ptypes:
             if inspector(value):
                 return ptype
         raise TypeError("invalid property type %s"%(type(value)))
@@ -40,6 +43,7 @@ class PropertySchemaTypeMap(object):
 
 PropertySchema = PropertySchemaTypeMap()
 PropertySchema.addType('string', lambda x: x is None or type(x) in StringTypes)
+PropertySchema.addType('text', lambda x: x is None or type(x) in StringTypes)
 PropertySchema.addType('boolean', lambda x: 1)  # anything can be boolean
 PropertySchema.addType('int', lambda x:  x is None or type(x) is IntType)
 PropertySchema.addType('long', lambda x:  x is None or type(x) is LongType)
@@ -48,14 +52,14 @@ PropertySchema.addType('lines', lambda x:  x is None or type(x) in _SequenceType
 PropertySchema.addType('date', lambda x: 1 or x is None or type(x) is InstanceType and isinstance(x, DateTime))
 validateValue = PropertySchema.validate
 
-
 class MutablePropertySheet(UserPropertySheet):
 
     __implements__ = (IMutablePropertySheet,)
 
     def __init__(self, id, user, **kw ):
         UserPropertySheet.__init__(self, id, **kw)
-        self._user = user   # have to have a handle on container, since we're not acquisition-aware
+        self._user = user # have to have a handle on container, since we're not
+                          # acquisition-aware
 
     def validateProperty(self, id, value):
         if not self._properties.has_key(id):
@@ -63,7 +67,9 @@ class MutablePropertySheet(UserPropertySheet):
 
         proptype = self.getPropertyType(id)
         if not validateValue(proptype, value):
-            raise PropertyValueError("invalid value (%s) for property '%s' of type %s" % (value,id, proptype))
+            raise PropertyValueError, ("invalid value (%s) for "
+                                       "property '%s' of type %s" %
+                                       (value,id, proptype))
 
     def setProperty(self, id, value):
         self.validateProperty(id, value)
@@ -101,4 +107,4 @@ class MutablePropertySheet(UserPropertySheet):
 
 class SchemaMutablePropertySheet(MutablePropertySheet):
 
-    __implements__ = ( IMutablePropertySheet, )
+    __implements__ = (IMutablePropertySheet,)
