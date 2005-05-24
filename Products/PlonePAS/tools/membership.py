@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.3 2005/05/06 18:40:07 jccooper Exp $
+$Id: membership.py,v 1.4 2005/05/24 17:32:25 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 
@@ -7,15 +7,20 @@ from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipToo
 from urllib import quote as url_quote
 
 class MembershipTool(BaseMembershipTool):
-    """PAS-based customization of MembershipTool. Uses CMFPlone's as base."""
+    """PAS-based customization of MembershipTool.
+
+    Uses CMFPlone's as base.
+    """
 
     meta_type = "PlonePAS Membership Tool"
 
     def addMember(self, id, password, roles, domains, properties=None):
-        """Adds a new member to the user folder.  Security checks will have
-        already been performed.  Called by portal_registration.
-        This one specific to PAS. PAS ignores domains. Adding members with login_name
-        also not yet supported.
+        """Adds a new member to the user folder.
+
+        Security checks will have already been performed.  Called by
+        portal_registration.  This one specific to PAS. PAS ignores
+        domains. Adding members with login_name also not yet
+        supported.
         """
         acl_users = self.acl_users
         acl_users._doAddUser(id, password, roles, domains)
@@ -25,8 +30,10 @@ class MembershipTool(BaseMembershipTool):
             member.setMemberProperties(properties)
 
     def searchForMembers(self, REQUEST=None, **kw):
-        """Hacked up version of Plone searchForMembers. Only takes 'name' as keyword
-        (or in REQUEST) and searches on Full name and id.
+        """Hacked up version of Plone searchForMembers.
+
+        Only takes 'name' as keyword (or in REQUEST) and searches on
+        Full name and id.
         """
         acl_users = self.acl_users
         md = self.portal_memberdata
@@ -45,11 +52,13 @@ class MembershipTool(BaseMembershipTool):
         md_users = []
         uf_users = []
         if name:
-            # We first find in MemberDataTool users whose _full_ name match what we want.
+            # We first find in MemberDataTool users whose _full_ name
+            # match what we want.
             lst = md.searchMemberDataContents('fullname', name)
             md_users = [ x['username'] for x in lst]
 
-            # This will allow us to retreive users by their _id_ (not name).
+            # This will allow us to retreive users by their _id_ (not
+            # name).
             uf_users = acl_users.searchUsers(name=name)
 
         # build final list
@@ -64,7 +73,7 @@ class MembershipTool(BaseMembershipTool):
             if userid in md_users:
                 continue             # Kill dupes
             members.append(wrap(getUser(userid)))
-    
+
         return members
 
     #############
@@ -80,7 +89,9 @@ class MembershipTool(BaseMembershipTool):
             #     Create a member area for 'member_id' or authenticated user.)
             member = membership.getAuthenticatedMember()
             member_id = member.getId()
-        member_id = url_quote(member_id, '')  # we provide the 'safe' param because want '/' encoded
+        member_id = url_quote(member_id, '') # we provide the 'safe'
+                                             # param because want '/'
+                                             # encoded
         return BaseMembershipTool.createMemberarea(self, member_id, minimal)
 
     def getHomeFolder(self, id=None, verifyPermission=0):
@@ -92,7 +103,8 @@ class MembershipTool(BaseMembershipTool):
             if not hasattr(member, 'getMemberId'):
                 return None
             id = member.getMemberId()
-        id = url_quote(id, '')  # we provide the 'safe' param because want '/' encoded
+        id = url_quote(id, '') # we provide the 'safe' param because
+                               # want '/' encoded
         return BaseMembershipTool.getHomeFolder(self, id, verifyPermission)
 
 

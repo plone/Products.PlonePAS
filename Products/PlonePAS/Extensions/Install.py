@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.32 2005/05/20 23:03:22 jccooper Exp $
+$Id: Install.py,v 1.33 2005/05/24 17:32:24 dreamcatcher Exp $
 """
 
 from StringIO import StringIO
@@ -59,10 +59,10 @@ def setupRoles( portal ):
     rmanager.addRole('Reviewer', title="content reviewer")
 
 def registerPluginType( pas, plugin_type, plugin_info ):
-    pas.plugins._plugin_type_info[plugin_type] =  plugin_info 
+    pas.plugins._plugin_type_info[plugin_type] =  plugin_info
     pas.plugins._plugin_types.append(plugin_type)
 
-    
+
 def registerPluginTypes( pas ):
 
     PluginInfo = { 'id' : 'IUserManagement',
@@ -91,7 +91,7 @@ def registerPluginTypes( pas ):
                    'title':'local_roles',
                    'description':"Defines Policy for getting Local Roles" }
 
-    registerPluginType( pas, ILocalRolesPlugin, PluginInfo )    
+    registerPluginType( pas, ILocalRolesPlugin, PluginInfo )
 
 def setupPlugins( portal, out ):
     pas = portal.acl_users
@@ -101,7 +101,7 @@ def setupPlugins( portal, out ):
     print >> out, "Added Cookie Auth Helper."
     activatePluginInterfaces(portal, 'credentials_cookie', out)
 
-    
+
     pas.manage_addProduct['PluggableAuthService'].addHTTPBasicAuthHelper('credentials_basic_auth',
             title="HTTP Basic Auth")
     print >> out, "Added Basic Auth Helper."
@@ -306,7 +306,7 @@ def setupTools(portal, out):
 def migrateGroupDataTool(portal, out):
     # this could be somewhat combined with migrateMemberDataTool, but I don't think it's worth it
 
-    print >> out, "GroupData Tool (portal_groupdata)"    
+    print >> out, "GroupData Tool (portal_groupdata)"
 
     print >> out, " ...copying actions"
     actions = portal.portal_groupdata._actions
@@ -335,7 +335,7 @@ def migrateGroupDataTool(portal, out):
     print >> out, " ...done"
 
 def migrateMemberDataTool(portal, out):
-    print >> out, "MemberData Tool (portal_memberdata)"    
+    print >> out, "MemberData Tool (portal_memberdata)"
 
     print >> out, " ...copying actions"
     actions = portal.portal_memberdata._actions
@@ -403,7 +403,7 @@ def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
     """Create appropriate plugins to replace destroyed LDAP user folders."""
     if not (ldap_ufs or ldap_gf):
         print >> out, "\nNo LDAP auth sources to restore. Skipping."
-    else:    
+    else:
         print >> out, "\nRestoring LDAP auth sources:"
         pas = portal.acl_users
 
@@ -452,11 +452,13 @@ def replaceUserFolder(portal, out):
     print >> out, " - Removing existing user folder"
     portal.manage_delObjects(['acl_users'])
 
-    print >> out, " - Adding PAS user folder"
-    portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+    addPAS(portal, out)
 
     print >> out, "...replace done"
 
+def addPAS(portal, out):
+    print >> out, " - Adding PAS user folder"
+    portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
 
 def goForMigration(portal, out):
     """Checks for supported configurations.
@@ -465,11 +467,12 @@ def goForMigration(portal, out):
     Should provide some way to extend this check.
     """
     if not canAutoMigrate(portal.acl_users):
-        msg = """Your user folder is in a configuration not supported by the migration script.
-Only GroupUserFolders with basic UserFolder and LDAPUserFolder sources can be migrated at this time.
-Any other setup will require custom migration. You may install PlonePAS empty by deleting you current
-UserFolder.
-"""
+        msg = ("Your user folder is in a configuration not supported "
+               "by the migration script.\nOnly GroupUserFolders with "
+               "basic UserFolder and LDAPUserFolder sources can be "
+               "migrated at this time.\nAny other setup will require "
+               "custom migration. You may install PlonePAS empty by "
+               "deleting you current UserFolder.")
         raise Exception, msg
 
     return 1
@@ -479,17 +482,24 @@ def install(self):
     out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
-    goForMigration(portal, out)
+    EXISTING_UF = 'acl_users' in portal.objectIds()
 
-    userdata = grabUserData(portal, out)
-    groupdata, memberships = grabGroupData(portal, out)
+    if not EXISTING_UF:
+        addPAS(portal, out)
+    else:
+        goForMigration(portal, out)
 
-    ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
-    if (ldap_ufs or ldap_gf) and not CAN_LDAP:
-        raise Exception, """LDAPUserFolders present, but LDAPMultiPlugins not present. To successfully
-auto-migrate, the LDAPMultiPlugins product must be installed. (%s, %s):%s""" % (ldap_ufs, ldap_gf, CAN_LDAP)
+        userdata = grabUserData(portal, out)
+        groupdata, memberships = grabGroupData(portal, out)
 
-    replaceUserFolder(portal, out)
+        ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
+        if (ldap_ufs or ldap_gf) and not CAN_LDAP:
+            raise Exception, ("LDAPUserFolders present, but LDAPMultiPlugins "
+                              "not present. To successfully auto-migrate, "
+                              "the LDAPMultiPlugins product must be installed. "
+                              "(%s, %s):%s" % (ldap_ufs, ldap_gf, CAN_LDAP))
+
+        replaceUserFolder(portal, out)
 
     install_subskin(self, out, config.GLOBALS)
     print >> out, "\nInstalled skins."
@@ -498,10 +508,11 @@ auto-migrate, the LDAPMultiPlugins product must be installed. (%s, %s):%s""" % (
 
     setupTools(portal, out)
 
-    if CAN_LDAP: restoreLDAP(portal, out, ldap_ufs, ldap_gf)
-
-    restoreUserData(portal, out, userdata)
-    restoreGroupData(portal, out, groupdata, memberships)
+    if EXISTING_UF:
+        if CAN_LDAP:
+            restoreLDAP(portal, out, ldap_ufs, ldap_gf)
+        restoreUserData(portal, out, userdata)
+        restoreGroupData(portal, out, groupdata, memberships)
 
     print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()

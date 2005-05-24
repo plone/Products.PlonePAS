@@ -3,9 +3,13 @@ acceptable_user_sources = ("User Folder","LDAPUserFolder")
 acceptable_group_sources = ("User Folder",)
 
 def canAutoMigrate(userfolder):
-    """Determine if a userfolder is set up so that it can be auto-migrated to PAS.
-    Currently only true for GRUF with either UserFolder or LDAPUserFolder sources.
+    """Determine if a userfolder is set up so that it can be
+    auto-migrated to PAS.
+
+    Currently only true for GRUF with either UserFolder or
+    LDAPUserFolder sources.
     """
+    import pdb;pdb.set_trace()
     retval = 1
     if userfolder.meta_type == "Group User Folder":
         user_sources = userfolder.listUserSources()
