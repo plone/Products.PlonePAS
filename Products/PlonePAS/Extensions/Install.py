@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.34 2005/05/24 18:23:16 dreamcatcher Exp $
+$Id: Install.py,v 1.35 2005/05/24 19:54:56 dreamcatcher Exp $
 """
 
 from StringIO import StringIO
@@ -110,6 +110,11 @@ def setupPlugins(portal, out):
     pas.addCookieAuthHelper('credentials_cookie', cookie_name='__ac')
     print >> out, "Added Cookie Auth Helper."
     activatePluginInterfaces(portal, 'credentials_cookie', out)
+
+    credentials_cookie = uf._getOb('credentials_cookie')
+    if 'login_form' in credentials_cookie.objectIds():
+        credentials_cookie.manage_delObjects(ids=['login_form'])
+        print >> out, "Removed default login_form from credentials cookie."
 
     pas.addHTTPBasicAuthHelper('credentials_basic_auth',
                                title="HTTP Basic Auth")
