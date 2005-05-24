@@ -63,5 +63,3 @@ where pr.role_id = purm.role_id
   and purm.user_id = pu.user_id
   and pu.user_id = '%s'
 """
-
-

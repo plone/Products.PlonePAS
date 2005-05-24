@@ -1,5 +1,5 @@
 """
-$Id: PloneUserFactory.py,v 1.1 2005/02/16 23:52:26 k_vertigo Exp $
+$Id: PloneUserFactory.py,v 1.2 2005/05/24 17:50:07 dreamcatcher Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -21,7 +21,7 @@ def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
     self._setObject( puf.getId(), puf )
 
     if RESPONSE is not None:
-        return RESPONSE.redirect('manage_workspace')    
+        return RESPONSE.redirect('manage_workspace')
 
 
 class PloneUserFactory( BasePlugin ):
@@ -33,7 +33,7 @@ class PloneUserFactory( BasePlugin ):
     def __init__(self, id, title=''):
         self.id = id
         self.title = title or self.meta_type
-    
+
     def createUser( self, user_id, name ):
 
         return PloneUser( user_id, name )
@@ -104,12 +104,8 @@ class PloneUser( PropertiedUser ):
             access_allowed = lrmanager.allowed( self, object, object_roles )
             # return values
             # 0,1,None - 1 success, 0 object context violation - None - failure
-            if access_allowed is None: 
+            if access_allowed is None:
                 continue
             return access_allowed
 
         return None
-
-
-
-

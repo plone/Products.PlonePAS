@@ -19,7 +19,7 @@ A Local Roles Plugin Implementation that respects Black Listing markers.
 ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
-$Id: local_role.py,v 1.3 2005/05/14 00:40:13 jccooper Exp $
+$Id: local_role.py,v 1.4 2005/05/24 17:50:11 dreamcatcher Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -63,7 +63,7 @@ class LocalRolesManager(LocalRolePlugin):
         principal_ids = list( group_ids )
         principal_ids.insert( 0, user_id )
 
-        local ={} 
+        local ={}
         object = aq_inner( object )
 
         while 1:
@@ -86,7 +86,7 @@ class LocalRolesManager(LocalRolePlugin):
 
             if getattr(obj, '__ac_local_roles_block__', None):
                 break
-                
+
             if parent is not None:
                 object = parent
                 continue
@@ -158,7 +158,7 @@ class LocalRolesManager(LocalRolePlugin):
 
             break
 
-        return None        
+        return None
 
 
 InitializeClass( LocalRolesManager )

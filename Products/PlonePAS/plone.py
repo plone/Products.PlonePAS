@@ -1,7 +1,7 @@
 """
 monkey patches to Plone code
 
-$Id: plone.py,v 1.10 2005/04/28 00:29:43 jccooper Exp $
+$Id: plone.py,v 1.11 2005/05/24 17:49:59 dreamcatcher Exp $
 """
 
 # intentionally empty. all money patches moved to over-riding tools

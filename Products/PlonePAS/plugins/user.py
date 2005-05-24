@@ -15,7 +15,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: user.py,v 1.3 2005/05/06 22:10:04 jccooper Exp $
+$Id: user.py,v 1.4 2005/05/24 17:50:11 dreamcatcher Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
@@ -46,7 +46,7 @@ class UserManager( BasePlugin ):
 
     meta_type = 'User Manager'
     __implements__ = BasePlugin.__implements__ + (IUserManagement,)
-    
+
     security = ClassSecurityInfo()
 
     def addUser( self, user_id, login_name, password ):

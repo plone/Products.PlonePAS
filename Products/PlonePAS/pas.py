@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.22 2005/05/14 00:40:12 jccooper Exp $
+$Id: pas.py,v 1.23 2005/05/24 17:49:59 dreamcatcher Exp $
 """
 import sys
 from sets import Set
@@ -39,7 +39,7 @@ def _doDelUsers(self, ids):
     for userdeleter_id, userdeleter in userdeleters:
         for id in ids:
             userdeleter.doDeleteUser(id)
-        
+
 PluggableAuthService._doDelUsers = _doDelUsers
 
 security.declareProtected( ManageUsers, 'userFolderDelUsers' )
@@ -57,8 +57,8 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
     plugins = self._getOb('plugins')
     managers = plugins.listPlugins( IUserManagement )
     rmanagers = plugins.listPlugins( IRoleAssignerPlugin )
-    
-    
+
+
     if not ( managers and rmanagers ):
         raise NotImplementedError( "There is no plugin that can modify users" )
 
@@ -75,7 +75,7 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 
 #    sroles = Set() # keep track that we set all the requested roles
     for rid, rmanager in rmanagers:
-        rmanager.assignRolesToPrincipal( roles, principal_id)   
+        rmanager.assignRolesToPrincipal( roles, principal_id)
 
 #    # we can take care of this all in one call, now
 #        for role in roles:
@@ -83,7 +83,7 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 #                sroles.add( role )
 
 #    roles_not_set = sroles.difference( Set( roles ) )
-    
+
 #    if not len( roles_not_set ) == 0:
 #        raise RuntimeError("not all roles were set - %s"%roles_not_set)
 
@@ -92,7 +92,7 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 PluggableAuthService._doChangeUser = _doChangeUser
 
 security.declareProtected( ManageUsers, 'userFolderEditUser' )
-PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser 
+PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser
 
 
 # ttw alias
@@ -126,20 +126,20 @@ def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
 
     plugins = self._getOb('plugins')
     rmanagers = plugins.listPlugins( IRoleAssignerPlugin )
-    
-    
+
+
     if not ( rmanagers ):
         raise NotImplementedError( "There is no plugin that can modify users" )
 
     for rid, rmanager in rmanagers:
-        rmanager.assignRolesToPrincipal( roles, principal_id)   
+        rmanager.assignRolesToPrincipal( roles, principal_id)
 
     return True
 
 PluggableAuthService._doChangeGroup = _doChangeGroup
 
 security.declareProtected( ManageUsers, 'userFolderEditGroup' )
-PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup 
+PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
 
 
 
@@ -192,6 +192,3 @@ def _doDelUsers(self, names):
         self._doDelUser(name)
 
 PluggableAuthService._doDelUsers = _doDelUsers
-
-
-

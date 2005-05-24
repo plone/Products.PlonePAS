@@ -18,21 +18,21 @@ acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id: gruf.py,v 1.1 2005/02/24 15:13:33 k_vertigo Exp $
+$Id: gruf.py,v 1.2 2005/05/24 17:50:11 dreamcatcher Exp $
 """
 
 from Globals import DTMLFile
 from OFS.ObjectManager import ObjectManager
 
 from Products.PluggableAuthService.plugins.DelegatingMultiPlugin import DelegatingMultiPlugin
-from Products.PluggableAuthService.interfaces import plugins 
+from Products.PluggableAuthService.interfaces import plugins
 
 
 def manage_addGRUFBridge(self, id, title='', RESPONSE=None ):
     """
     add gruf bridge
     """
-    
+
     bridge = GRUFBridge( id, title='')
     self._setObject( id, bridge )
 
@@ -49,7 +49,7 @@ class GroupFilter( object ):
             id = [ id ]
         self.group_ids = id
         self.exact_match = not not exact_match
-        
+
     def __call__(self, group):
         tid = group.getId()
         if self.exact_match:
@@ -60,14 +60,14 @@ class GroupFilter( object ):
             if value.find( tid ) >= 0:
                 return True
 
-            
+
 class GRUFBridge( DelegatingMultiPlugin ):
 
     meta_type = "GRUF Bridge"
 
     __implements__ = ( plugins.IGroupsPlugin,
                        plugins.IGroupEnumerationPlugin ) + DelegatingMultiPlugin.__implements__
- 
+
     def manage_afterAdd(self, item, container):
         self.manage_addProduct['GroupUserFolder'].manage_addGroupUserFolder()
 
@@ -76,7 +76,7 @@ class GRUFBridge( DelegatingMultiPlugin ):
 
     #################################
     # group interface implementation
-    
+
     # plugins.IGroupsEnumerationPlugin
     def enumerateGroups( self,
                          id=None,
@@ -86,7 +86,7 @@ class GRUFBridge( DelegatingMultiPlugin ):
                          max_results=None,
                          **kw
                          ):
-        
+
         gruf = self._getUserFolder()
         groups = gruf.getGroups()
         filter = GroupFilter( id, exact_match, **kw )
@@ -109,7 +109,7 @@ class GRUFBridge( DelegatingMultiPlugin ):
     def addGroup(self, group_id):
         self._getUserFolder().userFolderAddGroup( group_id, (), () )
         return True
-    
+
     def addPrincipalToGroup(self, principal_id, group_id):
         group = self._getUserFolder().getGroupById( group_id )
         group.addMember( principal_id )
@@ -155,11 +155,8 @@ class GRUFBridge( DelegatingMultiPlugin ):
             'members_url' : url,
             'properties_url' : url,
             }
-        
+
     def _demangle(self, princid):
         unmangle_fn = self.aq_acquire('_unmangleId') # acquire from PAS
         unmangled_princid = unmangle_fn(princid)[-1]
         return unmangled_princid
-
-
- 

@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.3 2005/05/07 01:27:48 jccooper Exp $
+$Id: groupdata.py,v 1.4 2005/05/24 17:50:13 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -50,7 +50,7 @@ class GroupDataTool(BaseGroupDataTool):
         # Return a wrapper with self as containment and
         # the user as context.
         return portal_group.__of__(self).__of__(g)
-    
+
 
 InitializeClass(GroupDataTool)
 

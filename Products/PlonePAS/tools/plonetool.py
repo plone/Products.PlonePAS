@@ -1,5 +1,5 @@
 """
-$Id: plonetool.py,v 1.3 2005/05/14 00:40:14 jccooper Exp $
+$Id: plonetool.py,v 1.4 2005/05/24 17:50:14 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 
@@ -24,7 +24,7 @@ class PloneTool(BasePloneTool):
         status = not not status
         status = status or None
         folder.__ac_local_roles_block__ = status
-                
+
         return self._acquireLocalRoles(folder, status)
 
     def isLocalRoleAcquired(self, folder):

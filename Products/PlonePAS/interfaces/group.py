@@ -13,9 +13,9 @@
 #
 ##############################################################################
 """
-group interfaces for plone, based off existing group usage pre pas. 
+group interfaces for plone, based off existing group usage pre pas.
 
-$Id: group.py,v 1.8 2005/04/26 22:32:35 jccooper Exp $
+$Id: group.py,v 1.9 2005/05/24 17:50:01 dreamcatcher Exp $
 """
 
 from Products.PluggableAuthService.interfaces import plugins
@@ -39,25 +39,25 @@ class IGroupManagement(Interface):
     def updateGroup(id, **kw):
         """
         Edit the given group. plugin specific
-        return True on success        
+        return True on success
         """
 
     def setRolesForGroup( group_id, roles=() ):
         """
         set roles for group
-        return True on success        
+        return True on success
         """
 
     def removeGroup( group_id ):
         """
         Remove the given group
-        return True on success        
+        return True on success
         """
 
     def removePrincipalFromGroup( principal_id, group_id ):
         """
         remove the given principal from the group
-        return True on success        
+        return True on success
         """
 
 class IGroupIntrospection(Interface):
@@ -71,12 +71,12 @@ class IGroupIntrospection(Interface):
     #################################
     # these interface methods are suspect for scalability.
     #################################
-    
+
     def listGroups():
         """
         Returns an iteration of the available groups
         """
-        
+
     def getGroupIds():
         """
         Returns a list of the available groups
@@ -132,5 +132,3 @@ class IGroupTool( IGroupIntrospection,
     Defines an interface for managing and introspecting and
     groups and group membership.
     """
-
-

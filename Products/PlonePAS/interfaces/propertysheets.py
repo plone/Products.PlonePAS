@@ -26,15 +26,13 @@ class IMutablePropertySheet( IPropertySheet ):
     def setProperties( mapping ):
         """
         """
-        
+
     def _getPropertyProvider( context ):
         """
         return the property provider that was the origin for this property
         sheet.
         """
-        
+
 
 class ISchemaMutablePropertySheet( IMutablePropertySheet ):
     pass
-        
-        

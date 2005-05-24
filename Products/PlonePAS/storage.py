@@ -3,7 +3,7 @@ an archetypes storage that delegates to a pas property provider.
 
 main use.. cmfmember integration w/ properties providers
 
-$Id: storage.py,v 1.1 2005/02/24 15:13:31 k_vertigo Exp $
+$Id: storage.py,v 1.2 2005/05/24 17:50:00 dreamcatcher Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -25,7 +25,7 @@ class PASStorage( object ):
             if sheet.hasProperty( name ):
                 return sheet.getProperty( name )
         raise AttributeError( name )
-    
+
     def set(self, name, instance, value, **kwargs):
         user = instance.getUser()
         sheets = user.getOrderedSheets()
@@ -34,9 +34,4 @@ class PASStorage( object ):
                 if IMutablePropertySheet.isImplementedBy( sheet ):
                     sheet.setProperty( k, v )
                 else:
-                    raise RuntimeError("mutable property provider shadowed by read only provider")                    
-
-        
-
-        
-
+                    raise RuntimeError("mutable property provider shadowed by read only provider")

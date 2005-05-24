@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.11 2005/05/07 02:15:13 jccooper Exp $
+$Id: groups.py,v 1.12 2005/05/24 17:50:14 dreamcatcher Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
@@ -180,4 +180,3 @@ class GroupsTool(PloneGroupsTool):
 
 
 InitializeClass(GroupsTool)
-

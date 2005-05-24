@@ -3,7 +3,7 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.6 2005/05/07 01:27:48 jccooper Exp $
+$Id: sheet.py,v 1.7 2005/05/24 17:50:00 dreamcatcher Exp $
 """
 
 from types import StringTypes, BooleanType, IntType, LongType, FloatType, InstanceType
@@ -27,7 +27,7 @@ class PropertySchemaTypeMap(object):
             self.tmap_order.insert( order, type_name )
         else:
             self.tmap_order.append( type_name )
-                
+
     def getTypeFor(self, value):
         for ptype, inspector in [ (ptype, self.tmap[ptype]) for ptype in self.tmap_order ]:
             if inspector(value):
@@ -58,27 +58,27 @@ class MutablePropertySheet(UserPropertySheet):
         self._user = user   # have to have a handle on container, since we're not acquisition-aware
 
     def validateProperty(self, id, value):
-        if not self._properties.has_key(id): 
+        if not self._properties.has_key(id):
             raise PropertyValueError("no such property found on this schema")
 
         proptype = self.getPropertyType(id)
         if not validateValue(proptype, value):
             raise PropertyValueError("invalid value (%s) for property '%s' of type %s" % (value,id, proptype))
-        
+
     def setProperty(self, id, value):
         self.validateProperty(id, value)
-        
+
         self._properties[id] = value
-        
+
         # cascade to plugin
         provider = self.getPropertyProvider()
         user = self.getPropertiedUser()
         provider.setPropertiesForUser(user, self)
-        
+
     def setProperties(self, mapping):
         prop_keys = self._properties.keys()
         prop_update = mapping.copy()
-        
+
         for key, value in tuple(prop_update.items()):
             if key not in prop_keys:
                 prop_update.pop( key )
@@ -86,7 +86,7 @@ class MutablePropertySheet(UserPropertySheet):
             self.validateProperty(key, value)
 
         self._properties.update(prop_update)
-        
+
         # cascade to plugin
         provider = self.getPropertyProvider()
         user = self.getPropertiedUser()
@@ -98,11 +98,7 @@ class MutablePropertySheet(UserPropertySheet):
     def getPropertyProvider(self, context=None):
         context = context or self._user
         return context.acl_users._getOb(self._id)
-    
+
 class SchemaMutablePropertySheet(MutablePropertySheet):
 
     __implements__ = ( IMutablePropertySheet, )
-
-
-
-    

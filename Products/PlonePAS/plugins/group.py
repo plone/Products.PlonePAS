@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.9 2005/05/07 02:15:13 jccooper Exp $
+$Id: group.py,v 1.10 2005/05/24 17:50:11 dreamcatcher Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -48,7 +48,7 @@ def manage_addGroupManager(self, id, title='', RESPONSE=None):
 
 
 class GroupManager( ZODBGroupManager ):
-    
+
     meta_type = "Group Manager"
 
     __implements__ = ( IGroupsPlugin, IGroupEnumerationPlugin,
@@ -62,12 +62,12 @@ class GroupManager( ZODBGroupManager ):
 
     #################################
     # overrides to ease group principal lookups for introspection api
-    
+
     def addGroup(self, group_id, *args, **kw):
         ZODBGroupManager.addGroup( self, group_id, *args, **kw)
         self._group_principal_map[ group_id ] = OOSet()
         return True
-        
+
     def removeGroup(self, group_id):
         ZODBGroupManager.removeGroup( self, group_id )
         del self._group_principal_map[ group_id ]
@@ -82,7 +82,7 @@ class GroupManager( ZODBGroupManager ):
         already = ZODBGroupManager.removePrincipalFromGroup( self, principal_id, group_id)
         if already: self._group_principal_map[ group_id ].remove( principal_id )
         return True
-    
+
     #################################
     # overrides for api matching/massage
 
@@ -91,10 +91,10 @@ class GroupManager( ZODBGroupManager ):
         kw['description'].setdefault('')
         ZODBGroupManager.updateGroup(self, group_id, **kw)
         return True
-    
+
     #################################
     # introspection interface
-    
+
     def getGroupById(self, group_id, default=None):
         plugins = self.acl_users._getOb('plugins')
 
@@ -105,7 +105,7 @@ class GroupManager( ZODBGroupManager ):
             return default
 
         return self._findGroup(plugins, group_id, title)
-            
+
     def getGroups(self):
         return map(self.getGroupById, self.getGroupIds())
 
@@ -250,7 +250,7 @@ class PloneGroup(PloneUser):
 
     # __implements__ = (IGroup, )  # this should be made true
 
-    security = ClassSecurityInfo()    
+    security = ClassSecurityInfo()
 
     _isGroup = True
 
@@ -286,4 +286,3 @@ class PloneGroup(PloneUser):
 
 
 InitializeClass(PloneGroup)
-

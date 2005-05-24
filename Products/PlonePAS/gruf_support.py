@@ -4,9 +4,9 @@ gruf specific hacks to pas, to make it play well in gruf
 in general its not recommended, but its a low risk mechanism for
 experimenting with pas flexibility on an existing system.
 
-open question if this mode will be supported at all 
+open question if this mode will be supported at all
 
-$Id: gruf_support.py,v 1.2 2005/04/20 21:11:51 jccooper Exp $
+$Id: gruf_support.py,v 1.3 2005/05/24 17:49:59 dreamcatcher Exp $
 """
 
 import sys
@@ -28,22 +28,22 @@ def authenticate(self, name, password, request):
             'Plugin listing error',
             error=sys.exc_info())
         authenticators = ()
-    
+
     credentials = { 'login':name,
                     'password':password }
 
     user_id = None
-    
+
     for authenticator_id, auth in authenticators:
         try:
             uid_and_name = auth.authenticateCredentials(
                 credentials )
-            
+
             if uid_and_name is None:
                 continue
-            
+
             user_id, name = uid_and_name
-            
+
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             LOG('PluggableAuthService', BLATHER,
                 'AuthenticationPlugin %s error' %
@@ -51,10 +51,10 @@ def authenticate(self, name, password, request):
             continue
 
     if not user_id:
-        return 
+        return
 
     return self._findUser( plugins, user_id, name, request )
-    
+
 PluggableAuthService.authenticate = authenticate
 PluggableAuthService.authenticate__roles__ = ()
 

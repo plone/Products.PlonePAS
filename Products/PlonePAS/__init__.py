@@ -1,16 +1,16 @@
 """
-$Id: __init__.py,v 1.22 2005/05/18 21:47:12 jccooper Exp $
+$Id: __init__.py,v 1.23 2005/05/24 17:49:58 dreamcatcher Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.DirectoryView import registerDirectory
 from Products.PluggableAuthService import registerMultiPlugin
 try:
-  from Products.CMFPlone import utils as plone_utils
+    from Products.CMFPlone import utils as plone_utils
 except ImportError:
-  # rename didn't happen until after 2.1a1, which is current packaged version
-  # can probably ditch the condition at a2 or so
-  from Products.CMFPlone import PloneUtilities as plone_utils
+    # rename didn't happen until after 2.1a1, which is current packaged version
+    # can probably ditch the condition at a2 or so
+    from Products.CMFPlone import PloneUtilities as plone_utils
 
 import config
 #import MigrationCheck
@@ -27,7 +27,7 @@ from plugins import property
 
 #################################
 # pas monkies
-import pas                              
+import pas
 
 #################################
 # pas monkies 2 play w/ gruf
@@ -53,7 +53,7 @@ registerDirectory('skins', globals())
 try:
     registerMultiPlugin( gruf.GRUFBridge.meta_type )
     registerMultiPlugin( user.UserManager.meta_type )
-    registerMultiPlugin( group.GroupManager.meta_type )    
+    registerMultiPlugin( group.GroupManager.meta_type )
     registerMultiPlugin( role.GroupAwareRoleManager.meta_type )
     registerMultiPlugin( local_role.LocalRolesManager.meta_type )
     registerMultiPlugin( ufactory.PloneUserFactory.meta_type )
@@ -71,15 +71,15 @@ def initialize(context):
                          product_name='PlonePAS',
                          icon='tool.gif',
                          ).initialize(context)
-                         
-    
+
+
     context.registerClass( role.GroupAwareRoleManager,
                            permission = add_user_folders,
                            constructors = ( role.manage_addGroupAwareRoleManagerForm,
                                             role.manage_addGroupAwareRoleManager ),
                            visibility = None
                            )
-    
+
     context.registerClass( gruf.GRUFBridge,
                            permission = add_user_folders,
                            constructors = ( gruf.manage_addGRUFBridgeForm,
@@ -99,25 +99,25 @@ def initialize(context):
                            constructors = ( group.manage_addGroupManagerForm,
                                             group.manage_addGroupManager ),
                            visibility = None
-                           )                           
+                           )
 
     context.registerClass( ufactory.PloneUserFactory,
                            permission = add_user_folders,
                            constructors = ( ufactory.manage_addPloneUserFactoryForm,
                                             ufactory.manage_addPloneUserFactory ),
                            visibility = None
-                           )                           
+                           )
 
     context.registerClass( local_role.LocalRolesManager,
                            permission = add_user_folders,
                            constructors = ( local_role.manage_addLocalRolesManagerForm,
                                             local_role.manage_addLocalRolesManager ),
                            visibility = None
-                           )                           
+                           )
 
     context.registerClass( property.ZODBMutablePropertyProvider,
                            permission = add_user_folders,
                            constructors = ( property.manage_addZODBMutablePropertyProviderForm,
                                             property.manage_addZODBMutablePropertyProvider ),
                            visibility = None
-                           )                           
+                           )

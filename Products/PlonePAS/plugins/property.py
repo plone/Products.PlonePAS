@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.4 2005/05/05 00:15:03 jccooper Exp $
+$Id: property.py,v 1.5 2005/05/24 17:50:11 dreamcatcher Exp $
 """
 from sets import Set
 
@@ -110,7 +110,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
     def setPropertiesForUser(self, user, propertysheet):
         properties = dict( propertysheet.propertyItems() )
-        
+
         for property_type, name in self._getSchema() or ():
             if name in properties and not validateValue( property_type, properties[ name ] ):
                 raise ValueError("Invalid Value %s does not conform to %s"%( name, property_type) )
@@ -128,5 +128,3 @@ class ZODBMutablePropertyProvider(BasePlugin):
             self._storage.insert(user.getId(), properties)
 
 class PersistentProperties( PersistentMapping ): pass
-
-

@@ -17,7 +17,7 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: role.py,v 1.3 2005/04/22 20:51:33 jccooper Exp $
+$Id: role.py,v 1.4 2005/05/24 17:50:11 dreamcatcher Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -75,4 +75,3 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         return tuple( unique( roles ) )
 
 InitializeClass( GroupAwareRoleManager )
-

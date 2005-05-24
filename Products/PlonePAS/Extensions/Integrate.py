@@ -11,7 +11,7 @@ def addPAS( gruf ):
     # programatically add a user source to gruf
 
     # copied from gruf guts
-    
+
     # Get the initial Users id
     ids = gruf.objectIds(GRUFUsers.meta_type)
     if ids:
@@ -46,7 +46,5 @@ def integrate( self ):
     pas.manage_addProduct['PlonePAS'].manage_addPloneUserFactory('user_factory')
     print >> out, "Added Plone User Factory."
     activatePluginInterfaces(portal, "user_factory", out)
-    
+
     return out.getvalue()
-
-

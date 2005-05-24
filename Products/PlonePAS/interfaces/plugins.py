@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: plugins.py,v 1.5 2005/02/24 15:13:33 k_vertigo Exp $
+$Id: plugins.py,v 1.6 2005/05/24 17:50:02 dreamcatcher Exp $
 """
 
 from Interface import Interface
@@ -27,7 +27,7 @@ class IUserIntrospection( Interface ):
     realistically this can only be done by authentication sources,
     or plugins which have intimate knowledge of such.
     """
-    
+
     def getUserIds(self):
         """
         return a list of user ids
@@ -48,7 +48,7 @@ class ILocalRolesPlugin( Interface ):
     plugin for determining a user's local roles and object access based on
     local roles.
     """
-    
+
     def getRolesInContext( user, object):
         """
         Return the list of roles assigned to the user.
@@ -68,12 +68,12 @@ class ILocalRolesPlugin( Interface ):
         on local roles. access is determined by a user's local roles
         including one of the object roles.
         """
-    
+
 
 class IUserManagement( plugins.IUserAdderPlugin ):
 
     """
-    Manage users 
+    Manage users
     """
 
     def doChangeUser( login, password, **kw):
@@ -103,14 +103,14 @@ class IMutablePropertiesPlugin( Interface ):
     def getPropertiesForUser( user, request=None ):
         """
         user -> IMutablePropertySheet || {}
-        
+
         o User will implement IPropertiedUser.
 
         o Plugin may scribble on the user, if needed (but must still
           return a mapping, even if empty).
 
         o May assign properties based on values in the REQUEST object, if
-          present        
+          present
         """
 
     def setPropertiesForUser( user, propertysheet ):
@@ -127,4 +127,3 @@ class ISchemaMutablePropertiesPlugin( Interface ):
         """
         add a new property to a property provider.
         """
-
