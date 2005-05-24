@@ -1,5 +1,5 @@
 """
-$Id: test_basic_ops.py,v 1.6 2005/05/24 17:44:37 dreamcatcher Exp $
+$Id: test_basic_ops.py,v 1.7 2005/05/24 17:47:11 dreamcatcher Exp $
 """
 
 import os, sys
@@ -71,8 +71,8 @@ class BasicOpsTestCase(PloneTestCase):
         self.acl_users.userFolderEditUser(
             "created_user", # name
             "secret2", # password
-            roles = ["Member", ],
-            groups = ["g1", ],
+            roles = ["Member"],
+            groups = ["g1"],
             domains = (),
             )
         self.compareRoles(None, "created_user", ['Member'])
