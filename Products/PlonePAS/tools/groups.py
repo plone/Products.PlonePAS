@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.12 2005/05/24 17:50:14 dreamcatcher Exp $
+$Id: groups.py,v 1.13 2005/05/24 22:26:18 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo, Permissions
 from Globals import InitializeClass
@@ -39,7 +39,7 @@ class GroupsTool(PloneGroupsTool):
         if not managers:
             raise NotSupported("no plugins allow for group management")
         for mid, manager in managers:
-            manager.addGroup(id)
+            manager.addGroup(id, title=kw.get('title',id), description=kw.get('title',None))
             self.setRolesForGroup(id, roles)
             for g in groups:
                 manager.addPrincipalToGroup(g.getId(), id)
