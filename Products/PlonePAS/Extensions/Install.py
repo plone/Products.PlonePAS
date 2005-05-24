@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.33 2005/05/24 17:32:24 dreamcatcher Exp $
+$Id: Install.py,v 1.34 2005/05/24 18:23:16 dreamcatcher Exp $
 """
 
 from StringIO import StringIO
@@ -8,11 +8,14 @@ from Products.Archetypes.Extensions.utils import install_subskin
 from Products.CMFCore.utils import getToolByName
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
 
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+     import IGroupEnumerationPlugin
 
 from Products.PlonePAS import config
-from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
+from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces import group as igroup
 
 from Products.PlonePAS.tools.groups import GroupsTool
@@ -53,103 +56,109 @@ def activatePluginInterfaces(portal, plugin, out):
     plugin_obj.manage_activateInterfaces(activatable)
     print >> out, plugin + " activated."
 
-def setupRoles( portal ):
+def setupRoles(portal):
     rmanager = portal.acl_users.role_manager
-    rmanager.addRole('Member', title="portal member")
-    rmanager.addRole('Reviewer', title="content reviewer")
+    rmanager.addRole('Member', title="Portal Member")
+    rmanager.addRole('Reviewer', title="Content Reviewer")
 
-def registerPluginType( pas, plugin_type, plugin_info ):
+def registerPluginType(pas, plugin_type, plugin_info):
     pas.plugins._plugin_type_info[plugin_type] =  plugin_info
     pas.plugins._plugin_types.append(plugin_type)
 
+def registerPluginTypes(pas):
 
-def registerPluginTypes( pas ):
+    PluginInfo = {
+        'id' : 'IUserManagement',
+        'title': 'user_management',
+        'description': ("The User Management plugins allow the "
+                        "Pluggable Auth Service to add/delete/modify users")
+        }
 
-    PluginInfo = { 'id' : 'IUserManagement',
-                   'title': 'user_management',
-                   'description': "The User Management plugins allow the Pluggable Auth " +\
-                   "Service to add/delete/modify users"
-                   }
+    registerPluginType(pas, IUserManagement, PluginInfo)
 
-    registerPluginType( pas, IUserManagement, PluginInfo )
+    PluginInfo = {
+        'id' : 'IGroupManagement',
+        'title': 'group_management',
+        'description': ("Group Management provides add/write/deletion "
+                        "of groups and member management")
+        }
 
-    PluginInfo = { 'id' : 'IGroupManagement',
-                   'title': 'group_management',
-                   'description': "Group Management provides add/write/deletion of groups and member management"
-                   }
+    registerPluginType(pas, igroup.IGroupManagement, PluginInfo)
 
-    registerPluginType( pas, igroup.IGroupManagement, PluginInfo )
+    PluginInfo = {
+        'id' : 'IGroupIntrospection',
+        'title': 'group_introspection',
+        'description': ("Group Introspection provides listings "
+                        "of groups and membership")
+        }
 
-    PluginInfo = { 'id' : 'IGroupIntrospection',
-                   'title': 'group_introspection',
-                   'description': "Group Introspection provides listings of groups and membership"
-                   }
+    registerPluginType(pas, igroup.IGroupIntrospection, PluginInfo)
 
-    registerPluginType( pas, igroup.IGroupIntrospection, PluginInfo )
+    PluginInfo = {
+        'id' : 'ILocalRolesPlugin',
+        'title': 'local_roles',
+        'description': "Defines Policy for getting Local Roles"
+        }
 
-    PluginInfo = { 'id' : 'ILocalRolesPlugin',
-                   'title':'local_roles',
-                   'description':"Defines Policy for getting Local Roles" }
+    registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
 
-    registerPluginType( pas, ILocalRolesPlugin, PluginInfo )
-
-def setupPlugins( portal, out ):
-    pas = portal.acl_users
+def setupPlugins(portal, out):
+    uf = portal.acl_users
     print >> out, "\nPlugin setup"
 
-    pas.manage_addProduct['PluggableAuthService'].addCookieAuthHelper('credentials_cookie', cookie_name='__ac')
+    pas = uf.manage_addProduct['PluggableAuthService']
+    pas.addCookieAuthHelper('credentials_cookie', cookie_name='__ac')
     print >> out, "Added Cookie Auth Helper."
     activatePluginInterfaces(portal, 'credentials_cookie', out)
 
-
-    pas.manage_addProduct['PluggableAuthService'].addHTTPBasicAuthHelper('credentials_basic_auth',
-            title="HTTP Basic Auth")
+    pas.addHTTPBasicAuthHelper('credentials_basic_auth',
+                               title="HTTP Basic Auth")
     print >> out, "Added Basic Auth Helper."
     activatePluginInterfaces(portal, 'credentials_basic_auth', out)
 
-
-    pas.manage_addProduct['PlonePAS'].manage_addUserManager('source_users')
+    plone_pas = uf.manage_addProduct['PlonePAS']
+    plone_pas.manage_addUserManager('source_users')
     print >> out, "Added User Manager."
     activatePluginInterfaces(portal, 'source_users', out)
 
-
-    pas.manage_addProduct['PlonePAS'].manage_addGroupAwareRoleManager('portal_role_manager')
+    plone_pas.manage_addGroupAwareRoleManager('portal_role_manager')
     print >> out, "Added Group Aware Role Manager."
     activatePluginInterfaces(portal, 'portal_role_manager', out)
 
-    pas.manage_addProduct['PlonePAS'].manage_addLocalRolesManager('local_roles')
+    plone_pas.manage_addLocalRolesManager('local_roles')
     print >> out, "Added Group Aware Role Manager."
     activatePluginInterfaces(portal, 'local_roles', out)
 
-
-    pas.manage_addProduct['PlonePAS'].manage_addGroupManager('source_groups')
+    plone_pas.manage_addGroupManager('source_groups')
     print >> out, "Added ZODB Group Manager."
     activatePluginInterfaces(portal, 'source_groups', out)
 
-    pas.manage_addProduct['PlonePAS'].manage_addPloneUserFactory('user_factory')
+    plone_pas.manage_addPloneUserFactory('user_factory')
     print >> out, "Added Plone User Factory."
     activatePluginInterfaces(portal, "user_factory", out)
 
-    pas.manage_addProduct['PlonePAS'].manage_addZODBMutablePropertyProvider('mutable_properties')
+    plone_pas.manage_addZODBMutablePropertyProvider('mutable_properties')
     print >> out, "Added Mutable Property Manager."
     activatePluginInterfaces(portal, "mutable_properties", out)
 
-
 def configurePlonePAS(portal, out):
-    """Add the necessary objects to make a usable PAS instance"""
-    registerPluginTypes( portal.acl_users )
-    setupPlugins( portal, out )
+    """Add the necessary objects to make a usable PAS instance
+    """
+    registerPluginTypes(portal.acl_users)
+    setupPlugins(portal, out)
 #    setupRoles( portal )
 
 def grabUserData(portal, out):
-    """Return a list of (id, password, roles, domains, properties) tuples for the users of the system.
+    """Return a list of (id, password, roles, domains, properties)
+    tuples for the users of the system.
+
     Password may be encypted or not: addUser will figure it out.
     """
     print >> out, "\nExtract Member information..."
 
     userdata = ()
-    mdtool = portal.portal_memberdata
-    mtool = portal.portal_membership
+    mdtool = getToolByName(portal, 'portal_memberdata')
+    mtool = getToolByName(portal, 'portal_membership')
 
     props = mdtool.propertyIds()
     members = mtool.listMembers()
@@ -184,28 +193,39 @@ def restoreUserData(portal, out, userdata):
     print >> out, "...restore done"
 
 def grabGroupData(portal, out):
-    """Return a list of (id, roles, groups, properties) tuples for the users of the system and
-    a mapping of group ids to a list of group members.
+    """Return a list of (id, roles, groups, properties) tuples for the
+    users of the system and a mapping of group ids to a list of group
+    members.
+
     Password may be encypted or not: addUser will figure it out.
     """
     print >> out, "\nExtract Group information..."
 
     groupdata = ()
     groupmemberships = {}
-    gdtool = portal.portal_groupdata
-    gtool = portal.portal_groups
+    gdtool = getToolByName(portal, 'portal_groupdata', None)
+    gtool = getToolByName(portal, 'portal_groups', None)
+
+    if gdtool is None or gtool is None:
+        print >> out, ('\nGroup-aware tools not found. Skipping '
+                       'group data migration.')
 
     props = gdtool.propertyIds()
-    groups = gtool.listGroups()
-    for group in groups:
-        id = group.getGroupId()
-        roles = [role for role in group.getRoles() if role != 'Authenticated']
-        properties = {}
-        has_groups = []    # we take care of this with the groupmemberships stuff
-        for propid in props:
-            properties[propid] = group.getProperty(propid, None)
-        groupdata += ((id, roles, has_groups, properties),)
-        groupmemberships[id] = group.getGroupMemberIds()
+
+    uf = getToolByName(portal, 'acl_users')
+    if hasattr(uf, 'getGroups'):
+        # Must be a GRUF for this to work.
+        groups = gtool.listGroups()
+        for group in groups:
+            id = group.getGroupId()
+            roles = [role for role in group.getRoles() if role != 'Authenticated']
+            properties = {}
+            has_groups = [] # we take care of this with the
+                            # groupmemberships stuff
+            for propid in props:
+                properties[propid] = group.getProperty(propid, None)
+            groupdata += ((id, roles, has_groups, properties),)
+            groupmemberships[id] = group.getGroupMemberIds()
 
     print >> out, "...extract done"
     return groupdata, groupmemberships
@@ -230,107 +250,123 @@ def restoreGroupData(portal, out, groupdata, groupmemberships):
 def setupTools(portal, out):
     print >> out, "\nTools:"
 
+    migratePloneTool(portal, out)
+    migrateMembershipTool(portal, out)
+    migrateGroupsTool(portal, out)
+    migrateMemberDataTool(portal, out)
+    migrateGroupDataTool(portal, out)
+
+def migratePloneTool(portal, out):
     print >> out, "Plone Tool (plone_utils)"
     print >> out, " ...nothing to migrate"
     print >> out, " - Removing Default"
     portal.manage_delObjects(['plone_utils'])
     print >> out, " - Installing PAS Aware"
-    portal._setObject( PloneTool.id, PloneTool() )
+    portal._setObject(PloneTool.id, PloneTool())
     print >> out, " ...done"
 
-
-
+def migrateMembershipTool(portal, out):
     print >> out, "Membership Tool (portal_membership)"
 
+    mt = getToolByName(portal, 'portal_membership')
     print >> out, " ...copying settings"
-    memberareaCreationFlag = portal.portal_membership.getMemberareaCreationFlag()
-    role_map = getattr(portal.portal_membership, 'role_map', None)
-    membersfolder_id = portal.portal_membership.membersfolder_id
+    memberareaCreationFlag = mt.getMemberareaCreationFlag()
+    role_map = getattr(mt, 'role_map', None)
+    membersfolder_id = mt.membersfolder_id
 
     print >> out, " ...copying actions"
-    actions = portal.portal_membership._actions
+    actions = mt._actions
 
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_membership'])
 
     print >> out, " - Installing PAS Aware"
-    portal._setObject( MembershipTool.id, MembershipTool() )
+    portal._setObject(MembershipTool.id, MembershipTool())
+
+    # Get new tool.
+    mt = getToolByName(portal, 'portal_membership')
 
     print >> out, " ...restoring settings"
-    portal.portal_membership.memberareaCreationFlag = memberareaCreationFlag
-    if role_map: portal.portal_membership.role_map = role_map
-    if membersfolder_id: portal.portal_membership.membersfolder_id = membersfolder_id
+    mt.memberareaCreationFlag = memberareaCreationFlag
+    if role_map:
+        mt.role_map = role_map
+    if membersfolder_id:
+        mt.membersfolder_id = membersfolder_id
 
     print >> out, " ...restoring actions"
-    portal.portal_membership._actions = actions
+    mt._actions = actions
 
     print >> out, " ...done"
 
-
-
+def migrateGroupsTool(portal, out):
     print >> out, "Groups Tool (portal_groups)"
+    gt = getToolByName(portal, 'portal_groups', None)
 
-    print >> out, " ...copying settings"
-    groupworkspaces_id = portal.portal_groups.getGroupWorkspacesFolderId()
-    groupworkspaces_title =  portal.portal_groups.getGroupWorkspacesFolderTitle()
-    groupWorkspacesCreationFlag =  portal.portal_groups.getGroupWorkspacesCreationFlag()
-    groupWorkspaceType =  portal.portal_groups.getGroupWorkspaceType()
-    groupWorkspaceContainerType =  portal.portal_groups.getGroupWorkspaceContainerType()
+    HAS_GT = gt is not None
 
-    print >> out, " ...copying actions"
-    actions = portal.portal_groups._actions
+    if HAS_GT:
+        print >> out, " ...copying settings"
+        groupworkspaces_id = gt.getGroupWorkspacesFolderId()
+        groupworkspaces_title =  gt.getGroupWorkspacesFolderTitle()
+        groupWorkspacesCreationFlag =  gt.getGroupWorkspacesCreationFlag()
+        groupWorkspaceType =  gt.getGroupWorkspaceType()
+        groupWorkspaceContainerType =  gt.getGroupWorkspaceContainerType()
 
-    print >> out, " - Removing Default"
-    portal.manage_delObjects(['portal_groups'])
+        print >> out, " ...copying actions"
+        actions = gt._actions
+
+        print >> out, " - Removing Default"
+        portal.manage_delObjects(['portal_groups'])
 
     print >> out, " - Installing PAS Aware"
-    portal._setObject( GroupsTool.id, GroupsTool() )
+    portal._setObject(GroupsTool.id, GroupsTool())
 
-    print >> out, " ...restoring settings"
-    portal.portal_groups.setGroupWorkspacesFolder(groupworkspaces_id, groupworkspaces_title)
-    portal.portal_groups.groupWorkspacesCreationFlag = groupWorkspacesCreationFlag
-    portal.portal_groups.setGroupWorkspaceType(groupWorkspaceType)
-    portal.portal_groups.setGroupWorkspaceContainerType(groupWorkspaceContainerType)
+    gt = getToolByName(portal, 'portal_groups')
 
-    print >> out, " ...restoring actions"
-    portal.portal_groups._actions = actions
+    if HAS_GT:
+        print >> out, " ...restoring settings"
+        gt.setGroupWorkspacesFolder(groupworkspaces_id, groupworkspaces_title)
+        gt.groupWorkspacesCreationFlag = groupWorkspacesCreationFlag
+        gt.setGroupWorkspaceType(groupWorkspaceType)
+        gt.setGroupWorkspaceContainerType(groupWorkspaceContainerType)
+
+        print >> out, " ...restoring actions"
+        gt._actions = actions
 
     print >> out, " ...done"
 
-
-
-    migrateMemberDataTool(portal, out)
-    migrateGroupDataTool(portal, out)
-
-
 def migrateGroupDataTool(portal, out):
-    # this could be somewhat combined with migrateMemberDataTool, but I don't think it's worth it
+    # this could be somewhat combined with migrateMemberDataTool, but
+    # I don't think it's worth it
 
     print >> out, "GroupData Tool (portal_groupdata)"
+    gt = getToolByName(portal, 'portal_groupdata', None)
 
-    print >> out, " ...copying actions"
-    actions = portal.portal_groupdata._actions
+    HAS_GT = gt is not None
 
-    print >> out, " ...extracting data"
-    gdtool = portal.portal_groupdata
-    properties = gdtool._properties
-    for elt in properties:
-        elt['value'] = gdtool.getProperty(elt['id'])
+    if HAS_GT:
+        print >> out, " ...copying actions"
+        actions = gt._actions
 
-    gdtool = None
-    print >> out, " - Removing Default"
-    portal.manage_delObjects(['portal_groupdata'])
+        print >> out, " ...extracting data"
+        properties = gt._properties
+        for elt in properties:
+            elt['value'] = gt.getProperty(elt['id'])
+
+        print >> out, " - Removing Default"
+        portal.manage_delObjects(['portal_groupdata'])
 
     print >> out, " - Installing PAS Aware"
     portal._setObject(GroupDataTool.id, GroupDataTool())
+    gt = getToolByName(portal, 'portal_groupdata')
 
-    print >> out, " ...restoring actions"
-    portal.portal_groupdata._actions = actions
+    if HAS_GT:
+        print >> out, " ...restoring actions"
+        gt._actions = actions
 
-    print >> out, " ...restoring data"
-    gdtool = portal.portal_groupdata
-    for prop in properties:
-        updateProp(gdtool, prop)
+        print >> out, " ...restoring data"
+        for prop in properties:
+            updateProp(gt, prop)
 
     print >> out, " ...done"
 
@@ -365,7 +401,9 @@ def migrateMemberDataTool(portal, out):
 
 
 def updateProp(prop_manager, prop_dict):
-    """Provided a PropertyManager and a property dict of {id, value, type}, set or update that property as applicable.
+    """Provided a PropertyManager and a property dict of {id, value,
+    type}, set or update that property as applicable.
+
     Doesn't deal with existing properties changing type.
     """
     id = prop_dict['id']
@@ -378,7 +416,9 @@ def updateProp(prop_manager, prop_dict):
 
 
 def grabLDAPFolders(portal, out):
-    """Get hold of any existing LDAPUserFolders so that we can put them into LDAPMultiPlugins later."""
+    """Get hold of any existing LDAPUserFolders so that we can put
+    them into LDAPMultiPlugins later.
+    """
     print >> out, "\nPreserving LDAP folders, if any:"
 
     user_sources = portal.acl_users.listUserSources()
@@ -400,7 +440,9 @@ def grabLDAPFolders(portal, out):
     return ldap_ufs, ldap_gf
 
 def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
-    """Create appropriate plugins to replace destroyed LDAP user folders."""
+    """Create appropriate plugins to replace destroyed LDAP user
+    folders.
+    """
     if not (ldap_ufs or ldap_gf):
         print >> out, "\nNo LDAP auth sources to restore. Skipping."
     else:
@@ -430,12 +472,14 @@ def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
             encryption = lduf._pwd_encryption
             read_only = lduf.read_only
 
-            pas.manage_addProduct['LDAPMultiPlugins'].manage_addActiveDirectoryMultiPlugin(id, title,
-                             LDAP_server, login_attr,
-                             uid_attr, users_base, users_scope, roles,
-                             groups_base, groups_scope, binduid, bindpwd,
-                             binduid_usage=1, rdn_attr='cn', local_groups=0,
-                             use_ssl=0 , encryption='SHA', read_only=0)
+            ldapmp = pas.manage_addProduct['LDAPMultiPlugins']
+            ldapmp.manage_addActiveDirectoryMultiPlugin(
+                id, title,
+                LDAP_server, login_attr,
+                uid_attr, users_base, users_scope, roles,
+                groups_base, groups_scope, binduid, bindpwd,
+                binduid_usage=1, rdn_attr='cn', local_groups=0,
+                use_ssl=0 , encryption='SHA', read_only=0)
             print >> out, "Added ActiveDirectoryMultiPlugin %s" % x
             x = x or 0 + 1
 
@@ -484,13 +528,13 @@ def install(self):
 
     EXISTING_UF = 'acl_users' in portal.objectIds()
 
+    userdata = grabUserData(portal, out)
+    groupdata, memberships = grabGroupData(portal, out)
+
     if not EXISTING_UF:
         addPAS(portal, out)
     else:
         goForMigration(portal, out)
-
-        userdata = grabUserData(portal, out)
-        groupdata, memberships = grabGroupData(portal, out)
 
         ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
         if (ldap_ufs or ldap_gf) and not CAN_LDAP:
@@ -511,8 +555,9 @@ def install(self):
     if EXISTING_UF:
         if CAN_LDAP:
             restoreLDAP(portal, out, ldap_ufs, ldap_gf)
-        restoreUserData(portal, out, userdata)
-        restoreGroupData(portal, out, groupdata, memberships)
+
+    restoreUserData(portal, out, userdata)
+    restoreGroupData(portal, out, groupdata, memberships)
 
     print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()

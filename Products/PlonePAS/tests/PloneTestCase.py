@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.13 2005/04/21 22:18:30 rochael Exp $
+# $Id: PloneTestCase.py,v 1.14 2005/05/24 18:23:17 dreamcatcher Exp $
 
 from Testing import ZopeTestCase
 
@@ -37,7 +37,7 @@ ZopeTestCase.installProduct('PortalTransforms')
 ZopeTestCase.installProduct('ATContentTypes')
 ZopeTestCase.installProduct('ExtendedPathIndex')
 ZopeTestCase.installProduct('ATReferenceBrowserWidget')
-ZopeTestCase.installProduct('CSSRegistry')
+ZopeTestCase.installProduct('ResourceRegistries')
 ZopeTestCase.installProduct('PlonePAS')
 
 ZopeTestCase.utils.setupSiteErrorLog()
