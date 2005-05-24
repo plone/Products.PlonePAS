@@ -19,7 +19,7 @@ BASE_DIR=$(shell dirname ${CURDIR})
 21_INSTANCE_HOME=~/src/instance/plone21
 21_ZOPE_CONFIG=${21_INSTANCE_HOME}/etc/zope.conf.test
 
-PACKAGES=${NAME}
+PACKAGES=${NAME} PluginRegistry LDAPMultiPlugins LDAPUserFolder PluggableAuthService
 
 RM=rm -f
 RMRF=rm -rf
@@ -88,3 +88,16 @@ sdist_tgz:
 	-zhcf ${BASE_DIR}/${PACKAGE_NAME}.tgz ${PACKAGE_NAME}
 	${RMRF} ${TMPDIR}/${PACKAGE_NAME}
 
+dev_tgz:
+	${MKDIR} ${TMPDIR}/${PACKAGE_NAME}
+	${CD} ${TMPDIR}/${PACKAGE_NAME} && \
+          for package in ${PACKAGES}; do ${LN} ${BASE_DIR}/$$package .; done && \
+          ${CD} ${TMPDIR} && ${TAR} \
+           --exclude=${PACKAGE_NAME}.tgz \
+           --exclude=*.pyc \
+           --exclude=*.pyo \
+           --exclude=TAGS \
+           --exclude=*~ \
+           --exclude=.#* \
+	-zhcf ${BASE_DIR}/${PACKAGE_NAME}.tgz ${PACKAGE_NAME}
+	${RMRF} ${TMPDIR}/${PACKAGE_NAME}
