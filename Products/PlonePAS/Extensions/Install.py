@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.36 2005/05/24 22:16:52 jccooper Exp $
+$Id: Install.py,v 1.37 2005/05/24 22:26:51 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -571,9 +571,8 @@ def install(self):
 
     setupTools(portal, out)
 
-    if EXISTING_UF:
-        if CAN_LDAP:
-            restoreLDAP(portal, out, ldap_ufs, ldap_gf)
+    if EXISTING_UF and CAN_LDAP:
+        restoreLDAP(portal, out, ldap_ufs, ldap_gf)
 
     restoreUserData(portal, out, userdata)
     restoreGroupData(portal, out, groupdata, memberships)
