@@ -77,6 +77,8 @@ LDAP: on intranet needed to set LDAP 'mail' prop to PAS 'email' prop. Is there a
 
 PAS: listAssignedPrincipals doesn't properly fall back on None title. (using get with default isn't quite enough.)
 
+User and group deletion should zero out roles and properties and such.
+
 jcc:
 
  - PasswordResetTool needed for reset password thing

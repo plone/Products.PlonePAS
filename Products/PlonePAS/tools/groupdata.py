@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.6 2005/05/25 19:40:17 dreamcatcher Exp $
+$Id: groupdata.py,v 1.7 2005/05/25 20:28:22 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -79,7 +79,7 @@ class GroupData(BaseGroupData):
         """PAS-specific method to set the properties of a group.
         """
         sheets = None
-        # We could pay attention to force_local here...
+
         if not IPluggableAuthService.isImplementedBy(self.acl_users):
             # Defer to base impl in absence of PAS, a PAS group, or
             # property sheets

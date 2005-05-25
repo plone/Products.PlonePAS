@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.6 2005/05/25 14:47:21 dreamcatcher Exp $
+$Id: property.py,v 1.7 2005/05/25 20:28:20 jccooper Exp $
 """
 from sets import Set
 
@@ -46,6 +46,10 @@ manage_addZODBMutablePropertyProviderForm = DTMLFile(
     "../zmi/MutablePropertyProviderForm", globals())
 
 class ZODBMutablePropertyProvider(BasePlugin):
+    """Storage for mutable properties in the ZODB for users/groups.
+
+    API sounds like it's only for users, but groups work as well.
+    """
 
     meta_type = 'ZODB Mutable Property Provider'
     __implements__ = (IPropertiesPlugin, IMutablePropertiesPlugin,)
@@ -84,22 +88,26 @@ class ZODBMutablePropertyProvider(BasePlugin):
         # don't use _schema directly or you'll lose the fallback! use
         # _getSchema instead same for default values
 
-    def _getSchema(self):
+    def _getSchema(self, isgroup=None):
+        datatool = isgroup and "portal_groupdata" or "portal_memberdata"
+
         schema = self._schema
         if not schema:
             # if no schema is provided, use portal_memberdata properties
             schema = ()
-            mdtool = getToolByName(self, 'portal_memberdata')
+            mdtool = getToolByName(self, datatool)
             mdschema = mdtool.propertyMap()
             schema = [(elt['id'], elt['type']) for elt in mdschema]
         return schema
 
-    def _getDefaultValues(self):
+    def _getDefaultValues(self, isgroup=None):
+        datatool = isgroup and "portal_groupdata" or "portal_memberdata"
+
         defaultvalues = self._defaultvalues
         if not self._schema:
-            # if no schema is provided, use portal_memberdata properties
+            # if no schema is provided, use portal_*data properties
             defaultvalues = {}
-            mdtool = getToolByName(self, 'portal_memberdata')
+            mdtool = getToolByName(self, datatool)
             # we rely on propertyMap and propertyItems mapping
             mdvalues = mdtool.propertyItems()
             for name, value in mdvalues:
@@ -107,30 +115,37 @@ class ZODBMutablePropertyProvider(BasePlugin):
         return defaultvalues
 
     def getPropertiesForUser(self, user, request=None):
-        """Get property values for a user. Returns a dictionary of
-        values or a PropertySheet.
+        """Get property values for a user or group.
+        Returns a dictionary of values or a PropertySheet.
 
         This implementation will always return a MutablePropertySheet.
 
         NOTE: Must always return something, or else the property sheet
         won't get created and this will screw up portal_memberdata.
         """
+        isGroup = getattr(user, 'isGroup', lambda: None)()
+
         data = self._storage.get(user.getId())
         if data is None:
-            data = self._getDefaultValues()
+            data = self._getDefaultValues(isGroup)
         return MutablePropertySheet(self.id, user,
-                                    schema=self._getSchema(), **data)
+                                    schema=self._getSchema(isGroup), **data)
 
     def setPropertiesForUser(self, user, propertysheet):
+        """Set the properties of a user or group based on the contents of a 
+        property sheet.
+        """
+        isGroup = getattr(user, 'isGroup', lambda: None)()
+
         properties = dict(propertysheet.propertyItems())
 
-        for property_type, name in self._getSchema() or ():
+        for property_type, name in self._getSchema(isGroup) or ():
             if (name in properties and not
                 validateValue(property_type, properties[name])):
                 raise ValueError, ('Invalid value: %s does not conform '
                                    'to %s' % (name, property_type))
 
-        allowed_prop_keys = [pt for pt, pn in self._getSchema() or ()]
+        allowed_prop_keys = [pt for pt, pn in self._getSchema(isGroup) or ()]
         if allowed_prop_keys:
             prop_names = Set(properties.keys()) - Set(allowed_prop_keys)
             if prop_names:
