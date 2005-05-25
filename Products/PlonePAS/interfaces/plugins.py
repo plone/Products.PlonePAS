@@ -13,43 +13,43 @@
 #
 ##############################################################################
 """
-$Id: plugins.py,v 1.6 2005/05/24 17:50:02 dreamcatcher Exp $
+$Id: plugins.py,v 1.7 2005/05/25 14:47:21 dreamcatcher Exp $
 """
 
 from Interface import Interface
 from Products.PluggableAuthService.interfaces import plugins
 
-class IUserIntrospection( Interface ):
+class IUserIntrospection(Interface):
     """
-    introspect users in a user source, api users need to be
-    careful as all sources may or not support this interface.
+    Introspect users in a user source, api users need to be careful as
+    all sources may or not support this interface.
 
-    realistically this can only be done by authentication sources,
-    or plugins which have intimate knowledge of such.
+    Realistically this can only be done by authentication sources, or
+    plugins which have intimate knowledge of such.
     """
 
     def getUserIds(self):
         """
-        return a list of user ids
+        Return a list of user ids
         """
 
     def getUserNames(self):
         """
-        return a list of usernames
+        Return a list of usernames
         """
 
     def getUsers(self):
         """
-        return a list of users
+        Return a list of users
         """
 
-class ILocalRolesPlugin( Interface ):
+class ILocalRolesPlugin(Interface):
     """
-    plugin for determining a user's local roles and object access based on
-    local roles.
+    Plugin for determining a user's local roles and object access
+    based on local roles.
     """
 
-    def getRolesInContext( user, object):
+    def getRolesInContext(user, object):
         """
         Return the list of roles assigned to the user.
 
@@ -62,7 +62,7 @@ class ILocalRolesPlugin( Interface ):
           no other extension mechanism. :(
         """
 
-    def checkLocalRolesAllowed( user, object, object_roles):
+    def checkLocalRolesAllowed(user, object, object_roles):
         """
         Check whether the user has access to object based
         on local roles. access is determined by a user's local roles
@@ -70,39 +70,39 @@ class ILocalRolesPlugin( Interface ):
         """
 
 
-class IUserManagement( plugins.IUserAdderPlugin ):
-
+class IUserManagement(plugins.IUserAdderPlugin):
     """
     Manage users
     """
 
-    def doChangeUser( login, password, **kw):
+    def doChangeUser(login, password, **kw):
         """
-        change a user's password ( differs from role )
-        roles are set in the pas engine api for
-        the same but are set via a role manager )
+        Change a user's password (differs from role) roles are set in
+        the pas engine api for the same but are set via a role
+        manager)
         """
 
-    def doDeleteUser( login ):
+    def doDeleteUser(login):
         """
         Remove a user record from a User Manager, with the given login
         and password
 
-        o Return a Boolean indicating whether a user was removed or not
+        o Return a Boolean indicating whether a user was removed or
+          not
         """
 
 
-class IMutablePropertiesPlugin( Interface ):
-
+class IMutablePropertiesPlugin(Interface):
     """
-    return a property set for a user. property set can either an object
-    conforming to the imutable property sheet interface or a dictionary
-    (in which case the properties are not persistently mutable ).
+    Return a property set for a user. Property set can either an
+    object conforming to the IMutable property sheet interface or a
+    dictionary (in which case the properties are not persistently
+    mutable).
     """
 
-    def getPropertiesForUser( user, request=None ):
+    def getPropertiesForUser(user, request=None):
         """
-        user -> IMutablePropertySheet || {}
+        User -> IMutablePropertySheet || {}
 
         o User will implement IPropertiedUser.
 
@@ -113,17 +113,17 @@ class IMutablePropertiesPlugin( Interface ):
           present
         """
 
-    def setPropertiesForUser( user, propertysheet ):
+    def setPropertiesForUser(user, propertysheet):
         """
-        set modified properties on the user persistently.
+        Set modified properties on the user persistently.
 
-        raise a ValueError if the property or property value is invalid
+        Raise a ValueError if the property or property value is invalid
         """
 
 
-class ISchemaMutablePropertiesPlugin( Interface ):
+class ISchemaMutablePropertiesPlugin(Interface):
 
-    def addProperty( property_type, property_name, default=None ):
+    def addProperty(property_type, property_name, default=None):
         """
-        add a new property to a property provider.
+        Add a new property to a property provider.
         """

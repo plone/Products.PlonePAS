@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.5 2005/05/24 17:50:11 dreamcatcher Exp $
+$Id: property.py,v 1.6 2005/05/25 14:47:21 dreamcatcher Exp $
 """
 from sets import Set
 
@@ -31,7 +31,8 @@ from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 
 
-def manage_addZODBMutablePropertyProvider(self, id, title='', RESPONSE=None, schema=None, **kw):
+def manage_addZODBMutablePropertyProvider(self, id, title='',
+                                          RESPONSE=None, schema=None, **kw):
     """
     Create an instance of a mutable property manager.
     """
@@ -41,23 +42,28 @@ def manage_addZODBMutablePropertyProvider(self, id, title='', RESPONSE=None, sch
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
 
-manage_addZODBMutablePropertyProviderForm = DTMLFile("../zmi/MutablePropertyProviderForm", globals())
+manage_addZODBMutablePropertyProviderForm = DTMLFile(
+    "../zmi/MutablePropertyProviderForm", globals())
 
 class ZODBMutablePropertyProvider(BasePlugin):
 
     meta_type = 'ZODB Mutable Property Provider'
-    __implements__ = ( IPropertiesPlugin, IMutablePropertiesPlugin, )
+    __implements__ = (IPropertiesPlugin, IMutablePropertiesPlugin,)
 
     def __init__(self, id, title='', schema=None, **kw):
-        """ Create in-ZODB mutable property provider.
-        Provide a schema either as a list of (name,type,value) tuples in the 'schema' parameter
-        or as a series of keyword parameters 'name=value'. Types will be guessed in this case.
-        The 'value' is meant as the default value, and will be used unless the user provides data.
+        """Create in-ZODB mutable property provider.
+        
+        Provide a schema either as a list of (name,type,value) tuples
+        in the 'schema' parameter or as a series of keyword parameters
+        'name=value'. Types will be guessed in this case.
 
-        If no schema is provided by constructor, the properties of the portal_memberdata object will
-        be used.
+        The 'value' is meant as the default value, and will be used
+        unless the user provides data.
 
-        Types available: string, boolean, int, long, float, lines, date
+        If no schema is provided by constructor, the properties of the
+        portal_memberdata object will be used.
+
+        Types available: string, text, boolean, int, long, float, lines, date
         """
         self.id = id
         self.title = title
@@ -75,12 +81,13 @@ class ZODBMutablePropertyProvider(BasePlugin):
         self._schema = tuple(schema)
         self._defaultvalues = defaultvalues
 
-        # don't use _schema directly or you'll lose the fallback! use _getSchema instead
-        # same for default values
+        # don't use _schema directly or you'll lose the fallback! use
+        # _getSchema instead same for default values
 
     def _getSchema(self):
         schema = self._schema
-        if not schema:       # if no schema is provided, use portal_memberdata properties
+        if not schema:
+            # if no schema is provided, use portal_memberdata properties
             schema = ()
             mdtool = getToolByName(self, 'portal_memberdata')
             mdschema = mdtool.propertyMap()
@@ -89,37 +96,45 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
     def _getDefaultValues(self):
         defaultvalues = self._defaultvalues
-        if not self._schema:          # if no schema is provided, use portal_memberdata properties
+        if not self._schema:
+            # if no schema is provided, use portal_memberdata properties
             defaultvalues = {}
             mdtool = getToolByName(self, 'portal_memberdata')
-            mdvalues = mdtool.propertyItems()   # we rely on propertyMap and propertyItems mapping
-            for name, value in mdvalues: defaultvalues[name] = value
+            # we rely on propertyMap and propertyItems mapping
+            mdvalues = mdtool.propertyItems()
+            for name, value in mdvalues:
+                defaultvalues[name] = value
         return defaultvalues
 
     def getPropertiesForUser(self, user, request=None):
-        """Get property values for a user. Returns a dictionary of values or a PropertySheet.
+        """Get property values for a user. Returns a dictionary of
+        values or a PropertySheet.
+
         This implementation will always return a MutablePropertySheet.
 
-        NOTE: Must always return something, or else the property sheet won't
-        get created and this will screw up portal_memberdata.
+        NOTE: Must always return something, or else the property sheet
+        won't get created and this will screw up portal_memberdata.
         """
         data = self._storage.get(user.getId())
         if data is None:
             data = self._getDefaultValues()
-        return MutablePropertySheet(self.id, user, schema=self._getSchema(), **data)
+        return MutablePropertySheet(self.id, user,
+                                    schema=self._getSchema(), **data)
 
     def setPropertiesForUser(self, user, propertysheet):
-        properties = dict( propertysheet.propertyItems() )
+        properties = dict(propertysheet.propertyItems())
 
         for property_type, name in self._getSchema() or ():
-            if name in properties and not validateValue( property_type, properties[ name ] ):
-                raise ValueError("Invalid Value %s does not conform to %s"%( name, property_type) )
+            if (name in properties and not
+                validateValue(property_type, properties[name])):
+                raise ValueError, ('Invalid value: %s does not conform '
+                                   'to %s' % (name, property_type))
 
-        allowed_prop_keys = [ pt for pt, pn in self._getSchema() or () ]
+        allowed_prop_keys = [pt for pt, pn in self._getSchema() or ()]
         if allowed_prop_keys:
-            prop_names = Set( properties.keys() ) - Set( allowed_prop_keys )
+            prop_names = Set(properties.keys()) - Set(allowed_prop_keys)
             if prop_names:
-                raise ValueError("Unknown Properties")
+                raise ValueError, 'Unknown Properties: %r' % prop_names
 
         userprops = self._storage.get(user.getId())
         if userprops is not None:
@@ -127,4 +142,4 @@ class ZODBMutablePropertyProvider(BasePlugin):
         else:
             self._storage.insert(user.getId(), properties)
 
-class PersistentProperties( PersistentMapping ): pass
+class PersistentProperties(PersistentMapping): pass

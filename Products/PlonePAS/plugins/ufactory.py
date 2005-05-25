@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.14 2005/05/24 17:50:11 dreamcatcher Exp $
+$Id: ufactory.py,v 1.15 2005/05/25 14:47:21 dreamcatcher Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -30,37 +30,38 @@ from Products.PlonePAS.sheet import MutablePropertySheet
 
 from zLOG import LOG, INFO
 def log(msg):
-    LOG('PlonePAS',INFO,msg)
+    LOG('PlonePAS', INFO, msg)
 
-manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals() )
+manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
+                                          globals())
 
 def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
     """
-    add a plone user factory
+    Add a plone user factory
     """
 
-    puf = PloneUserFactory( id, title )
-    self._setObject( puf.getId(), puf )
+    puf = PloneUserFactory(id, title)
+    self._setObject(puf.getId(), puf)
 
     if RESPONSE is not None:
         return RESPONSE.redirect('manage_workspace')
 
 
-class PloneUserFactory( BasePlugin ):
+class PloneUserFactory(BasePlugin):
 
-    meta_type = "Plone User Factory"
-
-    __implements__ = ( IUserFactoryPlugin, )
+    security = ClassSecurityInfo()
+    meta_type = 'Plone User Factory'
+    __implements__ = (IUserFactoryPlugin,)
 
     def __init__(self, id, title=''):
         self.id = id
         self.title = title or self.meta_type
 
-    def createUser( self, user_id, name ):
+    security.declarePrivate('createUser')
+    def createUser(self, user_id, name):
+        return PloneUser(user_id, name)
 
-        return PloneUser( user_id, name )
-
-InitializeClass( PloneUserFactory )
+InitializeClass(PloneUserFactory)
 
 
 class PloneUser(PropertiedUser):
@@ -76,28 +77,27 @@ class PloneUser(PropertiedUser):
         """Return 1 if this user is a group abstraction"""
         return self._isGroup
 
-    security.declarePublic("getName")
+    security.declarePublic('getName')
     def getName(self):
         """Get user's or group's name.
         This is the id. PAS doesn't do prefixes and such like GRUF.
         """
         return self.getId()
 
-    security.declarePublic("getGroups")
-
     #################################
     # acquisition aware
-    def getPropertysheet( self, id):
+    security.declarePublic('getPropertysheet')
+    def getPropertysheet(self, id):
         """ -> propertysheet (wrapped if supported)
         """
-        sheet = self._propertysheets[ id ]
+        sheet = self._propertysheets[id]
         try:
-            return sheet.__of__( self )
+            return sheet.__of__(self)
         except AttributeError:
             return sheet
 
     security.declarePrivate('addPropertysheet')
-    def addPropertysheet( self, id, data):
+    def addPropertysheet(self, id, data):
         """ -> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
         """
@@ -107,29 +107,36 @@ class PloneUser(PropertiedUser):
             sheet = MutablePropertySheet(id, self, **data)
 
         if self._propertysheets.get(id) is not None:
-            raise KeyError, "Duplicate property sheet: %s" % id
+            raise KeyError, 'Duplicate property sheet: %s' % id
 
         self._propertysheets[id] = sheet
 
+    def _getPropertyPlugins(self):
+        return self.acl_users.plugins.listPlugins(IPropertiesPlugin)
+
     security.declarePrivate('getOrderedPropertySheets')
     def getOrderedPropertySheets(self):
-        # ordered
-        source_provider_keys = [plugin_id for plugin_id, plugin in self.acl_users.plugins.listPlugins( IPropertiesPlugin )]
-        user_provider_keys = self.listPropertysheets()
-        sheets = [ self.getPropertysheet(pk) for pk in source_provider_keys if pk in user_provider_keys]
+        source_provider_keys = [plugin_id for plugin_id, plugin in
+                                self._getPropertyPlugins()]
+        provider_keys = self.listPropertysheets()
+        sheets = [self.getPropertysheet(pk) for pk in source_provider_keys
+                  if pk in provider_keys]
         return sheets
 
-#################################
-# local roles plugin type delegation - currently disabled
+    #################################
+    # local roles plugin type delegation - currently disabled
+
+    def _getLocalRolesPlugins(self):
+        return self.acl_users.plugins.listPlugins(ILocalRolesPlugin)
 
     def __getRolesInContext(self, object):
-        lrmanagers = aq_parent( aq_inner( self ) ).plugins.listPlugins( ILocalRolesPlugin )
+        lrmanagers = self._getLocalRolesPlugins()
         roles = []
         for lrid, lrmanager in lrmanagers:
-            roles.extend( lrmanager.getRolesInContext( self, object ) )
-        return unique( roles )
+            roles.extend(lrmanager.getRolesInContext(self, object))
+        return unique(roles)
 
-    def __allowed( self, object, object_roles = None ):
+    def __allowed(self, object, object_roles = None):
         if object_roles is _what_not_even_god_should_do:
             return 0
 
@@ -162,17 +169,18 @@ class PloneUser(PropertiedUser):
                 return None
 
         # check for local roles
-        lrmanagers = aq_parent( aq_inner( self ) ).plugins.listPlugins( ILocalRolesPlugin )
+        lrmanagers = self._getLocalRolesPlugins()
 
-        for lrid, lrmanager in lrmanagers:
-            access_allowed = lrmanager.checkLocalRolesAllowed( self, object, object_roles )
+        for lrid, lrm in lrmanagers:
+            allowed = lrm.checkLocalRolesAllowed(self, object, object_roles)
             # return values
-            # 0,1,None - 1 success, 0 object context violation - None - failure
-            if access_allowed is None:
+            # 0, 1, None
+            # - 1 success
+            # - 0 object context violation
+            # - None - failure
+            if allowed is None:
                 continue
-            return access_allowed
-
+            return allowed
         return None
 
-
-InitializeClass( PloneUser )
+InitializeClass(PloneUser)

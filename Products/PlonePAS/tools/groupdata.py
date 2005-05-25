@@ -1,11 +1,14 @@
 """
-$Id: groupdata.py,v 1.4 2005/05/24 17:50:13 dreamcatcher Exp $
+$Id: groupdata.py,v 1.5 2005/05/25 14:47:21 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
 
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
-from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData   # we must do this until Plone does it
+from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
+
+from Products.PluggableAuthService.interfaces.authservice \
+     import IPluggableAuthService
 
 try:
     from Products.CMFCore.MemberDataTool import CleanupTemp
@@ -14,7 +17,9 @@ except:
     _have_cleanup_temp = None
 
 class GroupDataTool(BaseGroupDataTool):
-    """PAS-specific implementation of groupdata tool. Uses Plone GroupDataTool as a base."""
+    """PAS-specific implementation of groupdata tool. Uses Plone
+    GroupDataTool as a base.
+    """
 
     meta_type = "PlonePAS GroupData Tool"
 
@@ -39,8 +44,9 @@ class GroupDataTool(BaseGroupDataTool):
                     self._v_temps = {id:portal_group}
                     if hasattr(self, 'REQUEST'):
                         # No REQUEST during tests.
-                        # XXX jcc => CleanupTemp doesn't seem to work on Plone 1.0.3.
-                        # Have to find a way to pass around...
+                        # XXX jcc => CleanupTemp doesn't seem to work
+                        # on Plone 1.0.3.  Have to find a way to pass
+                        # around...
                         if _have_cleanup_temp:
                             self.REQUEST._hold(CleanupTemp(self))
                 else:
@@ -50,7 +56,6 @@ class GroupDataTool(BaseGroupDataTool):
         # Return a wrapper with self as containment and
         # the user as context.
         return portal_group.__of__(self).__of__(g)
-
 
 InitializeClass(GroupDataTool)
 
@@ -63,6 +68,67 @@ class GroupData(BaseGroupData):
         """
         return self.getGroup()
 
-    # XXX group properties on PAS property provider like memberdata?
+    ## setProperties uses setGroupProperties. no need to override.
+
+    def setGroupProperties(self, mapping):
+        """PAS-specific method to set the properties of a group.
+        """
+        sheets = None
+        # We could pay attention to force_local here...
+        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+            # Defer to base impl in absence of PAS, a PAS group, or
+            # property sheets
+            return BaseGroupData.setGroupProperties(self, mapping)
+        else:
+            # It's a PAS! Whee!
+            group = self.getGroup()
+            sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
+
+            # We won't always have PlonePAS groups, due to acquisition,
+            # nor are guaranteed property sheets
+            if not sheets:
+                # Defer to base impl if we have a PAS but no property
+                # sheets.
+                return BaseGroupData.setGroupProperties(self, mapping)
+
+        # If we got this far, we have a PAS and some property sheets.
+        # XXX track values set to defer to default impl
+        # property routing?
+        modified = False
+        for k, v in mapping.items():
+            for sheet in sheets:
+                if not sheet.hasProperty(k):
+                    continue
+                if IMutablePropertySheet.isImplementedBy(sheet):
+                    sheet.setProperty( k, v )
+                    modified = True
+                else:
+                    raise RuntimeError, ("Mutable property provider "
+                                         "shadowed by read only provider")
+        if modified:
+            self.notifyModified()
+
+    def getProperty(self, id, default=None):
+        """PAS-specific method to fetch a group's properties. Looks
+        through the ordered property sheets.
+        """
+        sheets = None
+        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+            return BaseGroupData.getProperty(self, id)
+        else:
+            # It's a PAS! Whee!
+            group = self.getGroup()
+            sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
+
+            # we won't always have PlonePAS groups, due to acquisition,
+            # nor are guaranteed property sheets
+            if not sheets:
+                return BaseGroupData.getProperty(self, id)
+
+        # If we made this far, we found a PAS and some property sheets.
+        for sheet in sheets:
+            if sheet.hasProperty(id):
+                # Return the first one that has the property.
+                return sheet.getProperty(id)
 
 InitializeClass(GroupData)

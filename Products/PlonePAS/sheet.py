@@ -3,7 +3,7 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.8 2005/05/24 18:48:17 dreamcatcher Exp $
+$Id: sheet.py,v 1.9 2005/05/25 14:47:20 dreamcatcher Exp $
 """
 
 from types import StringTypes, BooleanType, IntType
@@ -26,16 +26,16 @@ class PropertySchemaTypeMap(object):
     def addType(self, type_name, identifier, order=None):
         self.tmap[type_name] = identifier
         if order is not None and isinstance(order, int):
-            self.tmap_order.insert( order, type_name )
+            self.tmap_order.insert(order, type_name)
         else:
-            self.tmap_order.append( type_name )
+            self.tmap_order.append(type_name)
 
     def getTypeFor(self, value):
         ptypes = [(ptype, self.tmap[ptype]) for ptype in self.tmap_order]
         for ptype, inspector in ptypes:
             if inspector(value):
                 return ptype
-        raise TypeError("invalid property type %s"%(type(value)))
+        raise TypeError, 'Invalid property type: %s' % type(value)
 
     def validate(self, property_type, value):
         inspector = self.tmap[property_type]
@@ -56,20 +56,20 @@ class MutablePropertySheet(UserPropertySheet):
 
     __implements__ = (IMutablePropertySheet,)
 
-    def __init__(self, id, user, **kw ):
+    def __init__(self, id, user, **kw):
         UserPropertySheet.__init__(self, id, **kw)
         self._user = user # have to have a handle on container, since we're not
                           # acquisition-aware
 
     def validateProperty(self, id, value):
         if not self._properties.has_key(id):
-            raise PropertyValueError("no such property found on this schema")
+            raise PropertyValueError, 'No such property found on this schema'
 
         proptype = self.getPropertyType(id)
         if not validateValue(proptype, value):
-            raise PropertyValueError, ("invalid value (%s) for "
+            raise PropertyValueError, ("Invalid value (%s) for "
                                        "property '%s' of type %s" %
-                                       (value,id, proptype))
+                                       (value, id, proptype))
 
     def setProperty(self, id, value):
         self.validateProperty(id, value)
@@ -87,7 +87,7 @@ class MutablePropertySheet(UserPropertySheet):
 
         for key, value in tuple(prop_update.items()):
             if key not in prop_keys:
-                prop_update.pop( key )
+                prop_update.pop(key)
                 continue
             self.validateProperty(key, value)
 

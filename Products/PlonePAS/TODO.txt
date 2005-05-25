@@ -2,46 +2,57 @@ Password reset
 
 Write tests for adding, setting, deleting properties on users.
 
-Write tests checking function of global roles (users and groups) and local roles (users and groups).
+Write tests checking function of global roles (users and groups) and
+local roles (users and groups).
 
 Write tests to groups tool.
 
 Write test to make sure we're not using a name mangling version.
 
-Verify why user records just created are marked as "orphaned" in portal_memberdata. It could just be that they never logged in.
+Verify why user records just created are marked as "orphaned" in
+portal_memberdata. It could just be that they never logged in.
 
-PlonePAS groups tool: assure API implementation; move common bits into Plone GroupsTool, also interface
+PlonePAS groups tool: assure API implementation; move common bits into
+Plone GroupsTool, also interface
 
 Should groups.getGroupById use new acl_users.getGroup?
 
-Group properties support in PAS (a plugin, not the GroupData properties)?
+Group properties support in PAS (a plugin, not the GroupData
+properties)?
 
 Should probably define group factory plugin
 
-I don't like where prefs_group_details form ends up. Should go back to prefs_group_members or itself. But,
-this is not a regression.
+I don't like where prefs_group_details form ends up. Should go back to
+prefs_group_members or itself. But, this is not a regression.
 
-Plone should include GroupData in its GroupDataTool.py. After this, our GroupData or monkey-patch can use the Plone one.
-Relatedly, wrapUsers and wrapGroups should have a way of specifying the wrapping object so it's easier to over-ride.
+Plone should include GroupData in its GroupDataTool.py. After this,
+our GroupData or monkey-patch can use the Plone one.  Relatedly,
+wrapUsers and wrapGroups should have a way of specifying the wrapping
+object so it's easier to over-ride.
 
-We're dependent on GRUF for groups tools. 
+We're dependent on GRUF for groups tools.
 
-PAS.plugins.ZODBGroupManager.removeGroup tries to remove every user from group. Probably bad!
+PAS.plugins.ZODBGroupManager.removeGroup tries to remove every user
+from group. Probably bad!
 
 _doChangeGroup ignores groups to add. This doesn't bother Plone.
 
-hooked up ZODBMutableProperties plugin schema to MemberData properties. Should probably note that other plugins
-may not do this. also: do we want another schema-setting mechanism?
+hooked up ZODBMutableProperties plugin schema to MemberData
+properties. Should probably note that other plugins may not do
+this. also: do we want another schema-setting mechanism?
 
-note: schema changes with ZODBMutableProperties (as through MemberData) may not take place on all existing users
-unless the server is restarted. (we could clear the ZCache to fix this.)
+note: schema changes with ZODBMutableProperties (as through
+MemberData) may not take place on all existing users unless the server
+is restarted. (we could clear the ZCache to fix this.)
 
-sheet.py has the MutablePropertySheet schema coded in for several basic types. is this all we need?
+sheet.py has the MutablePropertySheet schema coded in for several
+basic types. is this all we need?
 
-join_form manages to call addPropertySheet (probably through _findUser, through getUserById) like six times.
-may be for Anonymous.
+join_form manages to call addPropertySheet (probably through
+_findUser, through getUserById) like six times.  may be for Anonymous.
 
-I've seen some strange lag on property updates on ZOGBMutablePropertyManager. Dunno if it'll repeat. A caching thing?
+I've seen some strange lag on property updates on
+ZOGBMutablePropertyManager. Dunno if it'll repeat. A caching thing?
 
 plugins.user.UserManager.addUser changes should go into PAS
 
@@ -51,8 +62,8 @@ UI should be set to do listing of users/groups on a limited basis
 
 listing of group-belonging by user broken
 
-membership tool wrapUser stupidly uses roles attribute. we want it to use methods. until this is fixed,
-role mapping is broken
+membership tool wrapUser stupidly uses roles attribute. we want it to
+use methods. until this is fixed, role mapping is broken
 
 LDAP: default property mappings?
 
@@ -64,17 +75,21 @@ jcc:
 
  - PasswordResetTool needed for reset password thing
 
- - password reset and deletion UI needs to be determined by availability of plugins
+ - password reset and deletion UI needs to be determined by
+   availability of plugins
 
  - does title not get to wrapped group?
 
- - fix MembershipTool.searchForMembers, MemberDataTool searchFulltextForMembers
+ - fix MembershipTool.searchForMembers, MemberDataTool
+   searchFulltextForMembers
 
- - prefs_group_details and prefs_group_edit don't need to be customized for Plone 2.1 versions after 29 Apr 2005
+ - prefs_group_details and prefs_group_edit don't need to be
+   customized for Plone 2.1 versions after 29 Apr 2005
 
  - install: setupRoles?
 
- - how does member.getRoles work in GRUF? what permission should it be in PlonePAS?
+ - how does member.getRoles work in GRUF? what permission should it be
+   in PlonePAS?
 
  - memberarea quote needs to work right
 

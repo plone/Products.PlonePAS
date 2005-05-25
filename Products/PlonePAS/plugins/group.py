@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.10 2005/05/24 17:50:11 dreamcatcher Exp $
+$Id: group.py,v 1.11 2005/05/25 14:47:21 dreamcatcher Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -25,34 +25,37 @@ from Globals import DTMLFile
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
 
-from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGroupEnumerationPlugin
+from Products.PluggableAuthService.plugins.ZODBGroupManager \
+     import ZODBGroupManager
+from Products.PluggableAuthService.interfaces.plugins \
+     import IGroupsPlugin, IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
-from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
+from Products.PlonePAS.interfaces.group \
+     import IGroupManagement, IGroupIntrospection
 from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
 
 def manage_addGroupManager(self, id, title='', RESPONSE=None):
     """
-    add a zodb group manager with management and introspection
+    Add a zodb group manager with management and introspection
     capabilities to pas.
     """
-    grum = GroupManager( id, title )
+    grum = GroupManager(id, title)
 
-    self._setObject( grum.getId(), grum )
+    self._setObject(grum.getId(), grum)
 
     if RESPONSE is not None:
         return RESPONSE.redirect('manage_workspace')
 
 
-class GroupManager( ZODBGroupManager ):
+class GroupManager(ZODBGroupManager):
 
     meta_type = "Group Manager"
 
-    __implements__ = ( IGroupsPlugin, IGroupEnumerationPlugin,
-                       IGroupManagement, IGroupIntrospection )
+    __implements__ = (IGroupsPlugin, IGroupEnumerationPlugin,
+                       IGroupManagement, IGroupIntrospection)
 
     security = ClassSecurityInfo()
 
@@ -64,23 +67,23 @@ class GroupManager( ZODBGroupManager ):
     # overrides to ease group principal lookups for introspection api
 
     def addGroup(self, group_id, *args, **kw):
-        ZODBGroupManager.addGroup( self, group_id, *args, **kw)
+        ZODBGroupManager.addGroup(self, group_id, *args, **kw)
         self._group_principal_map[ group_id ] = OOSet()
         return True
 
     def removeGroup(self, group_id):
-        ZODBGroupManager.removeGroup( self, group_id )
+        ZODBGroupManager.removeGroup(self, group_id)
         del self._group_principal_map[ group_id ]
         return True
 
     def addPrincipalToGroup(self, principal_id, group_id):
-        ZODBGroupManager.addPrincipalToGroup( self, principal_id, group_id)
-        self._group_principal_map[ group_id ].insert( principal_id )
+        ZODBGroupManager.addPrincipalToGroup(self, principal_id, group_id)
+        self._group_principal_map[ group_id ].insert(principal_id)
         return True
 
     def removePrincipalFromGroup(self, principal_id, group_id):
-        already = ZODBGroupManager.removePrincipalFromGroup( self, principal_id, group_id)
-        if already: self._group_principal_map[ group_id ].remove( principal_id )
+        already = ZODBGroupManager.removePrincipalFromGroup(self, principal_id, group_id)
+        if already: self._group_principal_map[ group_id ].remove(principal_id)
         return True
 
     #################################
@@ -113,7 +116,7 @@ class GroupManager( ZODBGroupManager ):
         return self.listGroupIds()
 
     def getGroupMembers(self, group_id):
-        return tuple( self._group_principal_map[ group_id ] )
+        return tuple(self._group_principal_map[ group_id ])
 
 
     #################################
@@ -127,19 +130,19 @@ class GroupManager( ZODBGroupManager ):
         This method based on PluggableAuthService._createUser
         """
 
-        #factories = plugins.listPlugins( IUserFactoryPlugin )
+        #factories = plugins.listPlugins(IUserFactoryPlugin)
 
         #for factory_id, factory in factories:
 
         #    user = factory.createUser(user_id, name)
 
         #    if user is not None:
-        #        return user.__of__( self )
+        #        return user.__of__(self)
 
         return PloneGroup(group_id, name).__of__(self)
 
 
-    security.declarePrivate( '_findGroup' )
+    security.declarePrivate('_findGroup')
     def _findGroup(self, plugins, group_id, title=None, request=None):
         """ group_id -> decorated_group
         This method based on PluggableAuthService._findGroup
@@ -153,7 +156,7 @@ class GroupManager( ZODBGroupManager ):
         group = self.ZCacheable_get(view_name=view_name
                                   , keywords=keywords
                                   , default=None
-                                  )
+                                 )
 
         if group is None:
 
@@ -167,8 +170,8 @@ class GroupManager( ZODBGroupManager ):
             #    if data:
             #        user.addPropertysheet(propfinder_id, data)
 
-            groups = self.acl_users._getGroupsForPrincipal( group, request
-                                                , plugins=plugins )
+            groups = self.acl_users._getGroupsForPrincipal(group, request
+                                                , plugins=plugins)
             group._addGroups(groups)
 
             rolemakers = plugins.listPlugins(IRolesPlugin)
@@ -180,20 +183,20 @@ class GroupManager( ZODBGroupManager ):
                 if roles:
                     group._addRoles(roles)
 
-            group._addRoles( ['Authenticated'] )
+            group._addRoles(['Authenticated'])
 
             # Cache the group if caching is enabled
             base_group = aq_base(group)
             if getattr(base_group, '_p_jar', None) is None:
-                self.ZCacheable_set( base_group
+                self.ZCacheable_set(base_group
                                    , view_name=view_name
                                    , keywords=keywords
-                                   )
+                                  )
 
-        return group.__of__( self )
+        return group.__of__(self)
 
-    security.declarePrivate( '_verifyGroup' )
-    def _verifyGroup( self, plugins, group_id=None, title=None ):
+    security.declarePrivate('_verifyGroup')
+    def _verifyGroup(self, plugins, group_id=None, title=None):
 
         """ group_id -> boolean
         This method based on PluggableAuthService._verifyUser
@@ -209,25 +212,25 @@ class GroupManager( ZODBGroupManager ):
 
         if criteria:
             view_name = createViewName('_verifyGroup', group_id or login)
-            cached_info = self.ZCacheable_get( view_name=view_name
+            cached_info = self.ZCacheable_get(view_name=view_name
                                              , keywords=criteria
                                              , default=None
-                                             )
+                                            )
 
             if cached_info is not None:
                 return cached_info
 
 
-            enumerators = plugins.listPlugins( IGroupEnumerationPlugin )
+            enumerators = plugins.listPlugins(IGroupEnumerationPlugin)
 
             for enumerator_id, enumerator in enumerators:
                 try:
-                    info = enumerator.enumerateGroups( **criteria )
+                    info = enumerator.enumerateGroups(**criteria)
 
                     if info:
                         id = info[0]['id']
                         # Put the computed value into the cache
-                        self.ZCacheable_set( id
+                        self.ZCacheable_set(id
                                            , view_name=view_name
                                            , keywords=criteria
                                            )
@@ -246,12 +249,12 @@ InitializeClass(GroupManager)
 
 
 class PloneGroup(PloneUser):
-    """Plone expects a user to come, with approximately the same behavior as a user."""
+    """Plone expects a user to come, with approximately the same
+    behavior as a user.
+    """
 
-    # __implements__ = (IGroup, )  # this should be made true
-
+    # __implements__ = (IGroup,)  # this should be made true
     security = ClassSecurityInfo()
-
     _isGroup = True
 
     def getId(self, unprefixed=None):
@@ -261,13 +264,17 @@ class PloneGroup(PloneUser):
         return self._id
 
     security.declarePrivate("getMemberIds")
-    def getMemberIds(self, transitive = 1, ):
-        "Return member ids of this group, including or not transitive groups."
-        return self.getGroupMembers(self.getId())  # acquired from the groups_source
+    def getMemberIds(self, transitive = 1):
+        """Return member ids of this group, including or not
+        transitive groups.
+        """
+        # acquired from the groups_source
+        return self.getGroupMembers(self.getId())
 
     security.declarePublic('addMember')
     def addMember(self, id):
-        """ Add the existing member with the given id to the group"""
+        """Add the existing member with the given id to the group
+        """
         self.addPrincipalToGroup(id, self.getId())
 
     security.declarePublic('removeMember')
@@ -276,13 +283,16 @@ class PloneGroup(PloneUser):
         """
         self.removePrincipalFromGroup(id, self.getId())
 
+    security.declarePublic('getRolesInContext')
     def getRolesInContext(self, object):
-        """Since groups can't actually log in, do nothing."""
+        """Since groups can't actually log in, do nothing.
+        """
         return []
 
+    security.declarePublic('allowed')
     def allowed(self, object, object_roles=None):
-        """Since groups can't actually log in, do nothing."""
+        """Since groups can't actually log in, do nothing.
+        """
         return 0
-
 
 InitializeClass(PloneGroup)

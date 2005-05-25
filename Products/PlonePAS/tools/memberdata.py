@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.10 2005/05/25 02:04:15 dreamcatcher Exp $
+$Id: memberdata.py,v 1.11 2005/05/25 14:47:22 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -21,11 +21,9 @@ from Products.PluggableAuthService.interfaces.authservice \
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
-
 from zLOG import LOG, INFO
 def log(msg):
-    LOG('PlonePAS',INFO,msg)
-
+    LOG('PlonePAS', INFO, msg)
 
 class MemberDataTool(BaseMemberDataTool):
     """PAS-specific implementation of memberdata tool. Uses Plone
@@ -83,43 +81,66 @@ class MemberData(BaseMemberData):
     ## setProperties uses setMemberProperties. no need to override.
 
     def setMemberProperties(self, mapping, force_local = 0):
-        """PAS-specific method to set the properties of a member. Ignores 'force_local',
-        which is not reliably present.
+        """PAS-specific method to set the properties of a
+        member. Ignores 'force_local', which is not reliably present.
         """
-        tool = self.getTool()
+        sheets = None
 
-        # we could pay attention to force_local here...
-        if IPluggableAuthService.isImplementedBy(self.acl_users):
+        # We could pay attention to force_local here...
+        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+            # Defer to base impl in absence of PAS, a PAS user, or
+            # property sheets
+            return BaseMemberData.setMemberProperties(self, mapping)
+        else:
+            # It's a PAS! Whee!
             user = self.getUser()
             sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
 
-            # we won't always have PlonePAS users, due to acquisition, nor are guaranteed property sheets
-            if sheets:
-                # xxx track values set to defer to default impl
-                # property routing
-                for k,v in mapping.items():
-                    for sheet in sheets:
-                        if sheet.hasProperty(k):
-                            if IMutablePropertySheet.isImplementedBy(sheet):
-                                sheet.setProperty( k, v )
-                            else:
-                                raise RuntimeError("mutable property provider shadowed by read only provider")
-                self.notifyModified()
-                return
-        # defer to base impl in absence of PAS, a PAS user, or property sheets
-        return BaseMemberData.setMemberProperties(self, mapping)
+            # We won't always have PlonePAS users, due to acquisition,
+            # nor are guaranteed property sheets
+            if not sheets:
+                # Defer to base impl if we have a PAS but no property
+                # sheets.
+                return BaseMemberData.setMemberProperties(self, mapping)
+
+        # If we got this far, we have a PAS and some property sheets.
+        # XXX track values set to defer to default impl
+        # property routing?
+        modified = False
+        for k, v in mapping.items():
+            for sheet in sheets:
+                if not sheet.hasProperty(k):
+                    continue
+                if IMutablePropertySheet.isImplementedBy(sheet):
+                    sheet.setProperty( k, v )
+                    modified = True
+                else:
+                    raise RuntimeError, ("Mutable property provider "
+                                         "shadowed by read only provider")
+        if modified:
+            self.notifyModified()
 
     def getProperty(self, id, default=None):
-        """PAS-specific method to fetch a user's properties. Looks through the ordered property sheets."""
-        if IPluggableAuthService.isImplementedBy(self.acl_users):
+        """PAS-specific method to fetch a user's properties. Looks
+        through the ordered property sheets.
+        """
+        sheets = None
+        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+            return BaseMemberData.getProperty(self, id)
+        else:
+            # It's a PAS! Whee!
             user = self.getUser()
             sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
 
-            # we won't always have PlonePAS users, due to acquisition, nor are guaranteed property sheets
-            if sheets:
-                for sheet in sheets:
-                    if sheet.hasProperty(id):
-                        return sheet.getProperty(id)
-        return BaseMemberData.getProperty(self, id)
+            # we won't always have PlonePAS users, due to acquisition,
+            # nor are guaranteed property sheets
+            if not sheets:
+                return BaseMemberData.getProperty(self, id)
+
+        # If we made this far, we found a PAS and some property sheets.
+        for sheet in sheets:
+            if sheet.hasProperty(id):
+                # Return the first one that has the property.
+                return sheet.getProperty(id)
 
 InitializeClass(MemberData)
