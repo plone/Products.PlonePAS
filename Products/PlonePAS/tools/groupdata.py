@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.7 2005/05/25 20:28:22 jccooper Exp $
+$Id: groupdata.py,v 1.8 2005/05/25 21:33:28 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -105,7 +105,7 @@ class GroupData(BaseGroupData):
                 if not sheet.hasProperty(k):
                     continue
                 if IMutablePropertySheet.isImplementedBy(sheet):
-                    sheet.setProperty( k, v )
+                    sheet.setProperty(k, v)
                     modified = True
                 else:
                     raise RuntimeError, ("Mutable property provider "
@@ -124,7 +124,6 @@ class GroupData(BaseGroupData):
             # It's a PAS! Whee!
             group = self.getGroup()
             sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
-
             # we won't always have PlonePAS groups, due to acquisition,
             # nor are guaranteed property sheets
             if not sheets:

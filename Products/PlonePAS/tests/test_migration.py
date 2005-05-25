@@ -1,5 +1,5 @@
 """
-$Id: test_migration.py,v 1.1 2005/05/25 02:04:15 dreamcatcher Exp $
+$Id: test_migration.py,v 1.2 2005/05/25 21:33:27 dreamcatcher Exp $
 """
 
 import os, sys
@@ -148,7 +148,7 @@ class SanityCheck:
     def populateGroups(self):
         gt = getToolByName(self.portal, 'portal_groups')
         for g in self._groups:
-            gt.addGroup(*g)
+            gt.addGroup(*g[:-1], **g[-1])
 
             gid = g[0]
             group = gt.getGroupById(gid)
@@ -201,7 +201,8 @@ class MigrationTest(BaseTest):
 
     def test_migrate_populated(self):
         self.loginPortalOwner()
-        self.checker.run('populateUsers', 'populateGroups')
+        self.checker.run('populateUsers', 'populateGroups',
+                         'checkUsers', 'checkGroups')
         self.qi.installProduct('PlonePAS')
         self.checker.run('checkUserFolder', 'checkUsers', 'checkGroups')
 

@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.13 2005/05/25 21:13:05 jccooper Exp $
+$Id: memberdata.py,v 1.14 2005/05/25 21:33:28 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -112,7 +112,7 @@ class MemberData(BaseMemberData):
                 if not sheet.hasProperty(k):
                     continue
                 if IMutablePropertySheet.isImplementedBy(sheet):
-                    sheet.setProperty( k, v )
+                    sheet.setProperty(k, v)
                     modified = True
                 else:
                     raise RuntimeError, ("Mutable property provider "

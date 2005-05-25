@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.7 2005/05/25 20:28:20 jccooper Exp $
+$Id: property.py,v 1.8 2005/05/25 21:33:27 dreamcatcher Exp $
 """
 from sets import Set
 
@@ -139,13 +139,13 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         properties = dict(propertysheet.propertyItems())
 
-        for property_type, name in self._getSchema(isGroup) or ():
+        for name, property_type in self._getSchema(isGroup) or ():
             if (name in properties and not
                 validateValue(property_type, properties[name])):
                 raise ValueError, ('Invalid value: %s does not conform '
                                    'to %s' % (name, property_type))
 
-        allowed_prop_keys = [pt for pt, pn in self._getSchema(isGroup) or ()]
+        allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]
         if allowed_prop_keys:
             prop_names = Set(properties.keys()) - Set(allowed_prop_keys)
             if prop_names:
