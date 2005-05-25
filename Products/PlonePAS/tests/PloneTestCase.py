@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.15 2005/05/25 02:04:15 dreamcatcher Exp $
+# $Id: PloneTestCase.py,v 1.16 2005/05/25 23:04:45 dreamcatcher Exp $
 
 from Testing import ZopeTestCase
 
@@ -66,7 +66,8 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
 
     def _setup(self):
         ZopeTestCase.PortalTestCase._setup(self)
-        get_transaction().begin()
+        # Avoid ConflictError.
+        get_transaction().abort()
         portal_name = self.portal.getId()
         if self.vanilla_plone:
             if not self.isVanilla():
