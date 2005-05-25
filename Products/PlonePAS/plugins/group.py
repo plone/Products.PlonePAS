@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.11 2005/05/25 14:47:21 dreamcatcher Exp $
+$Id: group.py,v 1.12 2005/05/25 19:40:16 dreamcatcher Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -29,6 +29,7 @@ from Products.PluggableAuthService.plugins.ZODBGroupManager \
      import ZODBGroupManager
 from Products.PluggableAuthService.interfaces.plugins \
      import IGroupsPlugin, IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
 from Products.PlonePAS.interfaces.group \
@@ -124,9 +125,9 @@ class GroupManager(ZODBGroupManager):
 
     security.declarePrivate('_createGroup')
     def _createGroup(self, plugins, group_id, name):
-        """ Create group object. For users, this can be done with a plugin, but
-        I don't care to define one for that now. Just uses PloneGroup.
-        But, the code's still here, just commented out.
+        """ Create group object. For users, this can be done with a
+        plugin, but I don't care to define one for that now. Just uses
+        PloneGroup.  But, the code's still here, just commented out.
         This method based on PluggableAuthService._createUser
         """
 
@@ -162,13 +163,12 @@ class GroupManager(ZODBGroupManager):
 
             group = self._createGroup(plugins, group_id, title)
 
-            ## group properties not supported
-            #propfinders = plugins.listPlugins(IPropertiesPlugin)
-            #for propfinder_id, propfinder in propfinders:
+            propfinders = plugins.listPlugins(IPropertiesPlugin)
+            for propfinder_id, propfinder in propfinders:
 
-            #    data = propfinder.getPropertiesForGroup(user, request)
-            #    if data:
-            #        user.addPropertysheet(propfinder_id, data)
+               data = propfinder.getPropertiesForUser(group, request)
+               if data:
+                   group.addPropertysheet(propfinder_id, data)
 
             groups = self.acl_users._getGroupsForPrincipal(group, request
                                                 , plugins=plugins)

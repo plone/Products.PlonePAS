@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.5 2005/05/25 14:47:21 dreamcatcher Exp $
+$Id: groupdata.py,v 1.6 2005/05/25 19:40:17 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -15,6 +15,11 @@ try:
     _have_cleanup_temp = 1
 except:
     _have_cleanup_temp = None
+
+from Products.PluggableAuthService.interfaces.authservice \
+     import IPluggableAuthService
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+
 
 class GroupDataTool(BaseGroupDataTool):
     """PAS-specific implementation of groupdata tool. Uses Plone
@@ -130,5 +135,8 @@ class GroupData(BaseGroupData):
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
                 return sheet.getProperty(id)
+        # Couldn't find the property in the property sheets. Try to
+        # delegate back to the base implementation.
+        return BaseGroupData.getProperty(self, id)
 
 InitializeClass(GroupData)

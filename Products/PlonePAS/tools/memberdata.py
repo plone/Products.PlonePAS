@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.11 2005/05/25 14:47:22 dreamcatcher Exp $
+$Id: memberdata.py,v 1.12 2005/05/25 19:40:17 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -142,5 +142,8 @@ class MemberData(BaseMemberData):
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
                 return sheet.getProperty(id)
+        # Couldn't find the property in the property sheets. Try to
+        # delegate back to the base implementation.
+        return BaseGroupData.getProperty(self, id)
 
 InitializeClass(MemberData)
