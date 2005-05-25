@@ -1,19 +1,23 @@
 """
-$Id: memberdata.py,v 1.9 2005/05/20 23:00:23 jccooper Exp $
+$Id: memberdata.py,v 1.10 2005/05/25 02:04:15 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
 
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
 from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData
-try: BaseMemberData(1)
-except: from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData   # Plone 2.0.x is broken
+try:
+    BaseMemberData(1)
+except:
+    # Plone 2.0.x is broken
+    from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
 
-from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice \
+     import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
@@ -24,7 +28,9 @@ def log(msg):
 
 
 class MemberDataTool(BaseMemberDataTool):
-    """PAS-specific implementation of memberdata tool. Uses Plone MemberDataTool as a base."""
+    """PAS-specific implementation of memberdata tool. Uses Plone
+    MemberDataTool as a base.
+    """
 
     meta_type = "PlonePAS MemberData Tool"
 
@@ -65,7 +71,7 @@ class MemberDataTool(BaseMemberDataTool):
         """PAS-specific search for members by id, email, full name.
         """
         acl_users = getToolByName( self, 'acl_users')
-        return acl_users.searchUsers( name=s, exact_match=False)
+        return acl_users.searchUsers(name=s, exact_match=False)
         # I don't think this is right: we need to return Members
 
 

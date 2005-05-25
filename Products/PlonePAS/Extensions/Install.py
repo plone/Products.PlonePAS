@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.37 2005/05/24 22:26:51 jccooper Exp $
+$Id: Install.py,v 1.38 2005/05/25 02:04:14 dreamcatcher Exp $
 """
 
 from StringIO import StringIO
@@ -107,14 +107,14 @@ def setupPlugins(portal, out):
     print >> out, "\nPlugin setup"
 
     pas = uf.manage_addProduct['PluggableAuthService']
-    pas.addCookieAuthHelper('credentials_cookie', cookie_name='__ac')
+    pas.addCookieAuthHelper('credentials_cookie_auth', cookie_name='__ac')
     print >> out, "Added Cookie Auth Helper."
-    activatePluginInterfaces(portal, 'credentials_cookie', out)
+    activatePluginInterfaces(portal, 'credentials_cookie_auth', out)
 
-    credentials_cookie = uf._getOb('credentials_cookie')
-    if 'login_form' in credentials_cookie.objectIds():
-        credentials_cookie.manage_delObjects(ids=['login_form'])
-        print >> out, "Removed default login_form from credentials cookie."
+    credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
+    if 'login_form' in credentials_cookie_auth.objectIds():
+        credentials_cookie_auth.manage_delObjects(ids=['login_form'])
+        print >> out, "Removed default login_form from credentials cookie auth."
 
     pas.addHTTPBasicAuthHelper('credentials_basic_auth',
                                title="HTTP Basic Auth")
@@ -187,12 +187,14 @@ def restoreUserData(portal, out, userdata):
 
     # re-add users
     # Password may be encypted or not: addUser will figure it out.
-    mtool = portal.portal_membership
-    emerg = portal.acl_users._emergency_user
+    mtool = getToolByName(portal, 'portal_membership')
+    emerg = portal.acl_users._emergency_user.getId()
     for u in userdata:
-        if u[0] == str(emerg):
-            print >> out, " : WARNING! member '%s' has name of emergency user. Not migrated." % u[0]
-            print >> out, "You can undo the install if you want to fix this condition."
+        if u[0] == emerg:
+            print >> out, (" : WARNING! member '%s' has name of "
+                           "emergency user. Not migrated." % u[0])
+            print >> out, ("You can undo the install if you want "
+                           "to fix this condition.")
             continue  # skip Emergency User, if present
         
         # be careful of non-ZODB member sources, like LDAP
@@ -202,7 +204,7 @@ def restoreUserData(portal, out, userdata):
             print >> out, " : adding member '%s'" % u[0]
         else:
             # set any properties. do we need anything else? roles, maybe?
-            member.setMemberProperties(userdata[-1])
+            member.setMemberProperties(u[-1])
             print >> out, " : setting props on member '%s'" % member.getId()
 
     print >> out, "...restore done"
@@ -211,8 +213,6 @@ def grabGroupData(portal, out):
     """Return a list of (id, roles, groups, properties) tuples for the
     users of the system and a mapping of group ids to a list of group
     members.
-
-    Password may be encypted or not: addUser will figure it out.
     """
     print >> out, "\nExtract Group information..."
 
@@ -224,6 +224,7 @@ def grabGroupData(portal, out):
     if gdtool is None or gtool is None:
         print >> out, ('\nGroup-aware tools not found. Skipping '
                        'group data migration.')
+        return groupdata, groupmemberships
 
     props = gdtool.propertyIds()
 
@@ -251,7 +252,7 @@ def restoreGroupData(portal, out, groupdata, groupmemberships):
     print >> out, "\nRestoring Group information..."
 
     # re-add groups
-    gtool = portal.portal_groups
+    gtool = getToolByName(portal, 'portal_groups')
     for g in groupdata:
         print >> out, " : adding group '%s' with members: " % g[0]
         gtool.addGroup(*g)

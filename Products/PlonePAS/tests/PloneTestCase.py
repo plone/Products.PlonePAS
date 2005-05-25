@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.14 2005/05/24 18:23:17 dreamcatcher Exp $
+# $Id: PloneTestCase.py,v 1.15 2005/05/25 02:04:15 dreamcatcher Exp $
 
 from Testing import ZopeTestCase
 
@@ -55,6 +55,36 @@ default_user = ZopeTestCase.user_name
 
 class PloneTestCase(ZopeTestCase.PortalTestCase):
     '''TestCase for Plone testing'''
+
+    vanilla_plone = False
+
+    def isVanilla(self):
+        if self.portal.acl_users.meta_type == 'Pluggable Auth Service':
+            # It's not a vanilla Plone, but a PAS-enabled Plone.
+            return False
+        return True
+
+    def _setup(self):
+        ZopeTestCase.PortalTestCase._setup(self)
+        get_transaction().begin()
+        portal_name = self.portal.getId()
+        if self.vanilla_plone:
+            if not self.isVanilla():
+                from Products.CMFPlone.tests import PloneTestCase
+                # Setup a vanilla plone site, to test some migration trickery.
+                self.app.manage_delObjects(ids=[portal_name])
+                PloneTestCase.setupPloneSite(self.app, id=portal_name, quiet=1)
+
+                # Old portal is gone.
+                self.portal = self.app[portal_name]
+        else:
+            if self.isVanilla():
+                # Setup a PAS-enabled plone site
+                self.app.manage_delObjects(ids=[portal_name])
+                setupPloneSite(self.app, id=portal_name, quiet=1)
+
+                # Old portal is gone.
+                self.portal = self.app[portal_name]
 
     def getPortal(self):
         '''Returns the portal object to the bootstrap code.
