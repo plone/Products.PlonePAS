@@ -71,6 +71,12 @@ LDAP: ordering of property managers (and other plugins) to top
 
 LDAP: need to set MultiPlugin.groupid_attr to cn
 
+LDAP: need id attr to be sAMAccountName, possibly also 'login name' id
+
+LDAP: on intranet needed to set LDAP 'mail' prop to PAS 'email' prop. Is there a standard AD schema for this?
+
+PAS: listAssignedPrincipals doesn't properly fall back on None title. (using get with default isn't quite enough.)
+
 jcc:
 
  - PasswordResetTool needed for reset password thing
@@ -92,4 +98,3 @@ jcc:
    in PlonePAS?
 
  - memberarea quote needs to work right
-

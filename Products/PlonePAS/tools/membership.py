@@ -1,10 +1,17 @@
 """
-$Id: membership.py,v 1.4 2005/05/24 17:32:25 dreamcatcher Exp $
+$Id: membership.py,v 1.5 2005/05/25 18:11:29 jccooper Exp $
 """
 from Globals import InitializeClass
 
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
 from urllib import quote as url_quote
+
+# for createMemberArea...
+from AccessControl import getSecurityManager
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.PloneUtilities import _createObjectByType
+from Products.CMFPlone.PloneUtilities import translate
+
 
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool.
@@ -81,19 +88,142 @@ class MembershipTool(BaseMembershipTool):
 
     def createMemberarea(self, member_id=None, minimal=0):
         """
-        Create a member area for 'member_id' or the authenticated user.
-        Specially instrumented to for URL-quoted-member-id folder names.
+        Create a member area for 'member_id' or the authenticated user, but don't assume
+        that member_id is url-safe.
+
+        Unfortunately, a pretty close copy of the (very large) original and only
+        a few lines different.
+        Plone should probably do this.
         """
+        catalog = getToolByName(self, 'portal_catalog')
+        membership = getToolByName(self, 'portal_membership')
+        members = self.getMembersFolder()
+
         if not member_id:
             # member_id is optional (see CMFCore.interfaces.portal_membership:
             #     Create a member area for 'member_id' or authenticated user.)
             member = membership.getAuthenticatedMember()
             member_id = member.getId()
-        member_id = url_quote(member_id, '') # we provide the 'safe'
-                                             # param because want '/'
-                                             # encoded
-        return BaseMembershipTool.createMemberarea(self, member_id, minimal)
 
+        if hasattr(members, 'aq_explicit'):
+            members=members.aq_explicit
+
+        if members is None:
+            # no members area
+            # XXX exception?
+            return
+
+        safe_member_id = url_quote(member_id,'')  # we provide the 'safe' param to get '/' encoded
+        if hasattr(members, safe_member_id):
+            # has already this member
+            # XXX exception
+            return
+
+        _createObjectByType('Folder', members, id=safe_member_id)
+
+        # get the user object from acl_users
+        # XXX what about portal_membership.getAuthenticatedMember()?
+        acl_users = self.__getPUS()
+        user = acl_users.getUser(member_id)
+        if user is not None:
+            user= user.__of__(acl_users)
+        else:
+            user= getSecurityManager().getUser()
+            # check that we do not do something wrong
+            if user.getId() != member_id:
+                raise NotImplementedError, \
+                    'cannot get user for member area creation'
+
+        ## get some translations
+        # before translation we must set right encodings in header to make PTS happy
+        properties = getToolByName(self, 'portal_properties')
+        charset = properties.site_properties.getProperty('default_charset', 'utf-8')
+        self.REQUEST.RESPONSE.setHeader('Content-Type', 'text/html;charset=%s' % charset)
+
+        member_folder_title = translate(
+            'plone', 'title_member_folder',
+            {'member': member_id}, self,
+            default = "%s's Home" % member_id)
+
+        member_folder_description = translate(
+            'plone', 'description_member_folder',
+            {'member': member_id}, self,
+            default = 'Home page area that contains the items created ' \
+            'and collected by %s' % member_id)
+
+        member_folder_index_html_title = translate(
+            'plone', 'title_member_folder_index_html',
+            {'member': member_id}, self,
+            default = "Home page for %s" % member_id)
+
+        personal_folder_title = translate(
+            'plone', 'title_member_personal_folder',
+            {'member': member_id}, self,
+            default = "Personal Items for %s" % member_id)
+
+        personal_folder_description = translate(
+            'plone', 'description_member_personal_folder',
+            {'member': member_id}, self,
+            default = 'contains personal workarea items for %s' % member_id)
+
+        ## Modify member folder
+        member_folder = self.getHomeFolder(member_id)
+        # Grant Ownership and Owner role to Member
+        member_folder.changeOwnership(user)
+        member_folder.__ac_local_roles__ = None
+        member_folder.manage_setLocalRoles(member_id, ['Owner'])
+        # set title and description (edit invokes reindexObject)
+        member_folder.edit(title=member_folder_title,
+                           description=member_folder_description)
+        member_folder.reindexObject()
+
+        ## Create personal folder for personal items
+        _createObjectByType('Folder', member_folder, id=self.personal_id)
+        personal = getattr(member_folder, self.personal_id)
+        personal.edit(title=personal_folder_title,
+                      description=personal_folder_description)
+        # Grant Ownership and Owner role to Member
+        personal.changeOwnership(user)
+        personal.__ac_local_roles__ = None
+        personal.manage_setLocalRoles(member_id, ['Owner'])
+        # Don't add .personal folders to catalog
+        catalog.unindexObject(personal)
+
+        if minimal:
+            # don't set up the index_html for unit tests to speed up tests
+            return
+
+        ## add homepage text
+        # get the text from portal_skins automagically
+        homepageText = getattr(self, 'homePageText', None)
+        if homepageText:
+            member_object = self.getMemberById(member_id)
+            portal = getToolByName(self, 'portal_url')
+            # call the page template
+            content = homepageText(member=member_object, portal=portal).strip()
+            _createObjectByType('Document', member_folder, id='index_html')
+            hpt = getattr(member_folder, 'index_html')
+            # edit title, text and format
+            # XXX
+            hpt.setTitle(member_folder_index_html_title)
+            if hpt.meta_type == 'Document':
+                # CMFDefault Document
+                hpt.edit(text_format='structured-text', text=content)
+            else:
+                hpt.update(text=content)
+            hpt.setFormat('structured-text')
+            hpt.reindexObject()
+            # Grant Ownership and Owner role to Member
+            hpt.changeOwnership(user)
+            hpt.__ac_local_roles__ = None
+            hpt.manage_setLocalRoles(member_id, ['Owner'])
+
+        ## Hook to allow doing other things after memberarea creation.
+        notify_script = getattr(member_folder, 'notifyMemberAreaCreated', None)
+        if notify_script is not None:
+            notify_script()
+
+ 
     def getHomeFolder(self, id=None, verifyPermission=0):
         """ Return a member's home folder object, or None.
         Specially instrumented to for URL-quoted-member-id folder names.
@@ -106,6 +236,7 @@ class MembershipTool(BaseMembershipTool):
         id = url_quote(id, '') # we provide the 'safe' param because
                                # want '/' encoded
         return BaseMembershipTool.getHomeFolder(self, id, verifyPermission)
+        
 
 
 InitializeClass(MembershipTool)
