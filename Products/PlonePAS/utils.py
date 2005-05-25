@@ -1,4 +1,4 @@
-def unique( iterable ):
+def unique(iterable):
     d = {}
     for i in iterable:
         d[i] = None

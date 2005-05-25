@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.23 2005/05/24 17:49:59 dreamcatcher Exp $
+$Id: pas.py,v 1.24 2005/05/25 14:56:27 dreamcatcher Exp $
 """
 import sys
 from sets import Set
@@ -15,9 +15,10 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
 from Products.PluggableAuthService.PluggableAuthService import security
-from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IAuthenticationPlugin
-
-from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+     import IRoleAssignerPlugin, IAuthenticationPlugin
+from Products.PlonePAS.interfaces.plugins \
+     import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 #################################
@@ -25,16 +26,16 @@ from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 def _doDelUsers(self, ids):
     """
-    given a list of user ids, hand off to a deleter plugin if available;
+    Given a list of user ids, hand off to a deleter plugin if available;
     has no return value, like the original
     """
 
-    plugins = self._getOb( 'plugins' )
-    userdeleters = plugins.listPlugins( IUserManagement )
+    plugins = self._getOb('plugins')
+    userdeleters = plugins.listPlugins(IUserManagement)
 
     if not userdeleters:
-        raise NotImplementedError( "There is no plugin that can "
-                                   " delete users." )
+        raise NotImplementedError("There is no plugin that can "
+                                   " delete users.")
 
     for userdeleter_id, userdeleter in userdeleters:
         for id in ids:
@@ -42,56 +43,57 @@ def _doDelUsers(self, ids):
 
 PluggableAuthService._doDelUsers = _doDelUsers
 
-security.declareProtected( ManageUsers, 'userFolderDelUsers' )
+security.declareProtected(ManageUsers, 'userFolderDelUsers')
 PluggableAuthService.userFolderDelUsers = PluggableAuthService._doDelUsers
 
 
 def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
     """
-    given a principal id, change its password, roles, domains, iff
+    Given a principal id, change its password, roles, domains, iff
     respective plugins for such exist.
 
     XXX domains are currently ignored.
     """
 
     plugins = self._getOb('plugins')
-    managers = plugins.listPlugins( IUserManagement )
-    rmanagers = plugins.listPlugins( IRoleAssignerPlugin )
+    managers = plugins.listPlugins(IUserManagement)
+    rmanagers = plugins.listPlugins(IRoleAssignerPlugin)
 
 
-    if not ( managers and rmanagers ):
-        raise NotImplementedError( "There is no plugin that can modify users" )
+    if not (managers and rmanagers):
+        raise NotImplementedError("There is no plugin that can modify users")
 
     modified = False
     for mid, manager in managers:
         try:
-            manager.doChangeUser( principal_id, password )
+            manager.doChangeUser(principal_id, password)
             modified = True
         except RuntimeError:
             pass
 
     if not modified:
-        raise RuntimeError("no user management plugins were able to successfully modify the user")
+        raise RuntimeError ("No user management plugins were able "
+                            "to successfully modify the user")
 
 #    sroles = Set() # keep track that we set all the requested roles
     for rid, rmanager in rmanagers:
-        rmanager.assignRolesToPrincipal( roles, principal_id)
+        rmanager.assignRolesToPrincipal(roles, principal_id)
 
 #    # we can take care of this all in one call, now
 #        for role in roles:
-#            if rmanager.assignRolesToPrincipal( principal_id, role):
-#                sroles.add( role )
+#            if rmanager.assignRolesToPrincipal(principal_id, role):
+#                sroles.add(role)
 
-#    roles_not_set = sroles.difference( Set( roles ) )
+#    roles_not_set = sroles.difference(Set(roles))
 
-#    if not len( roles_not_set ) == 0:
+#    if not len(roles_not_set) == 0:
 #        raise RuntimeError("not all roles were set - %s"%roles_not_set)
 
     return True
 
 PluggableAuthService._doChangeUser = _doChangeUser
 
-security.declareProtected( ManageUsers, 'userFolderEditUser' )
+security.declareProtected(ManageUsers, 'userFolderEditUser')
 PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser
 
 
@@ -109,14 +111,15 @@ def _doDelGroups(self, names):
 
 PluggableAuthService._doDelGroups = _doDelGroups
 
-security.declareProtected( ManageUsers, 'userFolderDelGroups' )
+security.declareProtected(ManageUsers, 'userFolderDelGroups')
 PluggableAuthService.userFolderDelGroups = PluggableAuthService._doDelGroups
 
 
 
 def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
     """
-    given a group's id, change its roles, domains, iff respective plugins for such exist.
+    Given a group's id, change its roles, domains, iff respective
+    plugins for such exist.
 
     XXX domains are currently ignored.
     XXX groups also ignored
@@ -125,23 +128,21 @@ def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
     """
 
     plugins = self._getOb('plugins')
-    rmanagers = plugins.listPlugins( IRoleAssignerPlugin )
+    rmanagers = plugins.listPlugins(IRoleAssignerPlugin)
 
 
-    if not ( rmanagers ):
-        raise NotImplementedError( "There is no plugin that can modify users" )
+    if not (rmanagers):
+        raise NotImplementedError("There is no plugin that can modify users")
 
     for rid, rmanager in rmanagers:
-        rmanager.assignRolesToPrincipal( roles, principal_id)
+        rmanager.assignRolesToPrincipal(roles, principal_id)
 
     return True
 
 PluggableAuthService._doChangeGroup = _doChangeGroup
 
-security.declareProtected( ManageUsers, 'userFolderEditGroup' )
+security.declareProtected(ManageUsers, 'userFolderEditGroup')
 PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
-
-
 
 security.declareProtected(ManageUsers, 'getGroup')
 def getGroup(self, group_id):
@@ -162,14 +163,17 @@ PluggableAuthService.getGroup = getGroup
 security.declarePublic("getLocalRolesForDisplay")
 def getLocalRolesForDisplay(self, object):
     """This is used for plone's local roles display
-    This method returns a tuple (massagedUsername, roles, userType, actualUserName).
-    This method is protected by the 'access content information' permission. We may
-    change that if it's too permissive...
+
+    This method returns a tuple (massagedUsername, roles, userType,
+    actualUserName).  This method is protected by the 'access content
+    information' permission. We may change that if it's too
+    permissive...
 
     A GRUF method originally.
     """
     result = []
-    local_roles = object.get_local_roles()   # we don't have a PAS-side way to get this
+    # we don't have a PAS-side way to get this
+    local_roles = object.get_local_roles()
     for one_user in local_roles:
         username = one_user[0]
         roles = one_user[1]
@@ -181,13 +185,13 @@ def getLocalRolesForDisplay(self, object):
 PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
 
 
-
 #################################
 # non standard gruf --- junk method  XXX remove me
 
 def _doDelUsers(self, names):
-    """Delete one or more users. This should be implemented by subclasses
-       to do the actual deleting of users."""
+    """Delete one or more users. This should be implemented by
+    subclasses to do the actual deleting of users.
+    """
     for name in names:
         self._doDelUser(name)
 
