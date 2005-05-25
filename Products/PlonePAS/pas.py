@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.24 2005/05/25 14:56:27 dreamcatcher Exp $
+$Id: pas.py,v 1.25 2005/05/25 22:03:19 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -20,6 +20,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 from Products.PlonePAS.interfaces.plugins \
      import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 #################################
 # pas folder monkies - standard zope user folder api
@@ -183,6 +184,24 @@ def getLocalRolesForDisplay(self, object):
         result.append((username, roles, userType, username))
     return tuple(result)
 PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+
+
+def getUsers(self):
+    """
+    Return a list of all users from plugins that implement the user introspection interface.
+    Could potentially be very long.
+    """
+    # we should have a method that's cheap about returning number of users.
+    retval = []
+    plugins = self._getOb('plugins')
+    introspectors = self.plugins.listPlugins(IUserIntrospection)
+
+    for iid, introspector in introspectors:
+        retval += introspector.getUsers()
+
+    return retval
+PluggableAuthService.getUsers = getUsers
+PluggableAuthService.getPureUsers = getUsers   # this'll make listMembers work
 
 
 #################################

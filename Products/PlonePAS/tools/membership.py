@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.5 2005/05/25 18:11:29 jccooper Exp $
+$Id: membership.py,v 1.6 2005/05/25 22:03:19 jccooper Exp $
 """
 from Globals import InitializeClass
 
@@ -36,11 +36,23 @@ class MembershipTool(BaseMembershipTool):
             member = self.getMemberById(id)
             member.setMemberProperties(properties)
 
+
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
-        Only takes 'name' as keyword (or in REQUEST) and searches on
+        The following properties can be provided:
+        - name
+        - email
+        - last_login_time
+        - roles
+        - groupname
+
+        This is an 'AND' request.
+
+        When it takes 'name' as keyword (or in REQUEST) and searches on
         Full name and id.
+
+        Simple name searches are "fast".
         """
         acl_users = self.acl_users
         md = self.portal_memberdata
@@ -49,12 +61,22 @@ class MembershipTool(BaseMembershipTool):
             dict = REQUEST
         else:
             dict = kw
-
+        
         name = dict.get('name', None)
+        email = dict.get('email', None)
+        roles = dict.get('roles', None)
+        last_login_time = dict.get('last_login_time', None)
+        groupname = dict.get('groupname', '').strip()
+        is_manager = self.checkPermission('Manage portal', self)
+
         if name:
             name = name.strip().lower()
-
-        is_manager = self.checkPermission('Manage portal', self)
+        if not name:
+            name = None
+        if email:
+            email = email.strip().lower()
+        if not email:
+            email = None
 
         md_users = []
         uf_users = []
@@ -68,20 +90,81 @@ class MembershipTool(BaseMembershipTool):
             # name).
             uf_users = acl_users.searchUsers(name=name)
 
-        # build final list
         members = []
-        wrap = self.wrapUser
-        getUser = acl_users.getUser
+        g_userids, g_members = [], []
 
-        for userid in md_users:
-            members.append(wrap(getUser(userid)))
-        for user in uf_users:
-            userid = user['userid']
-            if userid in md_users:
-                continue             # Kill dupes
-            members.append(wrap(getUser(userid)))
+        if groupname:
+            groups = groups_tool.searchForGroups(title=groupname) + \
+                     groups_tool.searchForGroups(name=groupname)
 
-        return members
+            for group in groups:
+                for member in group.getGroupMembers():
+                    if member not in g_members and not groups_tool.isGroup(member):
+                        g_members.append(member)
+            g_userids = map(lambda x: x.getMemberId(), g_members)
+        if groupname and not g_userids:
+            return []
+
+
+        # build final list
+        if md_users is not None and uf_users is not None:
+            wrap = self.wrapUser
+            getUser = acl_users.getUser
+
+            for userid in md_users:
+                members.append(wrap(getUser(userid)))
+            for user in uf_users:
+                userid = user['userid']
+                if userid in md_users:
+                    continue             # Kill dupes
+                members.append(wrap(getUser(userid)))
+
+            if not email and \
+                   not roles and \
+                   not last_login_time:
+                return members
+
+        elif groupname:
+            members = g_members
+            names_checked = 0
+        else:
+            # If the lists are not available, we just stupidly get the members list
+            members = self.listMembers()
+            names_checked = 0
+
+        # Now perform individual checks on each user
+        res = []
+        portal = self.portal_url.getPortalObject()
+
+        for member in members:
+            #user = md.wrapUser(u)
+            u = member.getUser()
+            if not (member.listed or is_manager):
+                continue
+            if name and not names_checked:
+                if (u.getUserName().lower().find(name) == -1 and
+                    member.getProperty('fullname').lower().find(name) == -1):
+                    continue
+            if email:
+                if member.getProperty('email').lower().find(email) == -1:
+                    continue
+            if roles:
+                user_roles = member.getRoles()
+                found = 0
+                for r in roles:
+                    if r in user_roles:
+                        found = 1
+                        break
+                if not found:
+                    continue
+            if last_login_time:
+                if member.last_login_time < last_login_time:
+                    continue
+            res.append(member)
+        return res
+
+
+
 
     #############
     ## sanitize home folders (we may get URL-illegal ids)

@@ -15,13 +15,13 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: user.py,v 1.5 2005/05/25 14:47:21 dreamcatcher Exp $
+$Id: user.py,v 1.6 2005/05/25 22:03:19 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
 from Globals import InitializeClass, DTMLFile
 
-from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import IUserManagement, IUserIntrospection
 from Products.PluggableAuthService.utils import createViewName
 from Products.PluggableAuthService.plugins.ZODBUserManager \
      import ZODBUserManager as BasePlugin
@@ -47,7 +47,7 @@ class UserManager(BasePlugin):
     """
 
     meta_type = 'User Manager'
-    __implements__ = BasePlugin.__implements__ + (IUserManagement,)
+    __implements__ = BasePlugin.__implements__ + (IUserManagement, IUserIntrospection,)
 
     security = ClassSecurityInfo()
 
@@ -74,6 +74,8 @@ class UserManager(BasePlugin):
         view_name = createViewName('enumerateUsers')
         self.ZCacheable_invalidate(view_name=view_name)
 
+    ## User Management interface
+
     security.declarePrivate('doDeleteUser')
     def doDeleteUser(self, userid):
         """Given a user id, delete that user
@@ -87,5 +89,26 @@ class UserManager(BasePlugin):
         if self._user_passwords.get(principal_id) is None:
             raise RuntimeError, "User does not exist: %s" % principal_id
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
+
+    ## User Introspection interface
+
+    def getUserIds(self):
+        """
+        Return a list of user ids
+        """
+        return self.listUserIds()
+
+    def getUserNames(self):
+        """
+        Return a list of usernames
+        """
+        return [x['login_name'] for x in self.listUserInfo()]
+
+    def getUsers(self):
+        """
+        Return a list of users
+        """
+        uf = self.acl_users
+        return [uf.getUserById(x) for x in self.getUserIds()]
 
 InitializeClass(UserManager)
