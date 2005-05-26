@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.12 2005/05/25 19:40:16 dreamcatcher Exp $
+$Id: group.py,v 1.13 2005/05/26 01:32:48 dreamcatcher Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -56,7 +56,7 @@ class GroupManager(ZODBGroupManager):
     meta_type = "Group Manager"
 
     __implements__ = (IGroupsPlugin, IGroupEnumerationPlugin,
-                       IGroupManagement, IGroupIntrospection)
+                      IGroupManagement, IGroupIntrospection)
 
     security = ClassSecurityInfo()
 

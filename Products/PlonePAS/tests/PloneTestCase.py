@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.16 2005/05/25 23:04:45 dreamcatcher Exp $
+# $Id: PloneTestCase.py,v 1.17 2005/05/26 01:32:48 dreamcatcher Exp $
 
 from Testing import ZopeTestCase
 
@@ -132,6 +132,12 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
         user = uf.getUserById(portal_owner).__of__(uf)
         newSecurityManager(None, user)
 
+    def failIfRaises(self, exc, method, *args, **kw):
+        try:
+            method(*args, **kw)
+        except exc, e:
+            self.fail('Got exception %r where it should not happen' % e)
+                                        
 
 class FunctionalTestCase(ZopeTestCase.Functional, PloneTestCase):
     '''Convenience class for functional unit testing'''

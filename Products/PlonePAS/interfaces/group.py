@@ -15,7 +15,7 @@
 """
 group interfaces for plone, based off existing group usage pre pas.
 
-$Id: group.py,v 1.9 2005/05/24 17:50:01 dreamcatcher Exp $
+$Id: group.py,v 1.10 2005/05/26 01:32:47 dreamcatcher Exp $
 """
 
 from Products.PluggableAuthService.interfaces import plugins
@@ -42,19 +42,19 @@ class IGroupManagement(Interface):
         return True on success
         """
 
-    def setRolesForGroup( group_id, roles=() ):
+    def setRolesForGroup(group_id, roles=()):
         """
         set roles for group
         return True on success
         """
 
-    def removeGroup( group_id ):
+    def removeGroup(group_id):
         """
         Remove the given group
         return True on success
         """
 
-    def removePrincipalFromGroup( principal_id, group_id ):
+    def removePrincipalFromGroup(principal_id, group_id):
         """
         remove the given principal from the group
         return True on success
@@ -62,7 +62,7 @@ class IGroupManagement(Interface):
 
 class IGroupIntrospection(Interface):
 
-    def getGroupById( group_id ):
+    def getGroupById(group_id):
         """
         Returns the portal_groupdata-ish object for a group
         corresponding to this id.
@@ -82,7 +82,7 @@ class IGroupIntrospection(Interface):
         Returns a list of the available groups
         """
 
-    def getGroupMembers( group_id ):
+    def getGroupMembers(group_id):
         """
         return the members of the given group
         """
@@ -94,39 +94,39 @@ class IGroupSpaceManagement(Interface):
         return the group space container
         """
 
-    def setGroupSpaceCreationFlag( flag ):
+    def setGroupSpaceCreationFlag(flag):
         """
         set the creation flag, ie. whether or not to create
         group spaces.
         """
 
-    def getGroupSpaceForGroup( group_id ):
+    def getGroupSpaceForGroup(group_id):
         """
         return the groupspace for the given group id
         """
 
-    def getGroupSpaceURL( group_id ):
+    def getGroupSpaceURL(group_id):
         """
         return the url to the groupspace for the given group
         """
 
-    def createGroupSpace( group_id ):
+    def createGroupSpace(group_id):
         """
         create a groupspace for the given group id
         """
 
 
-class IGroupDataTool( Interface ):
+class IGroupDataTool(Interface):
 
-    def wrapGroup( group ):
+    def wrapGroup(group):
         """
         decorate a group with property management capabilities if needed
         """
 
-class IGroupTool( IGroupIntrospection,
+class IGroupTool(IGroupIntrospection,
                   IGroupManagement,
                   plugins.IGroupsPlugin,
-                  IGroupSpaceManagement ):
+                  IGroupSpaceManagement):
 
     """
     Defines an interface for managing and introspecting and

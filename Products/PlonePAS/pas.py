@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.25 2005/05/25 22:03:19 jccooper Exp $
+$Id: pas.py,v 1.26 2005/05/26 01:32:47 dreamcatcher Exp $
 """
 import sys
 from sets import Set
@@ -147,12 +147,13 @@ PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
 
 security.declareProtected(ManageUsers, 'getGroup')
 def getGroup(self, group_id):
-    """Like getGroupById in groups tool, but doesn't wrap."""
+    """Like getGroupById in groups tool, but doesn't wrap.
+    """
     group = None
     introspectors = self.plugins.listPlugins(IGroupIntrospection)
 
     if not introspectors:
-        raise NotSupported("no plugins allow for group management")
+        raise NotSupported, 'No plugins allow for group management'
     for iid, introspector in introspectors:
         group = introspector.getGroupById(group_id)
         if group is None:
@@ -188,10 +189,12 @@ PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
 
 def getUsers(self):
     """
-    Return a list of all users from plugins that implement the user introspection interface.
+    Return a list of all users from plugins that implement the user
+    introspection interface.
+
     Could potentially be very long.
     """
-    # we should have a method that's cheap about returning number of users.
+    # We should have a method that's cheap about returning number of users.
     retval = []
     plugins = self._getOb('plugins')
     introspectors = self.plugins.listPlugins(IUserIntrospection)

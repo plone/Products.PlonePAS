@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.6 2005/05/25 22:03:19 jccooper Exp $
+$Id: membership.py,v 1.7 2005/05/26 01:32:48 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 
@@ -7,7 +7,7 @@ from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipToo
 from urllib import quote as url_quote
 
 # for createMemberArea...
-from AccessControl import getSecurityManager
+from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.PloneUtilities import _createObjectByType
 from Products.CMFPlone.PloneUtilities import translate
@@ -20,7 +20,9 @@ class MembershipTool(BaseMembershipTool):
     """
 
     meta_type = "PlonePAS Membership Tool"
+    security = ClassSecurityInfo()
 
+    security.declarePrivate('addMember')
     def addMember(self, id, password, roles, domains, properties=None):
         """Adds a new member to the user folder.
 
@@ -37,6 +39,7 @@ class MembershipTool(BaseMembershipTool):
             member.setMemberProperties(properties)
 
 
+    security.declarePublic('searchForMembers')
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
@@ -163,20 +166,18 @@ class MembershipTool(BaseMembershipTool):
             res.append(member)
         return res
 
-
-
-
     #############
     ## sanitize home folders (we may get URL-illegal ids)
 
+    security.declarePublic('createMemberarea')
     def createMemberarea(self, member_id=None, minimal=0):
         """
-        Create a member area for 'member_id' or the authenticated user, but don't assume
-        that member_id is url-safe.
+        Create a member area for 'member_id' or the authenticated
+        user, but don't assume that member_id is url-safe.
 
-        Unfortunately, a pretty close copy of the (very large) original and only
-        a few lines different.
-        Plone should probably do this.
+        Unfortunately, a pretty close copy of the (very large)
+        original and only a few lines different.  Plone should
+        probably do this.
         """
         catalog = getToolByName(self, 'portal_catalog')
         membership = getToolByName(self, 'portal_membership')
@@ -196,7 +197,13 @@ class MembershipTool(BaseMembershipTool):
             # XXX exception?
             return
 
-        safe_member_id = url_quote(member_id,'')  # we provide the 'safe' param to get '/' encoded
+
+        # we provide the 'safe' param to get '/' encoded
+
+        # XXX Cameron, url_quote turns strange chars into %xx, and %
+        # is not a valid char for ObjectManager so this ends up
+        # breaking valid ids.
+        safe_member_id = member_id # url_quote(member_id, '')  
         if hasattr(members, safe_member_id):
             # has already this member
             # XXX exception
@@ -209,7 +216,7 @@ class MembershipTool(BaseMembershipTool):
         acl_users = self.__getPUS()
         user = acl_users.getUser(member_id)
         if user is not None:
-            user= user.__of__(acl_users)
+            user = user.__of__(acl_users)
         else:
             user= getSecurityManager().getUser()
             # check that we do not do something wrong
@@ -218,7 +225,8 @@ class MembershipTool(BaseMembershipTool):
                     'cannot get user for member area creation'
 
         ## get some translations
-        # before translation we must set right encodings in header to make PTS happy
+        # before translation we must set right encodings in header to
+        # make PTS happy
         properties = getToolByName(self, 'portal_properties')
         charset = properties.site_properties.getProperty('default_charset', 'utf-8')
         self.REQUEST.RESPONSE.setHeader('Content-Type', 'text/html;charset=%s' % charset)
@@ -306,18 +314,28 @@ class MembershipTool(BaseMembershipTool):
         if notify_script is not None:
             notify_script()
 
- 
+     # deal with ridiculous API change in CMF
+    security.declarePublic('createMemberArea')
+    createMemberArea = createMemberarea
+
+    security.declarePublic('getHomeFolder')
     def getHomeFolder(self, id=None, verifyPermission=0):
         """ Return a member's home folder object, or None.
-        Specially instrumented to for URL-quoted-member-id folder names.
+
+        Specially instrumented to for URL-quoted-member-id folder
+        names.
         """
         if id is None:
             member = self.getAuthenticatedMember()
             if not hasattr(member, 'getMemberId'):
                 return None
             id = member.getMemberId()
-        id = url_quote(id, '') # we provide the 'safe' param because
-                               # want '/' encoded
+
+        # XXX Cameron, url_quote turns strange chars into %xx, and %
+        # is not a valid char for ObjectManager so this ends up
+        # breaking valid ids.
+        # id = url_quote(id, '') # we provide the 'safe' param because
+        #                        # want '/' encoded
         return BaseMembershipTool.getHomeFolder(self, id, verifyPermission)
         
 

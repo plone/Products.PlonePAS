@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.14 2005/05/25 14:47:22 dreamcatcher Exp $
+$Id: groups.py,v 1.15 2005/05/26 01:32:48 dreamcatcher Exp $
 """
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
@@ -98,14 +98,7 @@ class GroupsTool(PloneGroupsTool):
 
     security.declareProtected(ManageUsers, 'getGroupById')
     def getGroupById(self, group_id):
-        group = None
-        introspectors = self._getGroupIntrospectors()
-        if not introspectors:
-            raise NotSupported, 'No plugins allow for group management'
-        for iid, introspector in introspectors:
-            group = introspector.getGroupById(group_id)
-            if group is None:
-                break
+        group = self.acl_users.getGroup(group_id)
         if group is not None:
             group = self.wrapGroup(group)
         return group
