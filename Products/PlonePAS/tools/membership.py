@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.7 2005/05/26 01:32:48 dreamcatcher Exp $
+$Id: membership.py,v 1.8 2005/05/27 21:07:26 jccooper Exp $
 """
 from Globals import InitializeClass
 
@@ -83,6 +83,7 @@ class MembershipTool(BaseMembershipTool):
 
         md_users = []
         uf_users = []
+
         if name:
             # We first find in MemberDataTool users whose _full_ name
             # match what we want.
@@ -110,7 +111,9 @@ class MembershipTool(BaseMembershipTool):
 
 
         # build final list
-        if md_users is not None and uf_users is not None:
+        #if md_users is not None and uf_users is not None:   # original. I think this is broken.
+                                                             # does anybody actually use this?
+        if md_users or uf_users:
             wrap = self.wrapUser
             getUser = acl_users.getUser
 
@@ -132,6 +135,7 @@ class MembershipTool(BaseMembershipTool):
             names_checked = 0
         else:
             # If the lists are not available, we just stupidly get the members list
+            # only IUserIntrospection plugins participate here.
             members = self.listMembers()
             names_checked = 0
 

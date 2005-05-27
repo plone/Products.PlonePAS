@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.38 2005/05/25 02:04:14 dreamcatcher Exp $
+$Id: Install.py,v 1.39 2005/05/27 21:07:24 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -15,6 +15,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces import group as igroup
 
@@ -75,6 +76,15 @@ def registerPluginTypes(pas):
         }
 
     registerPluginType(pas, IUserManagement, PluginInfo)
+
+    PluginInfo = {
+        'id' : 'IUserIntrospection',
+        'title': 'user_introspection',
+        'description': ("The User Introspection plugins allow the "
+                        "Pluggable Auth Service to provide lists of users")
+        }
+
+    registerPluginType(pas, IUserIntrospection, PluginInfo)
 
     PluginInfo = {
         'id' : 'IGroupManagement',
