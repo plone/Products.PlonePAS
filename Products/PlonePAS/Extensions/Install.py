@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.39 2005/05/27 21:07:24 jccooper Exp $
+$Id: Install.py,v 1.40 2005/05/27 21:37:42 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -598,5 +598,5 @@ def install(self):
 #    - so some sort of UI is necessary
 #  should have some sort of facility for allowing easy extension of migration of UFs
 #    - register grab and restore methods, or something
-#  cannot currently handle GRUFGroupsFolder
+#  cannot currently handle LDAPGroupsFolder
 #  can probably handle multiple LDAPUserFolders, but not tested
