@@ -1,5 +1,5 @@
 """
-$Id: test_properties.py,v 1.1 2005/05/25 23:04:45 dreamcatcher Exp $
+$Id: test_properties.py,v 1.2 2005/05/30 21:28:40 dreamcatcher Exp $
 """
 
 import os, sys
@@ -62,7 +62,7 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
 
         # Delete the property
         md.manage_delProperties(ids=('age',))
-        
+
         # Assert property is gone
         self.failIf(member.hasProperty('age'))
 
@@ -70,7 +70,7 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         got = member.getProperty('age', None)
         expected = None
         self.assertEquals(got, expected)
-        
+
         # Other properties should still be there.
         got = member.getProperty('fullname', None)
         expected = 'User #1 Is Cool'
@@ -84,6 +84,8 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         gt = getToolByName(self.portal, 'portal_groups')
         gd = getToolByName(self.portal, 'portal_groupdata')
 
+        self.loginPortalOwner()
+        
         # Create a new Group
         gt.addGroup('group1', ['Reviewer'], [],
                      {'email': 'group1@host.com',
@@ -124,7 +126,7 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
 
         # Delete the property
         gd.manage_delProperties(ids=('karma',))
-        
+
         # Assert property is gone
         self.failIf(group.hasProperty('karma'))
 
@@ -132,7 +134,7 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         got = group.getProperty('karma', None)
         expected = None
         self.assertEquals(got, expected)
-        
+
         # Other properties should still be there.
         got = group.getProperty('title', None)
         expected = 'Group #1 Is Cool'

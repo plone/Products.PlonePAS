@@ -4,11 +4,14 @@ Major missing functionality
 
  - UI user/group listing if small enough list (determined by capability)
 
- - other UI actions (deletion, property mod) should also be determined by capability
+ - other UI actions (deletion, property mod) should also be determined
+   by capability
+
 
 Robustness and productization
 
- - determine between AD and regular LDAP in install (see Install.py bottom)
+ - determine between AD and regular LDAP in install (see Install.py
+   bottom)
 
 Other todo items
 
@@ -53,7 +56,8 @@ Wishlist
 
 Stuff to go upstream
 
- - PlonePAS groups tool: move GRUF/PAS common bits into Plone GroupsTool, also interface
+ - PlonePAS groups tool: move GRUF/PAS common bits into Plone
+   GroupsTool, also interface
 
  - Plone should include GroupData in its GroupDataTool.py. After this,
    our GroupData or monkey-patch can use the Plone one.  Relatedly,
@@ -70,8 +74,8 @@ Questions
  - Should groups.getGroupById use new acl_users.getGroup?
 
  - do we want another schema-setting mechanism for properties plugin? (see note)
-   related: sheet.py has the MutablePropertySheet schema coded in for several basic
-   types. is this all we need?
+   related: sheet.py has the MutablePropertySheet schema coded in for
+   several basic types. is this all we need?
 
  - does title not get to wrapped group?
 
@@ -116,7 +120,8 @@ Notes
 
 Outstanding Tests
 
- - NOTE: I'm not entirely up with the status of tests. Some of these might be done.
+ - NOTE: I'm not entirely up with the status of tests. Some of these
+   might be done.
 
  - adding, setting, deleting properties on users.
 

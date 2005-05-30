@@ -1,5 +1,5 @@
 """
-$Id: test_groups_tool.py,v 1.1 2005/05/26 01:32:48 dreamcatcher Exp $
+$Id: test_groups_tool.py,v 1.2 2005/05/30 21:28:40 dreamcatcher Exp $
 """
 
 import os, sys
@@ -26,10 +26,11 @@ class GroupsToolTest(PloneTestCase.PloneTestCase):
 
         self.group_id = 'group1'
         # Create a new Group
+        self.loginPortalOwner()
         gt.addGroup(self.group_id, ['Reviewer'], [],
                     {'email': 'group1@host.com',
                      'title': 'Group #1'})
-        
+
     def test_get_group(self):
         # Use PAS (monkeypatched) API method to get a group by id.
         group = self.portal.acl_users.getGroup(self.group_id)
