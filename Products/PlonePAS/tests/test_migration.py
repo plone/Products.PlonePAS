@@ -1,5 +1,5 @@
 """
-$Id: test_migration.py,v 1.2 2005/05/25 21:33:27 dreamcatcher Exp $
+$Id: test_migration.py,v 1.3 2005/05/30 21:30:04 dreamcatcher Exp $
 """
 
 import os, sys
@@ -96,7 +96,7 @@ class SanityCheck:
             # Ignore password check?
             # pw = user.getPassword()
             # self.tc.failUnless(pw == upw, (uid, pw, upw)
-            
+
             roles = [r for r in user.getRoles() if r not in ('Authenticated',)]
             for role in uroles:
                 self.tc.failUnless(role in roles, (uid, role, roles))
@@ -104,7 +104,7 @@ class SanityCheck:
             # Ignore domains check?
             # domains = user.getDomains()
             # self.tc.failUnless(domains == udomains, (uid, domains, udomains))
-                           
+
             member = mt.getMemberById(uid)
 
             for k, v in uprops.items():
@@ -130,7 +130,7 @@ class SanityCheck:
             # expected = self._group_members[gid]
             # for member in expected:
             #     self.tc.failUnless(member in members, (gid, member, members))
-            
+
             # XXX This seems to be expected to break too.
             for k, v in gprops.items():
                 propval = group.getProperty(k, None)

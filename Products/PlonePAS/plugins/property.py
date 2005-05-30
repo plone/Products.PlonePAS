@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.8 2005/05/25 21:33:27 dreamcatcher Exp $
+$Id: property.py,v 1.9 2005/05/30 21:30:04 dreamcatcher Exp $
 """
 from sets import Set
 
@@ -56,7 +56,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
     def __init__(self, id, title='', schema=None, **kw):
         """Create in-ZODB mutable property provider.
-        
+
         Provide a schema either as a list of (name,type,value) tuples
         in the 'schema' parameter or as a series of keyword parameters
         'name=value'. Types will be guessed in this case.
@@ -132,7 +132,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
                                     schema=self._getSchema(isGroup), **data)
 
     def setPropertiesForUser(self, user, propertysheet):
-        """Set the properties of a user or group based on the contents of a 
+        """Set the properties of a user or group based on the contents of a
         property sheet.
         """
         isGroup = getattr(user, 'isGroup', lambda: None)()

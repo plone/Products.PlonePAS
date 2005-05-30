@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.13 2005/05/26 01:32:48 dreamcatcher Exp $
+$Id: group.py,v 1.14 2005/05/30 21:30:03 dreamcatcher Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -166,9 +166,9 @@ class GroupManager(ZODBGroupManager):
             propfinders = plugins.listPlugins(IPropertiesPlugin)
             for propfinder_id, propfinder in propfinders:
 
-               data = propfinder.getPropertiesForUser(group, request)
-               if data:
-                   group.addPropertysheet(propfinder_id, data)
+                data = propfinder.getPropertiesForUser(group, request)
+                if data:
+                    group.addPropertysheet(propfinder_id, data)
 
             groups = self.acl_users._getGroupsForPrincipal(group, request
                                                 , plugins=plugins)

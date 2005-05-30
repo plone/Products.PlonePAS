@@ -2,7 +2,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.17 2005/05/26 01:32:48 dreamcatcher Exp $
+# $Id: PloneTestCase.py,v 1.18 2005/05/30 21:30:04 dreamcatcher Exp $
 
 from Testing import ZopeTestCase
 
@@ -137,7 +137,7 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
             method(*args, **kw)
         except exc, e:
             self.fail('Got exception %r where it should not happen' % e)
-                                        
+
 
 class FunctionalTestCase(ZopeTestCase.Functional, PloneTestCase):
     '''Convenience class for functional unit testing'''

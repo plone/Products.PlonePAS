@@ -1,5 +1,5 @@
 """
-$Id: test_membership_tool.py,v 1.1 2005/05/26 01:32:48 dreamcatcher Exp $
+$Id: test_membership_tool.py,v 1.2 2005/05/30 21:30:04 dreamcatcher Exp $
 """
 
 import os, sys
@@ -29,7 +29,7 @@ class MembershipToolTest(PloneTestCase.PloneTestCase):
         mt.addMember(self.member_id, 'pw', ['Member'], [],
                      {'email': 'member1@host.com',
                       'title': 'Member #1'})
-        
+
     def test_get_member(self):
         member = self.portal.acl_users.getUserById(self.member_id)
         self.failIf(member is None)

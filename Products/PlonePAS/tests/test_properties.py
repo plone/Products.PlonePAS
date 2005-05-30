@@ -1,5 +1,5 @@
 """
-$Id: test_properties.py,v 1.2 2005/05/30 21:28:40 dreamcatcher Exp $
+$Id: test_properties.py,v 1.3 2005/05/30 21:30:04 dreamcatcher Exp $
 """
 
 import os, sys
@@ -85,7 +85,7 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         gd = getToolByName(self.portal, 'portal_groupdata')
 
         self.loginPortalOwner()
-        
+
         # Create a new Group
         gt.addGroup('group1', ['Reviewer'], [],
                      {'email': 'group1@host.com',

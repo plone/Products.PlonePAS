@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.40 2005/05/27 21:37:42 jccooper Exp $
+$Id: Install.py,v 1.41 2005/05/30 21:30:03 dreamcatcher Exp $
 """
 
 from StringIO import StringIO
@@ -206,7 +206,7 @@ def restoreUserData(portal, out, userdata):
             print >> out, ("You can undo the install if you want "
                            "to fix this condition.")
             continue  # skip Emergency User, if present
-        
+
         # be careful of non-ZODB member sources, like LDAP
         member = mtool.getMemberById(u[0])
         if member is None:

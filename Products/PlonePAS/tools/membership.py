@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.8 2005/05/27 21:07:26 jccooper Exp $
+$Id: membership.py,v 1.9 2005/05/30 21:30:04 dreamcatcher Exp $
 """
 from Globals import InitializeClass
 
@@ -64,7 +64,7 @@ class MembershipTool(BaseMembershipTool):
             dict = REQUEST
         else:
             dict = kw
-        
+
         name = dict.get('name', None)
         email = dict.get('email', None)
         roles = dict.get('roles', None)
@@ -207,7 +207,7 @@ class MembershipTool(BaseMembershipTool):
         # XXX Cameron, url_quote turns strange chars into %xx, and %
         # is not a valid char for ObjectManager so this ends up
         # breaking valid ids.
-        safe_member_id = member_id # url_quote(member_id, '')  
+        safe_member_id = member_id # url_quote(member_id, '')
         if hasattr(members, safe_member_id):
             # has already this member
             # XXX exception
@@ -341,7 +341,7 @@ class MembershipTool(BaseMembershipTool):
         # id = url_quote(id, '') # we provide the 'safe' param because
         #                        # want '/' encoded
         return BaseMembershipTool.getHomeFolder(self, id, verifyPermission)
-        
+
 
 
 InitializeClass(MembershipTool)
