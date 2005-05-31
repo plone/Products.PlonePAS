@@ -46,6 +46,12 @@ Wishlist
 
  - a more PAS-centric Plone UI might be a good idea.
 
+ - when LDAP (or any other non-mutable) and ZODB props installed, LDAP is higher priority.
+   When trying to set non-mutable (LDAP-provided) properties, we do a no-op to prevent shadowing.
+   Previously this was an error. However, this is not entirely satisfactory, as there is no
+   notice to the user that a value is immutable; even worse, the value would appear to change, since
+   personalize_form will display the value from the request.
+
  - better framework for non-envisioned-by-author migrations.
    see notes at bottom of Install.py
 
