@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.8 2005/05/25 21:33:28 dreamcatcher Exp $
+$Id: groupdata.py,v 1.9 2005/05/31 23:51:40 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -137,5 +137,9 @@ class GroupData(BaseGroupData):
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
         return BaseGroupData.getProperty(self, id)
+
+    def getUserName(self):
+        return self.getName()
+    getUserNameWithoutGroupPrefix = getUserName
 
 InitializeClass(GroupData)
