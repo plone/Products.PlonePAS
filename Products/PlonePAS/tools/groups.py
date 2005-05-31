@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.16 2005/05/31 22:14:15 jccooper Exp $
+$Id: groups.py,v 1.17 2005/05/31 23:04:17 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
@@ -13,7 +13,7 @@ from Products.CMFCore.utils import getToolByName, UniqueObject
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 
-from GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
+from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
 
 class NotSupported(Exception): pass
 
@@ -107,7 +107,7 @@ class GroupsTool(PloneGroupsTool):
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
-
+    
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
