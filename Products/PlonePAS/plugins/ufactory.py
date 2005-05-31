@@ -13,20 +13,20 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.15 2005/05/25 14:47:21 dreamcatcher Exp $
+$Id: ufactory.py,v 1.16 2005/05/31 20:59:54 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass, DTMLFile
 
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
+from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.PlonePAS.utils import unique
-from Products.PlonePAS.sheet import MutablePropertySheet
 
 from zLOG import LOG, INFO
 def log(msg):
@@ -104,7 +104,7 @@ class PloneUser(PropertiedUser):
         if IPropertySheet.isImplementedBy(data):
             sheet = data
         else:
-            sheet = MutablePropertySheet(id, self, **data)
+            sheet = UserPropertySheet(id, **data)
 
         if self._propertysheets.get(id) is not None:
             raise KeyError, 'Duplicate property sheet: %s' % id

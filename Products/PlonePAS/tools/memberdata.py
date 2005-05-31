@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.14 2005/05/25 21:33:28 dreamcatcher Exp $
+$Id: memberdata.py,v 1.15 2005/05/31 20:59:54 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -115,8 +115,9 @@ class MemberData(BaseMemberData):
                     sheet.setProperty(k, v)
                     modified = True
                 else:
-                    raise RuntimeError, ("Mutable property provider "
-                                         "shadowed by read only provider")
+                    break
+                    #raise RuntimeError, ("Mutable property provider "
+                    #                     "shadowed by read only provider")
         if modified:
             self.notifyModified()
 
