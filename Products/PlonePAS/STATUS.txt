@@ -1,11 +1,15 @@
-PlonePAS is still very much in development. Most of it works at the
-moment, but deployment on production sites is highly discouraged. If
-you are interested, please install and test on a development
-system. Help us work out the bugs! See below for specific notes.
+PlonePAS is still in development. Most of it works at the
+moment, but deployment on production sites is highly discouraged,
+at lease without serious testing. If you are interested, please
+install and test on a development system. Help us work out the bugs!
+See below for specific notes.
 
 PlonePAS currently works with all Plone UI functionality except for
 password reset.  If you wish to use PlonePAS, you should install
 PasswordResetTool.
+
+Some Plone UI functionality will not work with all plugins. There
+is currently no capabilities checking in the UI.
 
 PlonePAS implements a good deal of the API expected of a UserFolder
 and of GRUF. However, no systematic determination of interface
@@ -18,6 +22,7 @@ Plone setup. Other setups may work.  Please see the README.
 Using GRUF as a multi-source may work, but hasn't been looked at
 recently.
 
-Using LDAPMultiPlugins will work.
+PlonePAS will also migrate existing LDAPUserFolder+GRUF setups. It
+will use the ADMultiPlugin by default: there's no LDAP/AD detection yet.
 
-MembershipTool role mapping is currently broken. See README.
+Please also see the README and NOTES.
