@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.15 2005/05/26 01:32:48 dreamcatcher Exp $
+$Id: groups.py,v 1.16 2005/05/31 22:14:15 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
@@ -12,6 +12,8 @@ from Products.CMFCore.utils import getToolByName, UniqueObject
 
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+
+from GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
 
 class NotSupported(Exception): pass
 
@@ -32,7 +34,6 @@ class GroupsTool(PloneGroupsTool):
     # basic group mgmt
     ##
 
-    security.declareProtected(ManageUsers, 'addGroup')
     def addGroup(self, id, roles = [], groups = [], properties=None, *args, **kw):
         group = None
         managers = self._getGroupManagers()
@@ -48,7 +49,7 @@ class GroupsTool(PloneGroupsTool):
         group.setGroupProperties(properties or kw)
         self.createGrouparea(id)
 
-    security.declareProtected(ManageUsers, 'removeGroup')
+    security.declareProtected(DeleteGroups, 'removeGroup')
     def removeGroup(self, group_id):
         managers = self._getGroupManagers()
         if not managers:
@@ -58,7 +59,7 @@ class GroupsTool(PloneGroupsTool):
                 return True
         return False
 
-    security.declareProtected(ManageUsers, 'setRolesForGroup')
+    security.declareProtected(ManageGroups, 'setRolesForGroup')
     def setRolesForGroup(self, group_id, roles=()):
         rmanagers = self._getPlugins().listPlugins(IRoleAssignerPlugin)
         if not (rmanagers):
@@ -71,7 +72,7 @@ class GroupsTool(PloneGroupsTool):
     # basic principal mgmt
     ##
 
-    security.declareProtected(ManageUsers, 'addPrincipalToGroup')
+    security.declareProtected(ManageGroups, 'addPrincipalToGroup')
     def addPrincipalToGroup(self, principal_id, group_id):
         managers = self._getGroupManagers()
         if not managers:
@@ -81,7 +82,7 @@ class GroupsTool(PloneGroupsTool):
                 return True
         return False
 
-    security.declareProtected(ManageUsers, 'removePrincipalFromGroup')
+    security.declareProtected(ManageGroups, 'removePrincipalFromGroup')
     def removePrincipalFromGroup(self, principal_id, group_id):
         managers = self._getGroupManagers()
         if not managers:
@@ -96,19 +97,17 @@ class GroupsTool(PloneGroupsTool):
     # group getters
     ##
 
-    security.declareProtected(ManageUsers, 'getGroupById')
     def getGroupById(self, group_id):
         group = self.acl_users.getGroup(group_id)
         if group is not None:
             group = self.wrapGroup(group)
         return group
 
-    security.declareProtected(ManageUsers, 'searchGroups')
+    security.declareProtected(ManageGroups, 'searchGroups')
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
 
-    security.declareProtected(ManageUsers, 'listGroups')
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
@@ -118,7 +117,7 @@ class GroupsTool(PloneGroupsTool):
             groups.extend(introspector.getGroups())
         return [self.wrapGroup(elt) for elt in groups]
 
-    security.declareProtected(ManageUsers, 'getGroupIds')
+    security.declareProtected(ViewGroups, 'getGroupIds')
     def getGroupIds(self):
         groups = []
         introspectors = self._getGroupIntrospectors()
@@ -126,7 +125,9 @@ class GroupsTool(PloneGroupsTool):
             groups.extend(introspector.getGroupIds())
         return groups
 
-    security.declareProtected(ManageUsers, 'getGroupMembers')
+    listGroupIds = getGroupIds
+
+    security.declareProtected(ViewGroups, 'getGroupMembers')
     def getGroupMembers(self, group_id):
         members = []
         introspectors = self._getGroupIntrospectors()
@@ -136,7 +137,7 @@ class GroupsTool(PloneGroupsTool):
                 break
         return members
 
-    security.declareProtected(ManageUsers, 'getGroupsForPrincipal')
+    security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
     def getGroupsForPrincipal(self, principal):
         introspectors = self._getGroupIntrospectors()
         for iid, introspector in introspectors:
