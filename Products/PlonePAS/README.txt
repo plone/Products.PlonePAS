@@ -48,6 +48,13 @@ For reference, the standard install procedure:
     (portal_quickinstaller in ZMI, or "Add/Remove Products" in the
     Plone Setup) and install it.
 
+Notes
+
+  If PAS caching is enabled (see the "Cache" tab) and the cache manager does not
+  have a 'cleanup' method (RAMCacheManager has one), then changes to the memberdata
+  schema will not effect users already cached. In this case, restart the server
+  for the changes to take effect.
+
 Implementation
 
   In some places, PlonePAS acts as an adaptor to make PAS provide

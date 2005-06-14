@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.10 2005/06/14 23:07:06 jccooper Exp $
+$Id: groupdata.py,v 1.11 2005/06/14 23:58:26 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -178,6 +178,26 @@ class GroupData(BaseGroupData):
                 ret.append(md.wrapUser(usr))
         return ret
 
+    def setProperties(self, properties=None, **kw):
+        '''Allows the manager group to set his/her own properties.
+        Accepts either keyword arguments or a mapping for the "properties"
+        argument.
+        '''
+        if properties is None:
+            properties = kw
+        return self.setGroupProperties(properties)
+
+    def getProperties(self, ):
+        """ Return the properties of this group. Properties are as usual in Zope."""
+        tool = self.getTool()
+        ret = {}
+        for pty in tool.propertyIds():
+            try:
+                ret[pty] = self.getProperty(pty)
+            except ValueError:
+                # We ignore missing ptys
+                continue
+        return ret
 
 
 InitializeClass(GroupData)
