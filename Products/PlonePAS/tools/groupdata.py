@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.9 2005/05/31 23:51:40 jccooper Exp $
+$Id: groupdata.py,v 1.10 2005/06/14 23:07:06 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -141,5 +141,43 @@ class GroupData(BaseGroupData):
     def getUserName(self):
         return self.getName()
     getUserNameWithoutGroupPrefix = getUserName
+
+    def getGroupName(self):
+        return self.getName()
+
+
+    ## GRUF 3.2 methods...
+
+    def _getGRUF(self,):
+        return self.acl_users
+
+    def addMember(self, id):
+        """ Add the existing member with the given id to the group"""
+        self._getGroup().addMember(id)
+
+    def removeMember(self, id):
+        """Remove the member with the provided id from the group.
+        """
+        self._getGroup().removeMember(id)
+
+    def getGroupMembers(self, ):
+        """
+        Returns a list of the portal_memberdata-ish members of the group.
+        This doesn't include TRANSITIVE groups/users.
+        """
+        md = self.portal_memberdata
+        gd = self.portal_groupdata
+        ret = []
+        for u_name in self.getGroup().getMemberIds(transitive = 0, ):
+            usr = self._getGRUF().getUserById(u_name)
+            if not usr:
+                raise AssertionError, "Cannot retreive a user by its id !"
+            if usr.isGroup():
+                ret.append(gd.wrapGroup(usr))
+            else:
+                ret.append(md.wrapUser(usr))
+        return ret
+
+
 
 InitializeClass(GroupData)

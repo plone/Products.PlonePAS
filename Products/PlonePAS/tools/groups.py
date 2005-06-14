@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.17 2005/05/31 23:04:17 jccooper Exp $
+$Id: groups.py,v 1.18 2005/06/14 23:07:06 jccooper Exp $
 """
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
@@ -19,7 +19,7 @@ class NotSupported(Exception): pass
 
 class GroupsTool(PloneGroupsTool):
     """
-    Gor the groupie in you
+    Replace the GRUF groups tool with PAS-specific methods.
     """
 
     id = 'portal_groups'
@@ -49,15 +49,48 @@ class GroupsTool(PloneGroupsTool):
         group.setGroupProperties(properties or kw)
         self.createGrouparea(id)
 
+    def editGroup(self, id, password, roles, permissions):
+        """Edit the given group with the supplied roles.
+
+        Passwords for groups seem to be irrelevant.
+        PlonePAS doesn't deal with domains either.
+
+        If user is not present, returns without exception.
+        """
+        group = self.getGroupById(id)
+        if not group: return None
+        self.setRolesForGroup(id, roles)
+        
+
     security.declareProtected(DeleteGroups, 'removeGroup')
     def removeGroup(self, group_id):
+        """Remove a single group, including group workspace, unless keep_workspaces=true."""
+        retval = False
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
+
         for mid, manager in managers:
             if manager.removeGroup(group_id):
-                return True
-        return False
+                retval = True
+
+        gwf = self.getGroupWorkspacesFolder()
+        if retval and gwf and not keep_workspaces:
+            workspace_id = self.getGroupareaFolder().getId()
+            if hasattr(aq_base(gwf), workspace_id):
+                gwf._delObject(workspace_id)
+
+        return retval
+
+    security.declareProtected(DeleteGroups, 'removeGroups')
+    def removeGroups(self, ids, keep_workspaces=0):
+        """Remove the group in the provided list (if possible).
+
+        Will by default remove this group's GroupWorkspace if it exists. You may
+        turn this off by specifying keep_workspaces=true.
+        """
+        for id in ids:
+            self.removeGroup(id)
 
     security.declareProtected(ManageGroups, 'setRolesForGroup')
     def setRolesForGroup(self, group_id, roles=()):
