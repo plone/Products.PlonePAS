@@ -3,7 +3,7 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.11 2005/06/15 00:10:32 jccooper Exp $
+$Id: sheet.py,v 1.12 2005/06/15 00:29:30 jccooper Exp $
 """
 
 from types import StringTypes, BooleanType, IntType
@@ -75,6 +75,7 @@ class MutablePropertySheet(UserPropertySheet):
         self.validateProperty(id, value)
 
         self._properties[id] = value
+        self._properties = self._properties
 
         # cascade to plugin
         provider = self.getPropertyProvider()
