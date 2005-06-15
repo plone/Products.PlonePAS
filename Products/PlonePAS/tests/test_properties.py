@@ -1,5 +1,5 @@
 """
-$Id: test_properties.py,v 1.5 2005/06/15 00:10:32 jccooper Exp $
+$Id: test_properties.py,v 1.6 2005/06/15 01:05:21 jccooper Exp $
 """
 
 import os, sys
@@ -42,10 +42,13 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         expected = 20
         self.assertEquals(got, expected)
 
+        # get a handle on the member
+        member = mt.getMemberById('user1')
+
         # Set some member properties. Needs to be logged in as the user.
         self.login('user1')
-        member.setProperties(age=30, fullname='User #1 Is Cool',
-                             email='user1@anotherhost.qa')
+        member.setMemberProperties({'age':30, 'fullname':'User #1 Is Cool',
+                                    'email':'user1@anotherhost.qa'})
 
         # Check the properties have been set
         got = member.getProperty('age', None)
@@ -62,6 +65,9 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
 
         # Delete the property
         md.manage_delProperties(ids=('age',))
+
+        # re-get the member to reflect the new memberdata schema
+        member = mt.getMemberById('user1')
 
         # Assert property is gone
         self.failIf(member.hasProperty('age'))
@@ -108,8 +114,8 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         self.assertEquals(got, expected)
 
         # Set some group properties
-        group.setProperties(karma=30, title='Group #1 Is Cool',
-                             email='group1@anotherhost.qa')
+        group.setGroupProperties({'karma':30, 'title':'Group #1 Is Cool',
+                                  'email':'group1@anotherhost.qa'})
 
         # Check the properties have been set
         got = group.getProperty('karma', None)

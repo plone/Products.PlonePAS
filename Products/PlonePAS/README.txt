@@ -48,6 +48,18 @@ For reference, the standard install procedure:
     (portal_quickinstaller in ZMI, or "Add/Remove Products" in the
     Plone Setup) and install it.
 
+Notes
+
+  If PAS caching is enabled (see the "Cache" tab) and the cache manager does not
+  have a 'cleanup' method (RAMCacheManager has one), then changes to the memberdata
+  schema will not effect users already cached. In this case, restart the server
+  or clear the cache (if possible) for the changes to take effect.
+
+  Similarly, changes to the memberdata schema will not propagate to member objects
+  already in use. If you have a memberdata object and change the memberdata properties
+  you must re-construct the member by saying portal_membership.getMemberById again.
+  See 'tests.test_properties.test_user_properties' for example.
+
 Implementation
 
   In some places, PlonePAS acts as an adaptor to make PAS provide
