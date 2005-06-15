@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.17 2005/06/15 00:10:33 jccooper Exp $
+$Id: memberdata.py,v 1.18 2005/06/15 16:38:42 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -146,6 +146,6 @@ class MemberData(BaseMemberData):
 
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
-        return BaseMemberData.getProperty(self, id)
+        return BaseMemberData.getProperty(self, id, default)
 
 InitializeClass(MemberData)
