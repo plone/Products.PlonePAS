@@ -1,6 +1,7 @@
 """
-$Id: groups.py,v 1.18 2005/06/14 23:07:06 jccooper Exp $
+$Id: groups.py,v 1.19 2005/06/15 23:00:43 jccooper Exp $
 """
+from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
 from Globals import InitializeClass
@@ -63,8 +64,8 @@ class GroupsTool(PloneGroupsTool):
         
 
     security.declareProtected(DeleteGroups, 'removeGroup')
-    def removeGroup(self, group_id):
-        """Remove a single group, including group workspace, unless keep_workspaces=true."""
+    def removeGroup(self, group_id, keep_workspaces=0):
+        """Remove a single group, including group workspace, unless keep_workspaces==true."""
         retval = False
         managers = self._getGroupManagers()
         if not managers:
@@ -76,7 +77,7 @@ class GroupsTool(PloneGroupsTool):
 
         gwf = self.getGroupWorkspacesFolder()
         if retval and gwf and not keep_workspaces:
-            workspace_id = self.getGroupareaFolder().getId()
+            workspace_id = self.getGroupareaFolder(group_id).getId()
             if hasattr(aq_base(gwf), workspace_id):
                 gwf._delObject(workspace_id)
 
@@ -90,7 +91,7 @@ class GroupsTool(PloneGroupsTool):
         turn this off by specifying keep_workspaces=true.
         """
         for id in ids:
-            self.removeGroup(id)
+            self.removeGroup(id, keep_workspaces)
 
     security.declareProtected(ManageGroups, 'setRolesForGroup')
     def setRolesForGroup(self, group_id, roles=()):
