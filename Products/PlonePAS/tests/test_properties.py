@@ -1,5 +1,5 @@
 """
-$Id: test_properties.py,v 1.6 2005/06/15 01:05:21 jccooper Exp $
+$Id: test_properties.py,v 1.7 2005/06/15 18:36:56 jccooper Exp $
 """
 
 import os, sys
@@ -105,12 +105,16 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
         # Add new property
         gd.manage_addProperty('karma', 20, 'int')
 
+        # get group again to re-create with new groupdata schema
+        group = gt.getGroupById('group1')
+
         # Assert group has the property now
         self.failUnless(group.hasProperty('karma'))
 
         # Get the property, should have the default value
         got = group.getProperty('karma', None)
         expected = 20
+
         self.assertEquals(got, expected)
 
         # Set some group properties
@@ -132,6 +136,9 @@ class PropertiesTest(PloneTestCase.PloneTestCase):
 
         # Delete the property
         gd.manage_delProperties(ids=('karma',))
+
+        # get group again to re-create with new groupdata schema
+        group = gt.getGroupById('group1')
 
         # Assert property is gone
         self.failIf(group.hasProperty('karma'))
