@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.18 2005/06/15 16:38:42 jccooper Exp $
+$Id: memberdata.py,v 1.19 2005/06/15 16:42:18 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -15,6 +15,7 @@ except:
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
+from Products.CMFCore.MemberDataTool import _marker
 
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
@@ -121,7 +122,7 @@ class MemberData(BaseMemberData):
         if modified:
             self.notifyModified()
 
-    def getProperty(self, id, default=None):
+    def getProperty(self, id, default=_marker):
         """PAS-specific method to fetch a user's properties. Looks
         through the ordered property sheets.
         """
