@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.16 2005/06/14 23:58:26 jccooper Exp $
+$Id: memberdata.py,v 1.17 2005/06/15 00:10:33 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -24,7 +24,6 @@ from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from zLOG import LOG, INFO
 def log(msg):
     LOG('PlonePAS', INFO, msg)
-    print msg
 
 class MemberDataTool(BaseMemberDataTool):
     """PAS-specific implementation of memberdata tool. Uses Plone
@@ -74,38 +73,6 @@ class MemberDataTool(BaseMemberDataTool):
         # I don't think this is right: we need to return Members
 
 
-    ## PropertyManager over-rides
-    ##  flush user cache if property settings change
-
-    def __invalidate_users(self):
-        log("invalidate")
-        #cache = self.acl_users.ZCacheable_get(view_name="_findUser-jccooper")
-        #cleanup = getattr(cache, 'cleanup', None)
-        #log("cache is %s" % cache)
-        #if cleanup:
-        #    log("...cleanup")
-        #    cleanup()
-
-    def _setPropValue(self, *args, **kw):
-        self.__invalidate_users()
-        return BaseMemberDataTool._setPropValue(self,*args,**kw)
-
-    def _delPropValue(self,*args, **kw):
-        self.__invalidate_users()
-        return BaseMemberDataTool._delPropValue(self,*args,**kw)
-
-    def _setProperty(self, *args, **kw):
-        self.__invalidate_users()
-        return BaseMemberDataTool._setProperty(self,*args,**kw)
-
-    def _updateProperty(self, *args, **kw):
-        self.__invalidate_users()
-        return BaseMemberDataTool._updateProperty(self,*args,**kw)
-
-    def _delProperty(self, *args, **kw):
-        self.__invalidate_users()
-        return BaseMemberDataTool._delProperty(self,*args,**kw)
-
 InitializeClass(MemberDataTool)
 
 
@@ -117,17 +84,14 @@ class MemberData(BaseMemberData):
         """PAS-specific method to set the properties of a
         member. Ignores 'force_local', which is not reliably present.
         """
-        print "setMemberProperties", self.getId(), mapping
         sheets = None
 
         # We could pay attention to force_local here...
         if not IPluggableAuthService.isImplementedBy(self.acl_users):
             # Defer to base impl in absence of PAS, a PAS user, or
             # property sheets
-            print "not PAS"
             return BaseMemberData.setMemberProperties(self, mapping)
         else:
-            print "is PAS"
             # It's a PAS! Whee!
             user = self.getUser()
             sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
@@ -135,7 +99,6 @@ class MemberData(BaseMemberData):
             # We won't always have PlonePAS users, due to acquisition,
             # nor are guaranteed property sheets
             if not sheets:
-                print "no sheets"
                 # Defer to base impl if we have a PAS but no property
                 # sheets.
                 return BaseMemberData.setMemberProperties(self, mapping)
@@ -147,15 +110,12 @@ class MemberData(BaseMemberData):
         for k, v in mapping.items():
             for sheet in sheets:
                 if not sheet.hasProperty(k):
-                    print "sheet has not property", k
                     continue
                 if IMutablePropertySheet.isImplementedBy(sheet):
-                    print "mutable sheet setProperty", k, v
                     sheet.setProperty(k, v)
                     modified = True
                 else:
                     break
-                    print "Mutable property provider shadowed by read only provider"
                     #raise RuntimeError, ("Mutable property provider "
                     #                     "shadowed by read only provider")
         if modified:
@@ -187,6 +147,5 @@ class MemberData(BaseMemberData):
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
         return BaseMemberData.getProperty(self, id)
-
 
 InitializeClass(MemberData)

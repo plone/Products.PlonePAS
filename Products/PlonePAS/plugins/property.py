@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.10 2005/06/14 23:58:25 jccooper Exp $
+$Id: property.py,v 1.11 2005/06/15 00:10:32 jccooper Exp $
 """
 from sets import Set
 
@@ -75,9 +75,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         # calculate schema and default values
         defaultvalues = {}
-        if not schema and not kw:
-            schema = ()
-        elif not schema and kw:
+        if schema is None:
             schema = _guessSchema(kw)
             defaultvalues = kw
         else:
@@ -91,7 +89,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
         # _getSchema instead same for default values
 
     def _getSchema(self, isgroup=None):
-        # this could probably stand to be cached
         datatool = isgroup and "portal_groupdata" or "portal_memberdata"
 
         schema = self._schema
