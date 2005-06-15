@@ -1,11 +1,12 @@
 """
-$Id: groupdata.py,v 1.11 2005/06/14 23:58:26 jccooper Exp $
+$Id: groupdata.py,v 1.12 2005/06/15 18:35:38 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
 
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
+from Products.GroupUserFolder.GroupDataTool import _marker
 
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
@@ -113,7 +114,7 @@ class GroupData(BaseGroupData):
         if modified:
             self.notifyModified()
 
-    def getProperty(self, id, default=None):
+    def getProperty(self, id, default=_marker):
         """PAS-specific method to fetch a group's properties. Looks
         through the ordered property sheets.
         """
@@ -136,7 +137,7 @@ class GroupData(BaseGroupData):
                 return sheet.getProperty(id)
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
-        return BaseGroupData.getProperty(self, id)
+        return BaseGroupData.getProperty(self, id, default)
 
     def getUserName(self):
         return self.getName()
