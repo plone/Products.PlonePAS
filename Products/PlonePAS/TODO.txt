@@ -1,17 +1,13 @@
 Blocker bugs
 
- - changing memberdata properties doesn't affect property sheets on already-created
-   users
+ - None
 
 Major missing functionality
 
  - Password reset (determined by capability)
 
- - UI user/group listing if small enough list (determined by capability)
-
- - other UI actions (deletion, property mod) should also be determined
+ - UI actions (deletion, property mod) should also be determined
    by capability
-
 
 Robustness and productization
 
