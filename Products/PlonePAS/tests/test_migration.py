@@ -1,5 +1,5 @@
 """
-$Id: test_migration.py,v 1.3 2005/05/30 21:30:04 dreamcatcher Exp $
+$Id: test_migration.py,v 1.4 2005/06/15 19:37:09 jccooper Exp $
 """
 
 import os, sys
@@ -148,7 +148,13 @@ class SanityCheck:
     def populateGroups(self):
         gt = getToolByName(self.portal, 'portal_groups')
         for g in self._groups:
-            gt.addGroup(*g[:-1], **g[-1])
+            try:
+                gt.addGroup(*g[:-1], **g[-1])
+            except TypeError:
+                # GRUF 2.x doesn't accept properties in addgroup
+                gt.addGroup(g[0],"",*g[1:-1])   # old addGroup uses password
+                group = gt.getGroupById(g[0])
+                group.setGroupProperties(g[-1])
 
             gid = g[0]
             group = gt.getGroupById(gid)
