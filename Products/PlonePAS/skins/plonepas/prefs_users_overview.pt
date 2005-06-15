@@ -195,7 +195,7 @@
                            class="noborder"
                            name="name"
                            value="Manager"
-                           tal:attributes="name string:user_${this_user/getUserName}:list;
+                           tal:attributes="name string:roles-${this_user/getUserName}:list;
                                            value portal_role;
                                            checked python:test(portal_role in user_roles, 'checked' ,'');" />
                 </td>
