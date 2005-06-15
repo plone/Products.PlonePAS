@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.41 2005/05/30 21:30:03 dreamcatcher Exp $
+$Id: Install.py,v 1.42 2005/06/15 19:51:27 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -243,7 +243,7 @@ def grabGroupData(portal, out):
         # Must be a GRUF for this to work.
         groups = gtool.listGroups()
         for group in groups:
-            id = group.getGroupId()
+            id = group.getGroupName()  # in GRUF 2, getGroupId is prefixed!
             print >> out, " : %s" % id
             roles = [role for role in group.getRoles() if role != 'Authenticated']
             print >> out, "with roles %s" % roles
