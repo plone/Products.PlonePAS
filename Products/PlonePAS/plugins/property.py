@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.12 2005/06/15 00:28:06 jccooper Exp $
+$Id: property.py,v 1.13 2005/06/15 18:38:30 jccooper Exp $
 """
 from sets import Set
 
@@ -104,6 +104,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
         return schema
 
     def _getDefaultValues(self, isgroup=None):
+        """Returns a dictionary mapping of property names to default values.
+        Defaults to portal_*data tool if necessary.
+        """
         datatool = isgroup and "portal_groupdata" or "portal_memberdata"
 
         defaultvalues = self._defaultvalues
@@ -129,8 +132,14 @@ class ZODBMutablePropertyProvider(BasePlugin):
         isGroup = getattr(user, 'isGroup', lambda: None)()
 
         data = self._storage.get(user.getId())
-        if data is None:
-            data = self._getDefaultValues(isGroup)
+        defaults = self._getDefaultValues(isGroup)
+
+        # provide default values where missing
+        if not data: data = {}
+        for key, val in defaults.items():
+            if not data.has_key(key):
+                data[key] = val
+
         return MutablePropertySheet(self.id, user,
                                     schema=self._getSchema(isGroup), **data)
 
