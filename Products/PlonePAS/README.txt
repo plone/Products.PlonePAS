@@ -7,6 +7,28 @@ for use by Plone.
 Please see STATUS.txt for notes on the current version and whether or
 not it will help you.
 
+Versions
+
+  - Currently targeted to Plone 2.0.5 with GRUF 2.1.
+
+  - Should work with GRUF 3.2 as well.
+
+  - Moving to Plone 2.1 is probably a matter of removing some page templates.
+
+Depends On
+
+ - Plone standard products (esp. GRUF)
+
+ - PluggableAuthService 1.0.4 (currently unreleased, see CVS)
+
+   - PluginRegistry (latest)
+
+Optional
+
+ - PloneTestCase
+
+ - LDAPUserFolder and LDAPMultiPlugins
+
 PlonePAS installs like any other Plone Product, but please note: it
 does destroy your existing portal user folder. There is automatic
 migration, but this is not tested against setups other than GRUF+ZODB
