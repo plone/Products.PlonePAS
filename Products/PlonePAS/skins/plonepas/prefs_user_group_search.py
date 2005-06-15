@@ -12,8 +12,8 @@
 # PAS does not currently implement a list-all feature
 # for no searchstring, return empty list.
 
-if not searchstring:
-    return []
+#if not searchstring:
+#    return []
 
 
 groups_tool = context.portal_groups

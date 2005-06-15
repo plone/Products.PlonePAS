@@ -59,6 +59,13 @@
         the e-mail addresses, and add/remove users.
         </p>
 
+        <p i18n:translate="description_pas_listing"
+           tal:condition="python:not searchstring and not context.acl_users.canListAllUsers()">
+          <strong>Note:</strong> Some or all of your PAS user source plugins do not allow
+          listing of users, so you may not see the users defined by those plugins unless doing
+          a specific search.
+        </p>
+
         <form action=""
             name="users_add"
             method="post"
@@ -215,6 +222,11 @@
             <tal:block tal:condition="python:searchstring and not batch">
                 <tr>
                     <td i18n:translate="text_nomatches" style="text-align:center;">No matches</td>
+                </tr>
+            </tal:block>
+            <tal:block tal:condition="python:not searchstring and not batch">
+                <tr>
+                    <td i18n:translate="text_nomatches" style="text-align:center;">No users found</td>
                 </tr>
             </tal:block>
         </table>

@@ -82,6 +82,8 @@ Stuff to go upstream
 
 Questions
 
+ - should getUsers abort if list is too long?
+
  - Should groups.getGroupById use new acl_users.getGroup?
 
  - do we want another schema-setting mechanism for properties plugin? (see note)

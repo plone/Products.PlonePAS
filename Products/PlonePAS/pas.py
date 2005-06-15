@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.26 2005/05/26 01:32:47 dreamcatcher Exp $
+$Id: pas.py,v 1.27 2005/06/15 21:10:15 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -15,10 +15,10 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
 from Products.PluggableAuthService.PluggableAuthService import security
-from Products.PluggableAuthService.interfaces.plugins \
-     import IRoleAssignerPlugin, IAuthenticationPlugin
-from Products.PlonePAS.interfaces.plugins \
-     import IUserManagement, ILocalRolesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
+
+from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
@@ -205,6 +205,24 @@ def getUsers(self):
     return retval
 PluggableAuthService.getUsers = getUsers
 PluggableAuthService.getPureUsers = getUsers   # this'll make listMembers work
+
+
+def canListAllUsers(self):
+    plugins = self._getOb('plugins')
+
+    # Do we have multiple user plugins?
+    if len(plugins.listPlugins(IUserIntrospection)) > 1:
+        return False
+
+    # Does our single user enumerator support the needed API?
+    #for method in [#'countAllUsers',
+    #               'getUsers',
+    #               'getUserNames']:
+    #    if not hasattr(pas, method):
+    #        return False
+
+    return True
+PluggableAuthService.canListAllUsers = canListAllUsers
 
 
 #################################
