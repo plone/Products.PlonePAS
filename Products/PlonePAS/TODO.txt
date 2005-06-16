@@ -4,7 +4,7 @@ Blocker bugs
 
 Major missing functionality
 
- - Password reset (determined by capability)
+ - Password reset (conditional on capability)
 
  - UI actions (deletion, property mod) should also be determined
    by capability
@@ -37,11 +37,6 @@ Other todo items
 
    * default property mappings? at least for AD some should be possible.
      on intranet is 'mail' -> 'email'
-
-   * need to set MultiPlugin.groupid_attr to cn
-
-   * need id attr to be sAMAccountName, possibly also 'login name' id
-     Probably programmatically. Could also be hand-work.
 
 Wishlist
 

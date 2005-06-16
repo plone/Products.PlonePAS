@@ -1,5 +1,5 @@
 """
-$Id: Install.py,v 1.42 2005/06/15 19:51:27 jccooper Exp $
+$Id: Install.py,v 1.43 2005/06/16 00:26:13 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -502,6 +502,9 @@ def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
             encryption = lduf._pwd_encryption
             read_only = lduf.read_only
 
+            # attribute over-rides
+            uid_attr = login_attr = "sAMAccountName"
+
             ldapmp = pas.manage_addProduct['LDAPMultiPlugins']
             ldapmp.manage_addActiveDirectoryMultiPlugin(
                 id, title,
@@ -510,6 +513,8 @@ def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
                 groups_base, groups_scope, binduid, bindpwd,
                 binduid_usage=1, rdn_attr='cn', local_groups=0,
                 use_ssl=0 , encryption='SHA', read_only=0)
+            getattr(pas,id).groupid_attr = 'cn'
+            
             print >> out, "Added ActiveDirectoryMultiPlugin %s" % x
             x = x or 0 + 1
 
