@@ -15,16 +15,17 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: user.py,v 1.6 2005/05/25 22:03:19 jccooper Exp $
+$Id: user.py,v 1.7 2005/06/17 23:46:12 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
 from Globals import InitializeClass, DTMLFile
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement, IUserIntrospection
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
+
 from Products.PluggableAuthService.utils import createViewName
-from Products.PluggableAuthService.plugins.ZODBUserManager \
-     import ZODBUserManager as BasePlugin
+from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
 
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
                                           globals())
@@ -47,7 +48,8 @@ class UserManager(BasePlugin):
     """
 
     meta_type = 'User Manager'
-    __implements__ = BasePlugin.__implements__ + (IUserManagement, IUserIntrospection,)
+    __implements__ = BasePlugin.__implements__ + (IUserManagement, IUserIntrospection,) + \
+                     (IDeleteCapability, IPasswordSetCapability,)
 
     security = ClassSecurityInfo()
 
@@ -89,6 +91,24 @@ class UserManager(BasePlugin):
         if self._user_passwords.get(principal_id) is None:
             raise RuntimeError, "User does not exist: %s" % principal_id
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
+
+    # implement interfaces IDeleteCapability, IPasswordSetCapability
+
+    security.declarePublic('allowDeleteUser')
+    def allowDeleteUser(self, principal_id):
+        """True iff this plugin can delete a certain user.
+        This is true if this plugin manages the user.
+        """
+        if self._user_passwords.get(principal_id) is not None:
+            return 1
+        return 0
+
+    security.declarePublic('allowPasswordSetUser')
+    def allowPasswordSetUser(self, principal_id):
+        """True iff this plugin can set the password a certain user.
+        This is true if this plugin manages the user.
+        """
+        return self.allowDeleteUser(principal_id)
 
     ## User Introspection interface
 

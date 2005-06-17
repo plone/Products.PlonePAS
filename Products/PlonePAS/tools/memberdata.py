@@ -1,8 +1,9 @@
 """
-$Id: memberdata.py,v 1.19 2005/06/15 16:42:18 jccooper Exp $
+$Id: memberdata.py,v 1.20 2005/06/17 23:46:12 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
+from AccessControl import ClassSecurityInfo
 
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
 from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData
@@ -17,10 +18,13 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.CMFCore.MemberDataTool import _marker
 
-from Products.PluggableAuthService.interfaces.authservice \
-     import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
+from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 
 from zLOG import LOG, INFO
 def log(msg):
@@ -78,6 +82,12 @@ InitializeClass(MemberDataTool)
 
 
 class MemberData(BaseMemberData):
+
+    __implements__ = (BaseMemberData.__implements__,
+                      IManageCapabilities)
+
+    security = ClassSecurityInfo()
+
 
     ## setProperties uses setMemberProperties. no need to override.
 
@@ -148,5 +158,60 @@ class MemberData(BaseMemberData):
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
         return BaseMemberData.getProperty(self, id, default)
+
+
+    ## IManageCapabilities methods
+
+    def canDelete(self, interface=IDeleteCapability):
+        """True iff user can be removed from the Plone UI."""
+        # IUserManagement provides doDeleteUser
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IUserManagement)
+        if managers:
+            for mid, manager in managers:
+                if IDeleteCapability.isImplementedBy(manager):
+                    return manager.allowDeleteUser(self.getId())
+        return 0
+
+
+    def canPasswordSet(self):
+        """True iff user can change password."""
+        # IUserManagement provides doChangeUser
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IUserManagement)
+        if managers:
+            for mid, manager in managers:
+                if IPasswordSetCapability.isImplementedBy(manager):
+                    return manager.allowPasswordSetUser(self.getId())
+        return 0
+
+    def passwordInClear(self):
+        """True iff password can be retrieved in the clear (not hashed.)
+
+        False for PAS. It provides no API for getting passwords,
+        though it would be possible to add one in the future.
+        """
+        return 0
+
+    def canWriteProperty(self, prop_name):
+        """True iff the member/group property named in 'prop_name'
+        can be changed.
+        """
+        pass
+
+    def canAddToGroup(self, group):
+        """True iff member can be added to group."""
+        pass
+
+    def canAssignRoleToMember(self, role):
+        """True iff member can be assigned role."""
+        pass
+
+
+    ## plugin getters
+
+    security.declarePrivate('_getPlugins')
+    def _getPlugins(self):
+        return self.acl_users.plugins
 
 InitializeClass(MemberData)

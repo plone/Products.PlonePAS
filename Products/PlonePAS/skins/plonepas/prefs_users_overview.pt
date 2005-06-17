@@ -205,7 +205,8 @@
                             class="noborder"
                             name="resetpassword:list"
                             value="value"
-                            tal:attributes="value username" />
+                            tal:attributes="value username;
+                                            disabled python:this_user.canPasswordSet() and default or 'disabled'"/>
                     </td>
 
                     <td class="listingCheckbox">
@@ -213,7 +214,8 @@
                             class="noborder notify"
                             name="delete:list"
                             value="value"
-                            tal:attributes="value username" />
+                            tal:attributes="value username;
+                                            disabled python:this_user.canDelete() and default or 'disabled'"/>
                     </td>
 
                     </tal:block>
