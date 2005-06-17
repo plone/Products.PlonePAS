@@ -1,13 +1,12 @@
 Blocker bugs
 
- - None
+ - Properties seem to not persist past restart
 
 Major missing functionality
 
  - Password reset (conditional on capability)
 
- - UI actions (deletion, property mod) should also be determined
-   by capability
+ - UI actions (deletion, property mod) should be determined by capability
 
 Robustness and productization
 
