@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.13 2005/06/15 18:38:30 jccooper Exp $
+$Id: property.py,v 1.14 2005/06/18 01:06:23 jccooper Exp $
 """
 from sets import Set
 
@@ -163,9 +163,11 @@ class ZODBMutablePropertyProvider(BasePlugin):
             if prop_names:
                 raise ValueError, 'Unknown Properties: %r' % prop_names
 
-        userprops = self._storage.get(user.getId())
+        userid = user.getId()
+        userprops = self._storage.get(userid)
         if userprops is not None:
             userprops.update(properties)
+            self._storage[userid] = self._storage[userid]   # notify persistence machinery of change
         else:
             self._storage.insert(user.getId(), properties)
 
