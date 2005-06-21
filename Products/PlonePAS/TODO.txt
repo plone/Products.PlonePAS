@@ -17,6 +17,9 @@ Robustness and productization
  - determine between AD and regular LDAP in install (see Install.py
    bottom)
 
+ - disabled plone text boxes don't look disabled
+   either fix this, or change disabled action to be hidden + the text
+
 Other todo items
 
  - Verify why user records just created are marked as "orphaned" in
