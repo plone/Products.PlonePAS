@@ -1,5 +1,5 @@
 """
-$Id: membership.py,v 1.9 2005/05/30 21:30:04 dreamcatcher Exp $
+$Id: membership.py,v 1.10 2005/06/21 21:53:26 jccooper Exp $
 """
 from Globals import InitializeClass
 
@@ -90,9 +90,15 @@ class MembershipTool(BaseMembershipTool):
             lst = md.searchMemberDataContents('fullname', name)
             md_users = [ x['username'] for x in lst]
 
-            # This will allow us to retreive users by their _id_ (not
-            # name).
+            # This will allow us to retreive users by their id or name
             uf_users = acl_users.searchUsers(name=name)
+
+            # PAS allows search to return dupes. We must winnow...
+            uf_users_new = []
+            for user in uf_users:
+                if user not in uf_users_new:
+                    uf_users_new.append(user)
+            uf_users = uf_users_new
 
         members = []
         g_userids, g_members = [], []
