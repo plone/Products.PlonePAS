@@ -1,3 +1,9 @@
+<tal:comment replace="nothing">
+  Changes:
+    unknown original changes
+    added disable conditions for capabilities
+</tal:comment>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
     lang="en"
     metal:use-macro="here/prefs_main_template/macros/master"
@@ -179,7 +185,8 @@
                             name=""
                             value=""
                             tal:attributes="name string:email_entered_$username;
-                                            value email" />
+                                            value email;
+                                            disabled python:this_user.canWriteProperty('email') and default or 'disabled'" />
                         <input type="hidden"
                             name="email_original_username"
                             tal:attributes="name string:email_original_$username;

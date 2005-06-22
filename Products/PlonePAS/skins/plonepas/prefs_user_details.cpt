@@ -1,3 +1,8 @@
+<tal:comment replace="nothing">
+  Changes:
+    added disable conditions for capabilities
+</tal:comment>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en"
       metal:use-macro="here/prefs_main_template/macros/master"
@@ -93,7 +98,8 @@ we eventually might want to merge this form with personalize_form
                         tabindex=""
                         value="member.fullname html_quote"
                         tal:attributes="value fullname;
-                                        tabindex tabindex/next;"
+                                        tabindex tabindex/next;
+                                        disabled python:member.canWriteProperty('fullname') and default or 'disabled'"
                         />
 
             </div>
@@ -118,7 +124,8 @@ we eventually might want to merge this form with personalize_form
                        tabindex=""
                        value="member.email html_quote"
                        tal:attributes="value email;
-                                       tabindex tabindex/next;"
+                                       tabindex tabindex/next;
+                                       disabled python:member.canWriteProperty('email') and default or 'disabled'"
                        />
 
             </div>
@@ -138,7 +145,8 @@ we eventually might want to merge this form with personalize_form
                 <select name="wysiwyg_editor"
                         id="wysiwyg_editor"
                         tabindex=""
-                        tal:attributes="tabindex tabindex/next;">
+                        tal:attributes="tabindex tabindex/next;
+                                        disabled python:member.canWriteProperty('wysiwyg_editor') and default or 'disabled'">
                         <tal:block tal:repeat="editor site_properties/available_editors">
                         <option tal:condition="python:editor != 'None'"
                                 value="None"
@@ -167,7 +175,8 @@ we eventually might want to merge this form with personalize_form
                        name="listed"
                        id="cb_listed"
                        tal:attributes="tabindex tabindex/next;
-                                       checked python:test(listed, 'checked', None);"
+                                       checked python:test(listed, 'checked', None);
+                                       disabled python:member.canWriteProperty('listed') and default or 'disabled'"
                        />
 
                 <label for="cb_listed" i18n:translate="label_listed_status">Listed in searches</label>
@@ -186,7 +195,8 @@ we eventually might want to merge this form with personalize_form
                        name="visible_ids"
                        id="cb_invisible_ids"
                        tal:attributes="tabindex tabindex/next;
-                                       checked python:test(visible_ids, 'checked', None);"
+                                       checked python:test(visible_ids, 'checked', None);
+                                       disabled python:member.canWriteProperty('email') and default or 'disabled'"
                        />
 
                 <label for="cb_invisible_ids"
