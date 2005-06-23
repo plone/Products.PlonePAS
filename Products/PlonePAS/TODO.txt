@@ -22,6 +22,10 @@ Robustness and productization
 
 Other todo items
 
+ - add note about group listing to groups overview page, like on member overview
+
+ - security declarations on new memberdata methods
+
  - Verify why user records just created are marked as "orphaned" in
    portal_memberdata. It could just be that they never logged in.
 
@@ -64,6 +68,8 @@ Wishlist
 
 Stuff to go upstream
 
+ - PAS.searchUsers (and/or LDAP enumerateUsers) allows duplicates returned.
+
  - PlonePAS groups tool: move GRUF/PAS common bits into Plone
    GroupsTool, also interface
 
@@ -76,6 +82,8 @@ Stuff to go upstream
 
  - PAS: listAssignedPrincipals doesn't properly fall back on None title.
    (using get with default isn't quite enough.)
+
+ - need to not list too many members: either search only, or max results/list on low count
 
 Questions
 
