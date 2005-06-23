@@ -6,7 +6,7 @@ Major missing functionality
 
  - Password reset (conditional on capability)
 
- - UI actions (deletion, property mod) should be determined by capability
+ - group UI actions (deletion, property mod) should be determined by capability
 
  - Caching of users seems to fail
 
