@@ -17,14 +17,18 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: role.py,v 1.5 2005/05/31 21:17:50 jccooper Exp $
+$Id: role.py,v 1.6 2005/06/23 21:01:57 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
+
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
+
 from Products.PlonePAS.utils import unique
+from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
+
 from Products.PluggableAuthService.permissions import ManageUsers
 
 
@@ -44,7 +48,7 @@ manage_addGroupAwareRoleManagerForm = DTMLFile(
 class GroupAwareRoleManager( ZODBRoleManager ):
 
     meta_type = "Group Aware Role Manager"
-    __implements__ = ZODBRoleManager.__implements__
+    __implements__ = ZODBRoleManager.__implements__ + (IAssignRoleCapability,)
 
     security = ClassSecurityInfo()
 
@@ -73,5 +77,19 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         for pid in principal_ids:
             roles.extend( self._principal_roles.get( pid, () ) )
         return tuple( unique( roles ) )
+
+
+    ## implement IAssignRoleCapability
+
+    def getRoleInfo(self, role_id):
+        """Over-ride parent to not explode when getting role info by role_id."""
+        return self._roles.get(role_id,None)
+
+    def allowRoleAssign(self, user_id, role_id):
+        """True iff this plugin will allo assigning a certain user a certain role."""
+        present = self.getRoleInfo(role_id)
+        if present: return 1   # if we have a role, we can assign it
+                               # slightly naive, but should be okay. 
+        return 0
 
 InitializeClass( GroupAwareRoleManager )

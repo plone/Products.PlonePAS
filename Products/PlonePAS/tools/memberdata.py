@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.20 2005/06/17 23:46:12 jccooper Exp $
+$Id: memberdata.py,v 1.21 2005/06/23 21:01:58 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -19,11 +19,13 @@ from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.CMFCore.MemberDataTool import _marker
 
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin, IRoleAssignerPlugin
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
+from Products.PlonePAS.interfaces.capabilities import IGroupCapability, IAssignRoleCapability
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 
 from zLOG import LOG, INFO
@@ -193,19 +195,71 @@ class MemberData(BaseMemberData):
         """
         return 0
 
+    def _memberdataHasProperty(self, prop_name):
+        mdata = getToolByName(self, 'portal_memberdata', None)
+        if mdata:
+            return mdata.hasProperty(prop_name)
+        return 0
+
+
     def canWriteProperty(self, prop_name):
         """True iff the member/group property named in 'prop_name'
         can be changed.
         """
-        pass
+        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+            # not PAS; Memberdata is writable
+            return self._memberdataHasProperty(prop_name)
+        else:
+            # it's PAS
+            user = self.getUser()
+            sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
+            if not sheets:
+                return self._memberdataHasProperty(prop_name)
 
-    def canAddToGroup(self, group):
+            for sheet in sheets:
+                if not sheet.hasProperty(prop_name):
+                    continue
+                if IMutablePropertySheet.isImplementedBy(sheet):
+                    return 1
+                else:
+                    break  # shadowed by read-only
+        return 0
+
+
+    def canAddToGroup(self, group_id):
         """True iff member can be added to group."""
-        pass
+        # IGroupManagement provides IGroupCapability
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IGroupManagement)
+        if managers:
+            for mid, manager in managers:
+                if IGroupCapability.isImplementedBy(manager):
+                    return manager.allowGroupAdd(self.getId(), group_id)
+        return 0
 
-    def canAssignRoleToMember(self, role):
-        """True iff member can be assigned role."""
-        pass
+    def canRemoveFromGroup(self, group_id):
+        """True iff member can be removed from group."""
+        # IGroupManagement provides IGroupCapability
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IGroupManagement)
+        if managers:
+            for mid, manager in managers:
+                if IGroupCapability.isImplementedBy(manager):
+                    return manager.allowGroupRemove(self.getId(), group_id)
+        return 0
+
+
+    def canAssignRole(self, role_id):
+        """True iff member can be assigned role. Role id is string."""
+        # IRoleAssignerPlugin provides IAssignRoleCapability
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IRoleAssignerPlugin)
+        if managers:
+            for mid, manager in managers:
+                if IAssignRoleCapability.isImplementedBy(manager):
+                    return manager.allowRoleAssign(self.getId(), role_id)
+        return 0
+
 
 
     ## plugin getters

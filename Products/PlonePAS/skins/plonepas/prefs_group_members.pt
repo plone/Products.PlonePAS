@@ -130,7 +130,9 @@
                     <td class="listingCheckbox">
                         <input type="checkbox"
                                class="noborder notify"
-                               name="delete:list" tal:attributes="value username" />
+                               name="delete:list"
+                               tal:attributes="value username;
+                                               disabled python:this_user.canRemoveFromGroup(groupname) and default or 'disabled'" />
                     </td>
                     <td>
                         <a tal:attributes="href string:${here/portal_memberdata/absolute_url}/prefs_user_details?userid=$username">

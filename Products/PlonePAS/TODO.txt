@@ -20,6 +20,9 @@ Robustness and productization
  - disabled plone text boxes don't look disabled
    either fix this, or change disabled action to be hidden + the text
 
+ - LDAPMultiPlugin doesn't provide getGroupMembers; only matters when Group plugins
+   of LDAPMulti are on. they're off by default.
+
 Other todo items
 
  - add note about group listing to groups overview page, like on member overview

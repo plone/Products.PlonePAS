@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.12 2005/06/15 18:35:38 jccooper Exp $
+$Id: groupdata.py,v 1.13 2005/06/23 21:01:58 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -168,8 +168,9 @@ class GroupData(BaseGroupData):
         """
         md = self.portal_memberdata
         gd = self.portal_groupdata
+        gtool = self.portal_groups
         ret = []
-        for u_name in self.getGroup().getMemberIds(transitive = 0, ):
+        for u_name in gtool.getGroupMembers(self.getId()):
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
                 raise AssertionError, "Cannot retreive a user by its id !"

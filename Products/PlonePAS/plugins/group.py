@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.14 2005/05/30 21:30:03 dreamcatcher Exp $
+$Id: group.py,v 1.15 2005/06/23 21:01:57 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -24,16 +24,17 @@ from BTrees.OOBTree import OOBTree, OOSet
 from Globals import DTMLFile
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
+from zLOG import LOG, BLATHER
 
-from Products.PluggableAuthService.plugins.ZODBGroupManager \
-     import ZODBGroupManager
-from Products.PluggableAuthService.interfaces.plugins \
-     import IGroupsPlugin, IGroupEnumerationPlugin
+from Products.PluggableAuthService.PluggableAuthService import _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
-from Products.PlonePAS.interfaces.group \
-     import IGroupManagement, IGroupIntrospection
+
+from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
+from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
@@ -56,7 +57,9 @@ class GroupManager(ZODBGroupManager):
     meta_type = "Group Manager"
 
     __implements__ = (IGroupsPlugin, IGroupEnumerationPlugin,
-                      IGroupManagement, IGroupIntrospection)
+                      IGroupManagement, IGroupIntrospection) + \
+                     (IGroupCapability,)
+
 
     security = ClassSecurityInfo()
 
@@ -117,7 +120,30 @@ class GroupManager(ZODBGroupManager):
         return self.listGroupIds()
 
     def getGroupMembers(self, group_id):
-        return tuple(self._group_principal_map[ group_id ])
+        return tuple(self._group_principal_map.get(group_id,()))
+
+    #################################
+    # capabilties interface impl.
+
+    def getGroupInfo( self, group_id ):
+        """Over-ride parent to not explode when getting group info dict by group id."""
+        return self._groups.get(group_id,None)
+
+    def allowGroupAdd(self, user_id, group_id):
+        """True iff this plugin will allow adding a certain user to a certain group."""
+        present = self.getGroupInfo(group_id)
+        if present: return 1   # if we have a group, we can add users to it
+                                # slightly naive, but should be okay. 
+        return 0
+
+    def allowGroupRemove(self, user_id, group_id):
+        """True iff this plugin will allow removing a certain user from a certain group."""
+        present = self.getGroupInfo(group_id)
+        if not present: return 0   # if we don't have a group, we can't do anything
+
+        group_members = self.getGroupMembers(group_id)
+        if user_id in group_members: return 1
+        return 0
 
 
     #################################
@@ -128,7 +154,7 @@ class GroupManager(ZODBGroupManager):
         """ Create group object. For users, this can be done with a
         plugin, but I don't care to define one for that now. Just uses
         PloneGroup.  But, the code's still here, just commented out.
-        This method based on PluggableAuthService._createUser
+        This method based on PluggableAuthervice._createUser
         """
 
         #factories = plugins.listPlugins(IUserFactoryPlugin)

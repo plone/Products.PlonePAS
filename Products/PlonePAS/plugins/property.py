@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.14 2005/06/18 01:06:23 jccooper Exp $
+$Id: property.py,v 1.15 2005/06/23 21:01:57 jccooper Exp $
 """
 from sets import Set
 

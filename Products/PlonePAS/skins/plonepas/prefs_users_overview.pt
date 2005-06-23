@@ -204,7 +204,8 @@
                            value="Manager"
                            tal:attributes="name string:roles-${this_user/getUserName}:list;
                                            value portal_role;
-                                           checked python:test(portal_role in user_roles, 'checked' ,'');" />
+                                           checked python:test(portal_role in user_roles, 'checked' ,'');
+                                           disabled python:this_user.canAssignRole(portal_role) and default or 'disabled'" />
                 </td>
 
                     <td class="listingCheckbox">

@@ -16,7 +16,7 @@
 Define certain interfaces that a plugin must meet if it is to allow
 certain operations to be done by the Plone UI.
 
-$Id: capabilities.py,v 1.1 2005/06/17 23:46:12 jccooper Exp $
+$Id: capabilities.py,v 1.2 2005/06/23 21:01:57 jccooper Exp $
 """
 
 from Interface import Interface
@@ -39,24 +39,25 @@ class IPasswordSetCapability(Interface):
     def allowPasswordSetUser(self, user_id):
         """True iff this plugin can set the password of a certain user."""
 
-### JCC NOTE: not worked on the rest...
 
+#class IPasswordClearCapability(Interface):
+#    """Interface for plugin to say if it allows for deletion of a user.
+#    For Plone UI.
+#    """
+#
+#    def passwordInClear(self, user_id):
+#        """True iff this plugin provides a clear-text password for a certain user."""
 
-class IPasswordClearCapability(Interface):
-    """Interface for plugin to say if it allows for deletion of a user.
-    For Plone UI.
-    """
-
-    def passwordInClear(self, user_id):
-        """True iff this plugin provides a clear-text password for a certain user."""
-
-class IGroupAddCapability(Interface):
+class IGroupCapability(Interface):
     """Interface for plugin to say if it allows for deletion of a user.
     For Plone UI.
     """
 
     def allowGroupAdd(self, user_id, group_id):
         """True iff this plugin will allow adding a certain user to a certain group."""
+    
+    def allowGroupRemove(self, user_id, group_id):
+        """True iff this plugin will allow removing a certain user from a certain group."""
     
 
 class IAssignRoleCapability(Interface):
@@ -88,8 +89,11 @@ class IManageCapabilities(Interface):
         can be changed.
         """
 
-    def canAddToGroup(self, group):
+    def canAddToGroup(self, group_id):
         """True iff member can be added to group."""
 
-    def canAssignRoleToMember(self, role):
+    def canRemoveFromGroup(self, group_id):
+        """True iff member can be removed from group."""
+
+    def canAssignRole(self, role):
         """True iff member can be assigned role."""
