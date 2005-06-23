@@ -1,5 +1,5 @@
 """
-$Id: groups.py,v 1.19 2005/06/15 23:00:43 jccooper Exp $
+$Id: groups.py,v 1.20 2005/06/23 19:33:55 jccooper Exp $
 """
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
@@ -37,18 +37,24 @@ class GroupsTool(PloneGroupsTool):
 
     def addGroup(self, id, roles = [], groups = [], properties=None, *args, **kw):
         group = None
+        success = 0
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
         for mid, manager in managers:
-            manager.addGroup(id, title=kw.get('title', id),
-                             description=kw.get('title', None))
-            self.setRolesForGroup(id, roles)
-            for g in groups:
-                manager.addPrincipalToGroup(g.getId(), id)
-        group = self.getGroupById(id)
-        group.setGroupProperties(properties or kw)
-        self.createGrouparea(id)
+            success = manager.addGroup(id, title=kw.get('title', id),
+                                       description=kw.get('title', None))
+            if success:
+                self.setRolesForGroup(id, roles)
+                for g in groups:
+                    manager.addPrincipalToGroup(g.getId(), id)
+                break
+
+        if success:
+            group = self.getGroupById(id)
+            group.setGroupProperties(properties or kw)
+            self.createGrouparea(id)
+        return success
 
     def editGroup(self, id, password, roles, permissions):
         """Edit the given group with the supplied roles.
@@ -142,6 +148,81 @@ class GroupsTool(PloneGroupsTool):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
     
+    def searchForGroups(self, REQUEST, **kw):
+        """Search for groups by keyword.
+        The following properties can be searched:
+        - name
+        #- email
+        #- title
+
+        Only id/title search is implemented for groups. Is the rest of
+        this junk used anywhere?
+
+        This is an 'AND' request.
+
+        When it takes 'name' as keyword (or in REQUEST) and searches on
+        Full name and id.
+
+        Simple name searches are "fast".
+        """
+        acl_users = self.acl_users
+        groups_tool = self.portal_groups
+        if REQUEST:
+            dict = REQUEST
+        else:
+            dict = kw
+
+        name = dict.get('name', None)
+        #email = dict.get('email', None)
+        #roles = dict.get('roles', None)
+        #title = dict.get('title', None)
+        if name:
+            name = name.strip().lower()
+        if not name:
+            name = None
+        #if email:
+        #    email = email.strip().lower()
+        #if not email:
+        #    email = None
+        #if title:
+        #    title = title.strip().lower()
+        #if not title:
+        #    title = None
+
+        md_groups = []
+        uf_groups = []
+
+        if name:
+            # This will allow us to retrieve groups by their id or title
+            uf_groups = acl_users.searchGroups(name=name)
+
+            # PAS allows search to return dupes. We must winnow...
+            uf_groups_new = []
+            for group in uf_groups:
+                if group not in uf_groups_new:
+                    uf_groups_new.append(group)
+            uf_groups = uf_groups_new
+
+        groups = []
+        if md_groups or uf_groups:
+            getGroupById = self.getGroupById
+
+            for groupid in md_groups:
+                groups.append(getGroupById(groupid))
+            for group in uf_groups:
+                groupid = group['groupid']
+                if groupid in md_groups:
+                    continue             # Kill dupes
+                groups.append(getGroupById(groupid))
+
+            #if not email and \
+            #       not roles and \
+            #       not last_login_time:
+            #    return groups
+
+        return groups
+
+
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
