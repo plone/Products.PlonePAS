@@ -18,11 +18,9 @@ def addPAS( gruf ):
         ids.sort()
         if ids == ['Users',]:
             last = 0
-            else:
-                last = int(ids[-1][-2:])
-            next_id = "Users%02d" % (last + 1, )
         else:
-            next_id = "Users"
+            last = int(ids[-1][-2:])
+            next_id = "Users%02d" % (last + 1, )
 
         # Add the GRUFFolder object
         uf = GRUFFolder.GRUFUsers(id = next_id)

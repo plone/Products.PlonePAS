@@ -1,5 +1,5 @@
 """
-$Id: __init__.py,v 1.23 2005/05/24 17:49:58 dreamcatcher Exp $
+$Id: __init__.py,v 1.24 2005/06/23 23:11:50 jccooper Exp $
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -45,6 +45,13 @@ from tools.membership import MembershipTool
 from tools.memberdata import MemberDataTool
 from tools.groups import GroupsTool
 from tools.groupdata import GroupDataTool
+
+#################################
+# import Extensions to check for syntax errors
+from Extensions import *
+
+#################################
+# register skin layer dirs
 
 registerDirectory('skins', globals())
 
