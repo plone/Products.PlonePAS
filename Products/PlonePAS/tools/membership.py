@@ -1,10 +1,11 @@
 """
-$Id: membership.py,v 1.11 2005/06/23 19:33:55 jccooper Exp $
+$Id: membership.py,v 1.12 2005/06/23 22:46:55 jccooper Exp $
 """
 from Globals import InitializeClass
 
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
 from urllib import quote as url_quote
+from urllib import unquote as url_unquote
 
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
@@ -208,15 +209,10 @@ class MembershipTool(BaseMembershipTool):
             return
 
 
-        # we provide the 'safe' param to get '/' encoded
-
-        # XXX Cameron, url_quote turns strange chars into %xx, and %
-        # is not a valid char for ObjectManager so this ends up
-        # breaking valid ids.
-        safe_member_id = member_id # url_quote(member_id, '')
+        safe_member_id = _cleanId(member_id)
         if hasattr(members, safe_member_id):
             # has already this member
-            # XXX exception
+            # XXX exception?
             return
 
         _createObjectByType('Folder', members, id=safe_member_id)
@@ -341,13 +337,18 @@ class MembershipTool(BaseMembershipTool):
                 return None
             id = member.getMemberId()
 
-        # XXX Cameron, url_quote turns strange chars into %xx, and %
-        # is not a valid char for ObjectManager so this ends up
-        # breaking valid ids.
-        # id = url_quote(id, '') # we provide the 'safe' param because
-        #                        # want '/' encoded
-        return BaseMembershipTool.getHomeFolder(self, id, verifyPermission)
-
+        safe_id = _cleanId(id)
+        return BaseMembershipTool.getHomeFolder(self, safe_id, verifyPermission)
 
 
 InitializeClass(MembershipTool)
+
+def _cleanId(id):
+    """'url_quote' turns strange chars into '%xx', which is not a valid char
+    for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as escaping).
+    De-clean is possible, but not quite as simple.
+    Assumes that id can start with non-alpha(numeric), which is true.
+    """
+    # note: we provide the 'safe' param to get '/' encoded
+    return url_quote(id, '').replace('-','--').replace('%','-')
+
