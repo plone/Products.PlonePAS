@@ -1,11 +1,12 @@
 """
-$Id: Install.py,v 1.43 2005/06/16 00:26:13 jccooper Exp $
+$Id: Install.py,v 1.44 2005/06/28 20:18:36 jccooper Exp $
 """
 
 from StringIO import StringIO
 
 from Products.Archetypes.Extensions.utils import install_subskin
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.Expression import Expression
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
 
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
@@ -285,6 +286,7 @@ def setupTools(portal, out):
     migrateGroupsTool(portal, out)
     migrateMemberDataTool(portal, out)
     migrateGroupDataTool(portal, out)
+    modActions(portal, out)
 
 def migratePloneTool(portal, out):
     print >> out, "Plone Tool (plone_utils)"
@@ -429,6 +431,16 @@ def migrateMemberDataTool(portal, out):
 
     print >> out, " ...done"
 
+
+def modActions(portal, out):
+    """Change any actions necessary to support PAS."""
+    # condition "set password" on capability
+    cp = getToolByName(portal, 'portal_controlpanel', None)
+    _actions = cp._cloneActions()
+    for action in _actions:
+        if action.id=='MemberPassword':
+            action.condition = Expression("python:member.canPasswordSet()")
+    cp._actions=_actions
 
 def updateProp(prop_manager, prop_dict):
     """Provided a PropertyManager and a property dict of {id, value,
