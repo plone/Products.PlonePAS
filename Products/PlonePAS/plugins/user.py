@@ -15,7 +15,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id: user.py,v 1.7 2005/06/17 23:46:12 jccooper Exp $
+$Id: user.py,v 1.8 2005/06/28 19:39:56 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
@@ -94,21 +94,21 @@ class UserManager(BasePlugin):
 
     # implement interfaces IDeleteCapability, IPasswordSetCapability
 
-    security.declarePublic('allowDeleteUser')
-    def allowDeleteUser(self, principal_id):
-        """True iff this plugin can delete a certain user.
+    security.declarePublic('allowDeletePrincipal')
+    def allowDeletePrincipal(self, principal_id):
+        """True iff this plugin can delete a certain user/group.
         This is true if this plugin manages the user.
         """
         if self._user_passwords.get(principal_id) is not None:
             return 1
         return 0
 
-    security.declarePublic('allowPasswordSetUser')
-    def allowPasswordSetUser(self, principal_id):
+    security.declarePublic('allowPasswordSet')
+    def allowPasswordSet(self, principal_id):
         """True iff this plugin can set the password a certain user.
         This is true if this plugin manages the user.
         """
-        return self.allowDeleteUser(principal_id)
+        return self.allowDeletePrincipal(principal_id)
 
     ## User Introspection interface
 

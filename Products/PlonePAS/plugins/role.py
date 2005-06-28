@@ -17,7 +17,7 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: role.py,v 1.6 2005/06/23 21:01:57 jccooper Exp $
+$Id: role.py,v 1.7 2005/06/28 19:39:56 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
@@ -86,7 +86,7 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         return self._roles.get(role_id,None)
 
     def allowRoleAssign(self, user_id, role_id):
-        """True iff this plugin will allo assigning a certain user a certain role."""
+        """True iff this plugin will allow assigning a certain user a certain role."""
         present = self.getRoleInfo(role_id)
         if present: return 1   # if we have a role, we can assign it
                                # slightly naive, but should be okay. 

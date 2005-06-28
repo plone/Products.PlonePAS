@@ -69,6 +69,8 @@ Wishlist
 
  - get GRUFMultiPlugin working for complex upgrades. Or is that too ugly?
 
+ - seems LDAPMP doesn't provide properties on groups
+
 Stuff to go upstream
 
  - PAS.searchUsers (and/or LDAP enumerateUsers) allows duplicates returned.
@@ -90,6 +92,8 @@ Stuff to go upstream
 
 Questions
 
+ - PAS role manager doesn't initially manage Owner. Why? And should we make it do so?
+ 
  - should getUsers abort if list is too long?
 
  - Should groups.getGroupById use new acl_users.getGroup?

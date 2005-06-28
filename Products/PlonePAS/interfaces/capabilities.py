@@ -16,7 +16,7 @@
 Define certain interfaces that a plugin must meet if it is to allow
 certain operations to be done by the Plone UI.
 
-$Id: capabilities.py,v 1.2 2005/06/23 21:01:57 jccooper Exp $
+$Id: capabilities.py,v 1.3 2005/06/28 19:39:56 jccooper Exp $
 """
 
 from Interface import Interface
@@ -27,8 +27,8 @@ class IDeleteCapability(Interface):
     For Plone UI.
     """
 
-    def allowDeleteUser(self, user_id):
-        """True iff this plugin can delete a certain user."""
+    def allowDeletePrincipal(self, id):
+        """True iff this plugin can delete a certain user/group."""
 
 class IPasswordSetCapability(Interface):
     """Interface for plugin to say if it allows for setting the password of a user.
@@ -36,7 +36,7 @@ class IPasswordSetCapability(Interface):
     For Plone UI.
     """
 
-    def allowPasswordSetUser(self, user_id):
+    def allowPasswordSet(self, id):
         """True iff this plugin can set the password of a certain user."""
 
 
@@ -53,11 +53,11 @@ class IGroupCapability(Interface):
     For Plone UI.
     """
 
-    def allowGroupAdd(self, user_id, group_id):
-        """True iff this plugin will allow adding a certain user to a certain group."""
+    def allowGroupAdd(self, principal_id, group_id):
+        """True iff this plugin will allow adding a certain principal to a certain group."""
     
-    def allowGroupRemove(self, user_id, group_id):
-        """True iff this plugin will allow removing a certain user from a certain group."""
+    def allowGroupRemove(self, principal_id, group_id):
+        """True iff this plugin will allow removing a certain principal from a certain group."""
     
 
 class IAssignRoleCapability(Interface):
@@ -65,8 +65,8 @@ class IAssignRoleCapability(Interface):
     For Plone UI.
     """
 
-    def allowRoleAssign(self, user_id, role):
-        """True iff this plugin will allo assigning a certain user a certain role."""
+    def allowRoleAssign(self, id, role):
+        """True iff this plugin will allow assigning a certain principal a certain role."""
 
 
 

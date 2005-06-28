@@ -1,5 +1,5 @@
 """
-$Id: memberdata.py,v 1.21 2005/06/23 21:01:58 jccooper Exp $
+$Id: memberdata.py,v 1.22 2005/06/28 19:39:56 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -164,7 +164,7 @@ class MemberData(BaseMemberData):
 
     ## IManageCapabilities methods
 
-    def canDelete(self, interface=IDeleteCapability):
+    def canDelete(self):
         """True iff user can be removed from the Plone UI."""
         # IUserManagement provides doDeleteUser
         plugins = self._getPlugins()
@@ -172,7 +172,7 @@ class MemberData(BaseMemberData):
         if managers:
             for mid, manager in managers:
                 if IDeleteCapability.isImplementedBy(manager):
-                    return manager.allowDeleteUser(self.getId())
+                    return manager.allowDeletePrincipal(self.getId())
         return 0
 
 
@@ -184,7 +184,7 @@ class MemberData(BaseMemberData):
         if managers:
             for mid, manager in managers:
                 if IPasswordSetCapability.isImplementedBy(manager):
-                    return manager.allowPasswordSetUser(self.getId())
+                    return manager.allowPasswordSet(self.getId())
         return 0
 
     def passwordInClear(self):

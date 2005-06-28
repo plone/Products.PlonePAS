@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.15 2005/06/23 21:01:57 jccooper Exp $
+$Id: group.py,v 1.16 2005/06/28 19:39:56 jccooper Exp $
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
@@ -35,6 +35,7 @@ from Products.PluggableAuthService.utils import createViewName
 
 from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
@@ -58,7 +59,7 @@ class GroupManager(ZODBGroupManager):
 
     __implements__ = (IGroupsPlugin, IGroupEnumerationPlugin,
                       IGroupManagement, IGroupIntrospection) + \
-                     (IGroupCapability,)
+                     (IGroupCapability, IDeleteCapability)
 
 
     security = ClassSecurityInfo()
@@ -123,7 +124,16 @@ class GroupManager(ZODBGroupManager):
         return tuple(self._group_principal_map.get(group_id,()))
 
     #################################
-    # capabilties interface impl.
+    # capabilties interface impls.
+
+    security.declarePublic('allowDeletePrincipal')
+    def allowDeletePrincipal(self, principal_id):
+        """True iff this plugin can delete a certain group.
+        This is true if this plugin manages the group.
+        """
+        if self._groups.get(principal_id) is not None:
+            return 1
+        return 0
 
     def getGroupInfo( self, group_id ):
         """Over-ride parent to not explode when getting group info dict by group id."""

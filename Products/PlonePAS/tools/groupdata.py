@@ -1,15 +1,19 @@
 """
-$Id: groupdata.py,v 1.13 2005/06/23 21:01:58 jccooper Exp $
+$Id: groupdata.py,v 1.14 2005/06/28 19:39:56 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
+from AccessControl import ClassSecurityInfo
 
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
 from Products.GroupUserFolder.GroupDataTool import _marker
 
-from Products.PluggableAuthService.interfaces.authservice \
-     import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+
+from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 
 try:
     from Products.CMFCore.MemberDataTool import CleanupTemp
@@ -17,8 +21,9 @@ try:
 except:
     _have_cleanup_temp = None
 
-from Products.PluggableAuthService.interfaces.authservice \
-     import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+
+from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
 
@@ -67,6 +72,11 @@ InitializeClass(GroupDataTool)
 
 
 class GroupData(BaseGroupData):
+
+    __implements__ = (BaseGroupData.__implements__,
+                      IManageCapabilities)
+
+    security = ClassSecurityInfo()
 
     def _getGroup(self):
         """Get the underlying group object in a PAS-acceptable way.
@@ -201,5 +211,70 @@ class GroupData(BaseGroupData):
                 continue
         return ret
 
+
+    ## IManageCapabilities methods
+
+    def canDelete(self):
+        """True iff user can be removed from the Plone UI."""
+        # IGroupManagement provides removeGroup
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IGroupManagement)
+        if managers:
+            for mid, manager in managers:
+                if IDeleteCapability.isImplementedBy(manager):
+                    return manager.allowDeletePrincipal(self.getId())
+        return 0
+
+    def canPasswordSet(self):
+        """Always false for groups, which have no password."""
+        return 0
+
+    def passwordInClear(self):
+        """True iff password can be retrieved in the clear (not hashed.)
+
+        False for PAS. It provides no API for getting passwords,
+        though it would be possible to add one in the future.
+        """
+        return 0
+
+    def _groupdataHasProperty(self, prop_name):
+        gdata = getToolByName(self, 'portal_groupdata', None)
+        if mdata:
+            return gdata.hasProperty(prop_name)
+        return 0
+
+    def canWriteProperty(self, prop_name):
+        """True iff the group property named in 'prop_name'
+        can be changed.
+        """
+        # this looks almost exactly like in memberdata. refactor?
+        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+            # not PAS; Groupdata is writable
+            return self._groupdataHasProperty(prop_name)
+        else:
+            # it's PAS
+            group = self.getGroup()
+            sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
+            if not sheets:
+                return self._groupdataHasProperty(prop_name)
+
+            for sheet in sheets:
+                if not sheet.hasProperty(prop_name):
+                    continue
+                if IMutablePropertySheet.isImplementedBy(sheet):
+                    return 1
+                else:
+                    break  # shadowed by read-only
+        return 0
+
+    canAddToGroup = MemberData.canAddToGroup
+    canRemoveFromGroup = MemberData.canRemoveFromGroup
+    canAssignRole = MemberData.canAssignRole
+
+    ## plugin getters
+
+    security.declarePrivate('_getPlugins')
+    def _getPlugins(self):
+        return self.acl_users.plugins
 
 InitializeClass(GroupData)
