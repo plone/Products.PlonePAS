@@ -1,6 +1,8 @@
 <tal:comment replace="nothing">
   Changes:
     added disable conditions for capabilities
+    added description text for default listing
+    moved 'searchstring' definition up
 </tal:comment>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
@@ -18,7 +20,8 @@
                 Batch python:modules['Products.CMFPlone'].Batch;
                 b_start request/b_start | python:0;
                 b_size python:20;
-                portal_roles here/getGlobalPortalRoles;">
+                portal_roles here/getGlobalPortalRoles;
+                searchstring request/searchstring | nothing;">
 
 <div class="configlet">
 
@@ -62,6 +65,13 @@
           certain Groups have a particular role.
         </p>
     
+        <p i18n:translate="description_pas_listing"
+           tal:condition="python:not searchstring and not context.acl_users.canListAllGroups()">
+          <strong>Note:</strong> Some or all of your PAS groups source plugins do not allow
+          listing of groups, so you may not see the groups defined by those plugins unless doing
+          a specific search.
+        </p>
+
         <form action=""
               name="groups_add"
               method="post"
@@ -82,8 +92,7 @@
               name="groups_search"
               method="post"
               tal:attributes="action here_url"
-              tal:define="searchstring request/searchstring | nothing;
-                          groups python:here.prefs_user_group_search(searchstring, 'groups');
+              tal:define="groups python:here.prefs_user_group_search(searchstring, 'groups');
                           batch python:Batch(groups, b_size, int(b_start), orphan=1)">
 
           <input type="hidden" value="b_start" name="b_start" 

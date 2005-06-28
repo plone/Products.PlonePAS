@@ -2,6 +2,7 @@
   Changes:
     unknown original changes
     added disable conditions for capabilities
+    added help text for default listing
 </tal:comment>
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"

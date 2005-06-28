@@ -1,6 +1,6 @@
 """
 pas alterations and monkies
-$Id: pas.py,v 1.27 2005/06/15 21:10:15 jccooper Exp $
+$Id: pas.py,v 1.28 2005/06/28 22:17:53 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -17,6 +17,8 @@ from Products.PluggableAuthService.PluggableAuthService import \
 from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
@@ -211,7 +213,7 @@ def canListAllUsers(self):
     plugins = self._getOb('plugins')
 
     # Do we have multiple user plugins?
-    if len(plugins.listPlugins(IUserIntrospection)) > 1:
+    if len(plugins.listPlugins(IUserEnumerationPlugin)) != len(plugins.listPlugins(IUserIntrospection)):
         return False
 
     # Does our single user enumerator support the needed API?
@@ -224,6 +226,14 @@ def canListAllUsers(self):
     return True
 PluggableAuthService.canListAllUsers = canListAllUsers
 
+def canListAllGroups(self):
+    plugins = self._getOb('plugins')
+
+    # Do we have multiple user plugins?
+    if len(plugins.listPlugins(IGroupEnumerationPlugin)) != len(plugins.listPlugins(IGroupIntrospection)):
+        return False
+    return True
+PluggableAuthService.canListAllGroups = canListAllGroups
 
 #################################
 # non standard gruf --- junk method  XXX remove me
