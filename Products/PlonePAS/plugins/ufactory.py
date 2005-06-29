@@ -1,7 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Kapil Thangavelu
-# Reserved.
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this
@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py,v 1.16 2005/05/31 20:59:54 jccooper Exp $
+$Id: ufactory.py,v 1.17 2005/06/29 17:27:45 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo

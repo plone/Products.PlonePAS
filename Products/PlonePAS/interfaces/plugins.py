@@ -1,7 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Kapil Thangavelu
-# Reserved.
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this
@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: plugins.py,v 1.7 2005/05/25 14:47:21 dreamcatcher Exp $
+$Id: plugins.py,v 1.8 2005/06/29 17:27:45 jccooper Exp $
 """
 
 from Interface import Interface

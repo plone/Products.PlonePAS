@@ -1,3 +1,17 @@
+##############################################################################
+#
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """
 
 This script runs CMFPlone tests with our PAS user folder instead of the
@@ -10,7 +24,7 @@ The arguments are module names in CMFPlone/tests. They are imported (as opposed
 to execfile'd) so you don't need the '.py' extension. If no args are given, all
 tests will be run, and a summary of broken test modules will be output.
 
-$Id: seeWhatBreaks.py,v 1.9 2005/02/10 05:50:20 k_vertigo Exp $
+$Id: seeWhatBreaks.py,v 1.10 2005/06/29 17:27:46 jccooper Exp $
 """
 
 # framework is copied over from CMFPlone/tests

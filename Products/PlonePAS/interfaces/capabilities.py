@@ -1,7 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Enfold Systems, LLC
-# Reserved.
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this
@@ -16,7 +16,7 @@
 Define certain interfaces that a plugin must meet if it is to allow
 certain operations to be done by the Plone UI.
 
-$Id: capabilities.py,v 1.3 2005/06/28 19:39:56 jccooper Exp $
+$Id: capabilities.py,v 1.4 2005/06/29 17:27:45 jccooper Exp $
 """
 
 from Interface import Interface

@@ -1,9 +1,23 @@
+##############################################################################
+#
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """
 an archetypes storage that delegates to a pas property provider.
 
 main use.. cmfmember integration w/ properties providers
 
-$Id: storage.py,v 1.2 2005/05/24 17:50:00 dreamcatcher Exp $
+$Id: storage.py,v 1.3 2005/06/29 17:27:44 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo

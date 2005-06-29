@@ -1,5 +1,19 @@
+##############################################################################
+#
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """
-$Id: test_basic_ops.py,v 1.8 2005/05/24 18:48:17 dreamcatcher Exp $
+$Id: test_basic_ops.py,v 1.9 2005/06/29 17:27:46 jccooper Exp $
 """
 
 import os, sys

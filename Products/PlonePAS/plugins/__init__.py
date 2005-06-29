@@ -1,7 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Kapil Thangavelu
-# Reserved.
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this

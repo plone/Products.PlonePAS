@@ -1,3 +1,17 @@
+##############################################################################
+#
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """
 gruf specific hacks to pas, to make it play well in gruf
 
@@ -6,7 +20,7 @@ experimenting with pas flexibility on an existing system.
 
 open question if this mode will be supported at all
 
-$Id: gruf_support.py,v 1.4 2005/05/25 14:56:27 dreamcatcher Exp $
+$Id: gruf_support.py,v 1.5 2005/06/29 17:27:43 jccooper Exp $
 """
 
 import sys

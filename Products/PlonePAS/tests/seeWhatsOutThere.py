@@ -1,3 +1,17 @@
+##############################################################################
+#
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
+#
+# This software is subject to the provisions of the Zope Public License,
+# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
+# distribution.
+# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
+# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
+# FOR A PARTICULAR PURPOSE.
+#
+##############################################################################
 """
 
 This script definitively identifies the gruft scattered throughout CMFPlone.
@@ -14,7 +28,7 @@ GRUFisms are API in GRUF that aren't in our implementation of PAS. The set of
 difference between GRUF and PAS are cached; if PAS changes and you need to
 refresh, just delete whatsOutThere.dat or pass in 'refresh' as the first arg.
 
-$Id: seeWhatsOutThere.py,v 1.4 2005/02/04 20:22:44 thraxil Exp $
+$Id: seeWhatsOutThere.py,v 1.5 2005/06/29 17:27:46 jccooper Exp $
 """
 import os, sys, re
 from pprint import pprint

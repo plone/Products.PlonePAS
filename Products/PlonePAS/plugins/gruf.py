@@ -1,7 +1,7 @@
 ##############################################################################
 #
-# Copyright (c) 2005 Kapil Thangavelu
-# Reserved.
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this
@@ -18,7 +18,7 @@ acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id: gruf.py,v 1.2 2005/05/24 17:50:11 dreamcatcher Exp $
+$Id: gruf.py,v 1.3 2005/06/29 17:27:45 jccooper Exp $
 """
 
 from Globals import DTMLFile

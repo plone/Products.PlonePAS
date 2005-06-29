@@ -1,7 +1,8 @@
 ##############################################################################
 #
+# PlonePAS - Adapt PluggableAuthService for use in Plone
+# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
 # Portions Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-# Portions Copyright (c) 2005 Kapil Thangavelu. All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
 # Version 2.1 (ZPL).  A copy of the ZPL should accompany this
@@ -19,7 +20,7 @@ A Local Roles Plugin Implementation that respects Black Listing markers.
 ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
-$Id: local_role.py,v 1.4 2005/05/24 17:50:11 dreamcatcher Exp $
+$Id: local_role.py,v 1.5 2005/06/29 17:27:45 jccooper Exp $
 """
 
 from AccessControl import ClassSecurityInfo
