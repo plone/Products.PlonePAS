@@ -3,7 +3,7 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.12 2005/06/15 00:29:30 jccooper Exp $
+$Id: sheet.py,v 1.13 2005/06/29 00:22:30 rochael Exp $
 """
 
 from types import StringTypes, BooleanType, IntType
@@ -56,10 +56,8 @@ class MutablePropertySheet(UserPropertySheet):
 
     __implements__ = (IMutablePropertySheet,)
 
-    def __init__(self, id, user, **kw):
-        UserPropertySheet.__init__(self, id, **kw)
-        self._user = user # have to have a handle on container, since we're not
-                          # acquisition-aware
+##    def __init__(self, id, **kw):
+##        UserPropertySheet.__init__(self, id, **kw)
 
     def validateProperty(self, id, value):
         if not self._properties.has_key(id):
@@ -71,18 +69,17 @@ class MutablePropertySheet(UserPropertySheet):
                                        "property '%s' of type %s" %
                                        (value, id, proptype))
 
-    def setProperty(self, id, value):
+    def setProperty(self, user, id, value):
         self.validateProperty(id, value)
 
         self._properties[id] = value
         self._properties = self._properties
 
         # cascade to plugin
-        provider = self.getPropertyProvider()
-        user = self.getPropertiedUser()
+        provider = self._getPropertyProviderForUser(user)
         provider.setPropertiesForUser(user, self)
 
-    def setProperties(self, mapping):
+    def setProperties(self, user, mapping):
         prop_keys = self._properties.keys()
         prop_update = mapping.copy()
 
@@ -95,16 +92,11 @@ class MutablePropertySheet(UserPropertySheet):
         self._properties.update(prop_update)
 
         # cascade to plugin
-        provider = self.getPropertyProvider()
-        user = self.getPropertiedUser()
+        provider = self._getPropertyProviderForUser(user)
         provider.setPropertiesForUser(user, self)
 
-    def getPropertiedUser(self):
-        return self._user
-
-    def getPropertyProvider(self, context=None):
-        context = context or self._user
-        return context.acl_users._getOb(self._id)
+    def _getPropertyProviderForUser(self, user):
+        return user.acl_users._getOb(self._id)
 
 class SchemaMutablePropertySheet(MutablePropertySheet):
 

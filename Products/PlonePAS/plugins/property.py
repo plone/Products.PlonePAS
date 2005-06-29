@@ -14,7 +14,7 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py,v 1.15 2005/06/23 21:01:57 jccooper Exp $
+$Id: property.py,v 1.16 2005/06/29 00:22:31 rochael Exp $
 """
 from sets import Set
 
@@ -140,7 +140,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
             if not data.has_key(key):
                 data[key] = val
 
-        return MutablePropertySheet(self.id, user,
+        return MutablePropertySheet(self.id,
                                     schema=self._getSchema(isGroup), **data)
 
     def setPropertiesForUser(self, user, propertysheet):

@@ -19,20 +19,13 @@ from Products.PluggableAuthService.interfaces.propertysheets \
 class IMutablePropertySheet( IPropertySheet ):
 
 
-    def setProperty(  id, value ):
+    def setProperty( object, id, value ):
         """
         """
 
-    def setProperties( mapping ):
+    def setProperties( object, mapping ):
         """
         """
-
-    def _getPropertyProvider( context ):
-        """
-        return the property provider that was the origin for this property
-        sheet.
-        """
-
 
 class ISchemaMutablePropertySheet( IMutablePropertySheet ):
     pass

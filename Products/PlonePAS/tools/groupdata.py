@@ -1,5 +1,5 @@
 """
-$Id: groupdata.py,v 1.14 2005/06/28 19:39:56 jccooper Exp $
+$Id: groupdata.py,v 1.15 2005/06/29 00:22:31 rochael Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -116,7 +116,7 @@ class GroupData(BaseGroupData):
                 if not sheet.hasProperty(k):
                     continue
                 if IMutablePropertySheet.isImplementedBy(sheet):
-                    sheet.setProperty(k, v)
+                    sheet.setProperty(group, k, v)
                     modified = True
                 else:
                     raise RuntimeError, ("Mutable property provider "
