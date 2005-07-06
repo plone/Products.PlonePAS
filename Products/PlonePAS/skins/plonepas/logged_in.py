@@ -10,6 +10,7 @@
 
 # CHANGES:
 #  added blank template_id, just for safety
+#  changed isAnon return to be redirect, since return wasn't working for some unknown reason
 #  explicit login to cookie auth plugin, next line
 context.acl_users.credentials_cookie_auth.login()
 
@@ -20,6 +21,8 @@ REQUEST=context.REQUEST
 membership_tool=context.portal_membership
 
 isAnonymous = membership_tool.isAnonymousUser()
+
+context.plone_log('anon: ' + `isAnonymous`)
 
 login_failed = 'login_failed'
 login_changepassword = 'login_password'
@@ -43,8 +46,9 @@ if not came_from or \
     login_success = '%s/%s' % (context.portal_url(), 'login_success')
 
 if isAnonymous:
+    context.plone_log('anon! going to ' + `login_failed`)
     REQUEST.RESPONSE.expireCookie('__ac', path='/')
-    return context.restrictedTraverse(login_failed)()
+    return REQUEST.RESPONSE.redirect(login_failed)
 
 member = membership_tool.getAuthenticatedMember()
 
