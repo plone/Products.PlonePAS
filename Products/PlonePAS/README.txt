@@ -21,7 +21,7 @@ Depends On
 
  - PluggableAuthService 1.0.4 (currently unreleased, see CVS)
 
-   - PluginRegistry (latest)
+  - PluginRegistry (latest)
 
 Optional
 
@@ -81,6 +81,11 @@ Notes
   already in use. If you have a memberdata object and change the memberdata properties
   you must re-construct the member by saying portal_membership.getMemberById again.
   See 'tests.test_properties.test_user_properties' for example.
+
+  By default, logout from users signed in under HTTP Basic Auth cannot log out.
+  If you enable the "Credentials Reset" plugin for the HTTP Basic plugin, the logout for
+  cookies will no longer work. However, this is not a problem if you're not using
+  cookies.
 
 Implementation
 

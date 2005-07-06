@@ -1,3 +1,9 @@
+<tal:changes replace="nothing">
+  default 'ac_name' and 'ac_password' to expected values
+  set 'auth' to plugin instead of cookie crumbler
+  'remember me' hidden if no such config
+</tal:changes>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"
       i18n:domain="plone">
 <head>
@@ -26,7 +32,7 @@ function cookiesEnabled() {
 
 <body>
 
-<div tal:define="auth nocall:here/cookie_authentication|nothing;
+<div tal:define="auth nocall:here/acl_users/credentials_cookie_auth|nothing;
 		 Iterator python:modules['Products.CMFPlone'].IndexIterator;
 		 tabindex python:Iterator(pos=30000)">
 
@@ -70,8 +76,8 @@ to become a member.
 <form action="logged_in"
       method="post"
       tal:condition="python: auth"
-      tal:define="ac_name auth/name_cookie|nothing;
-                  ac_password auth/pw_cookie|nothing;
+      tal:define="ac_name auth/name_cookie|string:__ac_name;
+                  ac_password auth/pw_cookie|string:__ac_password;
                   ac_persist auth/persist_cookie|nothing;">
 
     <fieldset>
@@ -125,7 +131,7 @@ to become a member.
                    />
 	</div>
 
-        <div class="field">
+        <div class="field" tal:condition="ac_persist">
 
             <input type="checkbox"
                    class="noborder formRememberName"

@@ -1,3 +1,8 @@
+<tal:changes replace="nothing">
+  default 'ac_name' and 'ac_password' to expected values
+  set 'auth' to plugin instead of cookie crumbler
+</tal:changes>
+
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       i18n:domain="plone">
@@ -11,7 +16,7 @@
      tal:omit-tag=""
      tal:define="pageloc python: request.URL.split('/')[-1];
                  okToShowHere python: not pageloc in ('login_form', 'join_form');
-                 auth nocall:here/cookie_authentication|nothing"
+                 auth nocall:here/acl_users/credentials_cookie_auth|nothing"
      tal:condition="python: isAnon and okToShowHere">
 
     <div class="portlet"
@@ -27,8 +32,8 @@
     </div>
 
     <div class="portlet"
-         tal:define="ac_name auth/name_cookie|nothing;
-                     ac_password auth/pw_cookie|nothing;
+         tal:define="ac_name auth/name_cookie|string:__ac_name;
+                     ac_password auth/pw_cookie|string:__ac_password;
                      ac_persist auth/persist_cookie|nothing;"
          tal:condition="python: auth"
          id="portlet-login">

@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: Install.py,v 1.45 2005/06/29 17:27:44 jccooper Exp $
+$Id: Install.py,v 1.46 2005/07/06 00:56:54 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -25,8 +25,8 @@ from Products.PluginRegistry.PluginRegistry import PluginRegistry
 
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-     import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import ICredentialsResetPlugin
 
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement
@@ -132,19 +132,8 @@ def setupPlugins(portal, out):
     print >> out, "\nPlugin setup"
 
     pas = uf.manage_addProduct['PluggableAuthService']
-    pas.addCookieAuthHelper('credentials_cookie_auth', cookie_name='__ac')
-    print >> out, "Added Cookie Auth Helper."
-    activatePluginInterfaces(portal, 'credentials_cookie_auth', out)
 
-    credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
-    if 'login_form' in credentials_cookie_auth.objectIds():
-        credentials_cookie_auth.manage_delObjects(ids=['login_form'])
-        print >> out, "Removed default login_form from credentials cookie auth."
-
-    pas.addHTTPBasicAuthHelper('credentials_basic_auth',
-                               title="HTTP Basic Auth")
-    print >> out, "Added Basic Auth Helper."
-    activatePluginInterfaces(portal, 'credentials_basic_auth', out)
+    setupAuthPlugins(portal, pas, out)
 
     plone_pas = uf.manage_addProduct['PlonePAS']
     plone_pas.manage_addUserManager('source_users')
@@ -170,6 +159,42 @@ def setupPlugins(portal, out):
     plone_pas.manage_addZODBMutablePropertyProvider('mutable_properties')
     print >> out, "Added Mutable Property Manager."
     activatePluginInterfaces(portal, "mutable_properties", out)
+
+def setupAuthPlugins(portal, pas, out):
+    uf = portal.acl_users
+    print >> out, " cookie plugin setup"
+
+    crumbler = getToolByName(portal, 'cookie_authentication')
+    login_path = crumbler.auto_login_page
+    logout_path = crumbler.logout_page
+    cookie_name = crumbler.auth_cookie
+
+    pas.addCookieAuthHelper('credentials_cookie_auth', cookie_name='__ac')
+    print >> out, "Added Cookie Auth Helper."
+    activatePluginInterfaces(portal, 'credentials_cookie_auth', out)
+
+    credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
+    if 'login_form' in credentials_cookie_auth.objectIds():
+        credentials_cookie_auth.manage_delObjects(ids=['login_form'])
+        print >> out, "Removed default login_form from credentials cookie auth."
+    credentials_cookie_auth.cookie_name = cookie_name
+    credentials_cookie_auth.login_path = login_path
+
+    # remove cookie crumbler(s)
+    portal.manage_delObjects(['cookie_authentication'])
+
+    ccs = portal.objectValues('Cookie Crumbler')
+    assert not ccs, "Extra cookie crumblers found."
+    print >> out, "Removed old Cookie Crumbler"
+
+
+    pas.addHTTPBasicAuthHelper('credentials_basic_auth',
+                               title="HTTP Basic Auth")
+    print >> out, "Added Basic Auth Helper."
+    activatePluginInterfaces(portal, 'credentials_basic_auth', out)
+    pas.plugins.deactivatePlugin(ICredentialsResetPlugin, 'credentials_basic_auth')
+
+
 
 def configurePlonePAS(portal, out):
     """Add the necessary objects to make a usable PAS instance

@@ -8,6 +8,9 @@
 ##parameters=password='password', confirm='confirm', came_from_prefs=None
 ##title=Register a User
 ##
+
+# CHANGE NOTES: changing 'came_from' so that we don't loop 'logged_in' twice (PAS cookie auth is no longer implicit)
+
 from ZODB.POSException import ConflictError
 
 REQUEST=context.REQUEST
@@ -43,12 +46,12 @@ if site_properties.validate_email or REQUEST.get('mail_me', 0):
         # (MSL 12/28/03) We also need to delete the just made member and return to the join_form.
                
         state.setError('email', 'We were unable to send your password to your email address: '+str(err))
-        state.set(came_from='logged_in')
+        state.set(came_from='login_success')
         context.acl_users.userFolderDelUsers([username,])
         return state.set(status='failure', portal_status_message='Please enter a valid email address.')
         
 state.set(portal_status_message=REQUEST.get('portal_status_message', 'Registered.'))
-state.set(came_from=REQUEST.get('came_from','logged_in'))
+state.set(came_from=REQUEST.get('came_from','login_success'))
 
 if came_from_prefs:
     state.set(status='prefs')

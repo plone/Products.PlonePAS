@@ -7,6 +7,15 @@
 ##title=Logout handler
 ##parameters=
 
+# CHANGES:
+#  removed cookie crumbler expire
+#  call PAS.logout
+
+try:
+    context.acl_users.logout(context.REQUEST)
+except:
+    pass  # we expect Unauthorized
+
 REQUEST = context.REQUEST
 # if REQUEST.has_key('portal_skin'):
 #   context.portal_skins.clearSkinCookie()
@@ -17,10 +26,10 @@ path = '/' + context.absolute_url(1)
 if REQUEST.has_key(skinvar) and not context.portal_skins.getCookiePersistence():
     REQUEST.RESPONSE.expireCookie(skinvar, path=path)
 
-cookie_auth=getattr(context, 'cookie_authentication')
-if cookie_auth is not None:
-    cookie_name=cookie_auth.getProperty('auth_cookie')
-    REQUEST.RESPONSE.expireCookie(cookie_name, path='/')
+#cookie_auth=getattr(context, 'cookie_authentication')
+#if cookie_auth is not None:
+#    cookie_name=cookie_auth.getProperty('auth_cookie')
+#    REQUEST.RESPONSE.expireCookie(cookie_name, path='/')
 
 # This sort of sucks.  If you do not have SESSIONS enabled
 # this throws an exception ;-(.  You can not try/except

@@ -7,6 +7,11 @@
 ##parameters=
 ##title=login
 ##
+context.plone_log('logged_in: request[came_from]=' + context.REQUEST['came_from'])
+# CHANGES: explicit login to cookie auth plugin, next line
+context.acl_users.credentials_cookie_auth.login()
+context.plone_log('logged_in: request[came_from]=' + context.REQUEST['came_from'])
+
 from DateTime import DateTime
 import ZTUtils
 

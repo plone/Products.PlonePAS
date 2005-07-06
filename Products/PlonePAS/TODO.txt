@@ -112,6 +112,10 @@ Questions
 
 Notes
 
+ - we must turn off the ability to log out HTTP Basic Authed users, since
+   'resetCredentials' for that plugin raises Unauthorized, and that breaks
+   cookie logout. I'm not exactly sure why.
+
  - prefs_group_details and prefs_group_edit don't need to be
    customized for Plone 2.1 versions after 29 Apr 2005
 
