@@ -14,7 +14,7 @@
 ##############################################################################
 """
 pas alterations and monkies
-$Id: pas.py,v 1.30 2005/07/06 20:24:40 jccooper Exp $
+$Id: pas.py,v 1.31 2005/07/06 21:44:39 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -248,8 +248,24 @@ def userSetPassword(self, userid, password):
         raise RuntimeError ("No user management plugins were able "
                             "to successfully modify the user")
     
-
 PluggableAuthService.userSetPassword = userSetPassword
+
+
+def credentialsChanged(self, user, name, new_password):
+    """Notifies the authentication mechanism that this user has changed
+    passwords.  This can be used to update the authentication cookie.
+    Note that this call should *not* cause any change at all to user
+    databases.
+
+    For use by CMFCore.MembershipTool.credentialsChanged
+    """
+    request = self.REQUEST
+    response = request.RESPONSE
+    login = name
+        
+    self.updateCredentials(request, response, login, new_password)
+PluggableAuthService.credentialsChanged = credentialsChanged
+
 
 
 

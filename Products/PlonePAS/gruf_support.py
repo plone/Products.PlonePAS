@@ -20,7 +20,7 @@ experimenting with pas flexibility on an existing system.
 
 open question if this mode will be supported at all
 
-$Id: gruf_support.py,v 1.5 2005/06/29 17:27:43 jccooper Exp $
+$Id: gruf_support.py,v 1.6 2005/07/06 21:44:39 jccooper Exp $
 """
 
 import sys
@@ -53,7 +53,7 @@ def authenticate(self, name, password, request):
         try:
             uid_and_name = auth.authenticateCredentials(credentials)
 
-            if uid_and_name is None:
+            if uid_and_name == (None,None):
                 continue
 
             user_id, name = uid_and_name
