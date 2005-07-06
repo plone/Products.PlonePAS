@@ -7,10 +7,11 @@
 ##parameters=
 ##title=login
 ##
-context.plone_log('logged_in: request[came_from]=' + context.REQUEST['came_from'])
-# CHANGES: explicit login to cookie auth plugin, next line
+
+# CHANGES:
+#  added blank template_id, just for safety
+#  explicit login to cookie auth plugin, next line
 context.acl_users.credentials_cookie_auth.login()
-context.plone_log('logged_in: request[came_from]=' + context.REQUEST['came_from'])
 
 from DateTime import DateTime
 import ZTUtils
@@ -24,6 +25,7 @@ login_failed = 'login_failed'
 login_changepassword = 'login_password'
 login_success = None
 came_from = REQUEST.get('came_from')
+template_id = ''
 
 # If someone has something on their clipboard, expire it.
 if REQUEST.get('__cp', None) is not None:
