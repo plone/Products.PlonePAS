@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: memberdata.py,v 1.24 2005/06/29 17:27:46 jccooper Exp $
+$Id: memberdata.py,v 1.25 2005/07/06 20:24:40 jccooper Exp $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
@@ -174,6 +174,11 @@ class MemberData(BaseMemberData):
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
         return BaseMemberData.getProperty(self, id, default)
+
+
+    def getPassword(self):
+        """Returns None. Present to avoid NotImplementedError."""
+        return None
 
 
     ## IManageCapabilities methods

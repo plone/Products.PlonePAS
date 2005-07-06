@@ -14,7 +14,7 @@
 ##############################################################################
 """
 pas alterations and monkies
-$Id: pas.py,v 1.29 2005/06/29 17:27:43 jccooper Exp $
+$Id: pas.py,v 1.30 2005/07/06 20:24:40 jccooper Exp $
 """
 import sys
 from sets import Set
@@ -71,40 +71,16 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 
     XXX domains are currently ignored.
     """
+    self.userSetPassword(principal_id, password)
 
     plugins = self._getOb('plugins')
-    managers = plugins.listPlugins(IUserManagement)
     rmanagers = plugins.listPlugins(IRoleAssignerPlugin)
 
+    if not (rmanagers):
+        raise NotImplementedError("There is no plugin that can modify roles")
 
-    if not (managers and rmanagers):
-        raise NotImplementedError("There is no plugin that can modify users")
-
-    modified = False
-    for mid, manager in managers:
-        try:
-            manager.doChangeUser(principal_id, password)
-            modified = True
-        except RuntimeError:
-            pass
-
-    if not modified:
-        raise RuntimeError ("No user management plugins were able "
-                            "to successfully modify the user")
-
-#    sroles = Set() # keep track that we set all the requested roles
     for rid, rmanager in rmanagers:
         rmanager.assignRolesToPrincipal(roles, principal_id)
-
-#    # we can take care of this all in one call, now
-#        for role in roles:
-#            if rmanager.assignRolesToPrincipal(principal_id, role):
-#                sroles.add(role)
-
-#    roles_not_set = sroles.difference(Set(roles))
-
-#    if not len(roles_not_set) == 0:
-#        raise RuntimeError("not all roles were set - %s"%roles_not_set)
 
     return True
 
@@ -240,6 +216,7 @@ def canListAllUsers(self):
     return True
 PluggableAuthService.canListAllUsers = canListAllUsers
 
+
 def canListAllGroups(self):
     plugins = self._getOb('plugins')
 
@@ -248,6 +225,33 @@ def canListAllGroups(self):
         return False
     return True
 PluggableAuthService.canListAllGroups = canListAllGroups
+
+
+def userSetPassword(self, userid, password):
+    """Emulate GRUF 3 call for password set, for use with PwRT."""
+    # used by _doChangeUser
+    plugins = self._getOb('plugins')
+    managers = plugins.listPlugins(IUserManagement)
+
+    if not (managers):
+        raise NotImplementedError("There is no plugin that can modify users")
+
+    modified = False
+    for mid, manager in managers:
+        try:
+            manager.doChangeUser(userid, password)
+            modified = True
+        except RuntimeError:
+            pass
+
+    if not modified:
+        raise RuntimeError ("No user management plugins were able "
+                            "to successfully modify the user")
+    
+
+PluggableAuthService.userSetPassword = userSetPassword
+
+
 
 #################################
 # non standard gruf --- junk method  XXX remove me
