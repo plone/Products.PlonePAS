@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: Install.py,v 1.46 2005/07/06 00:56:54 jccooper Exp $
+$Id: Install.py,v 1.47 2005/07/08 23:13:23 jccooper Exp $
 """
 
 from StringIO import StringIO
@@ -71,6 +71,13 @@ def activatePluginInterfaces(portal, plugin, out):
         print >> out, "Please remove it before installing PlonePAS."
     plugin_obj.manage_activateInterfaces(activatable)
     print >> out, plugin + " activated."
+
+def installProducts(portal, out):
+    print >> out, "\nInstalling other products"
+    qi = getToolByName(portal, 'portal_quickinstaller')
+
+    print >> out, " - PasswordResetTool"
+    qi.installProduct('PasswordResetTool')
 
 def setupRoles(portal):
     rmanager = portal.acl_users.role_manager
@@ -199,6 +206,7 @@ def setupAuthPlugins(portal, pas, out):
 def configurePlonePAS(portal, out):
     """Add the necessary objects to make a usable PAS instance
     """
+    installProducts(portal, out)
     registerPluginTypes(portal.acl_users)
     setupPlugins(portal, out)
 #    setupRoles( portal )

@@ -23,6 +23,8 @@ Depends On
 
   - PluginRegistry (latest)
 
+ - PasswordResetTool (for full functionality)
+
 Optional
 
  - PloneTestCase
