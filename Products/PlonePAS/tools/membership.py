@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: membership.py,v 1.13 2005/06/29 17:27:46 jccooper Exp $
+$Id$
 """
 from Globals import InitializeClass
 
@@ -253,29 +253,29 @@ class MembershipTool(BaseMembershipTool):
 
         member_folder_title = translate(
             'plone', 'title_member_folder',
-            {'member': member_id}, self,
-            default = "%s's Home" % member_id)
+            {'member': safe_member_id}, self,
+            default = "%s's Home" % safe_member_id)
 
         member_folder_description = translate(
             'plone', 'description_member_folder',
-            {'member': member_id}, self,
+            {'member': safe_member_id}, self,
             default = 'Home page area that contains the items created ' \
-            'and collected by %s' % member_id)
+            'and collected by %s' % safe_member_id)
 
         member_folder_index_html_title = translate(
             'plone', 'title_member_folder_index_html',
-            {'member': member_id}, self,
-            default = "Home page for %s" % member_id)
+            {'member': safe_member_id}, self,
+            default = "Home page for %s" % safe_member_id)
 
         personal_folder_title = translate(
             'plone', 'title_member_personal_folder',
-            {'member': member_id}, self,
-            default = "Personal Items for %s" % member_id)
+            {'member': safe_member_id}, self,
+            default = "Personal Items for %s" % safe_member_id)
 
         personal_folder_description = translate(
             'plone', 'description_member_personal_folder',
-            {'member': member_id}, self,
-            default = 'contains personal workarea items for %s' % member_id)
+            {'member': safe_member_id}, self,
+            default = 'contains personal workarea items for %s' % safe_member_id)
 
         ## Modify member folder
         member_folder = self.getHomeFolder(member_id)
@@ -363,6 +363,7 @@ def _cleanId(id):
     De-clean is possible, but not quite as simple.
     Assumes that id can start with non-alpha(numeric), which is true.
     """
+    __traceback_info__ = (id,)
     # note: we provide the 'safe' param to get '/' encoded
     return url_quote(id, '').replace('-','--').replace('%','-')
 
