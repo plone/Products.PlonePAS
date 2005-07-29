@@ -1,0 +1,39 @@
+<dtml-var manage_page_header>
+
+<h2> Add A CookieCrumblingPlugin For PAS</h2>
+
+<p class="form-help">
+ This user factory allows form-based logins to be authenticated against regular user folders
+ in parent folders. Otherwise, users from, say, the root's <code>acl_users</code> won't be able
+ to log in via a form
+</p>
+
+<p>
+ It does this by injecting form-provided credentials into the REQUEST as CookieCrumbler does.
+</p>
+
+<form action="manage_addCookieCrumblingPlugin" method="POST">
+
+<table>
+<tr>
+   <td class="form-label"> Id </td>
+   <td> <input type="text" name="id" /> </td>
+</tr>
+<tr>
+   <td class="form-label"> Title </td>
+   <td> <input type="text" name="title" /> </td>
+</tr>
+<tr>
+   <td colspan="2"> 
+    <div class="form-element">
+     <input type="submit" value="submit"/>
+     </div>
+   </td>
+</tr>
+
+</table>
+
+</form>
+
+</body>
+</html>

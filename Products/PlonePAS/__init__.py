@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: __init__.py,v 1.25 2005/06/29 17:27:43 jccooper Exp $
+$Id$
 """
 
 from AccessControl.Permissions import add_user_folders
@@ -38,6 +38,7 @@ from plugins import role
 from plugins import local_role
 from plugins import ufactory
 from plugins import property
+from plugins import crumbler
 
 #################################
 # pas monkies
@@ -79,6 +80,7 @@ try:
     registerMultiPlugin( local_role.LocalRolesManager.meta_type )
     registerMultiPlugin( ufactory.PloneUserFactory.meta_type )
     registerMultiPlugin( property.ZODBMutablePropertyProvider.meta_type )
+    registerMultiPlugin( crumbler.CookieCrumblingPlugin.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
@@ -140,5 +142,12 @@ def initialize(context):
                            permission = add_user_folders,
                            constructors = ( property.manage_addZODBMutablePropertyProviderForm,
                                             property.manage_addZODBMutablePropertyProvider ),
+                           visibility = None
+                           )
+
+    context.registerClass( crumbler.CookieCrumblingPlugin,
+                           permission = add_user_folders,
+                           constructors = ( crumbler.manage_addCookieCrumblingPluginForm,
+                                            crumbler.manage_addCookieCrumblingPlugin ),
                            visibility = None
                            )
