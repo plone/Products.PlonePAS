@@ -25,7 +25,13 @@ from urllib import unquote as url_unquote
 from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.PloneUtilities import _createObjectByType
-from Products.CMFPlone.PloneUtilities import translate
+
+try:
+    # Plone 2.0
+    from Products.CMFPlone.PloneUtilities import translate
+except ImportError:
+    # Plone 2.1
+    from Products.CMFPlone.utils import utranslate as translate
 
 
 class MembershipTool(BaseMembershipTool):
