@@ -15,7 +15,7 @@
 """
 group interfaces for plone, based off existing group usage pre pas.
 
-$Id: group.py,v 1.11 2005/06/29 17:27:45 jccooper Exp $
+$Id$
 """
 
 from Products.PluggableAuthService.interfaces import plugins

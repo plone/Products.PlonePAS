@@ -20,7 +20,7 @@ A Local Roles Plugin Implementation that respects Black Listing markers.
 ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
-$Id: local_role.py,v 1.5 2005/06/29 17:27:45 jccooper Exp $
+$Id$
 """
 
 from AccessControl import ClassSecurityInfo

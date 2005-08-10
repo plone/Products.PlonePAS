@@ -1,5 +1,5 @@
 """
-$Id: test_caching.py,v 1.1 2005/06/29 23:00:18 rochael Exp $
+$Id$
 """
 
 import os, sys

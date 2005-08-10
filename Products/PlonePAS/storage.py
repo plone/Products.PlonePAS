@@ -17,7 +17,7 @@ an archetypes storage that delegates to a pas property provider.
 
 main use.. cmfmember integration w/ properties providers
 
-$Id: storage.py,v 1.3 2005/06/29 17:27:44 jccooper Exp $
+$Id$
 """
 
 from AccessControl import ClassSecurityInfo

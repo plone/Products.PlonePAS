@@ -14,7 +14,7 @@
 ##############################################################################
 """
 pas alterations and monkies
-$Id: pas.py,v 1.31 2005/07/06 21:44:39 jccooper Exp $
+$Id$
 """
 import sys
 from sets import Set

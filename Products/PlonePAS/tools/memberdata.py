@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: memberdata.py,v 1.25 2005/07/06 20:24:40 jccooper Exp $
+$Id$
 """
 from Globals import InitializeClass
 from Acquisition import aq_base

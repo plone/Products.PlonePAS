@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: PloneUserFactory.py,v 1.3 2005/06/29 17:27:45 jccooper Exp $
+$Id$
 """
 
 from AccessControl import ClassSecurityInfo

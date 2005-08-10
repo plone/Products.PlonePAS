@@ -17,7 +17,7 @@
 Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
 
-$Id: HTTPBasicAuthHelper.py,v 1.7 2004/10/16 20:15:47 urbanape Exp $
+$Id$
 """
 from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo

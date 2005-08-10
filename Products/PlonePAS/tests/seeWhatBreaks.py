@@ -24,7 +24,7 @@ The arguments are module names in CMFPlone/tests. They are imported (as opposed
 to execfile'd) so you don't need the '.py' extension. If no args are given, all
 tests will be run, and a summary of broken test modules will be output.
 
-$Id: seeWhatBreaks.py,v 1.10 2005/06/29 17:27:46 jccooper Exp $
+$Id$
 """
 
 # framework is copied over from CMFPlone/tests

@@ -16,7 +16,7 @@
 Define certain interfaces that a plugin must meet if it is to allow
 certain operations to be done by the Plone UI.
 
-$Id: capabilities.py,v 1.4 2005/06/29 17:27:45 jccooper Exp $
+$Id$
 """
 
 from Interface import Interface

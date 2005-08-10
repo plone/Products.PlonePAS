@@ -17,7 +17,7 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
-$Id: sheet.py,v 1.14 2005/06/29 17:27:44 jccooper Exp $
+$Id$
 """
 
 from types import StringTypes, BooleanType, IntType
