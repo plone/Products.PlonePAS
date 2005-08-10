@@ -50,7 +50,8 @@ def manage_addCookieCrumblingPlugin(self, id, title='',
 manage_addCookieCrumblingPluginForm = DTMLFile("../zmi/CookieCrumblingPluginForm", globals())
 
 class CookieCrumblingPlugin(Folder, BasePlugin):
-    """Multi-plugin for injecting HTTP Basic Authentication credentials from form credentials.
+    """Multi-plugin for injecting HTTP Basic Authentication
+    credentials from form credentials.
     """
     __implements__ = (IExtractionPlugin,)
 
@@ -65,8 +66,8 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
     def _getCC(self):
         return getattr(aq_base(self), CC_ID, None)
 
-    security.declarePrivate('extractCredentials' )
-    def extractCredentials( self, request ):
+    security.declarePrivate('extractCredentials')
+    def extractCredentials(self, request):
         """ Extract basic auth credentials from 'request'.
         """
         from zLOG import LOG
@@ -84,6 +85,6 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
             LOG("PlonePAS error", 0, format_exc())
 
         return {}
-        
+
 
 InitializeClass(CookieCrumblingPlugin)

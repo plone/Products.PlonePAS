@@ -16,7 +16,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.19 2005/06/29 17:27:46 jccooper Exp $
+# $Id$
 
 from Testing import ZopeTestCase
 
@@ -52,6 +52,7 @@ ZopeTestCase.installProduct('ATContentTypes')
 ZopeTestCase.installProduct('ExtendedPathIndex')
 ZopeTestCase.installProduct('ATReferenceBrowserWidget')
 ZopeTestCase.installProduct('ResourceRegistries')
+ZopeTestCase.installProduct('PasswordResetTool')
 ZopeTestCase.installProduct('PlonePAS')
 
 ZopeTestCase.utils.setupSiteErrorLog()

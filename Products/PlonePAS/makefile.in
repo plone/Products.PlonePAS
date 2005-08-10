@@ -11,13 +11,7 @@ TMPDIR=~/tmp
 CURDIR=$(shell pwd)
 BASE_DIR=$(shell dirname ${CURDIR})
 
-20_SOFTWARE_HOME=~/src/zope/2_7/lib/python
-20_INSTANCE_HOME=~/src/instance/pd11
-20_ZOPE_CONFIG=${20_INSTANCE_HOME}/etc/zope.conf.test
-
-21_SOFTWARE_HOME=~/src/zope/trunk/lib/python
-21_INSTANCE_HOME=~/src/instance/plone21
-21_ZOPE_CONFIG=${21_INSTANCE_HOME}/etc/zope.conf.test
+INSTANCE_HOME=~/src/instance/pd11
 
 PACKAGES=${NAME} PluginRegistry LDAPMultiPlugins LDAPUserFolder PluggableAuthService
 
@@ -36,7 +30,7 @@ MKDIR=mkdir -p
 .PHONY : default
 
 # default:     The default step (invoked when make is called without a target)
-default: quickclean test
+default: test
 
 clean :
 	find . \( -name '*~' -o -name '*.py[co]' -o -name '*.bak' -o -name '\.#*' \) -exec rm {} \; -print
@@ -47,19 +41,9 @@ quickclean :
 reindent :
 	~/src/reindent.py -r -v .
 
-test20 :
-	export INSTANCE_HOME=${20_INSTANCE_HOME}; \
-	export SOFTWARE_HOME=${20_SOFTWARE_HOME}; \
-	export ZOPE_CONFIG=${20_ZOPE_CONFIG}; \
-	cd ${CURDIR}/tests && ${PYTHON} -O runalltests.py
-
-test21 :
-	export INSTANCE_HOME=${21_INSTANCE_HOME}; \
-	export SOFTWARE_HOME=${21_SOFTWARE_HOME}; \
-	export ZOPE_CONFIG=${21_ZOPE_CONFIG}; \
-	cd ${CURDIR}/tests && ${PYTHON} -O runalltests.py
-
-test : test20 test21
+test :
+	cd $(INSTANCE_HOME) && \
+	./bin/zopectl test -v --keepbytecode --libdir Products/PlonePAS
 
 # sdist:       Create a source distribution file (implies clean).
 #
@@ -72,7 +56,9 @@ sdist_tgz:
           ${CURDIR}/version.txt
 	${MKDIR} ${TMPDIR}/${PACKAGE_NAME}
 	${CD} ${TMPDIR}/${PACKAGE_NAME} && \
-          for package in ${PACKAGES}; do ${LN} ${BASE_DIR}/$$package .; done && \
+          for package in ${PACKAGES};
+	  do ${LN} ${BASE_DIR}/$$package .;
+	  done && \
           ${CD} ${TMPDIR} && ${TAR} \
            --exclude=${PACKAGE_NAME}.tgz \
            --exclude=CVS \
@@ -80,20 +66,6 @@ sdist_tgz:
            --exclude=.cvsignore \
            --exclude=makefile \
            --exclude=Makefile \
-           --exclude=*.pyc \
-           --exclude=*.pyo \
-           --exclude=TAGS \
-           --exclude=*~ \
-           --exclude=.#* \
-	-zhcf ${BASE_DIR}/${PACKAGE_NAME}.tgz ${PACKAGE_NAME}
-	${RMRF} ${TMPDIR}/${PACKAGE_NAME}
-
-dev_tgz:
-	${MKDIR} ${TMPDIR}/${PACKAGE_NAME}
-	${CD} ${TMPDIR}/${PACKAGE_NAME} && \
-          for package in ${PACKAGES}; do ${LN} ${BASE_DIR}/$$package .; done && \
-          ${CD} ${TMPDIR} && ${TAR} \
-           --exclude=${PACKAGE_NAME}.tgz \
            --exclude=*.pyc \
            --exclude=*.pyo \
            --exclude=TAGS \
