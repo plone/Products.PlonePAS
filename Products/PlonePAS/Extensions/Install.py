@@ -13,10 +13,12 @@
 #
 ##############################################################################
 """
-$Id: Install.py,v 1.47 2005/07/08 23:13:23 jccooper Exp $
+$Id$
 """
 
 from StringIO import StringIO
+
+from Acquisition import aq_base, aq_inner, aq_parent
 
 from Products.Archetypes.Extensions.utils import install_subskin
 from Products.CMFCore.utils import getToolByName
@@ -25,8 +27,16 @@ from Products.PluginRegistry.PluginRegistry import PluginRegistry
 
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins import ICredentialsResetPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+     import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+     import ICredentialsResetPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+     import IChallengePlugin
+from Products.PluggableAuthService.PluggableAuthService \
+     import PluggableAuthService
+from Products.PluggableAuthService.Extensions.upgrade \
+     import replace_acl_users
 
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement
@@ -48,8 +58,6 @@ try:
     CAN_LDAP = 1
 except ImportError:
     pass
-
-from Acquisition import aq_base
 
 def activatePluginInterfaces(portal, plugin, out):
     pas = portal.acl_users
@@ -167,14 +175,21 @@ def setupPlugins(portal, out):
     print >> out, "Added Mutable Property Manager."
     activatePluginInterfaces(portal, "mutable_properties", out)
 
-def setupAuthPlugins(portal, pas, out):
+def setupAuthPlugins(portal, pas, out,
+                     deactivate_basic_reset=True,
+                     deactivate_cookie_challenge=False):
     uf = portal.acl_users
     print >> out, " cookie plugin setup"
 
-    crumbler = getToolByName(portal, 'cookie_authentication')
-    login_path = crumbler.auto_login_page
-    logout_path = crumbler.logout_page
-    cookie_name = crumbler.auth_cookie
+    login_path = 'require_login'
+    logout_path = 'logged_out'
+    cookie_name = '__ac'
+
+    crumbler = getToolByName(portal, 'cookie_authentication', None)
+    if crumbler is not None:
+        login_path = crumbler.auto_login_page
+        logout_path = crumbler.logout_page
+        cookie_name = crumbler.auth_cookie
 
     pas.addCookieAuthHelper('credentials_cookie_auth', cookie_name='__ac')
     print >> out, "Added Cookie Auth Helper."
@@ -188,7 +203,8 @@ def setupAuthPlugins(portal, pas, out):
     credentials_cookie_auth.login_path = login_path
 
     # remove cookie crumbler(s)
-    portal.manage_delObjects(['cookie_authentication'])
+    if 'cookie_authentication' in portal.objectIds():
+        portal.manage_delObjects(['cookie_authentication'])
 
     ccs = portal.objectValues('Cookie Crumbler')
     assert not ccs, "Extra cookie crumblers found."
@@ -199,8 +215,13 @@ def setupAuthPlugins(portal, pas, out):
                                title="HTTP Basic Auth")
     print >> out, "Added Basic Auth Helper."
     activatePluginInterfaces(portal, 'credentials_basic_auth', out)
-    pas.plugins.deactivatePlugin(ICredentialsResetPlugin, 'credentials_basic_auth')
 
+    if deactivate_basic_reset:
+        pas.plugins.deactivatePlugin(ICredentialsResetPlugin,
+                                     'credentials_basic_auth')
+    if deactivate_cookie_challenge:
+        pas.plugins.deactivatePlugin(IChallengePlugin,
+                                     'credentials_cookie_auth')
 
 
 def configurePlonePAS(portal, out):
@@ -573,7 +594,7 @@ def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
                 binduid_usage=1, rdn_attr='cn', local_groups=0,
                 use_ssl=0 , encryption='SHA', read_only=0)
             getattr(pas,id).groupid_attr = 'cn'
-            
+
             print >> out, "Added ActiveDirectoryMultiPlugin %s" % x
             x = x or 0 + 1
 
@@ -615,6 +636,33 @@ def goForMigration(portal, out):
 
     return 1
 
+def migrate_root_uf(self, out):
+    # Acquire parent user folder.
+    parent = aq_parent(aq_inner(self))
+    uf = getToolByName(parent, 'acl_users')
+    if uf.meta_type == PluggableAuthService.meta_type:
+        # It's a PAS already, do nothing.
+        return
+
+    if not uf.meta_type == 'User Folder':
+        # It's not a standard User Folder at the root. Nothing we can do.
+        return
+
+    # It's a standard User Folder, replace it.
+    replace_acl_users(parent, out)
+
+    # Get the new uf
+    uf = getToolByName(parent, 'acl_users')
+
+    pas = uf.manage_addProduct['PluggableAuthService']
+    # Setup authentication plugins
+    setupAuthPlugins(parent, pas, out,
+                     deactivate_basic_reset=False,
+                     deactivate_cookie_challenge=True)
+
+    # Activate *all* interfaces for user manager. IUserAdder is not
+    # activated for some reason by default.
+    activatePluginInterfaces(parent, 'users', out)
 
 def install(self):
     out = StringIO()
@@ -651,6 +699,8 @@ def install(self):
 
     restoreUserData(portal, out, userdata)
     restoreGroupData(portal, out, groupdata, memberships)
+
+    migrate_root_uf(self, out)
 
     print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()

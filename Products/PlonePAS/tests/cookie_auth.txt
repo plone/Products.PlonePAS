@@ -71,11 +71,12 @@ Login to Plone site using Cookie Auth should work too.
 User in parent folder
 ---------------------
 
-User Exists in UserFolder on the folder containing the Plone Site.
+User Exists on the folder containing the Plone Site, which should be a
+Pluggable Auth Service too.
 
   >>> uf = self.portal.aq_parent.acl_users
   >>> print uf.meta_type
-  User Folder
+  Pluggable Auth Service
 
   >>> user_name, user_password, user_role = ('baz', 'bar', 'Manager')
   >>> uf.userFolderAddUser(user_name, user_password, [user_role], [])
@@ -104,5 +105,6 @@ Login to Plone site using Cookie Auth should work too.
   >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
   >>> print http(r"""
   ... GET /portal/manage HTTP/1.1
-  ... Cookie: __ac="%s";
+  ... Cookie: __ac=%s;
   ... """ % (encoded), handle_errors=False)
+  HTTP/1.1 200 OK...
