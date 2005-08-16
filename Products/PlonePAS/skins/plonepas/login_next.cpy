@@ -7,6 +7,11 @@
 ##parameters=
 ##title=login
 ##
+
+# CHANGES:
+#  explicit login to cookie auth plugin, next line
+context.acl_users.credentials_cookie_auth.login()
+
 from DateTime import DateTime
 import ZTUtils
 
