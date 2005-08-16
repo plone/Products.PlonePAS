@@ -1,3 +1,7 @@
+<tal:changes replace="nothing">
+  insert disables for capabilities (just one!)
+</tal:changes>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en"
       metal:use-macro="here/prefs_main_template/macros/master"
@@ -120,7 +124,9 @@
                             <input
                                    type="checkbox"
                                    class="noborder notify"
-                                   name="delete:list" tal:attributes="value this_user/getId" />
+                                   name="delete:list"
+                                   tal:attributes="value this_user/getId;
+                                                   disabled python:this_user.canRemoveFromGroup(groupname) and default or 'disabled'" />
                         </td>
 
                         <tal:block tal:condition="python: context.portal_groups.isGroup(this_user)">
