@@ -19,7 +19,8 @@
     tal:define="Batch python:modules['Products.CMFPlone'].Batch;
                 b_start request/b_start | python:0;
                 b_size request/b_size | python:20;
-                portal_roles here/getGlobalPortalRoles;">
+                portal_roles here/getGlobalPortalRoles;
+                searchstring request/searchstring | nothing;">
 
       <div id="content" class="documentEditable">
     <!-- simulating views on the groups/user pages until we have real objects. -->
