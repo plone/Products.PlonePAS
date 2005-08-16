@@ -12,6 +12,7 @@
 # CHANGE NOTES: changing 'came_from' so that we don't loop 'logged_in' twice
 #               (since PAS cookie auth is no longer implicit)
 #               this could probably be moved upstream to Plone
+
 from ZODB.POSException import ConflictError
 
 REQUEST=context.REQUEST
