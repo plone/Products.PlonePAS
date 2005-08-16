@@ -84,6 +84,13 @@ class PloneUser(PropertiedUser):
         """
         return self.getId()
 
+    security.declarePublic('getName')
+    def getUserId(self):
+        """Get user's or group's name.
+        This is the id. PAS doesn't do prefixes and such like GRUF.
+        """
+        return self.getId()
+
     #################################
     # acquisition aware
     security.declarePublic('getPropertysheet')
