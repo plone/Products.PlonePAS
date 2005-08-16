@@ -12,8 +12,16 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+"""
+$Id$
+"""
+
 PROJECTNAME = 'PlonePAS'
 GLOBALS = globals()
 
-
 PAS_INSIDE_GRUF = True
+
+DEFAULT_CHALLENGE_PROTOCOL = ['http']
+DEFAULT_PROTO_MAPPING = {'WebDAV': DEFAULT_CHALLENGE_PROTOCOL,
+                         'FTP': DEFAULT_CHALLENGE_PROTOCOL,
+                         'XML-RPC': DEFAULT_CHALLENGE_PROTOCOL}

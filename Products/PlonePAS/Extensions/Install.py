@@ -641,7 +641,11 @@ def migrate_root_uf(self, out):
     parent = aq_parent(aq_inner(self))
     uf = getToolByName(parent, 'acl_users')
     if uf.meta_type == PluggableAuthService.meta_type:
-        # It's a PAS already, do nothing.
+        # It's a PAS already, fixup if needed.
+        pas_fixup(parent, out)
+
+        # Configure Challenge Chooser plugin if available
+        challenge_chooser_setup(parent, out)
         return
 
     if not uf.meta_type == 'User Folder':
@@ -664,28 +668,110 @@ def migrate_root_uf(self, out):
     # activated for some reason by default.
     activatePluginInterfaces(parent, 'users', out)
 
+    # Configure Challenge Chooser plugin if available
+    challenge_chooser_setup(parent, out)
+
+def pas_fixup(self, out):
+    from Products.PluggableAuthService.PluggableAuthService \
+         import _PLUGIN_TYPE_INFO, PluggableAuthService
+
+    pas = getToolByName(self, 'acl_users')
+    if not pas.meta_type == PluggableAuthService.meta_type:
+        # Not a PAS, skip.
+        print >> out, 'PAS UF not found, skipping PAS fixup'
+        return
+
+    plugins = pas['plugins']
+
+    plugin_types = list(plugins._plugin_types)
+    for key, id, title, description in _PLUGIN_TYPE_INFO:
+        if key in plugin_types:
+            print >> out, "Plugin type '%s' already registered." % id
+            continue
+        print >> out, "Plugin type '%s' was not registered." % id
+        plugin_types.append(key)
+        plugins._plugin_type_info[key] = {
+            'id': id,
+            'title': title,
+            'description': description,
+            }
+    plugins._plugin_types = plugin_types
+
+def challenge_chooser_setup(self, out):
+    uf = getToolByName(self, 'acl_users')
+    plugins = uf['plugins']
+    pas = uf.manage_addProduct['PluggableAuthService']
+
+    # Only install plugins if available
+    req = ('addChallengeProtocolChooserPlugin',
+           'addRequestTypeSnifferPlugin')
+    for m in req:
+        if getattr(pas, m, None) is None:
+            print >> out, 'Needed plugins have not been found, ignoring'
+            return
+
+    from Products.PluggableAuthService.interfaces.plugins import \
+         IRequestTypeSniffer, IChallengeProtocolChooser
+
+    found = uf.objectIds(['Challenge Protocol Chooser Plugin'])
+    if not found:
+        print >> out, 'Adding Challenge Protocol Chooser Plugin.'
+        pas.addChallengeProtocolChooserPlugin(
+            'chooser',
+            mapping=config.DEFAULT_PROTO_MAPPING)
+        plugins.activatePlugin(IChallengeProtocolChooser, 'chooser')
+    else:
+        assert len(found) == 1, 'Found extra plugins %s' % found
+        print >> out, 'Found existing Challenge Protocol Chooser Plugin.'
+        plugin = uf[found[0]]
+        plugin.manage_updateProtocolMapping(mapping=config.DEFAULT_PROTO_MAPPING)
+        plugins.activatePlugin(IChallengeProtocolChooser, found[0])
+
+    found = uf.objectIds(['Request Type Sniffer Plugin'])
+    if not found:
+        print >> out, 'Adding Request Type Sniffer Plugin.'
+        pas.addRequestTypeSnifferPlugin('sniffer')
+        plugins.activatePlugin(IRequestTypeSniffer, 'sniffer')
+    else:
+        assert len(found) == 1, 'Found extra plugins %s' % found
+        print >> out, 'Found existing Request Type Sniffer Plugin.'
+        plugins.activatePlugin(IRequestTypeSniffer, found[0])
+
 def install(self):
     out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
     EXISTING_UF = 'acl_users' in portal.objectIds()
+    uf = getToolByName(self, 'acl_users')
 
     userdata = grabUserData(portal, out)
     groupdata, memberships = grabGroupData(portal, out)
 
+    ldap_ufs, ldap_gf = None, None
+
     if not EXISTING_UF:
         addPAS(portal, out)
     else:
-        goForMigration(portal, out)
+        if not uf.meta_type == PluggableAuthService.meta_type:
+            # We've got a existing user folder, but it's not a PAS
+            # instance.
 
-        ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
-        if (ldap_ufs or ldap_gf) and not CAN_LDAP:
-            raise Exception, ("LDAPUserFolders present, but LDAPMultiPlugins "
+            goForMigration(portal, out)
+
+            ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
+            if (ldap_ufs or ldap_gf) and not CAN_LDAP:
+                raise Exception, ("LDAPUserFolders present, but LDAPMultiPlugins "
                               "not present. To successfully auto-migrate, "
                               "the LDAPMultiPlugins product must be installed. "
                               "(%s, %s):%s" % (ldap_ufs, ldap_gf, CAN_LDAP))
 
-        replaceUserFolder(portal, out)
+            replaceUserFolder(portal, out)
+
+    # Fix possible missing PAS plugins registration.
+    pas_fixup(self, out)
+
+    # Configure Challenge Chooser plugin if available
+    challenge_chooser_setup(self, out)
 
     install_subskin(self, out, config.GLOBALS)
     print >> out, "\nInstalled skins."
@@ -694,7 +780,9 @@ def install(self):
 
     setupTools(portal, out)
 
-    if EXISTING_UF and CAN_LDAP:
+    if (EXISTING_UF and CAN_LDAP
+        and ldap_gf is not None
+        and ldap_ufs is not None):
         restoreLDAP(portal, out, ldap_ufs, ldap_gf)
 
     restoreUserData(portal, out, userdata)
