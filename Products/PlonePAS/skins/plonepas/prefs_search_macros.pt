@@ -1,3 +1,8 @@
+<tal:comment replace="nothing">
+  Changes:
+    added disable conditions for capabilities to add:list
+</tal:comment>
+
 <html xmlns="http://www.w3.org/1999/xhtml"
       xml:lang="en"
       lang="en"
@@ -73,7 +78,13 @@
                        class="noborder"
                        name="add:list"
                        value="value"
-		       tal:attributes="value obj/getGroupId | obj/getId" />
+                       tal:define="calcId obj/getGroupId | obj/getId;
+                                   userid userid | nothing;
+                                   groupname groupname | nothing;
+                                   m python:userid and member or here.portal_membership.getMemberById(calcId);
+                                   g python:groupname and groupname or calcId;"
+                       tal:attributes="value calcId;
+                                       disabled python:m.canAddToGroup(g) and default or 'disabled'" />
 	      </td>
 
 	      <td>
