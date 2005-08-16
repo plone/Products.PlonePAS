@@ -1,3 +1,8 @@
+<tal:comment replace="nothing">
+  Changes:
+    added disable conditions for capabilities to delete:list
+</tal:comment>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en"
       metal:use-macro="here/prefs_main_template/macros/master"
@@ -97,7 +102,8 @@
                     <input type="checkbox"
                            class="noborder notify"
                            name="delete:list"
-                           tal:attributes="value groupname" />
+                           tal:attributes="value groupname;
+                                           disabled python:member.canRemoveFromGroup(groupname) and default or 'disabled'" />
                 </td>
                 </tal:block>
             </tr>
