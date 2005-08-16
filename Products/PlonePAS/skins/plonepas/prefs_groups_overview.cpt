@@ -1,3 +1,10 @@
+<tal:comment replace="nothing">
+  Changes:
+    moved 'searchstring' definition up
+    added description text for default listing
+    added disable conditions for capabilities
+</tal:comment>
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en"
       metal:use-macro="here/prefs_main_template/macros/master"
@@ -13,7 +20,8 @@
                 Batch python:modules['Products.CMFPlone'].Batch;
                 b_start request/b_start | python:0;
                 b_size python:20;
-                portal_roles here/getGlobalPortalRoles;">
+                portal_roles here/getGlobalPortalRoles;
+                searchstring request/searchstring | nothing;">
 
       <div id="content" class="documentEditable">
 	<!-- simulating views on the groups/user pages until we have real objects. -->
@@ -59,12 +67,18 @@
 	      particular role.
 	    </p>
     
+            <p i18n:translate="description_pas_listing"
+               tal:condition="python:not searchstring and not context.acl_users.canListAllGroups()">
+              <strong>Note:</strong> Some or all of your PAS groups source plugins do not allow
+              listing of groups, so you may not see the groups defined by those plugins unless doing
+              a specific search.
+            </p>
+
         <form action=""
               name="groups_add"
               method="post"
               tal:attributes="action template/getId"
-              tal:define="searchstring request/searchstring | nothing;
-                          groups python:here.prefs_user_group_search(searchstring, 'groups');
+              tal:define="groups python:here.prefs_user_group_search(searchstring, 'groups');
                           batch python:Batch(groups, b_size, int(b_start), orphan=1)">
 
             <input type="hidden" name="form.submitted" value="1" />
@@ -151,7 +165,8 @@
                                value="Manager"
                                tal:attributes="name string:group_${this_group/getGroupName}:list;
                                                value portal_role;
-                                               checked python:test(portal_role in group_roles, 'checked' ,'');" />
+                                               checked python:test(portal_role in group_roles, 'checked' ,'');
+                                               disabled python:this_group.canAssignRole(portal_role) and default or 'disabled'" />
                     </td>
     
                     <td class="listingCheckbox">
@@ -159,7 +174,8 @@
                                class="noborder notify"
                                name="delete:list"
                                value="value"
-                               tal:attributes="value this_group/getGroupName" />
+                               tal:attributes="value this_group/getGroupName;
+                                               disabled python:this_group.canDelete() and default or 'disabled'" />
                     </td>
     
                 </tal:block>
