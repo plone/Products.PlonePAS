@@ -1,4 +1,4 @@
-tal:comment replace="nothing">
+<tal:comment replace="nothing">
   Changes:
     added disable conditions for capabilities to properties
 </tal:comment>
@@ -209,7 +209,7 @@ we eventually might want to merge this form with personalize_form
                        name="description"
                        tal:content="description"
                        rows="5"
-                       tal:attributes="disabled python:member.canWriteProperty('description') and default or 'disabled'">
+                       tal:attributes="disabled python:member.canWriteProperty('description') and default or 'disabled'"
                        />
 
             </div>
