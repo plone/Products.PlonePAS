@@ -177,7 +177,7 @@
             </td>
 
             <td class="listingCheckbox"
-            tal:define="user_roles this_user/getUserRoles"
+            tal:define="user_roles this_user/getRoles"
             tal:repeat="portal_role portal_roles">
               <input type="checkbox"
                  class="noborder"
