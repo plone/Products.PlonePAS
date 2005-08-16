@@ -1,8 +1,3 @@
-<tal:comment replace="nothing">
-  Changes:
-    added disable conditions for capabilities
-</tal:comment>
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       lang="en"
       metal:use-macro="here/prefs_main_template/macros/master"
@@ -17,41 +12,43 @@
 we eventually might want to merge this form with personalize_form
 -->
 
-<div metal:fill-slot="prefs_configlet_main"
+<div metal:fill-slot="prefs_configlet_content"
      tal:define="userid python:request.get('userid', member.getId());
                  member python:mtool.getMemberById(userid);
-                 errors python:request.get('errors', {})">
+                 errors options/state/getErrors;">
 
-<div class="configlet">
-
-<div class="documentEditable">
-
+      <div id="content" class="documentEditable">
     <!-- simulating views on the groups/user pages until we have real objects. -->
     <ul class="contentViews">
-        <li class="selected">
+      <li class="selected">
             <a href=""
                tal:attributes="href string:${template/id}?userid=${userid}"
                i18n:translate="label_user_properties">
               User Properties
             </a>
-        </li>
+      </li>
             
-        <li class="">
+      <li class="">
             <a href=""
                tal:attributes="href string: prefs_user_memberships?userid=${userid}"
                i18n:translate="label_group_memberships">
               Group Memberships
             </a>
-        </li>
+      </li>
     </ul>
     
     <div class="contentActions">
-    &nbsp;
+      &nbsp;
     </div>        
-    <!-- End of tabs -->
+    
+    <div class="documentContent" id="region-content">
+      <a name="documentContent"></a>
+      
+      <div metal:use-macro="here/global_statusmessage/macros/portal_message">
+        Portal status message
+      </div>
 
-    <div class="documentContent">
-
+      <div class="configlet">
         <h1 i18n:translate="heading_prefs_user_details">
           User Properties for
           <tal:username replace="member/getId | default"
@@ -62,74 +59,151 @@ we eventually might want to merge this form with personalize_form
            class="link-parent"
            tal:attributes="href string: $portal_url/prefs_users_overview"
            i18n:translate="label_up_to_usersoverview">
-        Up to Users Overview
+          Up to Users Overview
         </a>
 
         <p i18n:translate="label_change_member_properties">
           Change member properties.
         </p>
     
-        <form class="group"
-              action=""
-              name="users"
-              method="post"
-              enctype="multipart/form-data"
-              tal:condition="user | nothing"
-              tal:attributes="href python:context.absolute_url()+'/'+template.id">
-          <input type="hidden" name="form.submitted" value="1" />
+        <form action=""
+                  name="users"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="enableUnloadProtection"
+                  tal:condition="user | nothing"
+              tal:attributes="action template/getId">
+
           <fieldset>
             <legend i18n:translate="legend_member_details">Member Details</legend>
     
             <input type="hidden" name="userid" value="username"
                    tal:attributes="value member/getId" />
     
+          <div class="row" tal:define="error errors/fullname| nothing;
+                                   fullname python:request.get('fullname', member.getProperty('fullname', ''));"
+                       tal:attributes="class python:test(error, 'field error', 'field')">
+        <label i18n:translate="label_full_name">Full Name</label>
+        <div class="formHelp" i18n:translate="help_full_name_creation">
+          Enter full name, eg. John Smith.
+        </div>
+
+        <div tal:content="error">Validation error output</div>
+        <input type="text"
+                   name="fullname"
+                   size="30"
+                   value="fullname"
+                   tabindex=""
+                   tal:attributes="value fullname;
+                                   tabindex tabindex/next;"
+                   />
+          </div>
+
+          <div class="field" tal:define="error errors/email | nothing;
+                                      email python:request.get('email', member.getProperty('email',''));"
+                                 tal:attributes="class python:test(error, 'field error', 'field')">
+
+            <label i18n:translate="label_email">E-mail</label>
+
+            <span class="fieldRequired" title="Required"
+                  i18n:attributes="title title_required;"
+                  i18n:translate="label_required">(Required)</span>
+
+                  <div class="formHelp" i18n:translate="help_email_creation">
+                    Enter an email address. This is necessary in case the password
+                    is lost. We respect your privacy, and will not give the address
+                    away to any third parties or expose it anywhere.
+                  </div>
+
+                  <div tal:content="error">Validation error output</div>
+
+                  <input type="text"
+                         name="email"
+                         size="30"
+                         tabindex=""
+                         tal:attributes="value email;
+                                         tabindex tabindex/next;"
+                         />
+          </div>
+
             <div class="field"
-                tal:define="error errors/fullname | nothing;
-                    fullname python:request.get('fullname', member.getProperty('fullname', ''));"
-                tal:attributes="class python:test(error, 'field error', 'field')">
-    
-                <label i18n:translate="label_full_name">Full name</label>
+                 tal:define="error errors/location | nothing;
+                             location python:request.get('location', member.getProperty('location', ''));"
+                 tal:attributes="class python:test(error, 'field error', 'field')">
+
+                <label for="location" i18n:translate="label_location">Location</label>
+
+                <div class="formHelp" i18n:translate="help_location">
+                Your location - either city and country - or in a company setting,
+                where your office is located.
+                </div>
 
                 <div tal:content="error">Validation error output</div>
 
                 <input type="text"
-                        name="fullname"
-                        size="25"
-                        tabindex=""
-                        value="member.fullname html_quote"
-                        tal:attributes="value fullname;
-                                        tabindex tabindex/next;
-                                        disabled python:member.canWriteProperty('fullname') and default or 'disabled'"
-                        />
-
-            </div>
-    
-            <div class="field"
-                tal:define="error errors/email | nothing;
-                            email python:request.get('email', member.getProperty('email',''));"
-                tal:attributes="class python:test(error, 'field error', 'field')">
-
-                <label for="email" i18n:translate="label_email">E-mail</label>
-
-                <span class="fieldRequired" title="Required"
-                      i18n:attributes="title"
-                      i18n:translate="label_required">(Required)</span>
-
-                <div tal:content="error">Validation error output</div>
-
-                <input type="text"
-                       id="email"
-                       name="email"
+                       id="location"
+                       name="location"
                        size="25"
                        tabindex=""
-                       value="member.email html_quote"
-                       tal:attributes="value email;
-                                       tabindex tabindex/next;
-                                       disabled python:member.canWriteProperty('email') and default or 'disabled'"
+                       value="member.location html_quote"
+                       tal:attributes="value location;
+                                       tabindex tabindex/next;"
                        />
 
             </div>
-    
+
+            <div class="field"
+                 tal:define="error errors/language | nothing;
+                             language python:request.get('language', member.getProperty('language', ''));"
+                 tal:attributes="class python:test(error, 'field error', 'field')">
+
+                <label for="language" i18n:translate="label_language">Language</label>
+
+                <div class="formHelp" i18n:translate="help_preferred_language">
+                Your preferred language.
+                </div>
+
+                <div tal:content="error">Validation error output</div>
+
+
+                <select name="language"
+                        id="language"
+                        tabindex=""
+                        tal:attributes="tabindex tabindex/next;">
+                    <tal:block tal:repeat="lang here/availableLanguages">
+                        <option value="None"
+                            tal:content="python:lang[1]"
+                            tal:attributes="value python:lang[0];
+                                            selected python:test(language==lang[0], 'selected', None);">
+                        </option>
+                    </tal:block>
+                 </select>
+
+            </div>
+
+            <div class="field"
+                 tal:define="error errors/description | nothing;
+                             description python:request.get('description', member.getProperty('description', ''));"
+                 tal:attributes="class python:test(error, 'field error', 'field')">
+
+                <label for="description" i18n:translate="label_biography">Biography</label>
+
+                <div class="formHelp" i18n:translate="help_biography">
+                A short overview of who you are and what you do. Will be displayed
+                on the your author page, linked from the items you create.
+                </div>
+
+                <div tal:content="error">Validation error output</div>
+
+                <textarea type="text"
+                       id="description"
+                       name="description"
+                       tal:content="description"
+                       rows="5"
+                       />
+
+            </div>
+
             <div class="field"
                  tal:define="wysiwyg_editor python:request.get('wysiwyg_editor',
                                                 member.getProperty('wysiwyg_editor',''))">
@@ -145,8 +219,7 @@ we eventually might want to merge this form with personalize_form
                 <select name="wysiwyg_editor"
                         id="wysiwyg_editor"
                         tabindex=""
-                        tal:attributes="tabindex tabindex/next;
-                                        disabled python:member.canWriteProperty('wysiwyg_editor') and default or 'disabled'">
+                        tal:attributes="tabindex tabindex/next;">
                         <tal:block tal:repeat="editor site_properties/available_editors">
                         <option tal:condition="python:editor != 'None'"
                                 value="None"
@@ -167,7 +240,25 @@ we eventually might want to merge this form with personalize_form
                         </tal:block>
                 </select>
             </div>
-    
+            <div class="field"
+                      tal:define="ext_editor python:request.get('ext_editor',
+                                                                member.getProperty('ext_editor',''))">
+                <input type="checkbox"
+                       class="noborder"
+                       name="ext_editor"
+                       id="cb_ext_editor"
+                       tal:attributes="tabindex tabindex/next;
+                                       checked python:test(ext_editor, 'checked', None);"
+                       />
+
+                <label for="cb_ext_editor" i18n:translate="label_ext_editor">Enable external editing</label>
+     
+                 <div class="formHelp" i18n:translate="help_content_ext_editor">
+                 When checked, an icon will be made visible on each page which allows
+                 you to edit content locally. Ask your administrator for more information
+                 when needed.
+                 </div>
+            </div>    
             <div class="field"
                  tal:define="listed python:request.get('listed', member.getProperty('listed',''));">
                 <input type="checkbox"
@@ -175,8 +266,7 @@ we eventually might want to merge this form with personalize_form
                        name="listed"
                        id="cb_listed"
                        tal:attributes="tabindex tabindex/next;
-                                       checked python:test(listed, 'checked', None);
-                                       disabled python:member.canWriteProperty('listed') and default or 'disabled'"
+                                       checked python:test(listed, 'checked', None);"
                        />
 
                 <label for="cb_listed" i18n:translate="label_listed_status">Listed in searches</label>
@@ -188,6 +278,7 @@ we eventually might want to merge this form with personalize_form
             </div>
 
             <div class="field"
+                     tal:condition="site_properties/visible_ids|nothing"
                      tal:define="visible_ids python:request.get('visible_ids', member.getProperty('visible_ids',''));">
 
                 <input type="checkbox"
@@ -195,12 +286,11 @@ we eventually might want to merge this form with personalize_form
                        name="visible_ids"
                        id="cb_invisible_ids"
                        tal:attributes="tabindex tabindex/next;
-                                       checked python:test(visible_ids, 'checked', None);
-                                       disabled python:member.canWriteProperty('email') and default or 'disabled'"
+                                       checked python:test(visible_ids, 'checked', None);"
                        />
 
-                <label for="cb_invisible_ids"
-                       i18n:translate="label_edit_short_names">Allow Editing of Short Names</label>
+                <label for="cb_invisible_ids" 
+                       i18n:translate="label_edit_short_names">Allow editing of Short Names</label>
 
                 <div class="formHelp" i18n:translate="help_display_names">
                 Determines if Short Names (also known as IDs) are
@@ -258,21 +348,17 @@ we eventually might want to merge this form with personalize_form
                         type="submit"
                         value="Save"
                         name="prefs_user_edit:method"
-                        i18n:attributes="value"
+                        i18n:attributes="value label_save;"
                         tal:attributes="tabindex tabindex/next;"
                         />
             </div>
           </fieldset>
+          <input type="hidden" name="form.submitted" value="1" />
         </form>
-    
+
+      </div>
     </div>
-
-</div>
-
-</div>
-
-</div>
-
-</body>
+      </div>
+    </div>
+  </body>
 </html>
-
