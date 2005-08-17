@@ -160,7 +160,7 @@ class GroupsTool(PloneGroupsTool):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
     
-    def searchForGroups(self, REQUEST, **kw):
+    def searchForGroups(self, REQUEST={}, **kw):
         """Search for groups by keyword.
         The following properties can be searched:
         - name
