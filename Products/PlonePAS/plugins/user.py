@@ -26,6 +26,7 @@ from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswo
 
 from Products.PluggableAuthService.utils import createViewName
 from Products.PluggableAuthService.utils import classImplements
+from Products.PluggableAuthService.utils import implementedBy
 from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
 
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
@@ -132,6 +133,7 @@ class UserManager(BasePlugin):
 
 classImplements(UserManager,
                 IUserManagement, IUserIntrospection,
-                IDeleteCapability, IPasswordSetCapability)
+                IDeleteCapability, IPasswordSetCapability,
+                *implementedBy(BasePlugin))
 
 InitializeClass(UserManager)
