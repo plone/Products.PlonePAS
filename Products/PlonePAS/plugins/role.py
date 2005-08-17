@@ -23,6 +23,7 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
 
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
 
@@ -48,7 +49,6 @@ manage_addGroupAwareRoleManagerForm = DTMLFile(
 class GroupAwareRoleManager( ZODBRoleManager ):
 
     meta_type = "Group Aware Role Manager"
-    __implements__ = ZODBRoleManager.__implements__ + (IAssignRoleCapability,)
 
     security = ClassSecurityInfo()
 
@@ -89,7 +89,10 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         """True iff this plugin will allow assigning a certain user a certain role."""
         present = self.getRoleInfo(role_id)
         if present: return 1   # if we have a role, we can assign it
-                               # slightly naive, but should be okay. 
+                               # slightly naive, but should be okay.
         return 0
+
+classImplements(GroupAwareRoleManager,
+                *tuple(implementedBy(ZODBRoleManager)) + (IAssignRoleCapability,))
 
 InitializeClass( GroupAwareRoleManager )

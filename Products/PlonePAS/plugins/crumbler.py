@@ -24,6 +24,7 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass, DTMLFile
 from OFS.Folder import Folder
 
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 
@@ -53,8 +54,6 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
     """Multi-plugin for injecting HTTP Basic Authentication
     credentials from form credentials.
     """
-    __implements__ = (IExtractionPlugin,)
-
     meta_type = 'Cookie Crumbling Plugin'
 
     security = ClassSecurityInfo()
@@ -86,5 +85,7 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
 
         return {}
 
+classImplements(CookieCrumblingPlugin,
+                IExtractionPlugin)
 
 InitializeClass(CookieCrumblingPlugin)

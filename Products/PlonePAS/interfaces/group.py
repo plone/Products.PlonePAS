@@ -19,8 +19,7 @@ $Id$
 """
 
 from Products.PluggableAuthService.interfaces import plugins
-from Interface import Interface
-
+from Products.PluggableAuthService.interfaces.plugins import Interface
 
 class IGroupManagement(Interface):
 

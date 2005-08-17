@@ -21,10 +21,12 @@ instance.
 $Id$
 """
 
-from Globals import DTMLFile
+from Globals import DTMLFile, InitializeClass
 from OFS.ObjectManager import ObjectManager
 
-from Products.PluggableAuthService.plugins.DelegatingMultiPlugin import DelegatingMultiPlugin
+from Products.PluggableAuthService.utils import classImplements, implementedBy
+from Products.PluggableAuthService.plugins.DelegatingMultiPlugin \
+     import DelegatingMultiPlugin
 from Products.PluggableAuthService.interfaces import plugins
 
 
@@ -64,9 +66,6 @@ class GroupFilter( object ):
 class GRUFBridge( DelegatingMultiPlugin ):
 
     meta_type = "GRUF Bridge"
-
-    __implements__ = ( plugins.IGroupsPlugin,
-                       plugins.IGroupEnumerationPlugin ) + DelegatingMultiPlugin.__implements__
 
     def manage_afterAdd(self, item, container):
         self.manage_addProduct['GroupUserFolder'].manage_addGroupUserFolder()
@@ -160,3 +159,9 @@ class GRUFBridge( DelegatingMultiPlugin ):
         unmangle_fn = self.aq_acquire('_unmangleId') # acquire from PAS
         unmangled_princid = unmangle_fn(princid)[-1]
         return unmangled_princid
+
+classImplements(GRUFBridge,
+                *tuple(implementedBy(DelegatingMultiPlugin)) +
+                (plugins.IGroupsPlugin, plugins.IGroupEnumerationPlugin))
+
+InitializeClass(GRUFBridge)

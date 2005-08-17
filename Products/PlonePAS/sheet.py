@@ -24,8 +24,9 @@ from types import StringTypes, BooleanType, IntType
 from types import LongType, FloatType, InstanceType
 
 from DateTime.DateTime import DateTime
-from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 
+from Products.PluggableAuthService.utils import classImplements
+from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
@@ -67,8 +68,6 @@ PropertySchema.addType('date', lambda x: 1 or x is None or type(x) is InstanceTy
 validateValue = PropertySchema.validate
 
 class MutablePropertySheet(UserPropertySheet):
-
-    __implements__ = (IMutablePropertySheet,)
 
 ##    def __init__(self, id, **kw):
 ##        UserPropertySheet.__init__(self, id, **kw)
@@ -112,6 +111,10 @@ class MutablePropertySheet(UserPropertySheet):
     def _getPropertyProviderForUser(self, user):
         return user.acl_users._getOb(self._id)
 
-class SchemaMutablePropertySheet(MutablePropertySheet):
+classImplements(MutablePropertySheet,
+                IMutablePropertySheet)
 
-    __implements__ = (IMutablePropertySheet,)
+class SchemaMutablePropertySheet(MutablePropertySheet): pass
+
+classImplements(SchemaMutablePropertySheet,
+                IMutablePropertySheet)

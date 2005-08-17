@@ -19,6 +19,7 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass, DTMLFile
 
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
@@ -42,8 +43,6 @@ class PloneUserFactory( BasePlugin ):
 
     meta_type = "Plone User Factory"
 
-    __implements__ = ( IUserFactoryPlugin, )
-
     def __init__(self, id, title=''):
         self.id = id
         self.title = title or self.meta_type
@@ -52,7 +51,9 @@ class PloneUserFactory( BasePlugin ):
 
         return PloneUser( user_id, name )
 
-InitializeClass( PloneUserFactory )
+classImplements(PloneUserFactory, IUserFactoryPlugin)
+
+InitializeClass(PloneUserFactory)
 
 
 class PloneUser( PropertiedUser ):

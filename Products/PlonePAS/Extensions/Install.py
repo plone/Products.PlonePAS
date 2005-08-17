@@ -719,30 +719,40 @@ def challenge_chooser_setup(self, out):
         pas.addChallengeProtocolChooserPlugin(
             'chooser',
             mapping=config.DEFAULT_PROTO_MAPPING)
-        plugins.activatePlugin(IChallengeProtocolChooser, 'chooser')
+        activatePluginInterfaces(self, 'chooser', out)
     else:
         assert len(found) == 1, 'Found extra plugins %s' % found
         print >> out, 'Found existing Challenge Protocol Chooser Plugin.'
         plugin = uf[found[0]]
         plugin.manage_updateProtocolMapping(mapping=config.DEFAULT_PROTO_MAPPING)
-        plugins.activatePlugin(IChallengeProtocolChooser, found[0])
+        activatePluginInterfaces(self, found[0], out)
 
     found = uf.objectIds(['Request Type Sniffer Plugin'])
     if not found:
         print >> out, 'Adding Request Type Sniffer Plugin.'
         pas.addRequestTypeSnifferPlugin('sniffer')
-        plugins.activatePlugin(IRequestTypeSniffer, 'sniffer')
+        activatePluginInterfaces(self, 'sniffer', out)
     else:
         assert len(found) == 1, 'Found extra plugins %s' % found
         print >> out, 'Found existing Request Type Sniffer Plugin.'
-        plugins.activatePlugin(IRequestTypeSniffer, found[0])
+        activatePluginInterfaces(self, found[0], out)
 
 def install(self):
     out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
-    EXISTING_UF = 'acl_users' in portal.objectIds()
     uf = getToolByName(self, 'acl_users')
+
+    EXISTING_UF = 'acl_users' in portal.objectIds()
+    EXISTING_PAS = uf.meta_type == PluggableAuthService.meta_type
+
+    if EXISTING_PAS:
+        # Fix possible missing PAS plugins registration.
+        pas_fixup(self, out)
+
+        # Register PAS Plugin Types
+        registerPluginTypes(uf)
+
 
     userdata = grabUserData(portal, out)
     groupdata, memberships = grabGroupData(portal, out)
@@ -752,7 +762,7 @@ def install(self):
     if not EXISTING_UF:
         addPAS(portal, out)
     else:
-        if not uf.meta_type == PluggableAuthService.meta_type:
+        if not EXISTING_PAS:
             # We've got a existing user folder, but it's not a PAS
             # instance.
 
@@ -766,9 +776,6 @@ def install(self):
                               "(%s, %s):%s" % (ldap_ufs, ldap_gf, CAN_LDAP))
 
             replaceUserFolder(portal, out)
-
-    # Fix possible missing PAS plugins registration.
-    pas_fixup(self, out)
 
     # Configure Challenge Chooser plugin if available
     challenge_chooser_setup(self, out)

@@ -23,7 +23,9 @@ from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
 from Products.GroupUserFolder.GroupDataTool import _marker
 
-from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.utils import classImplements, implementedBy
+from Products.PluggableAuthService.interfaces.authservice \
+     import IPluggableAuthService
 
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
@@ -86,9 +88,6 @@ InitializeClass(GroupDataTool)
 
 
 class GroupData(BaseGroupData):
-
-    __implements__ = (BaseGroupData.__implements__,
-                      IManageCapabilities)
 
     security = ClassSecurityInfo()
 
@@ -290,5 +289,9 @@ class GroupData(BaseGroupData):
     security.declarePrivate('_getPlugins')
     def _getPlugins(self):
         return self.acl_users.plugins
+
+classImplements(GroupData,
+                *tuple(implementedBy(BaseGroupData)) +
+                (IManageCapabilities,))
 
 InitializeClass(GroupData)

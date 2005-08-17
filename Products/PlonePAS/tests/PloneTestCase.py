@@ -120,8 +120,10 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
         user = user.__of__(uf)
         # Home folder may already exist (see below)
         members = membership.getMembersFolder()
-        if not hasattr(aq_base(members), member_id):
-            _setupHomeFolder(self.portal, member_id)
+        # Get rid of possible existing home folder.
+        if hasattr(aq_base(members), member_id):
+            members.manage_delObjects(ids=[member_id])
+        _setupHomeFolder(self.portal, member_id)
         # Take ownership of home folder
         home = membership.getHomeFolder(member_id)
         home.changeOwnership(user)
@@ -171,8 +173,8 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
         # Add Plone Site
         factory = app.manage_addProduct['CMFPlone']
         factory.manage_addSite(id, '', create_userfolder=1)
-        # replace acl_users with a PAS uf
-        app.portal.manage_delObjects(['acl_users'])
+        # Replace user folder.
+        app.portal.manage_delObjects(ids=['acl_users'])
         app.portal.portal_quickinstaller.installProduct('PlonePAS')
 
         # Precreate default memberarea for performance reasons

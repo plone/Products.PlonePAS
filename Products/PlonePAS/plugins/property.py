@@ -20,10 +20,11 @@ from sets import Set
 
 from ZODB.PersistentMapping import PersistentMapping
 from BTrees.OOBTree import OOBTree
-from Globals import DTMLFile
+from Globals import DTMLFile, InitializeClass
 
 from Products.CMFCore.utils import getToolByName
 
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
@@ -52,7 +53,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
     """
 
     meta_type = 'ZODB Mutable Property Provider'
-    __implements__ = (IPropertiesPlugin, IMutablePropertiesPlugin,)
 
     def __init__(self, id, title='', schema=None, **kw):
         """Create in-ZODB mutable property provider.
@@ -170,5 +170,10 @@ class ZODBMutablePropertyProvider(BasePlugin):
             self._storage[userid] = self._storage[userid]   # notify persistence machinery of change
         else:
             self._storage.insert(user.getId(), properties)
+
+classImplements(ZODBMutablePropertyProvider,
+                IPropertiesPlugin, IMutablePropertiesPlugin)
+
+InitializeClass(ZODBMutablePropertyProvider)
 
 class PersistentProperties(PersistentMapping): pass

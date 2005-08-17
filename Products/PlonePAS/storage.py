@@ -23,12 +23,11 @@ $Id$
 from AccessControl import ClassSecurityInfo
 from Globals import InitializeClass
 from Products.Archetypes.public import setSecurity, registerStorage, IStorage
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesProvider
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
-class PASStorage( object ):
-
-    __implements__ = ( IStorage, )
+class PASStorage(object):
 
     security = ClassSecurityInfo()
 
@@ -49,3 +48,7 @@ class PASStorage( object ):
                     sheet.setProperty( k, v )
                 else:
                     raise RuntimeError("mutable property provider shadowed by read only provider")
+
+classImplements(PASStorage,
+                IStorage)
+

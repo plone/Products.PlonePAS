@@ -32,6 +32,7 @@ from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGro
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
+from Products.PluggableAuthService.utils import classImplements
 
 from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
@@ -56,11 +57,6 @@ def manage_addGroupManager(self, id, title='', RESPONSE=None):
 class GroupManager(ZODBGroupManager):
 
     meta_type = "Group Manager"
-
-    __implements__ = (IGroupsPlugin, IGroupEnumerationPlugin,
-                      IGroupManagement, IGroupIntrospection) + \
-                     (IGroupCapability, IDeleteCapability)
-
 
     security = ClassSecurityInfo()
 
@@ -143,7 +139,7 @@ class GroupManager(ZODBGroupManager):
         """True iff this plugin will allow adding a certain user to a certain group."""
         present = self.getGroupInfo(group_id)
         if present: return 1   # if we have a group, we can add users to it
-                                # slightly naive, but should be okay. 
+                                # slightly naive, but should be okay.
         return 0
 
     def allowGroupRemove(self, user_id, group_id):
@@ -279,7 +275,10 @@ class GroupManager(ZODBGroupManager):
 
         return 0
 
-
+classImplements(GroupManager,
+                IGroupsPlugin, IGroupEnumerationPlugin,
+                IGroupManagement, IGroupIntrospection,
+                IGroupCapability, IDeleteCapability)
 
 InitializeClass(GroupManager)
 
@@ -289,7 +288,6 @@ class PloneGroup(PloneUser):
     behavior as a user.
     """
 
-    # __implements__ = (IGroup,)  # this should be made true
     security = ClassSecurityInfo()
     _isGroup = True
 
@@ -330,5 +328,8 @@ class PloneGroup(PloneUser):
         """Since groups can't actually log in, do nothing.
         """
         return 0
+
+# XXX this should be made true
+# classImplements(PloneGroup, IGroup)
 
 InitializeClass(PloneGroup)

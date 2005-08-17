@@ -2,6 +2,7 @@ Test for Cookie Auth
 ====================
 
   >>> import base64
+  >>> from Products.PluggableAuthService.utils import implementedBy
   >>> from Interface.Implements import flattenInterfaces
 
 User in Plone Site
@@ -40,7 +41,7 @@ Make sure cookie plugin is installed and activated.
   >>> plugins = uf.plugins
   >>> cookie = uf['credentials_cookie_auth']
 
-  >>> ifaces = flattenInterfaces(cookie.__implements__)
+  >>> ifaces = flattenInterfaces(tuple(implementedBy(cookie.__class__)))
 
   >>> actives = []
   >>> for iface in ifaces:
@@ -53,7 +54,7 @@ Make sure cookie plugin is installed and activated.
   ...     print iface,
   ...     for id, plugin in active:
   ...         if id == 'credentials_cookie_auth':
-  ...            print True,
+  ...            print True
   <...IExtractionPlugin...> True
   <...IChallengePlugin...> True
   <...ICredentialsUpdatePlugin...> True

@@ -32,6 +32,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.CMFCore.MemberDataTool import _marker
 
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin, IRoleAssignerPlugin
 
@@ -99,11 +100,7 @@ InitializeClass(MemberDataTool)
 
 class MemberData(BaseMemberData):
 
-    __implements__ = (BaseMemberData.__implements__,
-                      IManageCapabilities)
-
     security = ClassSecurityInfo()
-
 
     ## setProperties uses setMemberProperties. no need to override.
 
@@ -286,5 +283,10 @@ class MemberData(BaseMemberData):
     security.declarePrivate('_getPlugins')
     def _getPlugins(self):
         return self.acl_users.plugins
+
+
+classImplements(MemberData,
+                *tuple(implementedBy(BaseMemberData)) +
+                (IManageCapabilities,))
 
 InitializeClass(MemberData)

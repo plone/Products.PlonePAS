@@ -25,6 +25,8 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
+
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.LocalRolePlugin import LocalRolePlugin
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 
@@ -45,8 +47,6 @@ class LocalRolesManager(LocalRolePlugin):
     """Class incorporating local role storage with
     PlonePAS-specific local role permission checking.
     """
-
-    __implements__ = LocalRolePlugin.__implements__ + ( ILocalRolesPlugin, )
 
     meta_type = "Local Roles Manager"
     security = ClassSecurityInfo()
@@ -161,5 +161,8 @@ class LocalRolesManager(LocalRolePlugin):
 
         return None
 
+classImplements(LocalRolesManager,
+                *tuple(implementedBy(LocalRolePlugin)) +
+                (ILocalRolesPlugin,))
 
-InitializeClass( LocalRolesManager )
+InitializeClass(LocalRolesManager)

@@ -27,6 +27,7 @@ from Products.CMFCore.utils import getToolByName, UniqueObject
 
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 
 from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
 
@@ -41,9 +42,6 @@ class GroupsTool(PloneGroupsTool):
     meta_type = 'PlonePAS Groups Tool'
     security = ClassSecurityInfo()
     toolicon = 'skins/plone_images/group.gif'
-
-    __implements__ = (PloneGroupsTool.__implements__,
-                      igroup.IGroupTool)
 
     ##
     # basic group mgmt
@@ -301,5 +299,8 @@ class GroupsTool(PloneGroupsTool):
             igroup.IGroupSpaceManagers
             )
 
+classImplements(GroupsTool,
+                *tuple(implementedBy(PloneGroupsTool)) +
+                (igroup.IGroupTool,))
 
 InitializeClass(GroupsTool)

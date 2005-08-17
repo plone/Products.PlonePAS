@@ -16,8 +16,8 @@
 $Id$
 """
 
-from Interface import Interface
 from Products.PluggableAuthService.interfaces import plugins
+from Products.PluggableAuthService.interfaces.plugins import Interface
 
 class IUserIntrospection(Interface):
     """

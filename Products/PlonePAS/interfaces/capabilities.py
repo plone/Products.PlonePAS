@@ -19,7 +19,7 @@ certain operations to be done by the Plone UI.
 $Id$
 """
 
-from Interface import Interface
+from Products.PluggableAuthService.interfaces.plugins import Interface
 
 class IDeleteCapability(Interface):
     """Interface for plugin to say if it allows for deletion of a user.
