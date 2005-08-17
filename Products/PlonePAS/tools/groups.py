@@ -188,10 +188,12 @@ class GroupsTool(PloneGroupsTool):
         #email = dict.get('email', None)
         #roles = dict.get('roles', None)
         #title = dict.get('title', None)
+        title_or_name = dict.get('title_or_name', None)
         if name:
             name = name.strip().lower()
         if not name:
             name = None
+        if title_or_name: name = title_or_name
         #if email:
         #    email = email.strip().lower()
         #if not email:
