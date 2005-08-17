@@ -26,7 +26,6 @@ from Globals import DTMLFile, InitializeClass
 from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
-from Products.PluggableAuthService.utils import classImplements, implementedBy
 
 from Products.PlonePAS.utils import unique
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability

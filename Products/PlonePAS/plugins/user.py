@@ -24,7 +24,7 @@ from Globals import InitializeClass, DTMLFile
 from Products.PlonePAS.interfaces.plugins import IUserManagement, IUserIntrospection
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
 
-from Products.PluggableAuthService.utils import createViewName, classImplements
+from Products.PluggableAuthService.utils import createViewName
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
 

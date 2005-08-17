@@ -28,7 +28,6 @@ from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.DelegatingMultiPlugin \
      import DelegatingMultiPlugin
 from Products.PluggableAuthService.interfaces import plugins
-from Products.PluggableAuthService.utils import classImplements, implementedBy
 
 
 def manage_addGRUFBridge(self, id, title='', RESPONSE=None ):
