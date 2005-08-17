@@ -19,6 +19,7 @@ management (ie. rw) capabilities.
 $Id$
 """
 
+import sys
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
 from BTrees.OOBTree import OOBTree, OOSet
 from Globals import DTMLFile
