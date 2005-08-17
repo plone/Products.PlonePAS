@@ -28,6 +28,7 @@ from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.DelegatingMultiPlugin \
      import DelegatingMultiPlugin
 from Products.PluggableAuthService.interfaces import plugins
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 
 
 def manage_addGRUFBridge(self, id, title='', RESPONSE=None ):
@@ -161,7 +162,7 @@ class GRUFBridge( DelegatingMultiPlugin ):
         return unmangled_princid
 
 classImplements(GRUFBridge,
-                *tuple(implementedBy(DelegatingMultiPlugin)) +
-                (plugins.IGroupsPlugin, plugins.IGroupEnumerationPlugin))
+                plugins.IGroupsPlugin, plugins.IGroupEnumerationPlugin,
+                *implementedBy(DelegatingMultiPlugin))
 
 InitializeClass(GRUFBridge)

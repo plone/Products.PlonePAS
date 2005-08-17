@@ -33,7 +33,7 @@ from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGro
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
-from Products.PluggableAuthService.utils import classImplements
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 
 from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
@@ -277,9 +277,8 @@ class GroupManager(ZODBGroupManager):
         return 0
 
 classImplements(GroupManager,
-                IGroupsPlugin, IGroupEnumerationPlugin,
-                IGroupManagement, IGroupIntrospection,
-                IGroupCapability, IDeleteCapability)
+                IGroupManagement, IGroupIntrospection, IGroupCapability,
+                IDeleteCapability, *implementedBy(ZODBGroupManager))
 
 InitializeClass(GroupManager)
 
@@ -330,7 +329,10 @@ class PloneGroup(PloneUser):
         """
         return 0
 
-# XXX this should be made true
+# there was a comment in the class before saying:
+#    # __implements__ = (IGroup,)  # this should be made true
+#
+# if this is ever implemented, it should be made like this
 # classImplements(PloneGroup, IGroup)
 
 InitializeClass(PloneGroup)

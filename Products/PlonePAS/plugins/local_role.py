@@ -28,6 +28,7 @@ from Globals import DTMLFile, InitializeClass
 
 from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.LocalRolePlugin import LocalRolePlugin
+from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 
 def manage_addLocalRolesManager( dispatcher, id, title=None, RESPONSE=None):
@@ -162,7 +163,6 @@ class LocalRolesManager(LocalRolePlugin):
         return None
 
 classImplements(LocalRolesManager,
-                *tuple(implementedBy(LocalRolePlugin)) +
-                (ILocalRolesPlugin,))
+                ILocalRolesPlugin, *implementedBy(LocalRolePlugin))
 
 InitializeClass(LocalRolesManager)
