@@ -141,6 +141,7 @@ class MembershipTool(BaseMembershipTool):
         #if md_users is not None and uf_users is not None:   # original. I think this is broken.
                                                              # does anybody actually use this?
         if md_users or uf_users:
+            names_checked = 1
             wrap = self.wrapUser
             getUser = acl_users.getUser
 
