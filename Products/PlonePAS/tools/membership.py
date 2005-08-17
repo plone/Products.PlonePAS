@@ -371,6 +371,8 @@ def _cleanId(id):
     Assumes that id can start with non-alpha(numeric), which is true.
     """
     __traceback_info__ = (id,)
-    # note: we provide the 'safe' param to get '/' encoded
-    return url_quote(id, '').replace('-','--').replace('%','-')
+    if id:
+        # note: we provide the 'safe' param to get '/' encoded
+        return url_quote(id, '').replace('-','--').replace('%','-')
+    return ''
 
