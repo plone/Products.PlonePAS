@@ -638,7 +638,7 @@ def goForMigration(portal, out):
 
 def migrate_root_uf(self, out):
     # Acquire parent user folder.
-    parent = aq_parent(aq_inner(self))
+    parent = self.getPhysicalRoot()
     uf = getToolByName(parent, 'acl_users')
     if uf.meta_type == PluggableAuthService.meta_type:
         # It's a PAS already, fixup if needed.
