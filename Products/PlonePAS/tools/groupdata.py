@@ -280,9 +280,9 @@ class GroupData(BaseGroupData):
                     break  # shadowed by read-only
         return 0
 
-    canAddToGroup = MemberData.canAddToGroup
-    canRemoveFromGroup = MemberData.canRemoveFromGroup
-    canAssignRole = MemberData.canAssignRole
+    canAddToGroup = MemberData.canAddToGroup.im_func
+    canRemoveFromGroup = MemberData.canRemoveFromGroup.im_func
+    canAssignRole = MemberData.canAssignRole.im_func
 
     ## plugin getters
 
