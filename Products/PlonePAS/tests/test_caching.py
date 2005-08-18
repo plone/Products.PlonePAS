@@ -79,7 +79,7 @@ class BasicOpsTestCase(PloneTestCase):
         # monitor the caching method
         collector = CollectResultsWrapper(self.acl_users.aq_base.__class__,
                                           'ZCacheable_get')
-        
+
         self.assertEquals(collector.results, [])
         # creating a user already populates the cache, but it also looks
         # the user up, so we must have got only misses so far

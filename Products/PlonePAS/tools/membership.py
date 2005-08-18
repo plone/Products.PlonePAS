@@ -375,4 +375,3 @@ def _cleanId(id):
         # note: we provide the 'safe' param to get '/' encoded
         return url_quote(id, '').replace('-','--').replace('%','-')
     return ''
-

@@ -54,7 +54,7 @@ def setupADSI(portal):
                 binduid_usage=1, rdn_attr='cn', local_groups=0,
                 use_ssl=0 , encryption='SHA', read_only=0)
     getattr(pas,id).groupid_attr = 'cn'
-            
+
     print >> out, "Added ActiveDirectoryMultiPlugin %s" % x
 
     activatePluginInterfaces(portal, id, out)

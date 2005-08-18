@@ -79,7 +79,7 @@ class GroupsTool(PloneGroupsTool):
         group = self.getGroupById(id)
         if not group: return None
         self.setRolesForGroup(id, roles)
-        
+
 
     security.declareProtected(DeleteGroups, 'removeGroup')
     def removeGroup(self, group_id, keep_workspaces=0):
@@ -159,7 +159,7 @@ class GroupsTool(PloneGroupsTool):
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
-    
+
     def searchForGroups(self, REQUEST={}, **kw):
         """Search for groups by keyword.
         The following properties can be searched:

@@ -1,8 +1,7 @@
 NAME=PlonePAS
-DOMAIN=plonepas
-MAJOR_VERSION=0.0
+MAJOR_VERSION=0.4
 MINOR_VERSION=0
-RELEASE_TAG=-cvs
+RELEASE_TAG=
 PACKAGE_NAME=${NAME}-${MAJOR_VERSION}.${MINOR_VERSION}${RELEASE_TAG}
 
 PYTHON="/usr/bin/python"
@@ -10,10 +9,9 @@ TMPDIR=~/tmp
 
 CURDIR=$(shell pwd)
 BASE_DIR=$(shell dirname ${CURDIR})
-
-INSTANCE_HOME=~/src/instance/pd11
-
-PACKAGES=${NAME} PluginRegistry LDAPMultiPlugins LDAPUserFolder PluggableAuthService
+INSTANCE_HOME=/home/sidnei/src/instance/plone21
+PACKAGES=${NAME}
+TEST_OPTS=--keepbytecode -v -p --libdir Products/${NAME}
 
 RM=rm -f
 RMRF=rm -rf
@@ -23,31 +21,33 @@ CD=cd
 LN=ln -sfn
 CP=cp
 TAR=tar
-ZIP=zip
 MKDIR=mkdir -p
+ZIP=zip
+MV=mv
 
 .PHONY : clean test reindent reindent_clean sdist
 .PHONY : default
 
 # default:     The default step (invoked when make is called without a target)
-default: test
+default: clean test
 
 clean :
-	find . \( -name '*~' -o -name '*.py[co]' -o -name '*.bak' -o -name '\.#*' \) -exec rm {} \; -print
-
-quickclean :
-	find . \( -name '*~' -o -name '*.bak' -o -name '\.#*' \) -exec rm {} \; -print
+	$(FIND) . \( -name '*~' -o -name '*.py[co]' -o -name '*.bak' -o -name '\.#*' \) -exec $(RM) {} \; -print
 
 reindent :
 	~/src/reindent.py -r -v .
 
 test :
-	cd $(INSTANCE_HOME) && \
-	./bin/zopectl test -v --keepbytecode --libdir Products/PlonePAS
+	cd ${INSTANCE_HOME} && ./bin/zopectl test ${TEST_OPTS}
 
 # sdist:       Create a source distribution file (implies clean).
 #
 sdist: reindent clean sdist_tgz
+	${CD} ${TMPDIR} && \
+	${TAR} -zxf ${BASE_DIR}/${PACKAGE_NAME}.tgz && \
+	${ZIP} -r ${PACKAGE_NAME}.zip ${PACKAGE_NAME}
+	${RMRF} ${TMPDIR}/${PACKAGE_NAME}
+	${MV} ${TMPDIR}/${PACKAGE_NAME}.zip ${BASE_DIR}
 
 # sdist_tgz:   Create a tgz archive file as a source distribution.
 #
@@ -56,9 +56,7 @@ sdist_tgz:
           ${CURDIR}/version.txt
 	${MKDIR} ${TMPDIR}/${PACKAGE_NAME}
 	${CD} ${TMPDIR}/${PACKAGE_NAME} && \
-          for package in ${PACKAGES};
-	  do ${LN} ${BASE_DIR}/$$package .;
-	  done && \
+          for package in ${PACKAGES}; do ${LN} ${BASE_DIR}/$$package .; done && \
           ${CD} ${TMPDIR} && ${TAR} \
            --exclude=${PACKAGE_NAME}.tgz \
            --exclude=CVS \
@@ -73,3 +71,9 @@ sdist_tgz:
            --exclude=.#* \
 	-zhcf ${BASE_DIR}/${PACKAGE_NAME}.tgz ${PACKAGE_NAME}
 	${RMRF} ${TMPDIR}/${PACKAGE_NAME}
+
+mail :
+	mutt -nx -s 'New $(NAME) Release $(VERSION)' \
+	-a $(BASE_DIR)/${PACKAGE_NAME}.tgz \
+	-a $(BASE_DIR)/$(PACKAGE_NAME).zip \
+	-i version.txt ${TO} < .

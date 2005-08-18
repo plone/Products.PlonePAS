@@ -247,7 +247,7 @@ def userSetPassword(self, userid, password):
     if not modified:
         raise RuntimeError ("No user management plugins were able "
                             "to successfully modify the user")
-    
+
 PluggableAuthService.userSetPassword = userSetPassword
 
 
@@ -262,7 +262,7 @@ def credentialsChanged(self, user, name, new_password):
     request = self.REQUEST
     response = request.RESPONSE
     login = name
-        
+
     self.updateCredentials(request, response, login, new_password)
 PluggableAuthService.credentialsChanged = credentialsChanged
 

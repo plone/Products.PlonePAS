@@ -51,4 +51,3 @@ class PASStorage(object):
 
 classImplements(PASStorage,
                 IStorage)
-

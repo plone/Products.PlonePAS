@@ -55,10 +55,10 @@ class IGroupCapability(Interface):
 
     def allowGroupAdd(self, principal_id, group_id):
         """True iff this plugin will allow adding a certain principal to a certain group."""
-    
+
     def allowGroupRemove(self, principal_id, group_id):
         """True iff this plugin will allow removing a certain principal from a certain group."""
-    
+
 
 class IAssignRoleCapability(Interface):
     """Interface for plugin to say if it allows for deletion of a user.

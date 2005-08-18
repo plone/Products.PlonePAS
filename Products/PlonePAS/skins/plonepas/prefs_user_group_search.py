@@ -29,7 +29,7 @@ else:
         retlist = retlist + groups_tool.searchForGroups(REQUEST=None, name=searchstring)
 
 if ignore:
-  retlist = [r for r in retlist if r not in ignore]
+    retlist = [r for r in retlist if r not in ignore]
 
 # reorder retlist?
 if return_form:
