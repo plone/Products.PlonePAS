@@ -70,9 +70,10 @@
         </p>
         <p i18n:translate="description_pas_listing"
            tal:condition="python:not searchstring and not context.acl_users.canListAllUsers()">
-          <strong>Note:</strong> Some or all of your PAS user source plugins do not allow
-          listing of users, so you may not see the users defined by those plugins unless doing
-          a specific search.
+          <strong>Note:</strong> Some or all of your PAS user source
+          plugins do not allow listing of users, so you may not see
+          the users defined by those plugins unless doing a specific
+          search.
         </p>
 
         <form action=""
@@ -106,11 +107,12 @@
           <th colspan="6" tal:attributes="colspan python:len(portal_roles)+4">
             <span tal:omit-tag="" i18n:translate="label_user_search">User Search</span>:
             <input tabindex=""
-                           type="text"
-                           name="searchstring"
-                           value=""
-                           tal:attributes="value searchstring;
-                                           tabindex tabindex/next;"
+                   class="quickSearch"
+                   type="text"
+                   name="searchstring"
+                   value=""
+                   tal:attributes="value searchstring;
+                                   tabindex tabindex/next;"
               />
 
             <input type="submit"

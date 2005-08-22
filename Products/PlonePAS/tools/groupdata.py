@@ -98,7 +98,6 @@ class GroupData(BaseGroupData):
         return self.getGroup()
 
     ## setProperties uses setGroupProperties. no need to override.
-
     def setGroupProperties(self, mapping):
         """PAS-specific method to set the properties of a group.
         """
@@ -169,7 +168,6 @@ class GroupData(BaseGroupData):
     def getGroupName(self):
         return self.getName()
 
-
     ## GRUF 3.2 methods...
 
     def _getGRUF(self,):
@@ -184,7 +182,7 @@ class GroupData(BaseGroupData):
         """
         self._getGroup().removeMember(id)
 
-    def getGroupMembers(self, ):
+    def getGroupMembers(self):
         """
         Returns a list of the portal_memberdata-ish members of the group.
         This doesn't include TRANSITIVE groups/users.
@@ -204,16 +202,17 @@ class GroupData(BaseGroupData):
         return ret
 
     def setProperties(self, properties=None, **kw):
-        '''Allows the manager group to set his/her own properties.
+        """Allows the manager group to set his/her own properties.
         Accepts either keyword arguments or a mapping for the "properties"
         argument.
-        '''
+        """
         if properties is None:
             properties = kw
         return self.setGroupProperties(properties)
 
-    def getProperties(self, ):
-        """ Return the properties of this group. Properties are as usual in Zope."""
+    def getProperties(self):
+        """ Return the properties of this group. Properties are as usual in Zope.
+        """
         tool = self.getTool()
         ret = {}
         for pty in tool.propertyIds():
@@ -224,11 +223,10 @@ class GroupData(BaseGroupData):
                 continue
         return ret
 
-
     ## IManageCapabilities methods
-
     def canDelete(self):
-        """True iff user can be removed from the Plone UI."""
+        """True iff user can be removed from the Plone UI.
+        """
         # IGroupManagement provides removeGroup
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
@@ -239,7 +237,8 @@ class GroupData(BaseGroupData):
         return 0
 
     def canPasswordSet(self):
-        """Always false for groups, which have no password."""
+        """Always false for groups, which have no password.
+        """
         return 0
 
     def passwordInClear(self):

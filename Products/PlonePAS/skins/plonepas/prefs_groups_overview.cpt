@@ -37,21 +37,21 @@
                i18n:translate="label_groups">Groups</a>
 	  </li>
 	</ul>
-    
+
 	<div class="contentActions">
 	  &nbsp;
-	</div>        
+	</div>
 
 	<div class="documentContent">
 	  <a name="documentContent"></a>
-	  
+
 	  <div metal:use-macro="here/global_statusmessage/macros/portal_message">
 	    Portal status message
 	  </div>
 
 	  <div class="configlet">
 	    <h1 i18n:translate="heading_groups_overview">Groups Overview</h1>
-    
+
 	    <a href=""
 	       class="link-parent"
 	       tal:attributes="href string: $portal_url/plone_control_panel"
@@ -66,12 +66,13 @@
 	      use Roles for that - and let certain Groups have a
 	      particular role.
 	    </p>
-    
+
             <p i18n:translate="description_pas_listing"
                tal:condition="python:not searchstring and not context.acl_users.canListAllGroups()">
-              <strong>Note:</strong> Some or all of your PAS groups source plugins do not allow
-              listing of groups, so you may not see the groups defined by those plugins unless doing
-              a specific search.
+              <strong>Note:</strong> Some or all of your PAS groups
+              source plugins do not allow listing of groups, so you
+              may not see the groups defined by those plugins unless
+              doing a specific search.
             </p>
 
         <form action=""
@@ -92,35 +93,44 @@
                      i18n:attributes="value label_add_new_group;"
                      />
 
-            <input type="hidden" value="b_start" name="b_start" 
+            <input type="hidden" value="b_start" name="b_start"
                  tal:attributes="value b_start"/>
-                 
-            <table class="listing" summary="Select roles for each group" i18n:attributes="summary summary_roles_for_groups;">
-                <!-- commented this part until it is really integrated in the page, right now it isn't -->   
-                <!-- <tr> -->
-                    <!-- <th colspan="6" -->
-                        <!-- tal:attributes="colspan python:len(portal_roles)+2"> -->
-                        <!-- <span tal:omit-tag="" i18n:translate="label_group_search">Group Search</span>: -->
-                        <!-- <input class="quickSearch" -->
-                               <!-- tabindex="" -->
-                               <!-- type="text" -->
-                               <!-- name="searchstring" -->
-                               <!-- value="" -->
-                               <!-- tal:attributes="value searchstring; -->
-                                               <!-- tabindex tabindex/next;" -->
-                               <!-- /> -->
 
-                        <!-- <input type="hidden" name="searchonly" value="groups" /> -->
-                        <!-- <input type="submit" -->
-                               <!-- class="searchButton" -->
-                               <!-- name="form.button.Search" -->
-                               <!-- value="Search" -->
-                               <!-- tabindex="" -->
-                               <!-- i18n:attributes="value label_search;" -->
-                               <!-- tal:attributes="tabindex tabindex/next;" /> -->
+            <table class="listing" summary="Select roles for each group"
+                   i18n:attributes="summary summary_roles_for_groups;">
+                <tr>
+                    <th colspan="6"
+                        tal:attributes="colspan python:len(portal_roles)+2">
+                        <span tal:omit-tag="" i18n:translate="label_group_search">Group Search</span>:
+                        <input class="quickSearch"
+                               tabindex=""
+                               type="text"
+                               name="searchstring"
+                               value=""
+                               tal:attributes="value searchstring;
+                                               tabindex tabindex/next;"
+                               />
 
-                    <!-- </th> -->
-                <!-- </tr> -->
+            <input type="submit"
+                           class="searchButton"
+                           name="form.button.Search"
+                           value="Search"
+                           tabindex=""
+                           i18n:attributes="value label_search;"
+                           tal:attributes="tabindex tabindex/next;" />
+
+            <input type="submit"
+                           class="searchButton"
+                           name="form.button.FindAll"
+                           value="Show all"
+                           tabindex=""
+                           i18n:attributes="value label_showall;"
+                           tal:attributes="tabindex tabindex/next;" />
+
+            <input type="hidden" name="searchonly" value="groups" />
+
+                    </th>
+                </tr>
                 <tal:block tal:condition="groups">
                     <tr>
                         <th rowspan="2" i18n:translate="listingheader_group_name">Group name</th>
@@ -135,14 +145,14 @@
                         </tal:header>
                     </tr>
                 </tal:block>
-    
-    
+
+
                 <tal:block repeat="this_group batch">
                     <tr tal:define="oddrow repeat/this_group/odd"
                         tal:attributes="class python:test(oddrow,'odd','even')">
-    
+
                     <tal:block define="roles python:['this']">
-    
+
                     <td>
                         <input type="hidden" name="" tal:attributes="name string:group_${this_group/getGroupName}:list" value=""/>
                         <a href="#"
@@ -154,11 +164,11 @@
                         </a>
 
                     </td>
-    
+
                     <td class="listingCheckbox"
                         tal:define="group_roles python:this_group.getRoles();"
                         tal:repeat="portal_role portal_roles">
-    
+
                         <input type="checkbox"
                                class="noborder"
                                name="name"
@@ -168,7 +178,7 @@
                                                checked python:test(portal_role in group_roles, 'checked' ,'');
                                                disabled python:this_group.canAssignRole(portal_role) and default or 'disabled'" />
                     </td>
-    
+
                     <td class="listingCheckbox">
                         <input type="checkbox"
                                class="noborder notify"
@@ -177,11 +187,11 @@
                                tal:attributes="value this_group/getGroupName;
                                                disabled python:this_group.canDelete() and default or 'disabled'" />
                     </td>
-    
+
                 </tal:block>
             </tr>
             </tal:block>
-    
+
             <tal:block tal:condition="not:batch">
                 <tr>
                     <td i18n:translate="text_nomatches" style="text-align:center;">No matches</td>
@@ -190,7 +200,7 @@
             </table>
 
     	  <div metal:use-macro="here/batch_macros/macros/navigation" />
-    
+
             <input class="context"
                    tabindex=""
                    type="submit"
@@ -201,9 +211,9 @@
                    tal:condition="groups"
                    />
         </form>
-    
+
         <h1 i18n:translate="heading_roles_management">Roles Management</h1>
-    
+
         <p i18n:translate="description_roles_management">
           Roles are collections of permissions. The most common role is
           the Member role, which is any member of the portal. You can
@@ -211,13 +221,13 @@
           need to create a new discrete unit of permissions that you can
           combine to make up a Group.
         </p>
-        
+
         <p i18n:translate="description_roles_zmi">
-        Currently, if you want to add a new role, you must use the 
+        Currently, if you want to add a new role, you must use the
         Zope Management Interface, as adding roles is considered a
         development task.
         </p>
-    
+
     </div>
 
 </div>
