@@ -16,8 +16,20 @@
 $Id$
 """
 
+from Products.CMFCore.utils import getToolByName
+
 def unique(iterable):
     d = {}
     for i in iterable:
         d[i] = None
     return d.keys()
+
+def getCharset(context):
+    """Returns the site default charset, or utf-8.
+    """
+    properties = getToolByName(context, 'portal_properties', None)
+    if properties is not None:
+        site_properties = getToolByName(properties, 'site_properties', None)
+        if site_properties is not None:
+            return site_properties.getProperty('default_charset')
+    return 'utf-8'
