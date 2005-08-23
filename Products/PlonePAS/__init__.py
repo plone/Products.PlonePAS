@@ -45,6 +45,17 @@ from plugins import crumbler
 import pas
 
 #################################
+# ldapmp monkies if available
+
+try:
+    from Products import LDAPMultiPlugins
+    from Products import LDAPUserFolder
+except ImportError:
+    pass
+else:
+    import ldapmp
+
+#################################
 # pas monkies 2 play w/ gruf
 if config.PAS_INSIDE_GRUF:
     import gruf_support
