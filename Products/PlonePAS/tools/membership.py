@@ -212,6 +212,8 @@ class MembershipTool(BaseMembershipTool):
         original and only a few lines different.  Plone should
         probably do this.
         """
+        if not self.getMemberareaCreationFlag():
+            return None
         catalog = getToolByName(self, 'portal_catalog')
         membership = getToolByName(self, 'portal_membership')
         members = self.getMembersFolder()

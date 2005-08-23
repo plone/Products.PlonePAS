@@ -91,6 +91,19 @@ class MemberAreaTest(PloneTestCase.PloneTestCase):
         self.portal.acl_users._doAddUser(*minfo)
         self.failUnlessRaises(BadRequest, self.mt.createMemberArea, mid)
 
+    def test_memberareaCreationFlag_respected(self):
+        self.portal.acl_users._doAddUser('foo', 'pw', ['Member'], [])
+        self.portal.acl_users._doAddUser('bar', 'pw', ['Member'], [])
+
+        self.failIf('foo' in self.portal.Members.objectIds())
+        self.failIf('bar' in self.portal.Members.objectIds())
+
+        self.mt.createMemberarea('foo')
+        self.failUnless('foo' in self.portal.Members.objectIds())
+
+        self.mt.memberareaCreationFlag = 0
+        self.mt.createMemberArea('bar')
+        self.failIf('bar' in self.portal.Members.objectIds())
 
 def test_suite():
     suite = unittest.TestSuite()
