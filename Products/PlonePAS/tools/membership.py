@@ -174,7 +174,7 @@ class MembershipTool(BaseMembershipTool):
         for member in members:
             #user = md.wrapUser(u)
             u = member.getUser()
-            if not (member.listed or is_manager):
+            if not (member.getProperty('listed', False) or is_manager):
                 continue
             if name and not names_checked:
                 if (u.getUserName().lower().find(name) == -1 and
@@ -193,7 +193,8 @@ class MembershipTool(BaseMembershipTool):
                 if not found:
                     continue
             if last_login_time:
-                if member.last_login_time < last_login_time:
+                last_login = member.getProperty('last_login_time', last_login_time)
+                if last_login < last_login_time:
                     continue
             res.append(member)
         return res
