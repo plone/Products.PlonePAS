@@ -24,11 +24,11 @@ from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
 
 GROUP_PROPERTY_MAP = {
     # target property: ((possible key, as-is),)
-    'title': (('name', True),
-              ('displayName', True),
+    'title': (('name', False),
+              ('displayName', False),
               ('cn', False)),
     'description': (('description', False),),
-    'email': (('mail', True),),
+    'email': (('mail', False),),
     }
 
 KNOWN_ATTRS = []
