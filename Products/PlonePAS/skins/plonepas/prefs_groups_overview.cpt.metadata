@@ -8,5 +8,5 @@ View=0:Authenticated
 action.success..AddGroup = redirect_to:string:prefs_group_details
 action.success..Search  = traverse_to:string:prefs_groups_overview
 action.success..FindAll = traverse_to:string:prefs_groups_overview
-action.success..Modify   = traverse_to:string:prefs_group_modify
-action.success           = traverse_to:string:prefs_group_modify
+action.success..Modify  = traverse_to:string:prefs_group_modify
+action.success          = traverse_to:string:prefs_groups_overview
