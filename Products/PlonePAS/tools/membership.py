@@ -143,15 +143,15 @@ class MembershipTool(BaseMembershipTool):
         if md_users or uf_users:
             names_checked = 1
             wrap = self.wrapUser
-            getUser = acl_users.getUser
+            getUserById = acl_users.getUserById # not getUser, we have userids here
 
             for userid in md_users:
-                members.append(wrap(getUser(userid)))
+                members.append(wrap(getUserById(userid)))
             for user in uf_users:
                 userid = user['userid']
                 if userid in md_users:
                     continue             # Kill dupes
-                members.append(wrap(getUser(userid)))
+                members.append(wrap(getUserById(userid)))
 
             if not email and \
                    not roles and \
