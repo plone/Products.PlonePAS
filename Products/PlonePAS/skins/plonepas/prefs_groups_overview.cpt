@@ -119,6 +119,7 @@
                            i18n:attributes="value label_search;"
                            tal:attributes="tabindex tabindex/next;" />
 
+            <!-- commented out, does nothing anyway right now
             <input type="submit"
                            class="searchButton"
                            name="form.button.FindAll"
@@ -126,6 +127,7 @@
                            tabindex=""
                            i18n:attributes="value label_showall;"
                            tal:attributes="tabindex tabindex/next;" />
+            -->
 
             <input type="hidden" name="searchonly" value="groups" />
 

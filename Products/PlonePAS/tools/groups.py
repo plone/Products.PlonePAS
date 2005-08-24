@@ -68,7 +68,7 @@ class GroupsTool(PloneGroupsTool):
             self.createGrouparea(id)
         return success
 
-    def editGroup(self, id, password, roles, permissions):
+    def editGroup(self, id, roles=None, groups=None, *args, **kw):
         """Edit the given group with the supplied roles.
 
         Passwords for groups seem to be irrelevant.
@@ -79,11 +79,13 @@ class GroupsTool(PloneGroupsTool):
         group = self.getGroupById(id)
         if not group: return None
         self.setRolesForGroup(id, roles)
-
+        group.setGroupProperties(kw)
 
     security.declareProtected(DeleteGroups, 'removeGroup')
     def removeGroup(self, group_id, keep_workspaces=0):
-        """Remove a single group, including group workspace, unless keep_workspaces==true."""
+        """Remove a single group, including group workspace, unless
+        keep_workspaces==true.
+        """
         retval = False
         managers = self._getGroupManagers()
         if not managers:
