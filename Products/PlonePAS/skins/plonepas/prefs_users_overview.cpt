@@ -123,6 +123,7 @@
                            i18n:attributes="value label_search;"
                            tal:attributes="tabindex tabindex/next;" />
 
+            <!-- comment for now
             <input type="submit"
                            class="searchButton"
                            name="form.button.FindAll"
@@ -130,6 +131,7 @@
                            tabindex=""
                            i18n:attributes="value label_showall;"
                            tal:attributes="tabindex tabindex/next;" />
+            -->
 
                     </th>
                 </tr>
