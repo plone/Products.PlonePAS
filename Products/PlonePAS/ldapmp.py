@@ -49,7 +49,8 @@ def getPropertiesForUser(self, user, request=None):
     # We've got a PloneGroup.
     acl = self._getLDAPUserFolder()
 
-    if acl is None:
+    if acl is None or acl._local_groups:
+        # acl._local_groups == 1 means groups not stored on LDAP
         return ()
 
     group_filter = [filter_format('(%s=%s)', ('objectClass', o))
