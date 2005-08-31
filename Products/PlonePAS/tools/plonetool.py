@@ -18,7 +18,7 @@ $Id$
 from Globals import InitializeClass
 
 from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
-
+from AccessControl import getSecurityManager
 
 class PloneTool(BasePloneTool):
     """PAS-based customization of PloneTool. Uses CMFPlone's as base."""
