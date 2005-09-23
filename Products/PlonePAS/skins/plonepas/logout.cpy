@@ -10,6 +10,7 @@
 # CHANGES:
 #  removed cookie crumbler expire
 #  call PAS.logout
+from Products.CMFCore.utils import getToolByName
 
 try:
     context.acl_users.logout(context.REQUEST)
@@ -32,11 +33,11 @@ if REQUEST.has_key(skinvar) and not context.portal_skins.getCookiePersistence():
 #    cookie_name=cookie_auth.getProperty('auth_cookie')
 #    REQUEST.RESPONSE.expireCookie(cookie_name, path='/')
 
-# This sort of sucks.  If you do not have SESSIONS enabled
-# this throws an exception ;-(.  You can not try/except
-# around calling invalidate.  It will throw excpetion
-# regardless.  No idea how chrism managed that one *wink*
-REQUEST.SESSION.invalidate()
+sdm = getToolByName(context, 'session_data_manager', None)
+if sdm is not None:
+    session = sdm.getSessionData(create=0)
+    if session is not None:
+        session.invalidate()
 from Products.CMFPlone import transaction_note
 transaction_note('Logged out')
 
