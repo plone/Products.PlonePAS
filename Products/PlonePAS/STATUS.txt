@@ -1,6 +1,6 @@
 PlonePAS is still in development. Most of it works at the
-moment, but deployment on production sites is highly discouraged,
-at lease without serious testing. If you are interested, please
+moment, but you should be very cautious about deployment on production
+sites and do serious testing. If you are interested, please
 install and test on a development system. Help us work out the bugs!
 See below for specific notes.
 
@@ -8,12 +8,15 @@ PlonePAS currently works with all Plone UI functionality except for
 password reset.  If you wish to use PlonePAS, you should install
 PasswordResetTool.
 
-Some Plone UI functionality will not work with all plugins. There
-is currently no capabilities checking in the UI.
+Some Plone UI functionality will not work with all plugins.
+LDAPMultiPlugin, for example, cannot list users; many plugins
+cannot modify users/properties/groups/etc. There is some capabilities
+checking now, so that things that cannot be changed will not appear
+changable.
 
 PlonePAS implements a good deal of the API expected of a UserFolder
 and of GRUF. However, no systematic determination of interface
-fulfillment has been made, beyond that used by the UI. If you find
+fulfillment has been made, beyond that used by the Plone UI. If you find
 something missing that is needed, please report.
 
 PlonePAS will currently migrate the users and groups of a default

@@ -9,11 +9,7 @@ not it will help you.
 
 Versions
 
-  - Currently targeted to Plone 2.0.5 with GRUF 2.1.
-
-  - Should work with GRUF 3.2 as well.
-
-  - Moving to Plone 2.1 is probably a matter of removing some page templates.
+  - Currently targeted to Plone 2.1, and its standard dependencies.
 
 Depends On
 
