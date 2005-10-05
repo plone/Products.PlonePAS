@@ -267,6 +267,22 @@ def credentialsChanged(self, user, name, new_password):
 PluggableAuthService.credentialsChanged = credentialsChanged
 
 
+# for ZopeVersionControl, we need to check 'plugins' for more than
+# existence, since it replaces objects (like 'plugins') with SimpleItems
+# and calls _delOb, which tries to use special methods of 'plugins'
+def _delOb( self, id ):
+    #
+    #   Override ObjectManager's version to clean up any plugin
+    #   registrations for the deleted object
+    #
+    plugins = self._getOb( 'plugins', None )
+
+    if getattr(plugins, 'removePluginById', None) is not None:
+        plugins.removePluginById( id )
+
+    Folder._delOb( self, id )
+PluggableAuthService._delOb = _delOb
+
 
 
 #################################
