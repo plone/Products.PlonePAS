@@ -52,6 +52,24 @@ class GroupAwareRoleManager( ZODBRoleManager ):
 
     security = ClassSecurityInfo()
 
+    # don't blow up if manager already exists; mostly for ZopeVersionControl
+    def manage_afterAdd( self, item, container ):
+
+        try:
+            self.addRole( 'Manager' )
+        except KeyError:
+            pass
+
+        if item is self:
+            role_holder = aq_parent( aq_inner( container ) )
+            for role in getattr( role_holder, '__ac_roles__', () ):
+                try:
+                    if role not in ('Anonymous', 'Authenticated'):
+                        self.addRole( role )
+                except KeyError:
+                    pass
+
+
     security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
     def assignRolesToPrincipal( self, roles, principal_id ):
         """ Assign a specific set of roles, and only those roles, to a principal.
