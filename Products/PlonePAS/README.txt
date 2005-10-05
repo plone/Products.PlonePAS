@@ -109,8 +109,9 @@ Authorship
   Initial creation: The PAS CIGNEX Sprint Team [ Anders, Bob, Ben,
   Chad, Gautham, Joel, Kapil, Michel, Micheal ]
 
-  Making it work: J Cameron Cooper, Leo, Sidnei, Mark at "Enfold
+  Post-sprint work: J Cameron Cooper, Leo, Sidnei, Mark at "Enfold
   Systems":http://enfoldsystems.com
+  (Add yourself if you work on it!)
 
 Bug Reports
 
