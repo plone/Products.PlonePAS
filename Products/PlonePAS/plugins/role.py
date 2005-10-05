@@ -22,6 +22,7 @@ $Id$
 
 from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
+from Acquisition import aq_parent, aq_inner
 
 from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
