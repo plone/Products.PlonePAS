@@ -108,6 +108,9 @@ Authorship
   Post-sprint work: J Cameron Cooper, Leo, Sidnei, Mark at "Enfold
   Systems":http://enfoldsystems.com
   (Add yourself if you work on it!)
+  
+  Basic setAuthCookie support (to mimick CookieCrumbler) by:
+    Rocky Burt at "ServerZen Software":http://www.serverzen.com
 
 Bug Reports
 

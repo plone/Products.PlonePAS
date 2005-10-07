@@ -147,10 +147,10 @@ def setupPlugins(portal, out):
     print >> out, "\nPlugin setup"
 
     pas = uf.manage_addProduct['PluggableAuthService']
-
-    setupAuthPlugins(portal, pas, out)
-
     plone_pas = uf.manage_addProduct['PlonePAS']
+
+    setupAuthPlugins(portal, pas, plone_pas, out)
+
     plone_pas.manage_addUserManager('source_users')
     print >> out, "Added User Manager."
     activatePluginInterfaces(portal, 'source_users', out)
@@ -175,7 +175,8 @@ def setupPlugins(portal, out):
     print >> out, "Added Mutable Property Manager."
     activatePluginInterfaces(portal, "mutable_properties", out)
 
-def setupAuthPlugins(portal, pas, out,
+
+def setupAuthPlugins(portal, pas, plone_pas, out,
                      deactivate_basic_reset=True,
                      deactivate_cookie_challenge=False):
     uf = portal.acl_users
@@ -191,8 +192,9 @@ def setupAuthPlugins(portal, pas, out,
         logout_path = crumbler.logout_page
         cookie_name = crumbler.auth_cookie
 
-    pas.addCookieAuthHelper('credentials_cookie_auth', cookie_name='__ac')
-    print >> out, "Added Cookie Auth Helper."
+    plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
+                                                 cookie_name='__ac')
+    print >> out, "Added Extended Cookie Auth Helper."
     activatePluginInterfaces(portal, 'credentials_cookie_auth', out)
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
@@ -659,8 +661,9 @@ def migrate_root_uf(self, out):
     uf = getToolByName(parent, 'acl_users')
 
     pas = uf.manage_addProduct['PluggableAuthService']
+    plone_pas = uf.manage_addProduct['PlonePAS']
     # Setup authentication plugins
-    setupAuthPlugins(parent, pas, out,
+    setupAuthPlugins(parent, pas, plone_pas, out,
                      deactivate_basic_reset=False,
                      deactivate_cookie_challenge=True)
 

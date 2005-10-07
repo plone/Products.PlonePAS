@@ -39,6 +39,7 @@ from plugins import local_role
 from plugins import ufactory
 from plugins import property
 from plugins import crumbler
+from plugins import cookie_handler
 
 #################################
 # pas monkies
@@ -92,6 +93,7 @@ try:
     registerMultiPlugin( ufactory.PloneUserFactory.meta_type )
     registerMultiPlugin( property.ZODBMutablePropertyProvider.meta_type )
     registerMultiPlugin( crumbler.CookieCrumblingPlugin.meta_type )
+    registerMultiPlugin( cookie_handler.ExtendedCookieAuthHelper.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
@@ -162,3 +164,11 @@ def initialize(context):
                                             crumbler.manage_addCookieCrumblingPlugin ),
                            visibility = None
                            )
+
+    context.registerClass( cookie_handler.ExtendedCookieAuthHelper,
+                           permission = add_user_folders,
+                           constructors = ( cookie_handler.manage_addExtendedCookieAuthHelperForm,
+                                            cookie_handler.manage_addExtendedCookieAuthHelper ),
+                           visibility = None
+                           )
+                           
