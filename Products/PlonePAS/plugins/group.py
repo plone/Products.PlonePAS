@@ -244,7 +244,7 @@ class GroupManager(ZODBGroupManager):
             criteria[ 'title' ] = title
 
         if criteria:
-            view_name = createViewName('_verifyGroup', group_id or login)
+            view_name = createViewName('_verifyGroup', group_id)
             cached_info = self.ZCacheable_get(view_name=view_name
                                              , keywords=criteria
                                              , default=None
