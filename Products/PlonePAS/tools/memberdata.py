@@ -295,9 +295,8 @@ class MemberData(BaseMemberData):
     def _getPlugins(self):
         return self.acl_users.plugins
 
-
 classImplements(MemberData,
-                *tuple(implementedBy(BaseMemberData)) +
-                (IManageCapabilities,))
+                implementedBy(BaseMemberData),
+                IManageCapabilities)
 
 InitializeClass(MemberData)

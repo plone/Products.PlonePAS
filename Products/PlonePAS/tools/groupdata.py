@@ -290,7 +290,7 @@ class GroupData(BaseGroupData):
         return self.acl_users.plugins
 
 classImplements(GroupData,
-                *tuple(implementedBy(BaseGroupData)) +
-                (IManageCapabilities,))
+                implementedBy(BaseGroupData),
+                IManageCapabilities)
 
 InitializeClass(GroupData)
