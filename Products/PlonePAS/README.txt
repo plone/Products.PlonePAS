@@ -24,6 +24,8 @@ Depends On
  - currently requires LDAPUserFolder 2.6b3 or better
    (though this should be fixed!)
 
+   and LDAPMultiPlugins 1.0 or better
+
 Optional
 
  - PloneTestCase
