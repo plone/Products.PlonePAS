@@ -4,13 +4,15 @@ Blocker bugs
 
 Major missing functionality
 
- - Password reset (conditional on capability)
+ - None
+
+Robustness and productization
+
+ - Hard dependency on LDAP products (ldapmp.py) should be removed
 
  - Caching of users seems to fail
 
  - again with the failure of member property sets to take
-
-Robustness and productization
 
  - determine between AD and regular LDAP in install (see Install.py
    bottom)
@@ -18,12 +20,10 @@ Robustness and productization
  - disabled plone text boxes don't look disabled
    either fix this, or change disabled action to be hidden + the text
 
- - LDAPMultiPlugin doesn't provide getGroupMembers; only matters when Group plugins
-   of LDAPMulti are on. they're off by default.
+ - LDAPMultiPlugin doesn't provide getGroupMembers; only matters
+   when Group plugins of LDAPMulti are on. they're off by default.
 
 Other todo items
-
- - add note about group listing to groups overview page, like on member overview
 
  - security declarations on new memberdata methods
 

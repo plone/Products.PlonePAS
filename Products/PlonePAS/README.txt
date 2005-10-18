@@ -21,6 +21,9 @@ Depends On
 
  - PasswordResetTool (for full functionality)
 
+ - currently requires LDAPUserFolder 2.6b3 or better
+   (though this should be fixed!)
+
 Optional
 
  - PloneTestCase
