@@ -15,16 +15,17 @@
 """
 $Id$
 """
-from Globals import InitializeClass
 
-from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
+from sets import Set
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
+from Globals import InitializeClass
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.PloneUtilities import _createObjectByType
+from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
 
 try:
     # Plone 2.0
@@ -32,7 +33,6 @@ try:
 except ImportError:
     # Plone 2.1
     from Products.CMFPlone.utils import utranslate as translate
-
 
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool.
@@ -42,6 +42,14 @@ class MembershipTool(BaseMembershipTool):
 
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
+
+    user_search_keywords = ('name', 'exact_match')
+
+    _properties = (getattr(BaseMembershipTool, '_properties', ()) +
+                   ({'id': 'user_search_keywords',
+                     'type': 'lines',
+                     'mode': 'rw',
+                     },))
 
     security.declarePrivate('addMember')
     def addMember(self, id, password, roles, domains, properties=None):
@@ -81,10 +89,18 @@ class MembershipTool(BaseMembershipTool):
         acl_users = self.acl_users
         md = self.portal_memberdata
         groups_tool = self.portal_groups
-        if REQUEST:
+
+        if REQUEST is not None:
             dict = REQUEST
         else:
             dict = kw
+
+        user_search = {}
+        for key in self.user_search_keywords:
+            value = kw.get(key, None)
+            if value is None:
+                continue
+            user_search[key] = value
 
         name = dict.get('name', None)
         email = dict.get('email', None)
@@ -102,68 +118,57 @@ class MembershipTool(BaseMembershipTool):
         if not email:
             email = None
 
-        md_users = []
         uf_users = []
-
-        if name:
-            # We first find in MemberDataTool users whose _full_ name
-            # match what we want.
-            lst = md.searchMemberDataContents('fullname', name)
-            md_users = [ x['username'] for x in lst]
-
-            # This will allow us to retrieve users by their id or name
-            uf_users = acl_users.searchUsers(name=name)
-
-            # PAS allows search to return dupes. We must winnow...
-            uf_users_new = []
-            for user in uf_users:
-                if user not in uf_users_new:
-                    uf_users_new.append(user)
-            uf_users = uf_users_new
-
         members = []
         g_userids, g_members = [], []
 
         if groupname:
-            groups = groups_tool.searchForGroups(title=groupname) + \
-                     groups_tool.searchForGroups(name=groupname)
+            groups = (groups_tool.searchForGroups(title=groupname) +
+                      groups_tool.searchForGroups(name=groupname))
 
             for group in groups:
                 for member in group.getGroupMembers():
-                    if member not in g_members and not groups_tool.isGroup(member):
+                    if (member not in g_members and
+                        not groups_tool.isGroup(member)):
                         g_members.append(member)
             g_userids = map(lambda x: x.getMemberId(), g_members)
+
         if groupname and not g_userids:
             return []
 
+        if user_search:
+            # We first find in MemberDataTool users whose _full_ name
+            # match what we want.
+            lst = md.searchMemberDataContents('fullname', name)
+            uf_users = [x['username'] for x in lst]
 
-        # build final list
-        #if md_users is not None and uf_users is not None:   # original. I think this is broken.
-                                                             # does anybody actually use this?
-        if md_users or uf_users:
+            # This will allow us to retrieve users by their id or name
+            for user in acl_users.searchUsers(**user_search):
+                uid = user['userid']
+                uf_users.append(uid)
+
+        if uf_users:
             names_checked = 1
             wrap = self.wrapUser
-            getUserById = acl_users.getUserById # not getUser, we have userids here
+             # not getUser, we have userids here
+            getUserById = acl_users.getUserById
 
-            for userid in md_users:
-                members.append(wrap(getUserById(userid)))
-            for user in uf_users:
-                userid = user['userid']
-                if userid in md_users:
-                    continue             # Kill dupes
+            for userid in Set(uf_users):
                 members.append(wrap(getUserById(userid)))
 
-            if not email and \
-                   not roles and \
-                   not last_login_time:
+            if (not email and
+                not roles and
+                not last_login_time):
                 return members
 
         elif groupname:
             members = g_members
             names_checked = 0
+
         else:
-            # If the lists are not available, we just stupidly get the members list
-            # only IUserIntrospection plugins participate here.
+            # If the lists are not available, we just stupidly get the
+            # members list. Only IUserIntrospection plugins participate
+            # here.
             members = self.listMembers()
             names_checked = 0
 
@@ -172,7 +177,7 @@ class MembershipTool(BaseMembershipTool):
         portal = self.portal_url.getPortalObject()
 
         for member in members:
-            #user = md.wrapUser(u)
+            # user = md.wrapUser(u)
             u = member.getUser()
             if not (member.getProperty('listed', False) or is_manager):
                 continue
@@ -193,7 +198,8 @@ class MembershipTool(BaseMembershipTool):
                 if not found:
                     continue
             if last_login_time:
-                last_login = member.getProperty('last_login_time', last_login_time)
+                last_login = member.getProperty('last_login_time',
+                                                last_login_time)
                 if last_login < last_login_time:
                     continue
             res.append(member)

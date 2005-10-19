@@ -35,7 +35,7 @@ Login to Plone Site using Basic Auth works.
 
 Make sure cookie plugin is installed and activated.
 
-  >>> uf.objectIds('Cookie Auth Helper')
+  >>> uf.objectIds('Extended Cookie Auth Helper')
   ['credentials_cookie_auth']
 
   >>> plugins = uf.plugins
