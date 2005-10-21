@@ -97,7 +97,7 @@ class MembershipTool(BaseMembershipTool):
 
         user_search = {}
         for key in self.user_search_keywords:
-            value = kw.get(key, None)
+            value = dict.get(key, None)
             if value is None:
                 continue
             user_search[key] = value
@@ -139,8 +139,9 @@ class MembershipTool(BaseMembershipTool):
         if user_search:
             # We first find in MemberDataTool users whose _full_ name
             # match what we want.
-            lst = md.searchMemberDataContents('fullname', name)
-            uf_users = [x['username'] for x in lst]
+            if name:
+                lst = md.searchMemberDataContents('fullname', name)
+                uf_users = [x['username'] for x in lst]
 
             # This will allow us to retrieve users by their id or name
             for user in acl_users.searchUsers(**user_search):
