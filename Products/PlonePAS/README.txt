@@ -1,7 +1,7 @@
 PlonePAS
 
 This product adapts the
-"PluggableAuthService":http://cvs.zope.org/Products/PluggableAuthService/
+"PluggableAuthService":http://svn.zope.org/PluggableAuthService/
 for use by Plone.
 
 Please see STATUS.txt for notes on the current version and whether or
@@ -15,9 +15,9 @@ Depends On
 
  - Plone standard products (esp. GRUF)
 
- - PluggableAuthService 1.0.4 (currently unreleased, see CVS)
+ - PluggableAuthService 1.0.4 (currently unreleased, see SVN)
 
-  - PluginRegistry (latest)
+ - PluginRegistry (latest)
 
  - PasswordResetTool (for full functionality)
 
@@ -75,20 +75,22 @@ For reference, the standard install procedure:
 
 Notes
 
-  If PAS caching is enabled (see the "Cache" tab) and the cache manager does not
-  have a 'cleanup' method (RAMCacheManager has one), then changes to the memberdata
-  schema will not effect users already cached. In this case, restart the server
-  or clear the cache (if possible) for the changes to take effect.
+  If PAS caching is enabled (see the "Cache" tab) and the cache
+  manager does not have a 'cleanup' method (RAMCacheManager has one),
+  then changes to the memberdata schema will not effect users already
+  cached. In this case, restart the server or clear the cache (if
+  possible) for the changes to take effect.
 
-  Similarly, changes to the memberdata schema will not propagate to member objects
-  already in use. If you have a memberdata object and change the memberdata properties
-  you must re-construct the member by saying portal_membership.getMemberById again.
-  See 'tests.test_properties.test_user_properties' for example.
+  Similarly, changes to the memberdata schema will not propagate to
+  member objects already in use. If you have a memberdata object and
+  change the memberdata properties you must re-construct the member by
+  saying portal_membership.getMemberById again.  See
+  'tests.test_properties.test_user_properties' for example.
 
-  By default, logout from users signed in under HTTP Basic Auth cannot log out.
-  If you enable the "Credentials Reset" plugin for the HTTP Basic plugin, the logout for
-  cookies will no longer work. However, this is not a problem if you're not using
-  cookies.
+  By default, logout from users signed in under HTTP Basic Auth cannot
+  log out.  If you enable the "Credentials Reset" plugin for the HTTP
+  Basic plugin, the logout for cookies will no longer work. However,
+  this is not a problem if you're not using cookies.
 
 Implementation
 
