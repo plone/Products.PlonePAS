@@ -21,16 +21,13 @@ Depends On
 
  - PasswordResetTool (for full functionality)
 
- - currently requires LDAPUserFolder 2.6b3 or better
-   (though this should be fixed!)
-
-   and LDAPMultiPlugins 1.0 or better
-
 Optional
 
  - PloneTestCase
 
- - LDAPUserFolder and LDAPMultiPlugins
+ - LDAPUserFolder 2.6b3 or better
+
+   - LDAPMultiPlugins 1.0 or better
 
 PlonePAS installs like any other Plone Product, but please note: it
 does destroy your existing portal user folder. There is automatic
