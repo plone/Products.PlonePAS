@@ -283,8 +283,8 @@ class MembershipTool(BaseMembershipTool):
 
         # Get the user object from acl_users
         acl_users = self.__getPUS()
-        # SdS: Shouldn't it be getUserById here?
-        user = acl_users.getUser(member_id)
+        # SdS: According to Leo, our MOTUId, we should use getUserById here.
+        user = acl_users.getUserById(member_id)
         if user is not None:
             user = user.__of__(acl_users)
         else:
