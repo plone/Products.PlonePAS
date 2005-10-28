@@ -21,6 +21,8 @@ from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
 from Globals import InitializeClass
+from Products.PlonePAS.config import logger
+
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
@@ -86,6 +88,7 @@ class MembershipTool(BaseMembershipTool):
 
         Simple name searches are "fast".
         """
+        logger.debug('searchForMembers: started.')
         acl_users = self.acl_users
         md = self.portal_memberdata
         groups_tool = self.portal_groups
@@ -123,6 +126,9 @@ class MembershipTool(BaseMembershipTool):
         g_userids, g_members = [], []
 
         if groupname:
+            logger.debug(
+                'searchForMembers: searching groups '
+                'for title|name=%r.' % groupname)
             groups = (groups_tool.searchForGroups(title=groupname) +
                       groups_tool.searchForGroups(name=groupname))
 
@@ -134,15 +140,24 @@ class MembershipTool(BaseMembershipTool):
             g_userids = map(lambda x: x.getMemberId(), g_members)
 
         if groupname and not g_userids:
+            logger.debug(
+                'searchForMembers: searching for groupname '
+                'found no users, immediate return.')
             return []
 
         if user_search:
             # We first find in MemberDataTool users whose _full_ name
             # match what we want.
             if name:
+                logger.debug(
+                    'searchForMembers: searching memberdata '
+                    'for fullname=%r.' % name)
                 lst = md.searchMemberDataContents('fullname', name)
                 uf_users = [x['username'] for x in lst]
 
+            logger.debug(
+                'searchForMembers: searching PAS '
+                'with arguments %r.' % user_search)
             # This will allow us to retrieve users by their id or name
             for user in acl_users.searchUsers(**user_search):
                 uid = user['userid']
@@ -160,6 +175,9 @@ class MembershipTool(BaseMembershipTool):
             if (not email and
                 not roles and
                 not last_login_time):
+                logger.debug(
+                    'searchForMembers: searching users '
+                    'with no extra filter, immediate return.')
                 return members
 
         elif groupname:
@@ -204,6 +222,7 @@ class MembershipTool(BaseMembershipTool):
                 if last_login < last_login_time:
                     continue
             res.append(member)
+        logger.debug('searchForMembers: finished.')
         return res
 
     #############
@@ -237,6 +256,7 @@ class MembershipTool(BaseMembershipTool):
         if members is None:
             # no members area
             # XXX exception?
+            logger.debug('createMemberarea: members area does not exist.')
             return
 
 
@@ -244,29 +264,44 @@ class MembershipTool(BaseMembershipTool):
         if hasattr(members, safe_member_id):
             # has already this member
             # XXX exception?
+            logger.debug(
+                'createMemberarea: member area '
+                'for %r already exists.' % safe_member_id)
+            return
+
+        if not safe_member_id:
+            # Could be one of two things:
+            # - A Emergency User
+            # - _cleanId made a empty string out of member_id
+            logger.debug(
+                'createMemberarea: empty member id '
+                '(%r, %r), skipping member area creation.' % (
+                member_id, safe_member_id))
             return
 
         _createObjectByType('Folder', members, id=safe_member_id)
 
-        # get the user object from acl_users
-        # XXX what about portal_membership.getAuthenticatedMember()?
+        # Get the user object from acl_users
         acl_users = self.__getPUS()
+        # SdS: Shouldn't it be getUserById here?
         user = acl_users.getUser(member_id)
         if user is not None:
             user = user.__of__(acl_users)
         else:
-            user= getSecurityManager().getUser()
+            user = getSecurityManager().getUser()
             # check that we do not do something wrong
             if user.getId() != member_id:
                 raise NotImplementedError, \
                     'cannot get user for member area creation'
 
-        ## get some translations
-        # before translation we must set right encodings in header to
+        # Get some translations
+        # Before translation we must set right encodings in header to
         # make PTS happy
-        properties = getToolByName(self, 'portal_properties')
-        charset = properties.site_properties.getProperty('default_charset', 'utf-8')
-        self.REQUEST.RESPONSE.setHeader('Content-Type', 'text/html;charset=%s' % charset)
+        putils = getToolByName(self, 'plone_utils')
+        charset = putils.getSiteEncoding()
+
+        self.REQUEST.RESPONSE.setHeader(
+            'Content-Type', 'text/html;charset=%s' % charset)
 
         member_folder_title = translate(
             'plone', 'title_member_folder',
