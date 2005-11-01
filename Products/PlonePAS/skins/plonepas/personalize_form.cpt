@@ -330,8 +330,7 @@
                        id="portrait"
                        size="20"
                        tabindex=""
-                       tal:attributes="tabindex tabindex/next;
-                                       disabled python:member.canWriteProperty('portrait') and default or 'disabled'"
+                       tal:attributes="tabindex tabindex/next;"
                        />
 
                 <br />
@@ -342,8 +341,7 @@
                     id="pdelete"
                     value="Delete Portrait"
                     name="delete_portrait"
-                    tal:attributes="tabindex tabindex/next;
-                                    disabled python:member.canWriteProperty('portrait') and default or 'disabled'"
+                    tal:attributes="tabindex tabindex/next;"
                     />
                 <label for="pdelete" i18n:translate="label_delete_portrait">Delete Portrait</label>
 
