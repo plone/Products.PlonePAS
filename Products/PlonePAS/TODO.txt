@@ -28,6 +28,8 @@ Robustness and productization
 
 Other todo items
 
+ - make all "disabled" readonly?
+
  - security declarations on new memberdata methods
 
  - Verify why user records just created are marked as "orphaned" in

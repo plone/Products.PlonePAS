@@ -85,7 +85,7 @@
                        value="member.email html_quote"
                        tal:attributes="value email;
                                        tabindex tabindex/next;
-                                       disabled python:member.canWriteProperty('email') and default or 'disabled'"
+                                       readonly python:member.canWriteProperty('email') and default or 'readonly'"
                        />
 
             </div>
