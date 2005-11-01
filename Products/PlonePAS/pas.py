@@ -71,7 +71,10 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
 
     XXX domains are currently ignored.
     """
-    self.userSetPassword(principal_id, password)
+    # Might be called with 'None' as password from the Plone UI, in
+    # prefs_users_overview when resetPassword is not set.
+    if password is not None:
+        self.userSetPassword(principal_id, password)
 
     plugins = self._getOb('plugins')
     rmanagers = plugins.listPlugins(IRoleAssignerPlugin)
