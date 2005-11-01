@@ -69,7 +69,7 @@
           to group memberships.
         </p>
         <p i18n:translate="description_pas_listing"
-           tal:condition="python:not searchstring and not context.acl_users.canListAllUsers()">
+           tal:condition="nothing | python:not searchstring and not context.acl_users.canListAllUsers()">
           <strong>Note:</strong> Some or all of your PAS user source
           plugins do not allow listing of users, so you may not see
           the users defined by those plugins unless doing a specific
