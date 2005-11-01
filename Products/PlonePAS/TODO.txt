@@ -28,7 +28,7 @@ Robustness and productization
 
 Other todo items
 
- - make all "disabled" readonly?
+ - make validate_emailaddr not try validation if email is readonly
 
  - security declarations on new memberdata methods
 
