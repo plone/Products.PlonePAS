@@ -18,28 +18,35 @@ $Id$
 from Globals import InitializeClass
 
 from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
-from AccessControl import getSecurityManager, Permissions, Unauthorized
+from Products.CMFCore import permissions as CMFCorePermissions
+from Products.CMFCore.utils import getToolByName
 
 class PloneTool(BasePloneTool):
     """PAS-based customization of PloneTool. Uses CMFPlone's as base."""
 
     meta_type = "PlonePAS Utilities Tool"
 
-    def acquireLocalRoles(self, folder, status):
+    def acquireLocalRoles(self, obj, status=1):
         """
         Enable or disable local role acquisition on the specified folder.
-        If status is true, roles will not be acquired. if false or None (default )
-        they will be.
+        If 'status' is 1, roles will not be acquired.
+        If 0 they will not be.
         """
-        # Perform security check on destination folder
-        if not getSecurityManager().checkPermission(Permissions.change_permissions, folder):
-            raise Unauthorized(name = "acquireLocalRoles")
+        mt = getToolByName(self, 'portal_membership')
+        if not mt.checkPermission(CMFCorePermissions.ModifyPortalContent, obj):
+            raise Unauthorized
 
-        status = not not status
-        status = status or None
-        folder.__ac_local_roles_block__ = status
+        # Set local role status...
+        # set the variable (or unset it if it's defined)
+        if not status:
+            obj.__ac_local_roles_block__ = 1
+        else:
+            if getattr(obj, '__ac_local_roles_block__', None):
+                obj.__ac_local_roles_block__ = None
 
-        return self._acquireLocalRoles(folder, status)
+
+        # Reindex the whole stuff.
+        obj.reindexObjectSecurity()
 
     def isLocalRoleAcquired(self, folder):
         """Return true if the specified folder allows local role acquisition.
