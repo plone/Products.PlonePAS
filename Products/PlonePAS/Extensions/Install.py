@@ -775,6 +775,7 @@ def install(self):
 
 
     ldap_ufs, ldap_gf = None, None
+    userdata=groupdata=memberships=()
 
     if not EXISTING_UF:
         addPAS(portal, out)
