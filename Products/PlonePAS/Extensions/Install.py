@@ -93,6 +93,7 @@ def setupRoles(portal):
     rmanager.addRole('Reviewer', title="Content Reviewer")
 
 def registerPluginType(pas, plugin_type, plugin_info):
+    # this doesn't check for existing plugin types. doesn't seem to be a problem...
     pas.plugins._plugin_type_info[plugin_type] =  plugin_info
     pas.plugins._plugin_types.append(plugin_type)
 
@@ -151,29 +152,41 @@ def setupPlugins(portal, out):
 
     setupAuthPlugins(portal, pas, plone_pas, out)
 
-    plone_pas.manage_addUserManager('source_users')
-    print >> out, "Added User Manager."
-    activatePluginInterfaces(portal, 'source_users', out)
+    found = uf.objectIds(['User Manager'])
+    if not found:
+        plone_pas.manage_addUserManager('source_users')
+        print >> out, "Added User Manager."
+        activatePluginInterfaces(portal, 'source_users', out)
 
-    plone_pas.manage_addGroupAwareRoleManager('portal_role_manager')
-    print >> out, "Added Group Aware Role Manager."
-    activatePluginInterfaces(portal, 'portal_role_manager', out)
+    found = uf.objectIds(['Group Aware Role Manager'])
+    if not found:
+        plone_pas.manage_addGroupAwareRoleManager('portal_role_manager')
+        print >> out, "Added Group Aware Role Manager."
+        activatePluginInterfaces(portal, 'portal_role_manager', out)
 
-    plone_pas.manage_addLocalRolesManager('local_roles')
-    print >> out, "Added Group Aware Role Manager."
-    activatePluginInterfaces(portal, 'local_roles', out)
+    found = uf.objectIds(['Local Roles Manager'])
+    if not found:
+        plone_pas.manage_addLocalRolesManager('local_roles')
+        print >> out, "Added Group Aware Role Manager."
+        activatePluginInterfaces(portal, 'local_roles', out)
 
-    plone_pas.manage_addGroupManager('source_groups')
-    print >> out, "Added ZODB Group Manager."
-    activatePluginInterfaces(portal, 'source_groups', out)
+    found = uf.objectIds(['Group Manager'])
+    if not found:
+        plone_pas.manage_addGroupManager('source_groups')
+        print >> out, "Added ZODB Group Manager."
+        activatePluginInterfaces(portal, 'source_groups', out)
 
-    plone_pas.manage_addPloneUserFactory('user_factory')
-    print >> out, "Added Plone User Factory."
-    activatePluginInterfaces(portal, "user_factory", out)
+    found = uf.objectIds(['Plone User Factory'])
+    if not found:
+        plone_pas.manage_addPloneUserFactory('user_factory')
+        print >> out, "Added Plone User Factory."
+        activatePluginInterfaces(portal, "user_factory", out)
 
-    plone_pas.manage_addZODBMutablePropertyProvider('mutable_properties')
-    print >> out, "Added Mutable Property Manager."
-    activatePluginInterfaces(portal, "mutable_properties", out)
+    found = uf.objectIds(['ZODB Mutable Property Provider'])
+    if not found:
+        plone_pas.manage_addZODBMutablePropertyProvider('mutable_properties')
+        print >> out, "Added Mutable Property Manager."
+        activatePluginInterfaces(portal, "mutable_properties", out)
 
 
 def setupAuthPlugins(portal, pas, plone_pas, out,
@@ -192,8 +205,10 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
         logout_path = crumbler.logout_page
         cookie_name = crumbler.auth_cookie
 
-    plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
-                                                 cookie_name='__ac')
+    found = uf.objectIds(['Extended Cookie Auth Helper'])
+    if not found:
+        plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
+                                                     cookie_name=cookie_name)
     print >> out, "Added Extended Cookie Auth Helper."
     activatePluginInterfaces(portal, 'credentials_cookie_auth', out)
 
@@ -213,7 +228,9 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
     print >> out, "Removed old Cookie Crumbler"
 
 
-    pas.addHTTPBasicAuthHelper('credentials_basic_auth',
+    found = uf.objectIds(['HTTP Basic Auth Helper'])
+    if not found:
+        pas.addHTTPBasicAuthHelper('credentials_basic_auth',
                                title="HTTP Basic Auth")
     print >> out, "Added Basic Auth Helper."
     activatePluginInterfaces(portal, 'credentials_basic_auth', out)
@@ -757,9 +774,6 @@ def install(self):
         registerPluginTypes(uf)
 
 
-    userdata = grabUserData(portal, out)
-    groupdata, memberships = grabGroupData(portal, out)
-
     ldap_ufs, ldap_gf = None, None
 
     if not EXISTING_UF:
@@ -770,6 +784,9 @@ def install(self):
             # instance.
 
             goForMigration(portal, out)
+
+            userdata = grabUserData(portal, out)
+            groupdata, memberships = grabGroupData(portal, out)
 
             ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
             if (ldap_ufs or ldap_gf) and not CAN_LDAP:
@@ -795,8 +812,9 @@ def install(self):
         and ldap_ufs is not None):
         restoreLDAP(portal, out, ldap_ufs, ldap_gf)
 
-    restoreUserData(portal, out, userdata)
-    restoreGroupData(portal, out, groupdata, memberships)
+    if not EXISTING_PAS:
+        restoreUserData(portal, out, userdata)
+        restoreGroupData(portal, out, groupdata, memberships)
 
     migrate_root_uf(self, out)
 
