@@ -209,8 +209,8 @@ class GroupsTool(PloneGroupsTool):
         uf_groups = []
 
         if name:
-            # This will allow us to retrieve groups by their id or title
-            uf_groups = acl_users.searchGroups(name=name)
+            # This will allow us to retrieve groups by their id only
+            uf_groups = acl_users.searchGroups(id=name)
 
             # PAS allows search to return dupes. We must winnow...
             uf_groups_new = []
