@@ -26,6 +26,10 @@ Robustness and productization
  - Should call ZCacheable_invalidate on methods that modify users and
    groups. PAS doesn't call this either.
 
+ - searchGroups is only on id. We must at least do this. We could
+   add another call for searchGroups for 'name' as well so that we
+   search titles on those GroupEnumerators that support this.
+
 Other todo items
 
  - make validate_emailaddr not try validation if email is readonly
