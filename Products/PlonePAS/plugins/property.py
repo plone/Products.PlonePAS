@@ -118,6 +118,12 @@ class ZODBMutablePropertyProvider(BasePlugin):
             mdvalues = mdtool.propertyItems()
             for name, value in mdvalues:
                 defaultvalues[name] = value
+
+            # ALERT! if someone gives their *_data tool a title, and want a title
+            #        as a property of the user/group (and groups do by default)
+            #        we don't want them all to have this title, since a title is
+            #        used in the UI if it exists
+            if defaultvalues.get("title"): defaultvalues["title"] = ""
         return defaultvalues
 
     def getPropertiesForUser(self, user, request=None):

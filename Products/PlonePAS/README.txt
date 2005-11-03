@@ -76,6 +76,12 @@ Notes
   The title for a group comes from the properties plugin. The info
   in the groups plugin isn't used, except for the name.
 
+  The value of the 'title' property on the portal_groupdata or
+  portal_memberdata tool will not be used as a default for the title
+  of the group or member. This is to prevent UI confusion if a title
+  is set without realizing the implications. To remove this special
+  case, see 'plugins.property._getDefaultValues'.
+
   If PAS caching is enabled (see the "Cache" tab) and the cache
   manager does not have a 'cleanup' method (RAMCacheManager has one),
   then changes to the memberdata schema will not effect users already
