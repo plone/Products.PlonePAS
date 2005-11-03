@@ -72,6 +72,10 @@ For reference, the standard install procedure:
 
 Notes
 
+  Why doesn't the title of my group, that I set in the ZODB, show up?
+  The title for a group comes from the properties plugin. The info
+  in the groups plugin isn't used, except for the name.
+
   If PAS caching is enabled (see the "Cache" tab) and the cache
   manager does not have a 'cleanup' method (RAMCacheManager has one),
   then changes to the memberdata schema will not effect users already
