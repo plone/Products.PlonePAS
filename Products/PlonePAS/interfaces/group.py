@@ -71,7 +71,7 @@ class IGroupIntrospection(Interface):
     # these interface methods are suspect for scalability.
     #################################
 
-    def listGroups():
+    def getGroups():
         """
         Returns an iteration of the available groups
         """
