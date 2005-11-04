@@ -25,6 +25,8 @@ from types import LongType, FloatType, InstanceType
 
 from DateTime.DateTime import DateTime
 
+from Products.CMFCore.utils import getToolByName
+
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
@@ -109,7 +111,8 @@ class MutablePropertySheet(UserPropertySheet):
         provider.setPropertiesForUser(user, self)
 
     def _getPropertyProviderForUser(self, user):
-        return user.acl_users._getOb(self._id)
+        portal = getToolByName(user.acl_users, 'portal_url').getPortalObject()
+        return portal.acl_users._getOb(self._id)
 
 classImplements(MutablePropertySheet,
                 IMutablePropertySheet)
