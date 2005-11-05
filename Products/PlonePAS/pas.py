@@ -151,7 +151,7 @@ def getGroup(self, group_id):
         raise NotSupported, 'No plugins allow for group management'
     for iid, introspector in introspectors:
         group = introspector.getGroupById(group_id)
-        if group is None:
+        if group is not None:
             break
     return group
 PluggableAuthService.getGroup = getGroup
