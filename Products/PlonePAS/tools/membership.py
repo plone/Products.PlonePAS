@@ -26,15 +26,16 @@ from Products.PlonePAS.config import logger
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.PloneUtilities import _createObjectByType
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
 
 try:
-    # Plone 2.0
-    from Products.CMFPlone.PloneUtilities import translate
-except ImportError:
     # Plone 2.1
     from Products.CMFPlone.utils import utranslate as translate
+    from Products.CMFPlone.utils import _createObjectByType
+except ImportError:
+    # Plone 2.0
+    from Products.CMFPlone.PloneUtilities import translate
+    from Products.CMFPlone.PloneUtilities import _createObjectByType
 
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool.
