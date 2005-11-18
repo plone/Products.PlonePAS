@@ -66,6 +66,8 @@ PropertySchema.addType('int', lambda x:  x is None or type(x) is IntType)
 PropertySchema.addType('long', lambda x:  x is None or type(x) is LongType)
 PropertySchema.addType('float', lambda x:  x is None or type(x) is FloatType)
 PropertySchema.addType('lines', lambda x:  x is None or type(x) in _SequenceTypes)
+PropertySchema.addType('selection', lambda x:  x is None or type(x) in StringTypes)
+PropertySchema.addType('multiple selection', lambda x:  x is None or type(x) in _SequenceTypes)
 PropertySchema.addType('date', lambda x: 1 or x is None or type(x) is InstanceType and isinstance(x, DateTime))
 validateValue = PropertySchema.validate
 
