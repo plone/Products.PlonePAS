@@ -112,7 +112,7 @@ class MemberData(BaseMemberData):
         sheets = None
 
         # We could pay attention to force_local here...
-        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self.acl_users):
             # Defer to base impl in absence of PAS, a PAS user, or
             # property sheets
             return BaseMemberData.setMemberProperties(self, mapping)
@@ -136,7 +136,7 @@ class MemberData(BaseMemberData):
             for sheet in sheets:
                 if not sheet.hasProperty(k):
                     continue
-                if IMutablePropertySheet.isImplementedBy(sheet):
+                if IMutablePropertySheet.providedBy(sheet):
                     sheet.setProperty(user, k, v)
                     modified = True
                 else:
@@ -151,7 +151,7 @@ class MemberData(BaseMemberData):
         through the ordered property sheets.
         """
         sheets = None
-        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self.acl_users):
             return BaseMemberData.getProperty(self, id)
         else:
             # It's a PAS! Whee!
@@ -198,7 +198,7 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IUserManagement)
         if managers:
             for mid, manager in managers:
-                if IDeleteCapability.isImplementedBy(manager):
+                if IDeleteCapability.providedBy(manager):
                     return manager.allowDeletePrincipal(self.getId())
         return 0
 
@@ -210,7 +210,7 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IUserManagement)
         if managers:
             for mid, manager in managers:
-                if IPasswordSetCapability.isImplementedBy(manager):
+                if IPasswordSetCapability.providedBy(manager):
                     return manager.allowPasswordSet(self.getId())
         return 0
 
@@ -233,7 +233,7 @@ class MemberData(BaseMemberData):
         """True iff the member/group property named in 'prop_name'
         can be changed.
         """
-        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self.acl_users):
             # not PAS; Memberdata is writable
             return self._memberdataHasProperty(prop_name)
         else:
@@ -246,7 +246,7 @@ class MemberData(BaseMemberData):
             for sheet in sheets:
                 if not sheet.hasProperty(prop_name):
                     continue
-                if IMutablePropertySheet.isImplementedBy(sheet):
+                if IMutablePropertySheet.providedBy(sheet):
                     return 1
                 else:
                     break  # shadowed by read-only
@@ -260,7 +260,7 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if IGroupCapability.isImplementedBy(manager):
+                if IGroupCapability.providedBy(manager):
                     return manager.allowGroupAdd(self.getId(), group_id)
         return 0
 
@@ -271,7 +271,7 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if IGroupCapability.isImplementedBy(manager):
+                if IGroupCapability.providedBy(manager):
                     return manager.allowGroupRemove(self.getId(), group_id)
         return 0
 
@@ -283,7 +283,7 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IRoleAssignerPlugin)
         if managers:
             for mid, manager in managers:
-                if IAssignRoleCapability.isImplementedBy(manager):
+                if IAssignRoleCapability.providedBy(manager):
                     return manager.allowRoleAssign(self.getId(), role_id)
         return 0
 

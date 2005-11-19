@@ -44,7 +44,7 @@ class PASStorage(object):
         sheets = user.getOrderedSheets()
         for sheet in sheets:
             if sheet.hasProperty( name ):
-                if IMutablePropertySheet.isImplementedBy( sheet ):
+                if IMutablePropertySheet.providedBy( sheet ):
                     sheet.setProperty( k, v )
                 else:
                     raise RuntimeError("mutable property provider shadowed by read only provider")

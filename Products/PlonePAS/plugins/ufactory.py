@@ -111,7 +111,7 @@ class PloneUser(PropertiedUser):
         """ -> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
         """
-        if IPropertySheet.isImplementedBy(data):
+        if IPropertySheet.providedBy(data):
             sheet = data
         else:
             sheet = UserPropertySheet(id, **data)

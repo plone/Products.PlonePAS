@@ -73,7 +73,7 @@ class BasicOpsTestCase(PloneTestCase):
             )
 
     def test_installed(self):
-        self.failUnless(IPluggableAuthService.isImplementedBy(self.acl_users))
+        self.failUnless(IPluggableAuthService.providedBy(self.acl_users))
 
     def test_add(self):
         self.createUser()

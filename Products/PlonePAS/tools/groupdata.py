@@ -103,7 +103,7 @@ class GroupData(BaseGroupData):
         """
         sheets = None
 
-        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self.acl_users):
             # Defer to base impl in absence of PAS, a PAS group, or
             # property sheets
             return BaseGroupData.setGroupProperties(self, mapping)
@@ -127,7 +127,7 @@ class GroupData(BaseGroupData):
             for sheet in sheets:
                 if not sheet.hasProperty(k):
                     continue
-                if IMutablePropertySheet.isImplementedBy(sheet):
+                if IMutablePropertySheet.providedBy(sheet):
                     sheet.setProperty(group, k, v)
                     modified = True
                 else:
@@ -141,7 +141,7 @@ class GroupData(BaseGroupData):
         through the ordered property sheets.
         """
         sheets = None
-        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self.acl_users):
             return BaseGroupData.getProperty(self, id)
         else:
             # It's a PAS! Whee!
@@ -232,7 +232,7 @@ class GroupData(BaseGroupData):
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if IDeleteCapability.isImplementedBy(manager):
+                if IDeleteCapability.providedBy(manager):
                     return manager.allowDeletePrincipal(self.getId())
         return 0
 
@@ -260,7 +260,7 @@ class GroupData(BaseGroupData):
         can be changed.
         """
         # this looks almost exactly like in memberdata. refactor?
-        if not IPluggableAuthService.isImplementedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self.acl_users):
             # not PAS; Groupdata is writable
             return self._groupdataHasProperty(prop_name)
         else:
@@ -273,7 +273,7 @@ class GroupData(BaseGroupData):
             for sheet in sheets:
                 if not sheet.hasProperty(prop_name):
                     continue
-                if IMutablePropertySheet.isImplementedBy(sheet):
+                if IMutablePropertySheet.providedBy(sheet):
                     return 1
                 else:
                     break  # shadowed by read-only
