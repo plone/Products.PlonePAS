@@ -98,9 +98,11 @@ class ZODBMutablePropertyProvider(BasePlugin):
         if not schema:
             # if no schema is provided, use portal_memberdata properties
             schema = ()
-            mdtool = getToolByName(self, datatool)
-            mdschema = mdtool.propertyMap()
-            schema = [(elt['id'], elt['type']) for elt in mdschema]
+            mdtool = getToolByName(self, datatool, None)
+            # Don't fail badly if tool is not available.
+            if mdtool is not None:
+                mdschema = mdtool.propertyMap()
+                schema = [(elt['id'], elt['type']) for elt in mdschema]
         return schema
 
     def _getDefaultValues(self, isgroup=None):
@@ -113,11 +115,13 @@ class ZODBMutablePropertyProvider(BasePlugin):
         if not self._schema:
             # if no schema is provided, use portal_*data properties
             defaultvalues = {}
-            mdtool = getToolByName(self, datatool)
-            # we rely on propertyMap and propertyItems mapping
-            mdvalues = mdtool.propertyItems()
-            for name, value in mdvalues:
-                defaultvalues[name] = value
+            mdtool = getToolByName(self, datatool, None)
+            # Don't fail badly if tool is not available.
+            if mdtool is not None:
+                # we rely on propertyMap and propertyItems mapping
+                mdvalues = mdtool.propertyItems()
+                for name, value in mdvalues:
+                    defaultvalues[name] = value
 
             # ALERT! if someone gives their *_data tool a title, and want a title
             #        as a property of the user/group (and groups do by default)
