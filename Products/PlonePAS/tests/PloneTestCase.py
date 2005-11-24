@@ -188,7 +188,7 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
 
 def _setupHomeFolder(portal, member_id):
     '''Creates the folders comprising a memberarea.'''
-    from Products.CMFPlone.PloneUtilities import _createObjectByType
+    from Products.CMFPlone.utils import _createObjectByType
     membership = portal.portal_membership
     catalog = portal.portal_catalog
     # Create home folder
