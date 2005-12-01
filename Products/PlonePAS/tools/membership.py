@@ -306,7 +306,7 @@ class MembershipTool(BaseMembershipTool):
 
         member_folder_title = translate(
             'plone', 'title_member_folder',
-            {'member': safe_member_id}, self,
+            {'member': member_id}, self,
             default = "%s's Home" % safe_member_id)
 
         member_folder_description = translate(
