@@ -8,6 +8,8 @@ Major missing functionality
 
 Robustness and productization
 
+ - make sure listMemberIds works
+
  - Caching of users seems to fail
 
  - again with the failure of member property sets to take
