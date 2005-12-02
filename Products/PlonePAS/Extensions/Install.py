@@ -16,8 +16,8 @@
 $Id$
 """
 
+from sets import Set
 from StringIO import StringIO
-
 from Acquisition import aq_base, aq_inner, aq_parent
 
 from Products.Archetypes.Extensions.utils import install_subskin
@@ -93,9 +93,20 @@ def setupRoles(portal):
     rmanager.addRole('Reviewer', title="Content Reviewer")
 
 def registerPluginType(pas, plugin_type, plugin_info):
-    # this doesn't check for existing plugin types. doesn't seem to be a problem...
+    # Make sure there's no dupes in _plugin_types, otherwise your PAS
+    # will *CRAWL*
+    plugin_types = list(Set(pas.plugins._plugin_types))
+    if not plugin_type in plugin_types:
+        plugin_types.append(plugin_type)
+
+    # Order doesn't seem to matter, but let's store it ordered.
+    plugin_types.sort()
+
+    # Re-assign to the object, because this is a non-persistent list.
+    pas.plugins._plugin_types = plugin_types
+
+    # It's safe to assign over a existing key here.
     pas.plugins._plugin_type_info[plugin_type] =  plugin_info
-    pas.plugins._plugin_types.append(plugin_type)
 
 def registerPluginTypes(pas):
 
@@ -703,7 +714,7 @@ def pas_fixup(self, out):
 
     plugins = pas['plugins']
 
-    plugin_types = list(plugins._plugin_types)
+    plugin_types = list(Set(plugins._plugin_types))
     for key, id, title, description in _PLUGIN_TYPE_INFO:
         if key in plugin_types:
             print >> out, "Plugin type '%s' already registered." % id
@@ -715,6 +726,10 @@ def pas_fixup(self, out):
             'title': title,
             'description': description,
             }
+    # Make it ordered
+    plugin_types.sort()
+
+    # Re-assign because it's a non-persistent property.
     plugins._plugin_types = plugin_types
 
 def challenge_chooser_setup(self, out):
