@@ -92,7 +92,10 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         """
         roles = []
         principal_ids = [principal.getId()]
-        principal_ids.extend( principal.getGroups() )
+        # not all user objects are propertied users with groups support.
+        # theres no interface for now - so use an ugly hasattr
+        if hasattr(principal, 'getGroups'):
+            principal_ids.extend( principal.getGroups() )
         for pid in principal_ids:
             roles.extend( self._principal_roles.get( pid, () ) )
         return tuple( unique( roles ) )
