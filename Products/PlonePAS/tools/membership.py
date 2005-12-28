@@ -390,21 +390,48 @@ class MembershipTool(BaseMembershipTool):
     security.declarePublic('createMemberArea')
     createMemberArea = createMemberarea
 
-    security.declarePublic('getHomeFolder')
-    def getHomeFolder(self, id=None, verifyPermission=0):
-        """ Return a member's home folder object, or None.
+    def _getSafeMemberId(self, id=None):
+        """Return a safe version of a member id.
 
-        Specially instrumented to for URL-quoted-member-id folder
-        names.
+        If no id is given return the id for the currently authenticated user.
         """
+
         if id is None:
             member = self.getAuthenticatedMember()
             if not hasattr(member, 'getMemberId'):
                 return None
             id = member.getMemberId()
 
-        safe_id = cleanId(id)
+        return cleanId(id)
+
+
+    security.declarePublic('getHomeFolder')
+    def getHomeFolder(self, id=None, verifyPermission=0):
+        """ Return a member's home folder object, or None.
+
+        Specially instrumented for URL-quoted-member-id folder
+        names.
+        """
+        safe_id = self._getSafeMemberId(id)
         return BaseMembershipTool.getHomeFolder(self, safe_id, verifyPermission)
+
+
+    def getPersonalPortrait(self, id=None, verifyPermission=0):
+        """Return a members personal portait.
+
+        Modified from CMFPlone version to URL-quote the member id.
+        """
+        safe_id = self._getSafeMemberId(id)
+        return BaseMembershipTool.getPersonalPortrait(self, safe_id, verifyPermission)
+
+
+    def deletePersonalPortrait(self, id=None):
+        """deletes the Portait of a member.
+
+        Modified from CMFPlone version to URL-quote the member id.
+        """
+        safe_id = self._getSafeMemberId(id)
+        return BaseMembershipTool.deletePersonalPortrait(safe_id)
 
 
 InitializeClass(MembershipTool)
