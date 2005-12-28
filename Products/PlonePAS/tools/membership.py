@@ -431,7 +431,16 @@ class MembershipTool(BaseMembershipTool):
         Modified from CMFPlone version to URL-quote the member id.
         """
         safe_id = self._getSafeMemberId(id)
-        return BaseMembershipTool.deletePersonalPortrait(safe_id)
+        return BaseMembershipTool.deletePersonalPortrait(self, safe_id)
+
+
+    def changeMemberPortrait(self, portrait, id=None):
+        """update the portait of a member.
+
+        Modified from CMFPlone version to URL-quote the member id.
+        """
+        safe_id = self._getSafeMemberId(id)
+        return BaseMembershipTool.changeMemberPortrait(self, portrait, safe_id)
 
 
 InitializeClass(MembershipTool)
