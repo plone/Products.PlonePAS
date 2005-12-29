@@ -17,6 +17,7 @@ $Id$
 """
 
 from Products.CMFCore.utils import getToolByName
+from urllib import quote as url_quote
 
 def unique(iterable):
     d = {}
@@ -33,3 +34,15 @@ def getCharset(context):
         if site_properties is not None:
             return site_properties.getProperty('default_charset')
     return 'utf-8'
+
+def cleanId(id):
+    """'url_quote' turns strange chars into '%xx', which is not a valid char
+    for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as escaping).
+    De-clean is possible, but not quite as simple.
+    Assumes that id can start with non-alpha(numeric), which is true.
+    """
+    __traceback_info__ = (id,)
+    if id:
+        # note: we provide the 'safe' param to get '/' encoded
+        return url_quote(id, '').replace('-','--').replace('%','-')
+    return ''

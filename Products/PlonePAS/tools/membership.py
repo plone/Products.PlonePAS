@@ -17,8 +17,6 @@ $Id$
 """
 
 from sets import Set
-from urllib import quote as url_quote
-from urllib import unquote as url_unquote
 
 from Globals import InitializeClass
 from Products.PlonePAS.config import logger
@@ -36,6 +34,7 @@ except ImportError:
     # Plone 2.0
     from Products.CMFPlone.PloneUtilities import translate
     from Products.CMFPlone.PloneUtilities import _createObjectByType
+from Products.PlonePAS.utils import cleanId
 
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool.
@@ -261,7 +260,7 @@ class MembershipTool(BaseMembershipTool):
             return
 
 
-        safe_member_id = _cleanId(member_id)
+        safe_member_id = cleanId(member_id)
         if hasattr(members, safe_member_id):
             # has already this member
             # XXX exception?
@@ -273,7 +272,7 @@ class MembershipTool(BaseMembershipTool):
         if not safe_member_id:
             # Could be one of two things:
             # - A Emergency User
-            # - _cleanId made a empty string out of member_id
+            # - cleanId made a empty string out of member_id
             logger.debug(
                 'createMemberarea: empty member id '
                 '(%r, %r), skipping member area creation.' % (
@@ -391,33 +390,58 @@ class MembershipTool(BaseMembershipTool):
     security.declarePublic('createMemberArea')
     createMemberArea = createMemberarea
 
-    security.declarePublic('getHomeFolder')
-    def getHomeFolder(self, id=None, verifyPermission=0):
-        """ Return a member's home folder object, or None.
+    def _getSafeMemberId(self, id=None):
+        """Return a safe version of a member id.
 
-        Specially instrumented to for URL-quoted-member-id folder
-        names.
+        If no id is given return the id for the currently authenticated user.
         """
+
         if id is None:
             member = self.getAuthenticatedMember()
             if not hasattr(member, 'getMemberId'):
                 return None
             id = member.getMemberId()
 
-        safe_id = _cleanId(id)
+        return cleanId(id)
+
+
+    security.declarePublic('getHomeFolder')
+    def getHomeFolder(self, id=None, verifyPermission=0):
+        """ Return a member's home folder object, or None.
+
+        Specially instrumented for URL-quoted-member-id folder
+        names.
+        """
+        safe_id = self._getSafeMemberId(id)
         return BaseMembershipTool.getHomeFolder(self, safe_id, verifyPermission)
+
+
+    def getPersonalPortrait(self, id=None, verifyPermission=0):
+        """Return a members personal portait.
+
+        Modified from CMFPlone version to URL-quote the member id.
+        """
+        safe_id = self._getSafeMemberId(id)
+        return BaseMembershipTool.getPersonalPortrait(self, safe_id, verifyPermission)
+
+
+    def deletePersonalPortrait(self, id=None):
+        """deletes the Portait of a member.
+
+        Modified from CMFPlone version to URL-quote the member id.
+        """
+        safe_id = self._getSafeMemberId(id)
+        return BaseMembershipTool.deletePersonalPortrait(self, safe_id)
+
+
+    def changeMemberPortrait(self, portrait, id=None):
+        """update the portait of a member.
+
+        Modified from CMFPlone version to URL-quote the member id.
+        """
+        safe_id = self._getSafeMemberId(id)
+        return BaseMembershipTool.changeMemberPortrait(self, portrait, safe_id)
 
 
 InitializeClass(MembershipTool)
 
-def _cleanId(id):
-    """'url_quote' turns strange chars into '%xx', which is not a valid char
-    for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as escaping).
-    De-clean is possible, but not quite as simple.
-    Assumes that id can start with non-alpha(numeric), which is true.
-    """
-    __traceback_info__ = (id,)
-    if id:
-        # note: we provide the 'safe' param to get '/' encoded
-        return url_quote(id, '').replace('-','--').replace('%','-')
-    return ''
