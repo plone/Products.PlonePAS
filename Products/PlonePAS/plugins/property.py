@@ -121,7 +121,16 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 # we rely on propertyMap and propertyItems mapping
                 mdvalues = mdtool.propertyItems()
                 for name, value in mdvalues:
-                    defaultvalues[name] = value
+                    # For selection types the default value is the name of a
+                    # method which returns the possible values. There is no way
+                    # to set a default value for those types.
+                    ptype = mdtool.getPropertyType(name)
+                    if ptype == "selection":
+                        defaultvalues[name] = ""
+                    elif ptype == "multiple selection":
+                        defaultvalues[name] = []
+                    else:
+                        defaultvalues[name] = value
 
             # ALERT! if someone gives their *_data tool a title, and want a title
             #        as a property of the user/group (and groups do by default)
