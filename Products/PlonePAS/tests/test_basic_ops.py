@@ -132,7 +132,29 @@ class BasicOpsTestCase(PloneTestCase):
         mt = self.portal.portal_membership
         member = mt.getMemberById("created_user")
         self.assertEquals("secret", member.getPassword())
-
+        
+    def test_setpw(self):
+        # there is more than one place where one can set the password.
+        # insane. anyway we have to check the patch in pas.py userSetPassword 
+        # here its checked in the general setup using ZODBUserManager.
+        self.createUser()
+        uf = self.acl_users
+        new_secret = 'new_secret'
+        uf.userSetPassword('created_user', new_secret)
+        
+        # possible to authenticate with new password?
+        from Products.PluggableAuthService.interfaces.plugins \
+            import IAuthenticationPlugin
+        authenticators = uf.plugins.listPlugins(IAuthenticationPlugin)
+        credentials = {'login': 'created_user', 'password': new_secret}
+        result = None
+        for aid, authenticator in authenticators:
+            result = authenticator.authenticateCredentials(credentials)
+            if result is not None:
+                break
+        self.failUnless(result)        
+        
+        
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(BasicOpsTestCase))
