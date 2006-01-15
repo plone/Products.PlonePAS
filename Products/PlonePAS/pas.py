@@ -242,15 +242,16 @@ def userSetPassword(self, userid, password):
     modified = False
     for mid, manager in managers:
         try:
-            manager.doChangeUser(userid, password)
-            modified = True
+            manager.doChangeUser(userid, password)            
         except RuntimeError:
+            # XXX: why silent ignore this Error?
             pass
+        else:
+            modified = True
 
     if not modified:
         raise RuntimeError ("No user management plugins were able "
                             "to successfully modify the user")
-
 PluggableAuthService.userSetPassword = userSetPassword
 
 
