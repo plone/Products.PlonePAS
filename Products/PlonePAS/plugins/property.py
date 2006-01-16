@@ -130,7 +130,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
                     elif ptype == "multiple selection":
                         defaultvalues[name] = []
                     else:
-                    defaultvalues[name] = value
+                        defaultvalues[name] = value
 
             # ALERT! if someone gives their *_data tool a title, and want a title
             #        as a property of the user/group (and groups do by default)
