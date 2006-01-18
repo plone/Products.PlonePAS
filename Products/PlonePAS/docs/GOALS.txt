@@ -1,2 +1,0 @@
-Project to facilite using PAS as a replacement system for user/group
-auth and credential management
