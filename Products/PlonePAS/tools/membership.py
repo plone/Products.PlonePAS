@@ -94,22 +94,22 @@ class MembershipTool(BaseMembershipTool):
         groups_tool = self.portal_groups
 
         if REQUEST is not None:
-            dict = REQUEST
+            searchmap = REQUEST
         else:
-            dict = kw
+            searchmap = kw
 
         user_search = {}
         for key in self.user_search_keywords:
-            value = dict.get(key, None)
+            value = searchmap.get(key, None)
             if value is None:
                 continue
             user_search[key] = value
 
-        name = dict.get('name', None)
-        email = dict.get('email', None)
-        roles = dict.get('roles', None)
-        last_login_time = dict.get('last_login_time', None)
-        groupname = dict.get('groupname', '').strip()
+        name = searchmap.get('name', None)
+        email = searchmap.get('email', None)
+        roles = searchmap.get('roles', None)
+        last_login_time = searchmap.get('last_login_time', None)
+        groupname = searchmap.get('groupname', '').strip()
         is_manager = self.checkPermission('Manage portal', self)
 
         if name:
