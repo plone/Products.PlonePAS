@@ -41,12 +41,21 @@ from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 #################################
 # pas folder monkies - standard zope user folder api
 
-def _doDelUsers(self, ids):
+def _doDelUsers(self, names):
     """
-    Given a list of user ids, hand off to a deleter plugin if available;
-    has no return value, like the original
+    Delete users given by a list of user ids.
+    Has no return value, like the original.
     """
+    for name in names:
+        self._doDelUser(name)
 
+PluggableAuthService._doDelUsers = _doDelUsers
+
+ 
+def _doDelUser(self, id):
+    """
+    Given a user id, hand off to a deleter plugin if available.
+    """
     plugins = self._getOb('plugins')
     userdeleters = plugins.listPlugins(IUserManagement)
 
@@ -55,10 +64,8 @@ def _doDelUsers(self, ids):
                                    " delete users.")
 
     for userdeleter_id, userdeleter in userdeleters:
-        for id in ids:
-            userdeleter.doDeleteUser(id)
-
-PluggableAuthService._doDelUsers = _doDelUsers
+        userdeleter.doDeleteUser(id)
+PluggableAuthService._doDelUser = _doDelUser
 
 security.declareProtected(ManageUsers, 'userFolderDelUsers')
 PluggableAuthService.userFolderDelUsers = PluggableAuthService._doDelUsers
@@ -111,7 +118,6 @@ security.declareProtected(ManageUsers, 'userFolderDelGroups')
 PluggableAuthService.userFolderDelGroups = PluggableAuthService._doDelGroups
 
 
-
 def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
     """
     Given a group's id, change its roles, domains, iff respective
@@ -139,6 +145,7 @@ PluggableAuthService._doChangeGroup = _doChangeGroup
 
 security.declareProtected(ManageUsers, 'userFolderEditGroup')
 PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
+
 
 security.declareProtected(ManageUsers, 'getGroup')
 def getGroup(self, group_id):
@@ -242,15 +249,16 @@ def userSetPassword(self, userid, password):
     modified = False
     for mid, manager in managers:
         try:
-            manager.doChangeUser(userid, password)
-            modified = True
+            manager.doChangeUser(userid, password)            
         except RuntimeError:
+            # XXX: why silent ignore this Error?
             pass
+        else:
+            modified = True
 
     if not modified:
         raise RuntimeError ("No user management plugins were able "
                             "to successfully modify the user")
-
 PluggableAuthService.userSetPassword = userSetPassword
 
 
@@ -279,6 +287,8 @@ def _delOb( self, id ):
     #   Override ObjectManager's version to clean up any plugin
     #   registrations for the deleted object
     #
+    # XXX imo this is a evil one
+    #
     plugins = self._getOb( 'plugins', None )
 
     if getattr(plugins, 'removePluginById', None) is not None:
@@ -286,17 +296,3 @@ def _delOb( self, id ):
 
     Folder._delOb( self, id )
 PluggableAuthService._delOb = _delOb
-
-
-
-#################################
-# non standard gruf --- junk method  XXX remove me
-
-def _doDelUsers(self, names):
-    """Delete one or more users. This should be implemented by
-    subclasses to do the actual deleting of users.
-    """
-    for name in names:
-        self._doDelUser(name)
-
-PluggableAuthService._doDelUsers = _doDelUsers
