@@ -132,19 +132,6 @@ class BasicOpsTestCase(PloneTestCase):
         self.failUnless("created_user" in usernames,
                         "'created_user' not in %s" % usernames)
 
-    def test_getpw(self):
-        # both pw reset functionality in control panel and "mail me my
-        # pw" on the mail_password_form (accessible from the login
-        # form) use MemberData.getPassword() to mail the password the
-        # user already has. This is wrong, as some user sources don't
-        # have the ability to recover a user password (think
-        # /etc/passwd or /etc/shadow, for starters), but this is what
-        # Plone does so here is a test
-        self.createUser()
-        mt = self.portal.portal_membership
-        member = mt.getMemberById("created_user")
-        self.assertEquals("secret", member.getPassword())
-        
     def test_setpw(self):
         # there is more than one place where one can set the password.
         # insane. anyway we have to check the patch in pas.py userSetPassword 
