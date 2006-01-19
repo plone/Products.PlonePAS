@@ -80,7 +80,7 @@ class MemberAreaTest(PloneTestCase.PloneTestCase):
 
         # Create a new User
         self.portal.acl_users._doAddUser(*minfo)
-        self.failIfRaises(BadRequest, self.mt.createMemberArea, mid)
+	self.mt.createMemberArea,(mid)
 
     def test_funky_member_ids_2(self):
         # Forward-slash is not allowed

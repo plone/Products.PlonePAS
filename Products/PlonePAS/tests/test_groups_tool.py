@@ -83,7 +83,7 @@ class GroupWorkspacesTest(PloneTestCase.PloneTestCase):
                  {'email': 'group1@host.com',
                   'title': 'Group #1'})
         # Create a new Group
-        self.failIfRaises(BadRequest, self.gt.addGroup, *ginfo)
+	self.gt.addGroup(*ginfo)
 
     def test_funky_group_ids_2(self):
         # Forward-slash is not allowed
