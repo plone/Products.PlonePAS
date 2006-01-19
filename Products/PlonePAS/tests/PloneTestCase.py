@@ -1,17 +1,3 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
 #
 # PloneTestCase
 #
@@ -20,86 +6,82 @@
 
 from Testing import ZopeTestCase
 
-#ZopeTestCase.installProduct('SiteErrorLog')
+# XXX: Suppress DeprecationWarnings
+import warnings
+warnings.simplefilter('ignore', DeprecationWarning, append=1)
+
 ZopeTestCase.installProduct('CMFCore')
 ZopeTestCase.installProduct('CMFDefault')
 ZopeTestCase.installProduct('CMFCalendar')
 ZopeTestCase.installProduct('CMFTopic')
 ZopeTestCase.installProduct('DCWorkflow')
+ZopeTestCase.installProduct('CMFUid', quiet=1)
 ZopeTestCase.installProduct('CMFActionIcons')
 ZopeTestCase.installProduct('CMFQuickInstallerTool')
 ZopeTestCase.installProduct('CMFFormController')
+ZopeTestCase.installProduct('ResourceRegistries')
 ZopeTestCase.installProduct('GroupUserFolder')
 ZopeTestCase.installProduct('ZCTextIndex')
-if ZopeTestCase.hasProduct('TextIndexNG2'):
-    ZopeTestCase.installProduct('TextIndexNG2')
+ZopeTestCase.installProduct('ExtendedPathIndex')
 ZopeTestCase.installProduct('SecureMailHost')
+if ZopeTestCase.hasProduct('ExternalEditor'):
+    ZopeTestCase.installProduct('ExternalEditor')
 ZopeTestCase.installProduct('CMFPlone')
-ZopeTestCase.installProduct('PluggableAuthService')
-ZopeTestCase.installProduct('PluginRegistry')
 ZopeTestCase.installProduct('MailHost', quiet=1)
 ZopeTestCase.installProduct('PageTemplates', quiet=1)
 ZopeTestCase.installProduct('PythonScripts', quiet=1)
 ZopeTestCase.installProduct('ExternalMethod', quiet=1)
-ZopeTestCase.installProduct('SecureMailHost', quiet=1)
-ZopeTestCase.installProduct('ExternalEditor', quiet=1)
-ZopeTestCase.installProduct('Archetypes')
-ZopeTestCase.installProduct('validation')
-ZopeTestCase.installProduct('MimetypesRegistry')
-ZopeTestCase.installProduct('PortalTransforms')
-ZopeTestCase.installProduct('ATContentTypes')
-ZopeTestCase.installProduct('ExtendedPathIndex')
-ZopeTestCase.installProduct('ATReferenceBrowserWidget')
-ZopeTestCase.installProduct('ResourceRegistries')
+
+# PAS
+ZopeTestCase.installProduct('PluggableAuthService')
+ZopeTestCase.installProduct('PluginRegistry')
 ZopeTestCase.installProduct('PasswordResetTool')
 ZopeTestCase.installProduct('PlonePAS')
 
-ZopeTestCase.utils.setupSiteErrorLog()
+# Archetypes/ATContentTypes dependencies
+ZopeTestCase.installProduct('Archetypes')
+ZopeTestCase.installProduct('MimetypesRegistry', quiet=1)
+ZopeTestCase.installProduct('PortalTransforms', quiet=1)
+ZopeTestCase.installProduct('ATContentTypes')
+ZopeTestCase.installProduct('ATReferenceBrowserWidget')
+
+import transaction
+from Testing.ZopeTestCase.utils import makelist
+from Products.CMFPlone.utils import _createObjectByType
+from Products.CMFPlone.tests.utils import setupBrowserIdManager
 
 from AccessControl.SecurityManagement import newSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from Acquisition import aq_base
 import time
-import types
+
+from zope.app.tests.placelesssetup import setUp, tearDown
+from Products.Five import zcml
+import Products.statusmessages
 
 portal_name = 'portal'
 portal_owner = 'portal_owner'
 default_user = ZopeTestCase.user_name
+default_password = ZopeTestCase.user_password
 
 
 class PloneTestCase(ZopeTestCase.PortalTestCase):
     '''TestCase for Plone testing'''
 
-    vanilla_plone = False
-
-    def isVanilla(self):
-        if self.portal.acl_users.meta_type == 'Pluggable Auth Service':
-            # It's not a vanilla Plone, but a PAS-enabled Plone.
-            return False
-        return True
+    def beforeSetUp(self):
+        setUp()
+        zcml.load_config('meta.zcml', Products.Five)
+        zcml.load_config('configure.zcml', Products.statusmessages)
 
     def _setup(self):
         ZopeTestCase.PortalTestCase._setup(self)
-        # Avoid ConflictError.
-        get_transaction().abort()
-        portal_name = self.portal.getId()
-        if self.vanilla_plone:
-            if not self.isVanilla():
-                from Products.CMFPlone.tests import PloneTestCase
-                # Setup a vanilla plone site, to test some migration trickery.
-                self.app.manage_delObjects(ids=[portal_name])
-                PloneTestCase.setupPloneSite(self.app, id=portal_name, quiet=1)
-
-                # Old portal is gone.
-                self.portal = self.app[portal_name]
-        else:
-            if self.isVanilla():
-                # Setup a PAS-enabled plone site
-                self.app.manage_delObjects(ids=[portal_name])
-                setupPloneSite(self.app, id=portal_name, quiet=1)
-
-                # Old portal is gone.
-                self.portal = self.app[portal_name]
+        # Hack ACTUAL_URL and plone_skin into the REQUEST
+        self.app.REQUEST['ACTUAL_URL'] = self.app.REQUEST.get('URL')
+        self.app.REQUEST['plone_skin'] = 'Plone Default'
+        # Need PARENTS in request otherwise REQUEST.clone() fails
+        self.app.REQUEST.set('PARENTS', [self.app])
+        # Disable the constraintypes performance hog
+        self.folder.setConstrainTypesMode(0)
 
     def getPortal(self):
         '''Returns the portal object to the bootstrap code.
@@ -110,49 +92,25 @@ class PloneTestCase(ZopeTestCase.PortalTestCase):
 
     def createMemberarea(self, member_id):
         '''Creates a minimal, no-nonsense memberarea.'''
-        membership = self.portal.portal_membership
-        # Owner
-        uf = self.portal.acl_users
-        user = uf.getUserById(member_id)
-        if user is None:
-            raise ValueError, 'Member %s does not exist' % member_id
-        user = user.__of__(uf)
-        # Home folder may already exist (see below)
-        members = membership.getMembersFolder()
-        # Get rid of possible existing home folder.
-        if hasattr(aq_base(members), member_id):
-            members.manage_delObjects(ids=[member_id])
-        _setupHomeFolder(self.portal, member_id)
-        # Take ownership of home folder
-        home = membership.getHomeFolder(member_id)
-        home.changeOwnership(user)
-        home.__ac_local_roles__ = None
-        home.manage_setLocalRoles(member_id, ['Owner'])
-        # Take ownership of personal folder
-        personal = membership.getPersonalFolder(member_id)
-        personal.changeOwnership(user)
-        personal.__ac_local_roles__ = None
-        personal.manage_setLocalRoles(member_id, ['Owner'])
+        _createHomeFolder(self.portal, member_id)
 
     def setGroups(self, groups, name=default_user):
-        '''Changes the specified user's groups. Assumes GRUF.''' #' emacs
-        self.assertEqual(type(groups), types.ListType)
+        '''Changes the specified user's groups. Assumes GRUF.'''
         uf = self.portal.acl_users
-        uf._updateUser(name, groups=groups, domains=[])
+        uf._updateUser(name, groups=makelist(groups), domains=[])
         if name == getSecurityManager().getUser().getId():
             self.login(name)
 
     def loginPortalOwner(self):
-        '''Use if you need to manipulate the portal itself.'''
+        '''Use if - AND ONLY IF - you need to manipulate the
+           portal object itself.
+        '''
         uf = self.app.acl_users
         user = uf.getUserById(portal_owner).__of__(uf)
         newSecurityManager(None, user)
 
-    def failIfRaises(self, exc, method, *args, **kw):
-        try:
-            method(*args, **kw)
-        except exc, e:
-            self.fail('Got exception %r where it should not happen' % e)
+    def beforeTearDown(self):
+        tearDown()
 
 
 class FunctionalTestCase(ZopeTestCase.Functional, PloneTestCase):
@@ -163,42 +121,45 @@ def setupPloneSite(app=None, id=portal_name, quiet=0, with_default_memberarea=1)
     '''Creates a Plone site.'''
     if not hasattr(aq_base(app), id):
         _start = time.time()
-        if not quiet: ZopeTestCase._print('Adding PAS Plone Site ... ')
-
+        if not quiet: ZopeTestCase._print('Adding Plone Site ... ')
         # Add user and log in
         app.acl_users._doAddUser(portal_owner, '', ['Manager'], [])
         user = app.acl_users.getUserById(portal_owner).__of__(app.acl_users)
         newSecurityManager(None, user)
         # Add Plone Site
+        setUp() # we need the component architecture for site generation
         factory = app.manage_addProduct['CMFPlone']
         factory.manage_addSite(id, '', create_userfolder=1)
-        # Replace user folder.
-        app.portal.manage_delObjects(ids=['acl_users'])
-        app.portal.portal_quickinstaller.installProduct('PlonePAS')
-
         # Precreate default memberarea for performance reasons
         if with_default_memberarea:
-            _setupHomeFolder(app[id], default_user)
+            _createHomeFolder(app[id], default_user, 0)
+        tearDown() # clean up again
         # Log out
         noSecurityManager()
-        get_transaction().commit()
+        transaction.commit()
         if not quiet: ZopeTestCase._print('done (%.3fs)\n' % (time.time()-_start,))
 
 
-def _setupHomeFolder(portal, member_id):
-    '''Creates the folders comprising a memberarea.'''
-    from Products.CMFPlone.utils import _createObjectByType
+def _createHomeFolder(portal, member_id, take_ownership=1):
+    '''Creates a memberarea if it does not already exist.'''
     membership = portal.portal_membership
-    catalog = portal.portal_catalog
-    # Create home folder
     members = membership.getMembersFolder()
-    _createObjectByType('Folder', members, id=member_id)
-    # Create personal folder
-    home = membership.getHomeFolder(member_id)
-    _createObjectByType('Folder', home, id=membership.personal_id)
-    # Uncatalog personal folder
-    personal = membership.getPersonalFolder(member_id)
-    catalog.unindexObject(personal)
+
+    if not hasattr(aq_base(members), member_id):
+        # Create home folder
+        _createObjectByType('Folder', members, id=member_id)
+
+    if take_ownership:
+        user = portal.acl_users.getUserById(member_id)
+        if user is None:
+            raise ValueError, 'Member %s does not exist' % member_id
+        if not hasattr(user, 'aq_base'):
+            user = user.__of__(portal.acl_users)
+        # Take ownership of home folder
+        home = membership.getHomeFolder(member_id)
+        home.changeOwnership(user)
+        home.__ac_local_roles__ = None
+        home.manage_setLocalRoles(member_id, ['Owner'])
 
 
 def optimize():
@@ -227,14 +188,20 @@ def optimize():
     PloneGenerator.setupMembersFolder = setupMembersFolder
     # Don't setup Plone content (besides Members folder)
     def setupPortalContent(self, p):
-        p.invokeFactory('Large Plone Folder', id='Members')
-        p.portal_catalog.unindexObject(p.Members)
+        _createObjectByType('Large Plone Folder', p, id='Members', title='Members')
     PloneGenerator.setupPortalContent = setupPortalContent
+    # Don't populate type fields in the ConstrainTypesMixin schema, FFS!
+    def _ct_defaultAddableTypeIds(self):
+        return []
+    from Products.ATContentTypes.lib.constraintypes import ConstrainTypesMixin
+    ConstrainTypesMixin._ct_defaultAddableTypeIds = _ct_defaultAddableTypeIds
 
 
 optimize()
 
 # Create a Plone site in the test (demo-) storage
 app = ZopeTestCase.app()
+ZopeTestCase.utils.setupSiteErrorLog()
+setupBrowserIdManager(app)
 setupPloneSite(app)
 ZopeTestCase.close(app)
