@@ -30,7 +30,7 @@ except:
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
-from Products.CMFCore.MemberDataTool import _marker
+from Products.CMFPlone.MemberDataTool import _marker
 
 from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
@@ -161,7 +161,7 @@ class MemberData(BaseMemberData):
             # we won't always have PlonePAS users, due to acquisition,
             # nor are guaranteed property sheets
             if not sheets:
-                return BaseMemberData.getProperty(self, id)
+                return BaseMemberData.getProperty(self, id, default)
 
         charset = getCharset(self)
 
