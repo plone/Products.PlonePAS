@@ -89,7 +89,7 @@ class MemberAreaTest(PloneTestCase.PloneTestCase):
 
         # Create a new User
         self.portal.acl_users._doAddUser(*minfo)
-        self.failUnlessRaises(BadRequest, self.mt.createMemberArea, mid)
+        self.mt.createMemberArea(mid)
 
     def test_memberareaCreationFlag_respected(self):
         self.portal.acl_users._doAddUser('foo', 'pw', ['Member'], [])
