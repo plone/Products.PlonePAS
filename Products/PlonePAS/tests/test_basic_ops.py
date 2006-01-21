@@ -29,12 +29,8 @@ del PloneTestCase
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tests.PloneTestCase import PloneTestCase
 
-from Products.PluggableAuthService.PluggableAuthService \
-    import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins \
-     import IRolesPlugin
 
 class BasicOpsTestCase(PloneTestCase):
 
@@ -98,15 +94,7 @@ class BasicOpsTestCase(PloneTestCase):
         self.compareRoles(None, "created_user", ['Member'])
 
     def test_edit_userDefinedRole(self):
-	roleplugins = self.acl_users.plugins.listPlugins(IRolesPlugin)
-        for id, plugin in roleplugins:
-            try:
-                plugin.addRole('r1')
-            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                pass
-            else:
-                break
-
+        self.portal._addRole('r1')
         self.createUser()
         self.compareRoles(None, "created_user", [])
         self.acl_users.userFolderEditUser(
