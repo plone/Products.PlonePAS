@@ -51,6 +51,11 @@ class GroupsTool(PloneGroupsTool):
         group = None
         success = 0
         managers = self._getGroupManagers()
+        if roles is None:
+            roles = []
+        if groups is None:
+            groups = []
+
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
         for mid, manager in managers:
