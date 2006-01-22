@@ -82,7 +82,8 @@ class GroupsTool(PloneGroupsTool):
         If user is not present, returns without exception.
         """
         group = self.getGroupById(id)
-        if not group: return None
+        if not group:
+            raise KeyError, 'Trying to edit a non-existing group'
         self.setRolesForGroup(id, roles)
         group.setGroupProperties(kw)
 
