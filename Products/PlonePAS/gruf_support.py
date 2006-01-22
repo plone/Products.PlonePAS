@@ -31,6 +31,7 @@ from Products.PluggableAuthService.PluggableAuthService import \
 from Products.PluggableAuthService.interfaces.plugins \
      import IRoleAssignerPlugin, IAuthenticationPlugin
 from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 def authenticate(self, name, password, request):
 
@@ -94,7 +95,7 @@ def userSetGroups(self, id, groupnames):
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 LOG('PluggableAuthService', BLATHER,
                     'AuthenticationPlugin %s error' %
-                    authenticator_id, error=sys.exc_info())
+                    gm_id, error=sys.exc_info())
 
 PluggableAuthService.userSetGroups = userSetGroups
 
@@ -103,10 +104,53 @@ PluggableAuthService.userSetGroups = userSetGroups
 def getUsers(self):
     return ()
 
+def getUserIds(self):
+    plugins = self.plugins
+
+    try:
+        introspectors = plugins.listPlugins(IUserIntrospection)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        introspectors = ()
+
+    results = []
+    for introspector_id, introspector in introspectors:
+        try:
+            results.extend(introspector.getUserIds())
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    introspector_id, error=sys.exc_info())
+
+    return results
+
+
 def getUserNames(self):
-    return ()
+    plugins = self.plugins
+
+    try:
+        introspectors = plugins.listPlugins(IUserIntrospection)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        introspectors = ()
+
+    results = []
+    for introspector_id, introspector in introspectors:
+        try:
+            results.extend(introspector.getUserNames())
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    introspector_id, error=sys.exc_info())
+
+    return results
 
 PluggableAuthService.getUsers = getUsers
+PluggableAuthService.getUserIds = getUserIds
 PluggableAuthService.getUserNames = getUserNames
 
 
