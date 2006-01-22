@@ -62,10 +62,6 @@ if config.PAS_INSIDE_GRUF:
     import gruf_support
 
 #################################
-# plone monkies
-import plone
-
-#################################
 # new groups tool
 from tools.plonetool import PloneTool
 from tools.membership import MembershipTool
