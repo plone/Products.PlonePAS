@@ -99,6 +99,34 @@ def userSetGroups(self, id, groupnames):
 
 PluggableAuthService.userSetGroups = userSetGroups
 
+def userFolderAddGroup(self, name, roles, groups = (), **kw):
+    plugins = self.plugins
+
+    try:
+        groupmanagers = plugins.listPlugins(IGroupManagement)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        groupmanagers = ()
+
+    for group in groupmanagers:
+        for gm_id, gm in groupmanagers:
+            try:
+                gm.addGroup(name, **kw)
+                if roles:
+                    gm.setRolesForGroup(name, roles=roles)
+                if groups:
+                    for group in groups:
+                        gm.addPrincipalToGroup(name, group)
+
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    gm_id, error=sys.exc_info())
+
+PluggableAuthService.userFolderAddGroup = userFolderAddGroup
+
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
 def getUsers(self):

@@ -71,7 +71,7 @@ security.declareProtected(ManageUsers, 'userFolderDelUsers')
 PluggableAuthService.userFolderDelUsers = PluggableAuthService._doDelUsers
 
 
-def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
+def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None, **kw):
     """
     Given a principal id, change its password, roles, domains, iff
     respective plugins for such exist.
@@ -92,6 +92,9 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), **kw):
     for rid, rmanager in rmanagers:
         rmanager.assignRolesToPrincipal(roles, principal_id)
 
+    if groups is not None:
+        self.userSetGroups(principal_id, groups)
+
     return True
 
 PluggableAuthService._doChangeUser = _doChangeUser
@@ -103,7 +106,12 @@ PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser
 # ttw alias
 # XXX need to security restrict these methods, no base class sec decl
 #PluggableAuthService.userFolderAddUser__roles__ = ()
-PluggableAuthService.userFolderAddUser = PluggableAuthService._doAddUser
+def userFolderAddUser(self, login, password, roles, domains, groups=None, **kw ):
+    self._doAddUser(login, password, roles, domains, **kw)
+    if groups is not None:
+        self.userSetGroups(login, groups)
+
+PluggableAuthService.userFolderAddUser = userFolderAddUser
 
 
 # for prefs_group_manage compatibility. really should be using tool.
