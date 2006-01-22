@@ -30,7 +30,7 @@ from Products.PluggableAuthService.PluggableAuthService import \
 #from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PluggableAuthService.interfaces.plugins \
      import IRoleAssignerPlugin, IAuthenticationPlugin
-
+from Products.PlonePAS.interfaces.group import IGroupManagement
 
 def authenticate(self, name, password, request):
 
@@ -72,6 +72,31 @@ def authenticate(self, name, password, request):
 PluggableAuthService.authenticate = authenticate
 PluggableAuthService.authenticate__roles__ = ()
 
+
+#################################
+# compat code galore
+def userSetGroups(self, id, groupnames):
+    plugins = self.plugins
+
+    try:
+        groupmanagers = plugins.listPlugins(IGroupManagement)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        groupmanagers = ()
+
+    for group in groupnames:
+        for gm_id, gm in groupmanagers:
+            try:
+                if gm.addPrincipalToGroup(id, group):
+                    break
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    authenticator_id, error=sys.exc_info())
+
+PluggableAuthService.userSetGroups = userSetGroups
 
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
