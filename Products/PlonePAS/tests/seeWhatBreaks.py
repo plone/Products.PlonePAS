@@ -35,11 +35,6 @@ sys.argv = sys.argv[:1]
 if __name__ == '__main__':
     execfile(os.path.join(sys.path[0], 'framework.py'))
 
-# use our PloneTestCase, not CMFPlone's
-import PloneTestCase
-from Products.CMFPlone.tests import PloneTestCase as BaseModule
-BaseModule.PloneTestCase = PloneTestCase.PloneTestCase
-
 # now run our tests
 import unittest
 TestRunner = unittest.TextTestRunner

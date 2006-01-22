@@ -23,7 +23,7 @@ if __name__ == '__main__':
 # Load fixture
 import unittest
 from Testing import ZopeTestCase
-from Products.PlonePAS.tests import PloneTestCase
+from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
 
 from Products.CMFCore.utils import getToolByName
 
@@ -54,15 +54,11 @@ HTTPResponse._traceback = _traceback
 HTTPResponse.exception = exception
 HTTPResponse.setBody = setBody
 
-class FunctionalTest(ZopeTestCase.Functional,
-                     PloneTestCase.PloneTestCase):
-    pass
-
 def test_suite():
     suite = unittest.TestSuite()
     DocFileSuite = ZopeTestCase.FunctionalDocFileSuite
     tests = (
-        ('cookie_auth.txt', FunctionalTest),
+        ('cookie_auth.txt', FunctionalTestCase),
         )
 
     for fname, klass in tests:

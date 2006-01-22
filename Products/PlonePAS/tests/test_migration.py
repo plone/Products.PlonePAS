@@ -22,15 +22,13 @@ import unittest
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing import ZopeTestCase
-from Products.PlonePAS.tests import PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from cStringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.Extensions.Install import grabUserData
 from Products.PlonePAS.Extensions.Install import grabGroupData
-
 class SanityCheck:
 
     _users = (
@@ -179,7 +177,7 @@ class SanityCheck:
         for name in actions:
             getattr(self, name)()
 
-class BaseTest(PloneTestCase.PloneTestCase):
+class BaseTest(PlonePASTestCase):
 
     vanilla_plone = True
 

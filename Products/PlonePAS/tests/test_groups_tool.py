@@ -22,8 +22,7 @@ import unittest
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing import ZopeTestCase
-from Products.PlonePAS.tests import PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from cStringIO import StringIO
 from zExceptions import BadRequest
@@ -32,7 +31,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
 
-class GroupsToolTest(PloneTestCase.PloneTestCase):
+class GroupsToolTest(PlonePASTestCase):
 
     def afterSetUp(self):
         self.gt = gt = getToolByName(self.portal, 'portal_groups')
@@ -66,7 +65,7 @@ class GroupsToolTest(PloneTestCase.PloneTestCase):
         self.failUnless(isinstance(group, GroupData))
         self.failUnless(isinstance(aq_parent(group), PloneGroup))
 
-class GroupWorkspacesTest(PloneTestCase.PloneTestCase):
+class GroupWorkspacesTest(PlonePASTestCase):
 
     def afterSetUp(self):
         self.gt = gt = getToolByName(self.portal, 'portal_groups')

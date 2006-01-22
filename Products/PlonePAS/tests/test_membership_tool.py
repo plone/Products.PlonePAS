@@ -22,8 +22,7 @@ import unittest
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing import ZopeTestCase
-from Products.PlonePAS.tests import PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from cStringIO import StringIO
 from zExceptions import BadRequest
@@ -32,7 +31,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.plugins.ufactory import PloneUser
 
-class MembershipToolTest(PloneTestCase.PloneTestCase):
+class MembershipToolTest(PlonePASTestCase):
 
     def afterSetUp(self):
         self.mt = mt = getToolByName(self.portal, 'portal_membership')
@@ -63,7 +62,7 @@ class MembershipToolTest(PloneTestCase.PloneTestCase):
         self.failUnless(isinstance(member, MemberData))
         self.failUnless(isinstance(aq_parent(member), PloneUser))
 
-class MemberAreaTest(PloneTestCase.PloneTestCase):
+class MemberAreaTest(PlonePASTestCase):
 
     def afterSetUp(self):
         self.mt = mt = getToolByName(self.portal, 'portal_membership')

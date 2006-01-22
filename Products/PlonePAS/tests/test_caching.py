@@ -8,12 +8,8 @@ import unittest
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing import ZopeTestCase
-from Products.PloneTestCase import PloneTestCase
-del PloneTestCase
-
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.tests.PloneTestCase import PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
@@ -58,7 +54,7 @@ class CollectResultsWrapper(IntrospectorMethodWrapper):
         self.results.append(result)
         return result
 
-class BasicOpsTestCase(PloneTestCase):
+class BasicOpsTestCase(PlonePASTestCase):
 
     def afterSetUp(self):
         self.loginPortalOwner()

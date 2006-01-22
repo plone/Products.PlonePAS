@@ -23,13 +23,11 @@ if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from Testing import ZopeTestCase
-from Products.PloneTestCase import PloneTestCase
-del PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.tests.PloneTestCase import PloneTestCase
 
-class TestMemberFolder(PloneTestCase):
+class TestMemberFolder(PlonePASTestCase):
 
     def afterSetUp(self):
         self.mt = getToolByName(self.portal, 'portal_membership')
