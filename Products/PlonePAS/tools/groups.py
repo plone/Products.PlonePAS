@@ -102,9 +102,11 @@ class GroupsTool(PloneGroupsTool):
 
         gwf = self.getGroupWorkspacesFolder()
         if retval and gwf and not keep_workspaces:
-            workspace_id = self.getGroupareaFolder(group_id).getId()
-            if hasattr(aq_base(gwf), workspace_id):
-                gwf._delObject(workspace_id)
+            grouparea = self.getGroupareaFolder(group_id)
+            if grouparea is not None:
+                workspace_id = grouparea.getId()
+                if hasattr(aq_base(gwf), workspace_id):
+                    gwf._delObject(workspace_id)
 
         return retval
 
