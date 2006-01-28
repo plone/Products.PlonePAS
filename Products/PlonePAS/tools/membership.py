@@ -279,7 +279,7 @@ class MembershipTool(BaseMembershipTool):
                 member_id, safe_member_id))
             return
 
-        _createObjectByType('Folder', members, id=safe_member_id)
+        _createObjectByType(self.memberarea_type, members, id=member_id)
 
         # Get the user object from acl_users
         acl_users = self.__getPUS()
