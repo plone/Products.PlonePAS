@@ -18,6 +18,7 @@ $Id$
 
 from Products.CMFCore.utils import getToolByName
 from urllib import quote as url_quote
+from urllib import unquote as url_unquote
 
 def unique(iterable):
     d = {}
@@ -38,7 +39,7 @@ def getCharset(context):
 def cleanId(id):
     """'url_quote' turns strange chars into '%xx', which is not a valid char
     for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as escaping).
-    De-clean is possible, but not quite as simple.
+    De-clean is possible; see 'decleanId'.
     Assumes that id can start with non-alpha(numeric), which is true.
     """
     __traceback_info__ = (id,)
@@ -46,3 +47,10 @@ def cleanId(id):
         # note: we provide the 'safe' param to get '/' encoded
         return url_quote(id, '').replace('-','--').replace('%','-')
     return ''
+
+def decleanId(id):
+   """Reverse cleanId."""
+   if id:
+       id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
+       return url_unquote(id)
+   return ''

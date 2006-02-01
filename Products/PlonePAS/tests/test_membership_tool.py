@@ -62,6 +62,60 @@ class MembershipToolTest(PlonePASTestCase):
         self.failUnless(isinstance(member, MemberData))
         self.failUnless(isinstance(aq_parent(member), PloneUser))
 
+    def test_id_clean(self):
+        from Products.PlonePAS.utils import cleanId, decleanId
+        a = [
+             "asdfasdf",
+             "asdf-asdf",
+             "asdf--asdf",
+             "asdf---asdf",
+             "asdf----asdf",
+             "asdf-----asdf",
+             "asdf%asdf",
+             "asdf%%asdf",
+             "asdf%%%asdf",
+             "asdf%%%%asdf",
+             "asdf%%%%%asdf",
+             "asdf-%asdf",
+             "asdf%-asdf",
+             "asdf-%-asdf",
+             "asdf%-%asdf",
+             "asdf--%asdf",
+             "asdf%--asdf",
+             "asdf--%-asdf",
+             "asdf-%--asdf",
+             "asdf--%--asdf",
+             "asdf%-%asdf",
+             "asdf%--%asdf",
+             "asdf%---%asdf",
+             "-asdf",
+             "--asdf",
+             "---asdf",
+             "----asdf",
+             "-----asdf",
+             "asdf-",
+             "asdf--",
+             "asdf---",
+             "asdf----",
+             "asdf-----",
+             "%asdf",
+             "%%asdf",
+             "%%%asdf",
+             "%%%%asdf",
+             "%%%%%asdf",
+             "asdf%",
+             "asdf%%",
+             "asdf%%%",
+             "asdf%%%%",
+             "asdf%%%%%",
+             "asdf\x00asdf",
+        ]
+        b = [cleanId(id) for id in a]
+        c = [uncleanID(id) for id in b]
+        ac = zip(a,c)
+        for aa, cc in ac:
+            self.failUnless(aa==cc)
+
 class MemberAreaTest(PlonePASTestCase):
 
     def afterSetUp(self):
