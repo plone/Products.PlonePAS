@@ -194,7 +194,8 @@ class GroupData(BaseGroupData):
         for u_name in gtool.getGroupMembers(self.getId()):
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
-                raise AssertionError, "Cannot retreive a user by its id !"
+                # is this begging for errors? should we fail silently?
+                raise AssertionError, "Cannot retreive user %s by id!" % u_name
             if usr.isGroup():
                 ret.append(gd.wrapGroup(usr))
             else:
