@@ -171,7 +171,9 @@ class MembershipTool(BaseMembershipTool):
             getUserById = acl_users.getUserById
 
             for userid in Set(uf_users):
-                members.append(wrap(getUserById(userid)))
+                user=getUserById(userid)
+                if user is not None:
+                    members.append(wrap(user))
 
             if (not email and
                 not roles and
