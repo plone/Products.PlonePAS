@@ -22,8 +22,7 @@ import unittest
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing import ZopeTestCase
-from Products.PlonePAS.tests import PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from cStringIO import StringIO
 from zExceptions import BadRequest
@@ -32,7 +31,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.plugins.ufactory import PloneUser
 
-class MembershipToolTest(PloneTestCase.PloneTestCase):
+class MembershipToolTest(PlonePASTestCase):
 
     def afterSetUp(self):
         self.mt = mt = getToolByName(self.portal, 'portal_membership')
@@ -63,7 +62,61 @@ class MembershipToolTest(PloneTestCase.PloneTestCase):
         self.failUnless(isinstance(member, MemberData))
         self.failUnless(isinstance(aq_parent(member), PloneUser))
 
-class MemberAreaTest(PloneTestCase.PloneTestCase):
+    def test_id_clean(self):
+        from Products.PlonePAS.utils import cleanId, decleanId
+        a = [
+             "asdfasdf",
+             "asdf-asdf",
+             "asdf--asdf",
+             "asdf---asdf",
+             "asdf----asdf",
+             "asdf-----asdf",
+             "asdf%asdf",
+             "asdf%%asdf",
+             "asdf%%%asdf",
+             "asdf%%%%asdf",
+             "asdf%%%%%asdf",
+             "asdf-%asdf",
+             "asdf%-asdf",
+             "asdf-%-asdf",
+             "asdf%-%asdf",
+             "asdf--%asdf",
+             "asdf%--asdf",
+             "asdf--%-asdf",
+             "asdf-%--asdf",
+             "asdf--%--asdf",
+             "asdf%-%asdf",
+             "asdf%--%asdf",
+             "asdf%---%asdf",
+             "-asdf",
+             "--asdf",
+             "---asdf",
+             "----asdf",
+             "-----asdf",
+             "asdf-",
+             "asdf--",
+             "asdf---",
+             "asdf----",
+             "asdf-----",
+             "%asdf",
+             "%%asdf",
+             "%%%asdf",
+             "%%%%asdf",
+             "%%%%%asdf",
+             "asdf%",
+             "asdf%%",
+             "asdf%%%",
+             "asdf%%%%",
+             "asdf%%%%%",
+             "asdf\x00asdf",
+        ]
+        b = [cleanId(id) for id in a]
+        c = [uncleanID(id) for id in b]
+        ac = zip(a,c)
+        for aa, cc in ac:
+            self.failUnless(aa==cc)
+
+class MemberAreaTest(PlonePASTestCase):
 
     def afterSetUp(self):
         self.mt = mt = getToolByName(self.portal, 'portal_membership')
@@ -80,7 +133,7 @@ class MemberAreaTest(PloneTestCase.PloneTestCase):
 
         # Create a new User
         self.portal.acl_users._doAddUser(*minfo)
-        self.failIfRaises(BadRequest, self.mt.createMemberArea, mid)
+	self.mt.createMemberArea,(mid)
 
     def test_funky_member_ids_2(self):
         # Forward-slash is not allowed
@@ -89,7 +142,7 @@ class MemberAreaTest(PloneTestCase.PloneTestCase):
 
         # Create a new User
         self.portal.acl_users._doAddUser(*minfo)
-        self.failUnlessRaises(BadRequest, self.mt.createMemberArea, mid)
+        self.mt.createMemberArea(mid)
 
     def test_memberareaCreationFlag_respected(self):
         self.portal.acl_users._doAddUser('foo', 'pw', ['Member'], [])

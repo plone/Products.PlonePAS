@@ -8,12 +8,8 @@ import unittest
 if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
-from Testing import ZopeTestCase
-from Products.PloneTestCase import PloneTestCase
-del PloneTestCase
-
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.tests.PloneTestCase import PloneTestCase
+from PlonePASTestCase import PlonePASTestCase
 
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
@@ -58,7 +54,7 @@ class CollectResultsWrapper(IntrospectorMethodWrapper):
         self.results.append(result)
         return result
 
-class BasicOpsTestCase(PloneTestCase):
+class BasicOpsTestCase(PlonePASTestCase):
 
     def afterSetUp(self):
         self.loginPortalOwner()
@@ -85,8 +81,9 @@ class BasicOpsTestCase(PloneTestCase):
         # the user up, so we must have got only misses so far
         self.createUser()
         self.assertEquals(collector.results, [None] * len(collector.results))
-        # the cache must be populated by now, the user we're getting back
-        # must've come from the cache
+        # creating a user does not necessarily insert a cache entry,
+        # so retrieve the user twice to test caching.
+        u = self.acl_users.getUser("created_user")
         u = self.acl_users.getUser("created_user")
         self.assertEquals(id(collector.results[-1]), id(u.aq_base),
                           "%r is not %r" % (collector.results[-1],

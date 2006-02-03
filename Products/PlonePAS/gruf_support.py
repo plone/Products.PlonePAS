@@ -30,7 +30,8 @@ from Products.PluggableAuthService.PluggableAuthService import \
 #from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
 from Products.PluggableAuthService.interfaces.plugins \
      import IRoleAssignerPlugin, IAuthenticationPlugin
-
+from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 def authenticate(self, name, password, request):
 
@@ -74,14 +75,110 @@ PluggableAuthService.authenticate__roles__ = ()
 
 
 #################################
+# compat code galore
+def userSetGroups(self, id, groupnames):
+    plugins = self.plugins
+
+    try:
+        groupmanagers = plugins.listPlugins(IGroupManagement)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        groupmanagers = ()
+
+    for group in groupnames:
+        for gm_id, gm in groupmanagers:
+            try:
+                if gm.addPrincipalToGroup(id, group):
+                    break
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    gm_id, error=sys.exc_info())
+
+PluggableAuthService.userSetGroups = userSetGroups
+
+def userFolderAddGroup(self, name, roles, groups = (), **kw):
+    plugins = self.plugins
+
+    try:
+        groupmanagers = plugins.listPlugins(IGroupManagement)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        groupmanagers = ()
+
+    for group in groupmanagers:
+        for gm_id, gm in groupmanagers:
+            try:
+                gm.addGroup(name, **kw)
+                if roles:
+                    gm.setRolesForGroup(name, roles=roles)
+                if groups:
+                    for group in groups:
+                        gm.addPrincipalToGroup(name, group)
+
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    gm_id, error=sys.exc_info())
+
+PluggableAuthService.userFolderAddGroup = userFolderAddGroup
+
+#################################
 # monkies for the diehard introspection.. all these should die, imho - kt
 def getUsers(self):
     return ()
 
+def getUserIds(self):
+    plugins = self.plugins
+
+    try:
+        introspectors = plugins.listPlugins(IUserIntrospection)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        introspectors = ()
+
+    results = []
+    for introspector_id, introspector in introspectors:
+        try:
+            results.extend(introspector.getUserIds())
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    introspector_id, error=sys.exc_info())
+
+    return results
+
+
 def getUserNames(self):
-    return ()
+    plugins = self.plugins
+
+    try:
+        introspectors = plugins.listPlugins(IUserIntrospection)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        LOG('PluggableAuthService', BLATHER,
+            'Plugin listing error',
+            error=sys.exc_info())
+        introspectors = ()
+
+    results = []
+    for introspector_id, introspector in introspectors:
+        try:
+            results.extend(introspector.getUserNames())
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            LOG('PluggableAuthService', BLATHER,
+                    'AuthenticationPlugin %s error' %
+                    introspector_id, error=sys.exc_info())
+
+    return results
 
 PluggableAuthService.getUsers = getUsers
+PluggableAuthService.getUserIds = getUserIds
 PluggableAuthService.getUserNames = getUserNames
 
 

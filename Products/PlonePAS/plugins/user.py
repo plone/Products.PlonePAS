@@ -92,6 +92,17 @@ class UserManager(BasePlugin):
             raise RuntimeError, "User does not exist: %s" % principal_id
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
 
+        # for some reason we need to commit the transaction explicitly. 
+        # otherwise the change is gone in next request :-/ 
+        # if someone has an idea why please tell me to make code at this point 
+        # better -- jensens
+        try:
+            import transaction # Zope 2.8 style
+        except ImportError:
+            get_transaction().commit() # Zope <2.8 style
+        else:
+            transaction.commit() # Zope 2.8 style
+
     # implement interfaces IDeleteCapability, IPasswordSetCapability
 
     security.declarePublic('allowDeletePrincipal')

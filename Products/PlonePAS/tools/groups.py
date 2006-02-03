@@ -51,6 +51,11 @@ class GroupsTool(PloneGroupsTool):
         group = None
         success = 0
         managers = self._getGroupManagers()
+        if roles is None:
+            roles = []
+        if groups is None:
+            groups = []
+
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
         for mid, manager in managers:
@@ -59,7 +64,7 @@ class GroupsTool(PloneGroupsTool):
             if success:
                 self.setRolesForGroup(id, roles)
                 for g in groups:
-                    manager.addPrincipalToGroup(g.getId(), id)
+                    manager.addPrincipalToGroup(g, id)
                 break
 
         if success:
@@ -77,7 +82,8 @@ class GroupsTool(PloneGroupsTool):
         If user is not present, returns without exception.
         """
         group = self.getGroupById(id)
-        if not group: return None
+        if not group:
+            raise KeyError, 'Trying to edit a non-existing group'
         self.setRolesForGroup(id, roles)
         group.setGroupProperties(kw)
 
@@ -97,9 +103,11 @@ class GroupsTool(PloneGroupsTool):
 
         gwf = self.getGroupWorkspacesFolder()
         if retval and gwf and not keep_workspaces:
-            workspace_id = self.getGroupareaFolder(group_id).getId()
-            if hasattr(aq_base(gwf), workspace_id):
-                gwf._delObject(workspace_id)
+            grouparea = self.getGroupareaFolder(group_id)
+            if grouparea is not None:
+                workspace_id = grouparea.getId()
+                if hasattr(aq_base(gwf), workspace_id):
+                    gwf._delObject(workspace_id)
 
         return retval
 

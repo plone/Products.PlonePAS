@@ -36,6 +36,7 @@ except ImportError:
     from Products.CMFPlone.PloneUtilities import _createObjectByType
 from Products.PlonePAS.utils import cleanId
 
+
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool.
 
@@ -94,22 +95,22 @@ class MembershipTool(BaseMembershipTool):
         groups_tool = self.portal_groups
 
         if REQUEST is not None:
-            dict = REQUEST
+            searchmap = REQUEST
         else:
-            dict = kw
+            searchmap = kw
 
         user_search = {}
         for key in self.user_search_keywords:
-            value = dict.get(key, None)
+            value = searchmap.get(key, None)
             if value is None:
                 continue
             user_search[key] = value
 
-        name = dict.get('name', None)
-        email = dict.get('email', None)
-        roles = dict.get('roles', None)
-        last_login_time = dict.get('last_login_time', None)
-        groupname = dict.get('groupname', '').strip()
+        name = searchmap.get('name', None)
+        email = searchmap.get('email', None)
+        roles = searchmap.get('roles', None)
+        last_login_time = searchmap.get('last_login_time', None)
+        groupname = searchmap.get('groupname', '').strip()
         is_manager = self.checkPermission('Manage portal', self)
 
         if name:
@@ -281,7 +282,7 @@ class MembershipTool(BaseMembershipTool):
                 member_id, safe_member_id))
             return
 
-        _createObjectByType('Folder', members, id=safe_member_id)
+        _createObjectByType(self.memberarea_type, members, id=member_id)
 
         # Get the user object from acl_users
         acl_users = self.__getPUS()
@@ -296,40 +297,40 @@ class MembershipTool(BaseMembershipTool):
                 raise NotImplementedError, \
                     'cannot get user for member area creation'
 
-        # Get some translations
-        # Before translation we must set right encodings in header to
-        # make PTS happy
-        putils = getToolByName(self, 'plone_utils')
-        charset = putils.getSiteEncoding()
+        ## translate the default content
 
-        self.REQUEST.RESPONSE.setHeader(
-            'Content-Type', 'text/html;charset=%s' % charset)
+        # get some translation interfaces
 
-        member_folder_title = translate(
+        translation_service = getToolByName(self, 'translation_service', None)
+        if translation_service is None:
+            # test environ, some other aberent sitch
+            return
+
+        utranslate = translation_service.utranslate
+        encode = translation_service.encode
+
+        # convert the member_id to unicode type
+        umember_id = translation_service.asunicodetype(member_id, errors='replace')
+
+        member_folder_title = utranslate(
             'plone', 'title_member_folder',
-            {'member': member_id}, self,
-            default = "%s's Home" % member_id)
+            {'member': umember_id}, self,
+            default = "%s" % umember_id)
 
-        member_folder_description = translate(
+        member_folder_description = utranslate(
             'plone', 'description_member_folder',
-            {'member': member_id}, self,
-            default = 'Home page area that contains the items created ' \
-            'and collected by %s' % member_id)
+            {'member': umember_id}, self,
+            default = '')
 
-        member_folder_index_html_title = translate(
+        member_folder_index_html_title = utranslate(
             'plone', 'title_member_folder_index_html',
-            {'member': member_id}, self,
-            default = "Home page for %s" % member_id)
+            {'member': umember_id}, self,
+            default = "Home page for %s" % umember_id)
 
-        personal_folder_title = translate(
-            'plone', 'title_member_personal_folder',
-            {'member': member_id}, self,
-            default = "Personal Items for %s" % member_id)
-
-        personal_folder_description = translate(
-            'plone', 'description_member_personal_folder',
-            {'member': member_id}, self,
-            default = 'contains personal workarea items for %s' % member_id)
+        # encode strings to site encoding as we dont like to store type unicode atm
+        member_folder_title = encode(member_folder_title, errors='replace')
+        member_folder_description = encode(member_folder_description, errors='replace')
+        member_folder_index_html_title = encode(member_folder_index_html_title, errors='replace')
 
         ## Modify member folder
         member_folder = self.getHomeFolder(member_id)
@@ -337,51 +338,36 @@ class MembershipTool(BaseMembershipTool):
         member_folder.changeOwnership(user)
         member_folder.__ac_local_roles__ = None
         member_folder.manage_setLocalRoles(member_id, ['Owner'])
-        # set title and description (edit invokes reindexObject)
-        member_folder.edit(title=member_folder_title,
-                           description=member_folder_description)
+        # We use ATCT now use the mutators
+        member_folder.setTitle(member_folder_title)
+        member_folder.setDescription(member_folder_description)
         member_folder.reindexObject()
 
-        ## Create personal folder for personal items
-        _createObjectByType('Folder', member_folder, id=self.personal_id)
-        personal = getattr(member_folder, self.personal_id)
-        personal.edit(title=personal_folder_title,
-                      description=personal_folder_description)
-        # Grant Ownership and Owner role to Member
-        personal.changeOwnership(user)
-        personal.__ac_local_roles__ = None
-        personal.manage_setLocalRoles(member_id, ['Owner'])
-        # Don't add .personal folders to catalog
-        catalog.unindexObject(personal)
-
-        if minimal:
-            # don't set up the index_html for unit tests to speed up tests
-            return
-
-        ## add homepage text
-        # get the text from portal_skins automagically
-        homepageText = getattr(self, 'homePageText', None)
-        if homepageText:
-            member_object = self.getMemberById(member_id)
-            portal = getToolByName(self, 'portal_url')
-            # call the page template
-            content = homepageText(member=member_object, portal=portal).strip()
-            _createObjectByType('Document', member_folder, id='index_html')
-            hpt = getattr(member_folder, 'index_html')
-            # edit title, text and format
-            # XXX
-            hpt.setTitle(member_folder_index_html_title)
-            if hpt.meta_type == 'Document':
-                # CMFDefault Document
-                hpt.edit(text_format='structured-text', text=content)
-            else:
-                hpt.update(text=content)
-            hpt.setFormat('structured-text')
-            hpt.reindexObject()
-            # Grant Ownership and Owner role to Member
-            hpt.changeOwnership(user)
-            hpt.__ac_local_roles__ = None
-            hpt.manage_setLocalRoles(member_id, ['Owner'])
+        if not minimal:
+	    ## add homepage text
+	    # get the text from portal_skins automagically
+	    homepageText = getattr(self, 'homePageText', None)
+	    if homepageText:
+		member_object = self.getMemberById(member_id)
+		portal = getToolByName(self, 'portal_url')
+		# call the page template
+		content = homepageText(member=member_object, portal=portal).strip()
+		_createObjectByType('Document', member_folder, id='index_html')
+		hpt = getattr(member_folder, 'index_html')
+		# edit title, text and format
+		# XXX
+		hpt.setTitle(member_folder_index_html_title)
+		if hpt.meta_type == 'Document':
+		    # CMFDefault Document
+		    hpt.edit(text_format='structured-text', text=content)
+		else:
+		    hpt.update(text=content)
+		hpt.setFormat('structured-text')
+		hpt.reindexObject()
+		# Grant Ownership and Owner role to Member
+		hpt.changeOwnership(user)
+		hpt.__ac_local_roles__ = None
+		hpt.manage_setLocalRoles(member_id, ['Owner'])
 
         ## Hook to allow doing other things after memberarea creation.
         notify_script = getattr(member_folder, 'notifyMemberAreaCreated', None)
