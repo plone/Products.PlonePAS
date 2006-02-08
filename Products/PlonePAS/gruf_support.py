@@ -204,7 +204,7 @@ def acquireLocalRoles(self, obj, status = 1):
     # Reindex the whole stuff.
     obj.reindexObjectSecurity()
 
-PluggableAuthService.acquireLocalRoles = acquireLocalRoles
+PluggableAuthService._acquireLocalRoles = acquireLocalRoles
 
 #################################
 # give interested parties some apriori way of noticing pas is a user folder impl
