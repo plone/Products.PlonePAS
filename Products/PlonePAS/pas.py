@@ -304,3 +304,15 @@ def _delOb( self, id ):
 
     Folder._delOb( self, id )
 PluggableAuthService._delOb = _delOb
+
+def addRole( self, role ):
+    plugins = self._getOb('plugins')
+    roles = plugins.listPlugins(IRoleAssignerPlugin)
+
+    for plugin_id, plugin in roles:
+        try:
+            plugin.addRole( role )
+            return
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            pass
+PluggableAuthService.addRole = addRole
