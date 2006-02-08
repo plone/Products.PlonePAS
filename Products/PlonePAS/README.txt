@@ -27,7 +27,7 @@ Optional
 
  - LDAPUserFolder 2.6b3 or better
 
-   - LDAPMultiPlugins 1.0 or better
+ - LDAPMultiPlugins 1.0 or better
 
 PlonePAS installs like any other Plone Product, but please note: it
 does destroy your existing portal user folder. There is automatic
@@ -121,10 +121,14 @@ Authorship
 
   Post-sprint work: J Cameron Cooper, Leo, Sidnei, Mark at "Enfold
   Systems":http://enfoldsystems.com
+
+  Basic setAuthCookie support (to mimick CookieCrumbler):
+  Rocky Burt at "ServerZen Software":http://www.serverzen.com
+
+  Synced login process with Plone:
+  Dorneles Tremea at "PloneSolutions":http://plonesolutions.com
+
   (Add yourself if you work on it!)
-  
-  Basic setAuthCookie support (to mimick CookieCrumbler) by:
-    Rocky Burt at "ServerZen Software":http://www.serverzen.com
 
 Bug Reports
 

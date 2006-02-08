@@ -26,7 +26,7 @@ def manage_addExtendedCookieAuthHelper(self, id, title='',
                                        RESPONSE=None, **kw):
     """Create an instance of a extended cookie auth helper.
     """
-    
+
     self = self.this()
 
     o = ExtendedCookieAuthHelper(id, title, **kw)
@@ -44,15 +44,15 @@ class ExtendedCookieAuthHelper(BasePlugin):
     """Multi-plugin which adds ability to override the updating of cookie via
     a setAuthCookie method/script.
     """
-    
+
     meta_type = 'Extended Cookie Auth Helper'
     security = ClassSecurityInfo()
-        
+
     security.declarePrivate('updateCredentials')
     def updateCredentials(self, request, response, login, new_password):
         """Override standard updateCredentials method
         """
-        
+
         setAuthCookie = getattr(self, 'setAuthCookie', None)
         if setAuthCookie:
             cookie_val = encodestring('%s:%s' % (login, new_password))
@@ -60,10 +60,30 @@ class ExtendedCookieAuthHelper(BasePlugin):
             setAuthCookie(response, self.cookie_name, cookie_val)
         else:
             BasePlugin.updateCredentials(self, request, response, login, new_password)
-    
+
+    security.declarePublic('login')
+    def login(self):
+        """Set a cookie and redirect to the url that we tried to
+        authenticate against originally.
+
+        Override standard login method to avoid calling
+        'return response.redirect(came_from)' as there is additional
+        processing to ignore known bad come_from templates at
+        login_next.cpy script.
+        """
+        request = self.REQUEST
+        response = request['RESPONSE']
+
+        login = request.get('__ac_name', '')
+        password = request.get('__ac_password', '')
+
+        pas_instance = self._getPAS()
+
+        if pas_instance is not None:
+            pas_instance.updateCredentials(request, response, login, password)
 
 
-classImplements(ExtendedCookieAuthHelper, 
+classImplements(ExtendedCookieAuthHelper,
                 ILoginPasswordHostExtractionPlugin,
                 IChallengePlugin,
                 ICredentialsUpdatePlugin,
