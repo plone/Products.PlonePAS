@@ -27,6 +27,7 @@ from Products.PluggableAuthService.interfaces.propertysheets import IPropertyShe
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.utils import unique
 
 from zLOG import LOG, INFO
@@ -139,7 +140,7 @@ class PloneUser(PropertiedUser):
     def _getLocalRolesPlugins(self):
         return self.acl_users.plugins.listPlugins(ILocalRolesPlugin)
 
-    def __getRolesInContext(self, object):
+    def getRolesInContext(self, object):
         lrmanagers = self._getLocalRolesPlugins()
         roles = []
         for lrid, lrmanager in lrmanagers:
