@@ -25,6 +25,7 @@ $Id$
 
 import sys
 
+from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
 #from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
@@ -181,6 +182,29 @@ PluggableAuthService.getUsers = getUsers
 PluggableAuthService.getUserIds = getUserIds
 PluggableAuthService.getUserNames = getUserNames
 
+#################################
+# Evil role aquisition blocking
+
+def acquireLocalRoles(self, obj, status = 1):
+    """If status is 1, allow acquisition of local roles (regular behaviour).
+
+    If it's 0, prohibit it (it will allow some kind of local role blacklisting).
+    """
+    mt = getToolByName(self, 'portal_membership')
+    if not mt.checkPermission(ModifyPortalContent, obj):
+        raise Unauthorized
+    # Set local role status
+    gruf = getToolByName(self, 'portal_url').getPortalObject().acl_users
+    # We perform our own security check
+    if not status:
+        obj.__ac_local_roles_block__ = 1
+    else:
+        if getattr(folder, '__ac_local_roles_block__', None):
+            folder.__ac_local_roles_block__ = None
+    # Reindex the whole stuff.
+    obj.reindexObjectSecurity()
+
+PluggableAuthService._acquireLocalRoles = acquireLocalRoles
 
 #################################
 # give interested parties some apriori way of noticing pas is a user folder impl

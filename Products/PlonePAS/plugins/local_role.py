@@ -24,6 +24,7 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from Acquisition import aq_inner, aq_parent
 from Globals import DTMLFile, InitializeClass
 
 from Products.PluggableAuthService.utils import classImplements, implementedBy
@@ -85,7 +86,7 @@ class LocalRolesManager(LocalRolePlugin):
             inner = aq_inner( object )
             parent = aq_parent( inner )
 
-            if getattr(obj, '__ac_local_roles_block__', None):
+            if getattr(object, '__ac_local_roles_block__', None):
                 break
 
             if parent is not None:
