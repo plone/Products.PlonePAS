@@ -88,12 +88,14 @@ class MemberDataTool(BaseMemberDataTool):
         # the user as context.
         return m.__of__(self).__of__(u)
 
-    def searchFulltextForMembers(self, s):
-        """PAS-specific search for members by id, email, full name.
-        """
-        acl_users = getToolByName( self, 'acl_users')
-        return acl_users.searchUsers(name=s, exact_match=False)
-        # I don't think this is right: we need to return Members
+#    ## use the default implementation instead; this doesn't meet the original expectation
+#    ## (I also don't think this is used anywhere!)
+#    def searchFulltextForMembers(self, s):
+#        """PAS-specific search for members by id, email, full name.
+#        """
+#        acl_users = getToolByName( self, 'acl_users')
+#        return acl_users.searchUsers(name=s, exact_match=False)
+#        # I don't think this is right: we need to return Members
 
 
 InitializeClass(MemberDataTool)
