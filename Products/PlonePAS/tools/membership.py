@@ -17,6 +17,7 @@ $Id$
 """
 
 from sets import Set
+from types import StringTypes
 
 from Globals import InitializeClass
 from Products.PlonePAS.config import logger
@@ -79,6 +80,7 @@ class MembershipTool(BaseMembershipTool):
         - name
         - email
         - last_login_time
+        - before_specified_time
         - roles
         - groupname
 
@@ -110,6 +112,7 @@ class MembershipTool(BaseMembershipTool):
         email = searchmap.get('email', None)
         roles = searchmap.get('roles', None)
         last_login_time = searchmap.get('last_login_time', None)
+        before_specified_time = searchmap.get('before_specified_time', None)
         groupname = searchmap.get('groupname', '').strip()
         is_manager = self.checkPermission('Manage portal', self)
 
@@ -220,10 +223,19 @@ class MembershipTool(BaseMembershipTool):
                 if not found:
                     continue
             if last_login_time:
-                last_login = member.getProperty('last_login_time',
-                                                last_login_time)
-                if last_login < last_login_time:
+                last_login = member.getProperty('last_login_time', '')
+
+                if type(last_login) in StringTypes:
+                    # value is a string when mem hasn't yet logged in
+                    mem_last_login_time = DateTime(last_login or '2000/01/01')
+                else:
+                    mem_last_login_time = last_login
+                if before_specified_time:
+                    if mem_last_login_time >= last_login_time:
+                        continue
+                elif mem_last_login_time < last_login_time:
                     continue
+
             res.append(member)
         logger.debug('searchForMembers: finished.')
         return res
