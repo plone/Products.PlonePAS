@@ -15,6 +15,9 @@
 """
 $Id$
 """
+import sys
+from sets import Set
+
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
@@ -28,7 +31,8 @@ from Products.CMFCore.utils import getToolByName, UniqueObject
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.utils import classImplements, implementedBy
-
+from Products.PluggableAuthService.PluggableAuthService import \
+                                    _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
 from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
 
 class NotSupported(Exception): pass
@@ -71,6 +75,7 @@ class GroupsTool(PloneGroupsTool):
             group = self.getGroupById(id)
             group.setGroupProperties(properties or kw)
             self.createGrouparea(id)
+
         return success
 
     def editGroup(self, id, roles=None, groups=None, *args, **kw):
@@ -81,11 +86,38 @@ class GroupsTool(PloneGroupsTool):
 
         If user is not present, returns without exception.
         """
-        group = self.getGroupById(id)
-        if not group:
-            raise KeyError, 'Trying to edit a non-existing group'
-        self.setRolesForGroup(id, roles)
-        group.setGroupProperties(kw)
+        g = self.getGroupById(id)
+        if not g:
+            raise KeyError, 'Trying to edit a non-existing group: %s' % id
+
+        if roles: self.setRolesForGroup(id, roles)
+        g.setGroupProperties(kw)
+        if groups:
+            # remove absent groups
+            groupset = Set(groups)
+            p_groups = Set(self.getGroupsForPrincipal(g))
+            rmgroups = p_groups - groupset
+            for gid in rmgroups:
+                self.removePrincipalFromGroup(principal_id, gid)
+
+            # add groups
+            try:
+                groupmanagers = plugins.listPlugins(IGroupManagement)
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                LOG('PluggableAuthService', BLATHER,
+                    'Plugin listing error',
+                    error=sys.exc_info())
+                groupmanagers = ()
+
+            for group in groups:
+                for gm_id, gm in groupmanagers:
+                    try:
+                        if gm.addPrincipalToGroup(id, group):
+                            break
+                    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                        LOG('PluggableAuthService', BLATHER,
+                            'AuthenticationPlugin %s error' %
+                            gm_id, error=sys.exc_info())
 
     security.declareProtected(DeleteGroups, 'removeGroup')
     def removeGroup(self, group_id, keep_workspaces=0):

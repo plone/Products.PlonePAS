@@ -95,6 +95,14 @@ class PloneUser(PropertiedUser):
         """
         return self.getId()
 
+    security.declarePublic('getGroupNames')
+    def getGroupNames(self):
+        """Return ids of this user's groups. GRUF compat."""
+        return self.getGroups()
+
+    security.declarePublic('getGroupIds')
+    getGroupIds = getGroupNames
+
     #################################
     # acquisition aware
     security.declarePublic('getPropertysheet')

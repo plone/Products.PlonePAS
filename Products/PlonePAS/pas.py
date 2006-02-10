@@ -17,7 +17,6 @@ pas alterations and monkies
 $Id$
 """
 import sys
-from sets import Set
 
 from Acquisition import aq_inner, aq_parent
 from AccessControl.PermissionRole import _what_not_even_god_should_do
@@ -35,11 +34,22 @@ from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlu
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 #################################
 # pas folder monkies - standard zope user folder api
+
+_old_doAddUser = PluggableAuthService._doAddUser
+def _doAddUser(self, login, password, roles, domains, groups=None, **kw ):
+    """Masking of PAS._doAddUser to add groups param."""
+    retval = _old_doAddUser(self, login, password, roles, domains)
+    if groups is not None:
+        self.userSetGroups(login, groups)
+    return retval
+
+PluggableAuthService._doAddUser = _doAddUser
 
 def _doDelUsers(self, names):
     """
@@ -114,6 +124,12 @@ def userFolderAddUser(self, login, password, roles, domains, groups=None, **kw )
 PluggableAuthService.userFolderAddUser = userFolderAddUser
 
 
+def _doAddGroup(self, id, roles, groups=None, **kw):
+    gtool = getToolByName(self, 'portal_groups')
+    return gtool.addGroup(id, roles, groups, **kw)
+
+PluggableAuthService._doAddGroup = _doAddGroup
+
 # for prefs_group_manage compatibility. really should be using tool.
 def _doDelGroups(self, names):
     gtool = getToolByName(self, 'portal_groups')
@@ -132,28 +148,39 @@ def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
     plugins for such exist.
 
     XXX domains are currently ignored.
-    XXX groups also ignored
 
     See also _doChangeUser
     """
-
-    plugins = self._getOb('plugins')
-    rmanagers = plugins.listPlugins(IRoleAssignerPlugin)
-
-
-    if not (rmanagers):
-        raise NotImplementedError("There is no plugin that can modify users")
-
-    for rid, rmanager in rmanagers:
-        rmanager.assignRolesToPrincipal(roles, principal_id)
-
+    gtool = getToolByName(self, 'portal_groups')
+    gtool.editGroup(principal_id, roles, groups, **kw)
     return True
-
 PluggableAuthService._doChangeGroup = _doChangeGroup
+
+def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
+    """
+    Given a group's id, change its roles, groups, iff respective
+    plugins for such exist.
+
+    XXX domains are currently ignored.
+
+    This is not an alias to _doChangeGroup because its params are different (slightly).
+    """
+    return self._doChangeGroup(principal_id, roles, groups, **kw)
+PluggableAuthService._updateGroup = _updateGroup
 
 security.declareProtected(ManageUsers, 'userFolderEditGroup')
 PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
 
+
+security.declareProtected(ManageUsers, 'getGroups')
+def getGroups(self):
+    gtool = getToolByName(self, 'portal_groups')
+    gtool.listGroups()
+
+security.declareProtected(ManageUsers, 'getGroupNames')
+def getGroupNames(self):
+    gtool = getToolByName(self, 'portal_groups')
+    gtool.getGroupIds()
 
 security.declareProtected(ManageUsers, 'getGroup')
 def getGroup(self, group_id):

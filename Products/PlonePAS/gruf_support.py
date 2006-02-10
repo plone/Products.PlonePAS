@@ -82,10 +82,9 @@ PluggableAuthService.authenticate__roles__ = ()
 # compat code galore
 def userSetGroups(self, id, groupnames):
     plugins = self.plugins
-    mtool = getToolByName(self, "portal_membership")
     gtool = getToolByName(self, "portal_groups")
 
-    member = mtool.getMemberById(id)
+    member = self.getUser(id)
     groupnameset = Set(groupnames)
 
     # remove absent groups
@@ -116,30 +115,8 @@ def userSetGroups(self, id, groupnames):
 PluggableAuthService.userSetGroups = userSetGroups
 
 def userFolderAddGroup(self, name, roles, groups = (), **kw):
-    plugins = self.plugins
-
-    try:
-        groupmanagers = plugins.listPlugins(IGroupManagement)
-    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        LOG('PluggableAuthService', BLATHER,
-            'Plugin listing error',
-            error=sys.exc_info())
-        groupmanagers = ()
-
-    for group in groupmanagers:
-        for gm_id, gm in groupmanagers:
-            try:
-                gm.addGroup(name, **kw)
-                if roles:
-                    gm.setRolesForGroup(name, roles=roles)
-                if groups:
-                    for group in groups:
-                        gm.addPrincipalToGroup(name, group)
-
-            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                LOG('PluggableAuthService', BLATHER,
-                    'AuthenticationPlugin %s error' %
-                    gm_id, error=sys.exc_info())
+    gtool = getToolByName(self, 'portal_groups')
+    return gtool.addGroup(name, roles, groups, **kw)
 
 PluggableAuthService.userFolderAddGroup = userFolderAddGroup
 
