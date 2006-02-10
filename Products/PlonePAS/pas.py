@@ -175,12 +175,20 @@ PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
 security.declareProtected(ManageUsers, 'getGroups')
 def getGroups(self):
     gtool = getToolByName(self, 'portal_groups')
-    gtool.listGroups()
+    return gtool.listGroups()
+PluggableAuthService.getGroups = getGroups
 
 security.declareProtected(ManageUsers, 'getGroupNames')
 def getGroupNames(self):
     gtool = getToolByName(self, 'portal_groups')
-    gtool.getGroupIds()
+    return gtool.getGroupIds()
+PluggableAuthService.getGroupNames = getGroupNames
+
+security.declareProtected(ManageUsers, 'getGroupIds')
+def getGroupIds(self):
+    gtool = getToolByName(self, 'portal_groups')
+    return gtool.getGroupIds()
+PluggableAuthService.getGroupIds = getGroupIds
 
 security.declareProtected(ManageUsers, 'getGroup')
 def getGroup(self, group_id):
@@ -201,7 +209,7 @@ PluggableAuthService.getGroup = getGroup
 
 security.declareProtected(ManageUsers, 'getGroupByName')
 def getGroupByName(self, name, default = None):
-    ret = getGroup(name)
+    ret = self.getGroup(name)
     if ret is None:
         return default
     return ret
