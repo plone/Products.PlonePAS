@@ -216,6 +216,11 @@ def getGroupByName(self, name, default = None):
 PluggableAuthService.getGroupByName = getGroupByName
 
 
+security.declareProtected(ManageUsers, 'getGroupById')
+def getGroupById(self, id, default = None):
+    gtool = getToolByName(self, "portal_groups")
+    return gtool.getGroupById(id, default)
+
 
 security.declarePublic("getLocalRolesForDisplay")
 def getLocalRolesForDisplay(self, object):
