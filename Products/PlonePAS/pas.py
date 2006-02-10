@@ -219,7 +219,13 @@ PluggableAuthService.getGroupByName = getGroupByName
 security.declareProtected(ManageUsers, 'getGroupById')
 def getGroupById(self, id, default = None):
     gtool = getToolByName(self, "portal_groups")
-    return gtool.getGroupById(id, default)
+    ret = gtool.getGroupById(id)
+    if ret is None:
+        return default
+    else:
+        return ret
+	    
+PluggableAuthService.getGroupById = getGroupById
 
 
 security.declarePublic("getLocalRolesForDisplay")
