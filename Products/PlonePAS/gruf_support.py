@@ -24,6 +24,7 @@ $Id$
 """
 
 import sys
+from sets import Set
 
 from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
@@ -33,6 +34,8 @@ from Products.PluggableAuthService.interfaces.plugins \
      import IRoleAssignerPlugin, IAuthenticationPlugin
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
+
+from Products.CMFCore.utils import getToolByName
 
 def authenticate(self, name, password, request):
 
@@ -79,7 +82,19 @@ PluggableAuthService.authenticate__roles__ = ()
 # compat code galore
 def userSetGroups(self, id, groupnames):
     plugins = self.plugins
+    mtool = getToolByName(self, "portal_membership")
+    gtool = getToolByName(self, "portal_groups")
 
+    member = mtool.getMemberById(id)
+    groupnameset = Set(groupnames)
+
+    # remove absent groups
+    groups = Set(gtool.getGroupsForPrincipal(member))
+    rmgroups = groups - groupnameset
+    for gid in rmgroups:
+        gtool.removePrincipalFromGroup(id, gid)
+
+    # add groups
     try:
         groupmanagers = plugins.listPlugins(IGroupManagement)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
@@ -206,3 +221,4 @@ PluggableAuthService._acquireLocalRoles = acquireLocalRoles
 #################################
 # give interested parties some apriori way of noticing pas is a user folder impl
 PluggableAuthService.isAUserFolder = 1
+
