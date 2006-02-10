@@ -199,6 +199,16 @@ def getGroup(self, group_id):
 PluggableAuthService.getGroup = getGroup
 
 
+security.declareProtected(ManageUsers, 'getGroupByName')
+def getGroupByName(self, name, default = None):
+    ret = getGroup(name)
+    if ret is None:
+        return default
+    return ret
+PluggableAuthService.getGroupByName = getGroupByName
+
+
+
 security.declarePublic("getLocalRolesForDisplay")
 def getLocalRolesForDisplay(self, object):
     """This is used for plone's local roles display
