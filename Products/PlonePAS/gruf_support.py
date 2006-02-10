@@ -130,8 +130,6 @@ PluggableAuthService.userFolderAddGroup = userFolderAddGroup
 
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
-def getUsers(self):
-    return ()
 
 def getUserIds(self):
     plugins = self.plugins
@@ -178,7 +176,6 @@ def getUserNames(self):
 
     return results
 
-PluggableAuthService.getUsers = getUsers
 PluggableAuthService.getUserIds = getUserIds
 PluggableAuthService.getUserNames = getUserNames
 
