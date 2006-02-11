@@ -179,9 +179,6 @@ def acquireLocalRoles(self, obj, status = 1):
 
     If it's 0, prohibit it (it will allow some kind of local role blacklisting).
     """
-    mt = getToolByName(self, 'portal_membership')
-    if not mt.checkPermission(ModifyPortalContent, obj):
-        raise Unauthorized
     # Set local role status
     gruf = getToolByName(self, 'portal_url').getPortalObject().acl_users
     # We perform our own security check
@@ -190,8 +187,6 @@ def acquireLocalRoles(self, obj, status = 1):
     else:
         if getattr(folder, '__ac_local_roles_block__', None):
             folder.__ac_local_roles_block__ = None
-    # Reindex the whole stuff.
-    obj.reindexObjectSecurity()
 
 PluggableAuthService._acquireLocalRoles = acquireLocalRoles
 
