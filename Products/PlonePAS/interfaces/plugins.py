@@ -69,6 +69,13 @@ class ILocalRolesPlugin(Interface):
         including one of the object roles.
         """
 
+    def getAllLocalRolesInContext(object):
+        """
+        Return a list of all local roles in a context.
+        """
+
+
+
 
 class IUserManagement(plugins.IUserAdderPlugin):
     """
