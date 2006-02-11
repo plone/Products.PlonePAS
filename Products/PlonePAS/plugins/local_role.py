@@ -23,6 +23,7 @@ roles from their containment structure.
 $Id$
 """
 
+from sets import Set
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner, aq_parent
 from Globals import DTMLFile, InitializeClass
@@ -161,6 +162,53 @@ class LocalRolesManager(LocalRolePlugin):
             break
 
         return None
+
+
+    def getAllLocalRolesInContext(self, context):
+        roles = {}
+        object = aq_inner( context )
+
+        while True:
+
+            local_roles = getattr( object, '__ac_local_roles__', None )
+
+            if local_roles:
+
+                if callable( local_roles ):
+                    local_roles = local_roles()
+
+                dict = local_roles or {}
+
+                for principal, localroles in dict.items():
+                    if not principal in roles:
+                        roles[principal]=Set()
+
+                    roles[principal].update(localroles)
+
+
+            inner = aq_inner( object )
+            parent = aq_parent( inner )
+
+            if getattr(object, '__ac_local_roles_block__', None):
+                break
+
+            if parent is not None:
+                object = parent
+                continue
+
+            new = getattr( object, 'im_self', None )
+
+            if new is not None:
+
+                object = aq_inner( new )
+                continue
+
+            break
+
+        return roles
+
+
+
 
 classImplements(LocalRolesManager,
                 ILocalRolesPlugin, *implementedBy(LocalRolePlugin))

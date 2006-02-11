@@ -17,6 +17,7 @@ pas alterations and monkies
 $Id$
 """
 import sys
+from sets import Set
 
 from Acquisition import aq_inner, aq_parent
 from AccessControl.PermissionRole import _what_not_even_god_should_do
@@ -32,7 +33,7 @@ from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 
-from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
@@ -370,3 +371,21 @@ def addRole( self, role ):
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             pass
 PluggableAuthService.addRole = addRole
+
+def getAllLocalRoles( self, context ):
+    plugins = self._getOb('plugins')
+    lrmanagers = plugins.listPlugins(ILocalRolesPlugin)
+
+    roles={}
+    for lrid, lrmanager in lrmanagers:
+        newroles=lrmanager.getAllLocalRolesInContext(context)
+        for k,v in newroles.items():
+            if k not in roles:
+                roles[k]=Set()
+            roles[k].update(v)
+
+    return roles
+PluggableAuthService.getAllLocalRoles = getAllLocalRoles
+# Old name, used by CMFPlone.CatalogTool
+PluggableAuthService._getAllLocalRoles = getAllLocalRoles
+

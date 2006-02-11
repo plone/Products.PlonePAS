@@ -74,9 +74,8 @@ class ILocalRolesPlugin(Interface):
         Return active all local roles in a context.
 
         The roles are returned in a dictionary mapping a principal (a
-        user or a group) to the list of roles assigned to it.
+        user or a group) to the set of roles assigned to it.
         """
-
 
 
 

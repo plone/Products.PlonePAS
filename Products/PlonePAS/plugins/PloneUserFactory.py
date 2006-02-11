@@ -24,6 +24,7 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PlonePAS.utils import unique
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 
 manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals() )
 
