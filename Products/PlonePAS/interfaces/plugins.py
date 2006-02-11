@@ -71,7 +71,10 @@ class ILocalRolesPlugin(Interface):
 
     def getAllLocalRolesInContext(object):
         """
-        Return a list of all local roles in a context.
+        Return active all local roles in a context.
+
+        The roles are returned in a dictionary mapping a principal (a
+        user or a group) to the list of roles assigned to it.
         """
 
 
