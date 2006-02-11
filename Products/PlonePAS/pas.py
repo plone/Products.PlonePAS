@@ -29,12 +29,10 @@ from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
 from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
-from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 
-from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
-from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
