@@ -9,13 +9,13 @@ not it will help you.
 
 Versions
 
-  - Currently targeted to Plone 2.1, and its standard dependencies.
+  - Currently targeted to Plone 2.1 and 2.5, and its standard dependencies.
 
 Depends On
 
  - Plone standard products (esp. GRUF)
 
- - PluggableAuthService 1.0.4 (currently unreleased, see SVN)
+ - PluggableAuthService 1.0.5 (or later)
 
  - PluginRegistry (latest)
 
@@ -30,7 +30,7 @@ Optional
  - LDAPMultiPlugins 1.0 or better
 
 PlonePAS installs like any other Plone Product, but please note: it
-does destroy your existing portal user folder. There is automatic
+does replace your existing portal user folder. There is automatic
 migration, but this is not tested against setups other than GRUF+ZODB
 UserFolder. It may work for other userfolders or sources, but it will
 end up storing all users in the ZODB, regardless of original user
@@ -128,9 +128,12 @@ Authorship
   Synced login process with Plone:
   Dorneles Tremea at "PloneSolutions":http://plonesolutions.com
 
+  Bugfixes, various development and merging with Plone:
+  Wichert Akkerman at "Amaze":http://www.amaze.nl
+
   (Add yourself if you work on it!)
 
 Bug Reports
 
-  Please report bugs to plonepas@jcameroncooper.com, or to the PAS
-  mailing list.
+  Please report bugs to the PlonePAS issue tracker at
+  http://plone.org/products/plonepas/issues
