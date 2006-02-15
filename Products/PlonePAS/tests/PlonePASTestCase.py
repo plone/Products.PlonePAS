@@ -12,12 +12,6 @@ import Products.statusmessages
 from Testing import ZopeTestCase
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.setup import PLONE25
-# Do our placeless setup if needed, this should be handled in PTC itself
-# eventually
-if PLONE25:
-    setUp()
-    zcml.load_config('meta.zcml', Products.Five)
-    zcml.load_config('configure.zcml', Products.statusmessages)
 
 PloneTestCase.setupPloneSite(products=('PlonePAS',))
 
