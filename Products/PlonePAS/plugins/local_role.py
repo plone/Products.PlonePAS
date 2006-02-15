@@ -112,9 +112,9 @@ class LocalRolesManager(LocalRolePlugin):
         # this manually rather than call getRolesInContext so that
         # we can incur only the overhead required to find a match.
         inner_obj = aq_inner( object )
-        user_id = self.getId()
-        # [ x.getId() for x in self.getGroups() ]
-        group_ids = self.getGroups()
+        user_id = user.getId()
+        # [ x.getId() for x in user.getGroups() ]
+        group_ids = user.getGroups()
 
         principal_ids = list( group_ids )
         principal_ids.insert( 0, user_id )
@@ -138,7 +138,7 @@ class LocalRolesManager(LocalRolePlugin):
 
                         if role in local_roles:
 
-                            if self._check_context( object ):
+                            if user._check_context( object ):
                                 return 1
 
                             return 0
@@ -146,7 +146,7 @@ class LocalRolesManager(LocalRolePlugin):
             inner = aq_inner( inner_obj )
             parent = aq_parent( inner )
 
-            if getattr(obj, '__ac_local_roles_block__', None):
+            if getattr(inner_obj, '__ac_local_roles_block__', None):
                 break
 
             if parent is not None:

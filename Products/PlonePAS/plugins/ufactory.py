@@ -17,6 +17,7 @@ $Id$
 """
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.PermissionRole import _what_not_even_god_should_do
 from Globals import InitializeClass, DTMLFile
 
 from Products.PluggableAuthService.utils import classImplements
@@ -143,7 +144,7 @@ class PloneUser(PropertiedUser):
         return sheets
 
     #################################
-    # local roles plugin type delegation - currently disabled
+    # local roles plugin type delegation
 
     def _getLocalRolesPlugins(self):
         return self.acl_users.plugins.listPlugins(ILocalRolesPlugin)
@@ -155,7 +156,7 @@ class PloneUser(PropertiedUser):
             roles.extend(lrmanager.getRolesInContext(self, object))
         return unique(roles)
 
-    def __allowed(self, object, object_roles = None):
+    def allowed(self, object, object_roles = None):
         if object_roles is _what_not_even_god_should_do:
             return 0
 
