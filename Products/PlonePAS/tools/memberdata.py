@@ -97,6 +97,36 @@ class MemberDataTool(BaseMemberDataTool):
 #        return acl_users.searchUsers(name=s, exact_match=False)
 #        # I don't think this is right: we need to return Members
 
+    def deleteMemberData(self, member_id):
+        """ Delete member data of specified member.
+        """
+        sheets = None
+        if IPluggableAuthService.providedBy(self.acl_users):
+            # It's a PAS! Whee!
+            # XXX: can we safely assume that user name == member_id
+            plugins = self._getPlugins()
+            prop_managers = plugins.listPlugins(IPropertiesPlugin)
+            for mid, prop_manager in prop_managers:
+                # Not all PropertiesPlugins support user deletion
+                try:
+                    prop_manager.deleteUser(member_id)
+                except AttributeError:
+                    pass
+
+        # we won't always have PlonePAS users, due to acquisition,
+        # nor are guaranteed property sheets
+        if not sheets:
+            members = self._members
+            if members.has_key(member_id):
+                del members[member_id]
+                return 1
+            else:
+                return 0
+
+    ## plugin getter
+    def _getPlugins(self):
+        return self.acl_users.plugins
+
 
 InitializeClass(MemberDataTool)
 

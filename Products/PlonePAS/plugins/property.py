@@ -190,6 +190,15 @@ class ZODBMutablePropertyProvider(BasePlugin):
         else:
             self._storage.insert(user.getId(), properties)
 
+    def deleteUser(self, user_id):
+        """Delete all user properties
+        """
+        # Do nothing if an unknown user_id is given
+        try:
+            del self._storage[user_id]
+        except KeyError:
+            pass
+
 classImplements(ZODBMutablePropertyProvider,
                 IPropertiesPlugin, IMutablePropertiesPlugin)
 

@@ -129,6 +129,11 @@ class IMutablePropertiesPlugin(Interface):
         Raise a ValueError if the property or property value is invalid
         """
 
+    def deleteUser(user_id):
+        """
+        Remove properties stored for a user
+        """
+
 
 class ISchemaMutablePropertiesPlugin(Interface):
 
