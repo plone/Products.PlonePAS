@@ -111,7 +111,7 @@ class MembershipToolTest(PlonePASTestCase):
              "asdf\x00asdf",
         ]
         b = [cleanId(id) for id in a]
-        c = [uncleanID(id) for id in b]
+        c = [decleanId(id) for id in b]
         ac = zip(a,c)
         for aa, cc in ac:
             self.failUnless(aa==cc)
