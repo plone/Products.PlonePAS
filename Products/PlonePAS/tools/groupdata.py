@@ -31,6 +31,8 @@ from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 
+from Products.PlonePAS.config import logger
+
 try:
     from Products.CMFCore.MemberDataTool import CleanupTemp
     _have_cleanup_temp = 1
@@ -194,9 +196,8 @@ class GroupData(BaseGroupData):
         for u_name in gtool.getGroupMembers(self.getId()):
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
-                # is this begging for errors? should we fail silently?
-                raise AssertionError, "Cannot retreive user %s by id!" % u_name
-            if usr.isGroup():
+                logger.debug("Group has a non-existing user %s" % u_name)
+            elif usr.isGroup():
                 ret.append(gd.wrapGroup(usr))
             else:
                 ret.append(md.wrapUser(usr))
