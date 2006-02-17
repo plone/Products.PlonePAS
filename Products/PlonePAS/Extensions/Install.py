@@ -217,7 +217,7 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
         cookie_name = crumbler.auth_cookie
 
     # note: old versions of PlonePAS (< 0.4.2) may leave a 'Cookie
-    #       Auth Helper' by thie same name
+    #       Auth Helper' by the same name
     found = uf.objectIds(['Cookie Auth Helper'])
     if found and 'credentials_cookie_auth' in found:
         print >> out, " old credentials_cookie_auth found; removing"
