@@ -16,7 +16,7 @@
 # PloneTestCase
 #
 
-# $Id: PloneTestCase.py,v 1.19 2005/06/29 17:27:46 jccooper Exp $
+# $Id$
 
 from Testing import ZopeTestCase
 

@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: __init__.py,v 1.25 2005/06/29 17:27:43 jccooper Exp $
+$Id$
 """
 
 from AccessControl.Permissions import add_user_folders

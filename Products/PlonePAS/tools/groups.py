@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: groups.py,v 1.21 2005/06/29 17:27:46 jccooper Exp $
+$Id$
 """
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo

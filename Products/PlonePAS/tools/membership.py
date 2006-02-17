@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id: membership.py,v 1.13 2005/06/29 17:27:46 jccooper Exp $
+$Id$
 """
 from Globals import InitializeClass
 

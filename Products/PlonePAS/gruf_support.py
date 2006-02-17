@@ -20,7 +20,7 @@ experimenting with pas flexibility on an existing system.
 
 open question if this mode will be supported at all
 
-$Id: gruf_support.py,v 1.5 2005/06/29 17:27:43 jccooper Exp $
+$Id$
 """
 
 import sys

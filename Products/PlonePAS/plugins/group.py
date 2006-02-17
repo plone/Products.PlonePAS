@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id: group.py,v 1.17 2005/06/29 17:27:45 jccooper Exp $
+$Id$
 """
 
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
