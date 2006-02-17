@@ -19,7 +19,7 @@ Depends On
 
  - PluginRegistry (latest)
 
- - PasswordResetTool (for full functionality)
+ - PasswordResetTool (latest)
 
 Optional
 
