@@ -184,6 +184,24 @@ class GroupData(BaseGroupData):
         """
         self._getGroup().removeMember(id)
 
+    def getAllGroupMembers(self, ):
+        """
+        Returns a list of the portal_memberdata-ish members of the group.
+        This will include transitive groups / users
+        """
+        md = self.portal_memberdata
+        gd = self.portal_groupdata
+        ret = []
+        for u_name in self.getGroup().getMemberIds():
+            usr = self._getGRUF().getUserById(u_name)
+            if not usr:
+                logger.debug("Group has a non-existing user %s" % u_name)
+            if usr.isGroup():
+                ret.append(gd.wrapGroup(usr))
+            else:
+                ret.append(md.wrapUser(usr))
+        return ret
+
     def getGroupMembers(self):
         """
         Returns a list of the portal_memberdata-ish members of the group.
