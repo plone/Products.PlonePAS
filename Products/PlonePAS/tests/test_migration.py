@@ -194,15 +194,20 @@ class MigrationTest(BaseTest):
         self.loginPortalOwner()
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])
-        self.qi.installProduct('PlonePAS')
+
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
         self.checker.run('checkUserFolder')
 
     def test_migrate_no_user_folder_populated_users(self):
         self.loginPortalOwner()
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])
+
         self.checker.run('populateUsers')
-        self.qi.installProduct('PlonePAS')
+        # Don't remove the tools
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
         self.checker.run('checkUserFolder', 'checkUsers')
 
     def test_migrate_normal_uf_no_group_tools(self):
@@ -213,15 +218,19 @@ class MigrationTest(BaseTest):
         for tname in to_remove:
             if tname in self.portal.objectIds():
                 self.portal.manage_delObjects(ids=[tname])
+
         self.checker.run('populateUsers')
-        self.qi.installProduct('PlonePAS')
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
         self.checker.run('checkUserFolder', 'checkUsers')
 
     def test_migrate_populated(self):
         self.loginPortalOwner()
         self.checker.run('populateUsers', 'populateGroups',
                          'checkUsers', 'checkGroups')
-        self.qi.installProduct('PlonePAS')
+
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
         self.checker.run('checkUserFolder', 'checkUsers', 'checkGroups')
 
     def test_migrate_populated_gruf_no_group_tools(self):
@@ -231,7 +240,9 @@ class MigrationTest(BaseTest):
         for tname in to_remove:
             if tname in self.portal.objectIds():
                 self.portal.manage_delObjects(ids=[tname])
-        self.qi.installProduct('PlonePAS')
+
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
         self.checker.run('checkUserFolder', 'checkUsers')
 
 def test_suite():

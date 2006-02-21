@@ -23,12 +23,12 @@ User exists in the user folder inside the Plone Site.
   >>> uf.userFolderAddUser(user_name, user_password, [user_role], [])
 
   >>> uf.getUserById(user_name)
-  foo
+  <PloneUser 'foo'>
 
 Login to Plone Site using Basic Auth works.
 
   >>> print http(r"""
-  ... GET /portal/manage HTTP/1.1
+  ... GET /plone/manage HTTP/1.1
   ... Authorization: Basic %s:%s
   ... """ % (user_name, user_password), handle_errors=False)
   HTTP/1.1 200 OK...
@@ -64,7 +64,7 @@ Login to Plone site using Cookie Auth should work too.
 
   >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
   >>> print http(r"""
-  ... GET /portal/manage HTTP/1.1
+  ... GET /plone/manage HTTP/1.1
   ... Cookie: __ac=%s;
   ... """ % (encoded), handle_errors=False)
   HTTP/1.1 200 OK...
@@ -83,7 +83,7 @@ Pluggable Auth Service too.
   >>> uf.userFolderAddUser(user_name, user_password, [user_role], [])
 
   >>> uf.getUserById(user_name)
-  baz
+  <PropertiedUser 'baz'>
 
 Login directly to containing folder using Basic Auth works.
 
@@ -96,7 +96,7 @@ Login directly to containing folder using Basic Auth works.
 Login to Plone Site using Basic Auth works.
 
   >>> print http(r"""
-  ... GET /portal/manage HTTP/1.1
+  ... GET /plone/manage HTTP/1.1
   ... Authorization: Basic %s:%s
   ... """ % (user_name, user_password), handle_errors=False)
   HTTP/1.1 200 OK...
@@ -105,7 +105,7 @@ Login to Plone site using Cookie Auth should work too.
 
   >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
   >>> print http(r"""
-  ... GET /portal/manage HTTP/1.1
+  ... GET /plone/manage HTTP/1.1
   ... Cookie: __ac=%s;
   ... """ % (encoded), handle_errors=False)
   HTTP/1.1 200 OK...
