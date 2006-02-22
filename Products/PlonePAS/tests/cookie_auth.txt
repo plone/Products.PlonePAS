@@ -4,6 +4,7 @@ Test for Cookie Auth
   >>> import base64
   >>> from Products.PluggableAuthService.utils import implementedBy
   >>> from Interface.Implements import flattenInterfaces
+  >>> from Products.PloneTestCase.PloneTestCase import portal_name
 
 User in Plone Site
 ------------------
@@ -28,9 +29,9 @@ User exists in the user folder inside the Plone Site.
 Login to Plone Site using Basic Auth works.
 
   >>> print http(r"""
-  ... GET /plone/manage HTTP/1.1
+  ... GET /%s/manage HTTP/1.1
   ... Authorization: Basic %s:%s
-  ... """ % (user_name, user_password), handle_errors=False)
+  ... """ % (portal_name, user_name, user_password), handle_errors=False)
   HTTP/1.1 200 OK...
 
 Make sure cookie plugin is installed and activated.
@@ -64,9 +65,9 @@ Login to Plone site using Cookie Auth should work too.
 
   >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
   >>> print http(r"""
-  ... GET /plone/manage HTTP/1.1
+  ... GET /%s/manage HTTP/1.1
   ... Cookie: __ac=%s;
-  ... """ % (encoded), handle_errors=False)
+  ... """ % (portal_name, encoded), handle_errors=False)
   HTTP/1.1 200 OK...
 
 User in parent folder
@@ -96,16 +97,16 @@ Login directly to containing folder using Basic Auth works.
 Login to Plone Site using Basic Auth works.
 
   >>> print http(r"""
-  ... GET /plone/manage HTTP/1.1
+  ... GET /%s/manage HTTP/1.1
   ... Authorization: Basic %s:%s
-  ... """ % (user_name, user_password), handle_errors=False)
+  ... """ % (portal_name, user_name, user_password), handle_errors=False)
   HTTP/1.1 200 OK...
 
 Login to Plone site using Cookie Auth should work too.
 
   >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
   >>> print http(r"""
-  ... GET /plone/manage HTTP/1.1
+  ... GET /%s/manage HTTP/1.1
   ... Cookie: __ac=%s;
-  ... """ % (encoded), handle_errors=False)
+  ... """ % (portal_name, encoded), handle_errors=False)
   HTTP/1.1 200 OK...
