@@ -20,7 +20,6 @@ from sets import Set
 from StringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
 
-from Products.Archetypes.Extensions.utils import install_subskin
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.Expression import Expression
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
@@ -824,9 +823,6 @@ def install(self):
 
     # Configure Challenge Chooser plugin if available
     challenge_chooser_setup(self, out)
-
-    install_subskin(self, out, config.GLOBALS)
-    print >> out, "\nInstalled skins."
 
     configurePlonePAS(portal, out)
 

@@ -17,7 +17,6 @@ $Id$
 """
 
 from AccessControl.Permissions import add_user_folders
-from Products.CMFCore.DirectoryView import registerDirectory
 from Products.PluggableAuthService import registerMultiPlugin
 try:
     from Products.CMFPlone import utils as plone_utils
@@ -72,11 +71,6 @@ from tools.groupdata import GroupDataTool
 #################################
 # import Extensions to check for syntax errors
 from Extensions import *
-
-#################################
-# register skin layer dirs
-
-registerDirectory('skins', globals())
 
 #################################
 # register plugins with pas
