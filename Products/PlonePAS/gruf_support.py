@@ -25,11 +25,11 @@ $Id$
 
 import sys
 from sets import Set
+from zLOG import LOG, BLATHER
 
 from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
-          PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
-#from Products.PluggableAuthService.PluggableAuthService import MANGLE_DELIMITER
+          PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins \
      import IRoleAssignerPlugin, IAuthenticationPlugin
 from Products.PlonePAS.interfaces.group import IGroupManagement

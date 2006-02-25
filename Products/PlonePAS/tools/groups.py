@@ -23,6 +23,7 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
+from zLOG import LOG, BLATHER
 
 from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
@@ -32,7 +33,7 @@ from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.PluggableAuthService import \
-                                    _SWALLOWABLE_PLUGIN_EXCEPTIONS, LOG, BLATHER
+                                    _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
 
 class NotSupported(Exception): pass
