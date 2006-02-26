@@ -18,12 +18,7 @@ $Id$
 
 from AccessControl.Permissions import add_user_folders
 from Products.PluggableAuthService import registerMultiPlugin
-try:
-    from Products.CMFPlone import utils as plone_utils
-except ImportError:
-    # rename didn't happen until after 2.1a1, which is current packaged version
-    # can probably ditch the condition at a2 or so
-    from Products.CMFPlone import PloneUtilities as plone_utils
+from Products.CMFPlone import utils as plone_utils
 
 import config
 #import MigrationCheck
@@ -94,10 +89,8 @@ def initialize(context):
 
     plone_utils.ToolInit('PlonePAS Tools',
                          tools=tools,
-                         product_name='PlonePAS',
                          icon='tool.gif',
                          ).initialize(context)
-
 
     context.registerClass( role.GroupAwareRoleManager,
                            permission = add_user_folders,
