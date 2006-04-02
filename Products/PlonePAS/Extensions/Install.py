@@ -205,7 +205,7 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
     uf = portal.acl_users
     print >> out, " cookie plugin setup"
 
-    login_path = 'require_login'
+    login_path = 'login_form'
     logout_path = 'logged_out'
     cookie_name = '__ac'
 

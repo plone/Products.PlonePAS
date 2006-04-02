@@ -39,7 +39,7 @@ class GroupsToolTest(PlonePASTestCase):
 
         self.group_id = 'group1'
         # Create a new Group
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         gt.addGroup(self.group_id, ['Reviewer'], [],
                     {'email': 'group1@host.com',
                      'title': 'Group #1'})
@@ -74,7 +74,7 @@ class GroupWorkspacesTest(PlonePASTestCase):
         self.gt.groupWorkspacesCreationFlag = 1
         # Those are all valid chars in Zope.
         self.gid = "Group #1 - Houston, TX. ($100)"
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
 
     def test_funky_group_ids_1(self):
         gid = self.gid

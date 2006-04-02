@@ -125,7 +125,7 @@ class MemberAreaTest(PlonePASTestCase):
         self.mt.memberareaCreationFlag = 1
         # Those are all valid chars in Zope.
         self.mid = "Member #1 - Houston, TX. ($100)"
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
 
     def test_funky_member_ids_1(self):
         mid = self.mid

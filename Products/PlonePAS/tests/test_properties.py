@@ -103,7 +103,7 @@ class PropertiesTest(PlonePASTestCase):
         gt = getToolByName(self.portal, 'portal_groups')
         gd = getToolByName(self.portal, 'portal_groupdata')
 
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
 
         # Create a new Group
         gt.addGroup('group1', ['Reviewer'], [],

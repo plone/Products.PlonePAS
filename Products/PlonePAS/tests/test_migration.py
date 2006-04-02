@@ -191,7 +191,7 @@ class MigrationTest(BaseTest):
         self.qi = getToolByName(self.portal, 'portal_quickinstaller')
 
     def test_migrate_no_user_folder_empty(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])
 
@@ -200,7 +200,7 @@ class MigrationTest(BaseTest):
         self.checker.run('checkUserFolder')
 
     def test_migrate_no_user_folder_populated_users(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])
 
@@ -211,7 +211,7 @@ class MigrationTest(BaseTest):
         self.checker.run('checkUserFolder', 'checkUsers')
 
     def test_migrate_normal_uf_no_group_tools(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])
         to_remove = ('portal_groups', 'portal_groupdata')
@@ -225,7 +225,7 @@ class MigrationTest(BaseTest):
         self.checker.run('checkUserFolder', 'checkUsers')
 
     def test_migrate_populated(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         self.checker.run('populateUsers', 'populateGroups',
                          'checkUsers', 'checkGroups')
 
@@ -234,7 +234,7 @@ class MigrationTest(BaseTest):
         self.checker.run('checkUserFolder', 'checkUsers', 'checkGroups')
 
     def test_migrate_populated_gruf_no_group_tools(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         self.checker.run('populateUsers', 'populateGroups')
         to_remove = ('portal_groups', 'portal_groupdata')
         for tname in to_remove:

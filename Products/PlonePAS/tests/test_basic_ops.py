@@ -38,7 +38,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 class BasicOpsTestCase(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         self.acl_users = self.portal.acl_users
 
     def compareRoles(self, target, user, roles):

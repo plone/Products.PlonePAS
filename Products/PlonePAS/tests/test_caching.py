@@ -57,7 +57,7 @@ class CollectResultsWrapper(IntrospectorMethodWrapper):
 class BasicOpsTestCase(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.loginPortalOwner()
+        self.loginAsPortalOwner()
         self.acl_users = self.portal.acl_users
         self.acl_users.ZCacheable_setManagerId('RAMCache')
 
