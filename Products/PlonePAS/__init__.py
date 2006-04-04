@@ -100,7 +100,6 @@ def initialize(context):
 
     plone_utils.ToolInit('PlonePAS Tools',
                          tools=tools,
-                         product_name='PlonePAS',
                          icon='tool.gif',
                          ).initialize(context)
 
