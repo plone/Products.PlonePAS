@@ -16,16 +16,18 @@
 $Id$
 """
 
+import logging
 from sets import Set
 from types import StringTypes
 
 from Globals import InitializeClass
-from Products.PlonePAS.config import logger
 
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
+
+logger = logging.getLogger('Plone')
 
 try:
     # Plone 2.1

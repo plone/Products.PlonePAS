@@ -31,7 +31,9 @@ from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 
-from Products.PlonePAS.config import logger
+import logging
+
+logger = logging.getLogger('Plone')
 
 try:
     from Products.CMFCore.MemberDataTool import CleanupTemp
