@@ -31,9 +31,6 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.utils import unique
 
-from zLOG import LOG, INFO
-def log(msg):
-    LOG('PlonePAS', INFO, msg)
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
                                           globals())

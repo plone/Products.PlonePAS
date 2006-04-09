@@ -19,13 +19,12 @@ management (ie. rw) capabilities.
 $Id$
 """
 
-import sys
+import logging
 from Acquisition import Implicit, aq_parent, aq_base, aq_inner
 from BTrees.OOBTree import OOBTree, OOSet
 from Globals import DTMLFile
 from Globals import InitializeClass
 from AccessControl import ClassSecurityInfo
-from zLOG import LOG, BLATHER
 
 from Products.PluggableAuthService.PluggableAuthService import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
@@ -41,6 +40,7 @@ from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
+logger = logging.getLogger('Plone')
 
 def manage_addGroupManager(self, id, title='', RESPONSE=None):
     """
@@ -270,9 +270,9 @@ class GroupManager(ZODBGroupManager):
                         return id
 
                 except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                    LOG('PluggableAuthService', BLATHER,
-                        'GroupEnumerationPlugin %s error' % enumerator_id,
-                        error=sys.exc_info())
+                    logger.info(
+                        'PluggableAuthService: GroupEnumerationPlugin %s error',
+                        enumerator_id, exc_info=1)
 
         return 0
 

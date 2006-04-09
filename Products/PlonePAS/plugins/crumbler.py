@@ -69,19 +69,14 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
     def extractCredentials(self, request):
         """ Extract basic auth credentials from 'request'.
         """
-        from zLOG import LOG
-        LOG("PlonePAS", 0, "extracting")
 
         try:
-            LOG("PlonePAS", 0, "pre: " + `getattr(request,'_auth',"None")`)
-            LOG("PlonePAS", 0, "extracting 3")
             self._getCC().modifyRequest(request, request.RESPONSE)
-            LOG("PlonePAS", 0, "post: " + `getattr(request,'_auth',"None")`)
 
         except Exception, e:
-            LOG("PlonePAS error", 0, e)
-            from traceback import format_exc
-            LOG("PlonePAS error", 0, format_exc())
+            import logging
+            logger = logging.getLogger('Plone')
+            logger.error("PlonePAS error: %s", e, exc_info=1)
 
         return {}
 
