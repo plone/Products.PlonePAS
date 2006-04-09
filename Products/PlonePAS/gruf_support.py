@@ -63,7 +63,7 @@ def authenticate(self, name, password, request):
             user_id, name = uid_and_name
 
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        logger.info('PluggableAuthService: AuthenticationPlugin %s error',
+            logger.info('PluggableAuthService: AuthenticationPlugin %s error',
                     authenticator_id, exc_info=1)
             continue
 
@@ -125,7 +125,6 @@ def getUserIds(self):
         introspectors = plugins.listPlugins(IUserIntrospection)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
         logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
-            error=sys.exc_info())
         introspectors = ()
 
     results = []
