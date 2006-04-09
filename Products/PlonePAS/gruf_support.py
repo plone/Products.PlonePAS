@@ -23,9 +23,8 @@ open question if this mode will be supported at all
 $Id$
 """
 
-import sys
+import logging
 from sets import Set
-from zLOG import LOG, BLATHER
 
 from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
@@ -37,6 +36,8 @@ from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 from Products.CMFCore.utils import getToolByName
 
+logger = logging.getLogger('Plone')
+
 def authenticate(self, name, password, request):
 
     plugins = self.plugins
@@ -44,9 +45,7 @@ def authenticate(self, name, password, request):
     try:
         authenticators = plugins.listPlugins(IAuthenticationPlugin)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        LOG('PluggableAuthService', BLATHER,
-            'Plugin listing error',
-            error=sys.exc_info())
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
         authenticators = ()
 
     credentials = {'login': name,
@@ -64,9 +63,8 @@ def authenticate(self, name, password, request):
             user_id, name = uid_and_name
 
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            LOG('PluggableAuthService', BLATHER,
-                'AuthenticationPlugin %s error' %
-                authenticator_id, error=sys.exc_info())
+        logger.info('PluggableAuthService: AuthenticationPlugin %s error',
+                    authenticator_id, exc_info=1)
             continue
 
     if not user_id:
@@ -97,9 +95,7 @@ def userSetGroups(self, id, groupnames):
     try:
         groupmanagers = plugins.listPlugins(IGroupManagement)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        LOG('PluggableAuthService', BLATHER,
-            'Plugin listing error',
-            error=sys.exc_info())
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
         groupmanagers = ()
 
     for group in groupnames:
@@ -108,9 +104,8 @@ def userSetGroups(self, id, groupnames):
                 if gm.addPrincipalToGroup(id, group):
                     break
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                LOG('PluggableAuthService', BLATHER,
-                    'AuthenticationPlugin %s error' %
-                    gm_id, error=sys.exc_info())
+                logger.info('PluggableAuthService: GroupManagement %s error',
+                            gm_id, exc_info=1)
 
 PluggableAuthService.userSetGroups = userSetGroups
 
@@ -129,8 +124,7 @@ def getUserIds(self):
     try:
         introspectors = plugins.listPlugins(IUserIntrospection)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        LOG('PluggableAuthService', BLATHER,
-            'Plugin listing error',
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
             error=sys.exc_info())
         introspectors = ()
 
@@ -139,9 +133,8 @@ def getUserIds(self):
         try:
             results.extend(introspector.getUserIds())
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            LOG('PluggableAuthService', BLATHER,
-                    'AuthenticationPlugin %s error' %
-                    introspector_id, error=sys.exc_info())
+            logger.info('PluggableAuthService: UserIntrospection %s error',
+                    introspector_id, exc_info=1)
 
     return results
 
@@ -152,9 +145,7 @@ def getUserNames(self):
     try:
         introspectors = plugins.listPlugins(IUserIntrospection)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        LOG('PluggableAuthService', BLATHER,
-            'Plugin listing error',
-            error=sys.exc_info())
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
         introspectors = ()
 
     results = []
@@ -162,9 +153,8 @@ def getUserNames(self):
         try:
             results.extend(introspector.getUserNames())
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            LOG('PluggableAuthService', BLATHER,
-                    'AuthenticationPlugin %s error' %
-                    introspector_id, error=sys.exc_info())
+            logger.info('PluggableAuthService: UserIntroSpection plugin %s error',
+                    introspector_id, exc_info=1)
 
     return results
 

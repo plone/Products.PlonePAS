@@ -16,13 +16,11 @@
 pas alterations and monkies
 $Id$
 """
-import sys
 from sets import Set
 
 from Acquisition import aq_inner, aq_parent
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.Permissions import manage_users as ManageUsers
-from zLOG import LOG, BLATHER
 
 from Products.CMFCore.utils import getToolByName
 

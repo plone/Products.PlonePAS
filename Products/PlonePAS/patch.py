@@ -15,10 +15,10 @@
 """
 $Id$
 """
-from zLOG import LOG, INFO
+import logging
 
-def log(msg):
-    LOG('PlonePAS', INFO, msg)
+logger = logging.getLogger('Plone')
+
 
 PATTERN = '__PlonePAS_%s__'
 def call(self, __name__, *args, **kw):
@@ -32,10 +32,10 @@ def isWrapperMethod(meth):
 def wrap_method(klass, name, method, pattern=PATTERN):
     old_method = getattr(klass, name)
     if isWrapperMethod(old_method):
-        log('Wrapping already wrapped method at %s.%s' %
+        logger.info('PlonePAS: Wrapping already wrapped method at %s.%s',
             (klass.__name__, name))
     else:
-        log('Wrapping method at %s.%s' %
+        logger.info('PlonePAS: Wrapping method at %s.%s',
             (klass.__name__, name))
     new_name = pattern % name
     setattr(klass, new_name, old_method)
