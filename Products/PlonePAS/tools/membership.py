@@ -324,7 +324,7 @@ class MembershipTool(BaseMembershipTool):
         encode = translation_service.encode
 
         # convert the member_id to unicode type
-        umember_id = translation_service.asunicodetype(user.getUserName(), errors='replace')
+        umember_id = translation_service.asunicodetype(member.id, errors='replace')
 
         member_folder_title = utranslate(
             'plone', 'title_member_folder',
