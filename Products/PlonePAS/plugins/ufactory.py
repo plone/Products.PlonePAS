@@ -186,7 +186,7 @@ class PloneUser(PropertiedUser):
             if role in user_roles:
                 if self._check_context(object):
                     return 1
-                break
+                return None
 
         # check for local roles
         lrmanagers = self._getLocalRolesPlugins()
