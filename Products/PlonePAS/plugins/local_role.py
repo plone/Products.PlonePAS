@@ -53,11 +53,6 @@ class LocalRolesManager(LocalRolePlugin):
     meta_type = "Local Roles Manager"
     security = ClassSecurityInfo()
 
-    def __init__(self, id, title=None):
-        self._id = self.id = id
-        self.title = title
-
-
     #security.declarePrivate( 'getRolesInContext' )
     def getRolesInContext( self, user, object):
         user_id = user.getId()
