@@ -13,11 +13,11 @@ member=context.portal_membership.getAuthenticatedMember()
 if not member.canWriteProperty('email'):
     return state
 
-from Products.CMFPlone import PloneMessageFactory as _
 reg_tool=context.portal_registration
 
 def invalid(field):
-    state.setError('email', _(u'You entered an invalid email address.'), 'invalid_email')
+    state.setError('email', 
+        context.translate('You entered an invalid email address.'))
 
 if email and reg_tool.isValidEmail(email):
     pass
@@ -25,7 +25,8 @@ else:
     invalid('email')
 
 if state.getErrors():
-    context.plone_utils.addPortalMessage(_(u'Please correct the indicated errors.'))
+    context.plone_utils.addPortalMessage(
+            context.translate('Please correct the indicated errors.'))
     return state.set(status='failure')
 else:
     return state
