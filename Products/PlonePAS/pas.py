@@ -22,6 +22,8 @@ from sets import Set
 from Acquisition import aq_inner, aq_parent
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.Permissions import manage_users as ManageUsers
+from AccessControl.Permissions import manage_properties as ManageProperties
+from AccessControl import getSecurityManager
 
 from Products.CMFCore.utils import getToolByName
 
@@ -238,6 +240,20 @@ def getLocalRolesForDisplay(self, object):
 
     A GRUF method originally.
     """
+    if not getSecurityManager().checkPermission(ManageProperties, object):
+        raise Unauthorized(name="getLocalRolesForDisplay")
+    return _getLocalRolesForDisplay(self, object)
+
+def _getLocalRolesForDisplay(self, object):
+    """This is used for plone's local roles display
+
+    This method returns a tuple (massagedUsername, roles, userType,
+    actualUserName).  This method is protected by the 'access content
+    information' permission. We may change that if it's too
+    permissive...
+
+    A GRUF method originally.
+    """
     result = []
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
@@ -249,7 +265,10 @@ def getLocalRolesForDisplay(self, object):
             userType = 'group'
         result.append((username, roles, userType, username))
     return tuple(result)
+
 PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+# Plone 2.1.3 started calling this method instead. Yuck.
+PluggableAuthService._getLocalRolesForDisplay = _getLocalRolesForDisplay
 
 
 def getUsers(self):
