@@ -18,6 +18,7 @@ $Id$
 from Globals import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
+from AccessControl import Unauthorized
 
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
@@ -179,11 +180,15 @@ class GroupData(BaseGroupData):
 
     def addMember(self, id):
         """ Add the existing member with the given id to the group"""
+        if not self.canAdministrateGroup():
+            raise Unauthorized, "You cannot add a member to the group."
         self._getGroup().addMember(id)
 
     def removeMember(self, id):
         """Remove the member with the provided id from the group.
         """
+        if not self.canAdministrateGroup():
+            raise Unauthorized, "You cannot remove a member from the group."
         self._getGroup().removeMember(id)
 
     def getAllGroupMembers(self, ):

@@ -27,9 +27,12 @@ from PlonePASTestCase import PlonePASTestCase
 from cStringIO import StringIO
 from zExceptions import BadRequest
 from Acquisition import aq_base, aq_inner, aq_parent
+from AccessControl import Permissions
+from AccessControl import Unauthorized
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
+from Testing.ZopeTestCase import user_name
 
 class GroupsToolTest(PlonePASTestCase):
 
@@ -82,7 +85,7 @@ class GroupWorkspacesTest(PlonePASTestCase):
                  {'email': 'group1@host.com',
                   'title': 'Group #1'})
         # Create a new Group
-	self.gt.addGroup(*ginfo)
+        self.gt.addGroup(*ginfo)
 
     def test_funky_group_ids_2(self):
         # Forward-slash is not allowed
@@ -93,10 +96,45 @@ class GroupWorkspacesTest(PlonePASTestCase):
         # Create a new Group
         self.failUnlessRaises(BadRequest, self.gt.addGroup, *ginfo)
 
+class TestMethodProtection(PlonePASTestCase):
+    # GroupData has wrong security declarations
+
+    def afterSetUp(self):
+        self.groups = self.portal.portal_groups
+        self.groups.groupWorkspacesCreationFlag = 0
+        self.groups.addGroup('foo')
+        self.groupdata = self.groups.getGroupById('foo')
+
+    def testAnonAddMember(self):
+        self.logout()
+        self.assertRaises(Unauthorized, self.groupdata.addMember, user_name)
+
+    def testAnonRemoveMember(self):
+        self.logout()
+        self.assertRaises(Unauthorized, self.groupdata.removeMember, user_name)
+
+    def testMemberAddMember(self):
+        self.assertRaises(Unauthorized, self.groupdata.addMember, user_name)
+
+    def testMemberRemoveMember(self):
+        self.assertRaises(Unauthorized, self.groupdata.removeMember, user_name)
+
+    def testManagerAddMember(self):
+        self.setPermissions([Permissions.manage_users])
+        self.groupdata.addMember(user_name)
+
+    def testManagerRemoveMember(self):
+        self.setPermissions([Permissions.manage_users])
+        self.groupdata.addMember(user_name)
+        self.groupdata.removeMember(user_name)
+
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(GroupsToolTest))
     suite.addTest(unittest.makeSuite(GroupWorkspacesTest))
+    suite.addTest(unittest.makeSuite(TestMethodProtection))
     return suite
 
 if __name__ == '__main__':
