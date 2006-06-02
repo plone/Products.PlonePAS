@@ -20,10 +20,11 @@ import sys
 from sets import Set
 
 from Acquisition import aq_inner, aq_parent
+from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.Permissions import manage_properties as ManageProperties
-from AccessControl import getSecurityManager
 
 from Products.CMFCore.utils import getToolByName
 
