@@ -17,6 +17,7 @@ $Id$
 """
 
 import logging
+from DateTime import DateTime
 from sets import Set
 from types import StringTypes
 
