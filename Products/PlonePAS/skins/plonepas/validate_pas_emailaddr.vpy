@@ -16,7 +16,7 @@ if not member.canWriteProperty('email'):
 reg_tool=context.portal_registration
 
 def invalid(field):
-    state.setError('email', 
+    state.setError('email',
         context.translate('You entered an invalid email address.'))
 
 if email and reg_tool.isValidEmail(email):
@@ -25,9 +25,10 @@ else:
     invalid('email')
 
 if state.getErrors():
-    context.plone_utils.addPortalMessage(
-            context.translate('Please correct the indicated errors.'))
-    return state.set(status='failure')
+    status_msg = context.translate('Please correct the indicated errors.')
+    return state.set(
+        status='failure',
+        portal_status_message=status_msg)
 else:
     return state
 
