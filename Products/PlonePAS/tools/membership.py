@@ -19,6 +19,7 @@ $Id$
 from sets import Set
 from types import StringTypes
 
+from DateTime import DateTime
 from Globals import InitializeClass
 from Products.PlonePAS.config import logger
 
