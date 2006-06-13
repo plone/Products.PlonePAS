@@ -203,6 +203,7 @@ class GroupData(BaseGroupData):
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
                 logger.debug("Group has a non-existing user %s" % u_name)
+                continue
             if usr.isGroup():
                 ret.append(gd.wrapGroup(usr))
             else:
@@ -222,6 +223,7 @@ class GroupData(BaseGroupData):
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
                 logger.debug("Group has a non-existing user %s" % u_name)
+                continue
             elif usr.isGroup():
                 ret.append(gd.wrapGroup(usr))
             else:
