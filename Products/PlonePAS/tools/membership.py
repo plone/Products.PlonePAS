@@ -48,7 +48,7 @@ class MembershipTool(BaseMembershipTool):
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
 
-    user_search_keywords = ('name', 'exact_match')
+    user_search_keywords = ('fullname', 'exact_match')
 
     _properties = (getattr(BaseMembershipTool, '_properties', ()) +
                    ({'id': 'user_search_keywords',
@@ -102,6 +102,13 @@ class MembershipTool(BaseMembershipTool):
         else:
             searchmap = kw
 
+        # While the parameter is called name it is actually used to search a
+        # users name, which is stored in the fullname property. We need to fix
+        # that here so the right name is used when calling into PAS plugins.
+        if 'name' in searchmap:
+            searchmap['fullname']=searchmap['name']
+            del searchmap['name']
+
         user_search = {}
         for key in self.user_search_keywords:
             value = searchmap.get(key, None)
@@ -109,7 +116,7 @@ class MembershipTool(BaseMembershipTool):
                 continue
             user_search[key] = value
 
-        name = searchmap.get('name', None)
+        fullname = searchmap.get('fullname', None)
         email = searchmap.get('email', None)
         roles = searchmap.get('roles', None)
         last_login_time = searchmap.get('last_login_time', None)
@@ -117,10 +124,10 @@ class MembershipTool(BaseMembershipTool):
         groupname = searchmap.get('groupname', '').strip()
         is_manager = self.checkPermission('Manage portal', self)
 
-        if name:
-            name = name.strip().lower()
-        if not name:
-            name = None
+        if fullname:
+            fullname = fullname.strip().lower()
+        if not fullname:
+            fullname = None
         if email:
             email = email.strip().lower()
         if not email:
@@ -153,11 +160,11 @@ class MembershipTool(BaseMembershipTool):
         if user_search:
             # We first find in MemberDataTool users whose _full_ name
             # match what we want.
-            if name:
+            if fullname:
                 logger.debug(
                     'searchForMembers: searching memberdata '
-                    'for fullname=%r.' % name)
-                lst = md.searchMemberDataContents('fullname', name)
+                    'for fullname=%r.' % fullname)
+                lst = md.searchMemberDataContents('fullname', fullname)
                 uf_users = [x['username'] for x in lst]
 
             logger.debug(
