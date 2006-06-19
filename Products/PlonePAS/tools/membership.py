@@ -162,12 +162,12 @@ class MembershipTool(BaseMembershipTool):
         if user_search:
             # We first find in MemberDataTool users whose _full_ name
             # match what we want.
-            if fullname:
-                logger.debug(
-                    'searchForMembers: searching memberdata '
-                    'for fullname=%r.' % fullname)
-                lst = md.searchMemberDataContents('fullname', fullname)
-                uf_users = [x['username'] for x in lst]
+#            if fullname:
+#                logger.debug(
+#                    'searchForMembers: searching memberdata '
+#                    'for fullname=%r.' % fullname)
+#                lst = md.searchMemberDataContents('fullname', fullname)
+#                uf_users = [x['username'] for x in lst]
 
             logger.debug(
                 'searchForMembers: searching PAS '
@@ -216,9 +216,9 @@ class MembershipTool(BaseMembershipTool):
             u = member.getUser()
             if not (member.getProperty('listed', False) or is_manager):
                 continue
-            if name and not names_checked:
+            if fullname and not names_checked:
                 if (u.getUserName().lower().find(name) == -1 and
-                    member.getProperty('fullname').lower().find(name) == -1):
+                    member.getProperty('fullname').lower().find(fullname) == -1):
                     continue
             if email:
                 if member.getProperty('email').lower().find(email) == -1:
