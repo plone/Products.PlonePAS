@@ -160,12 +160,12 @@ class MembershipTool(BaseMembershipTool):
         if user_search:
             # We first find in MemberDataTool users whose _full_ name
             # match what we want.
-            if fullname:
-                logger.debug(
-                    'searchForMembers: searching memberdata '
-                    'for fullname=%r.' % fullname)
-                lst = md.searchMemberDataContents('fullname', fullname)
-                uf_users = [x['username'] for x in lst]
+#            if fullname:
+#                logger.debug(
+#                    'searchForMembers: searching memberdata '
+#                    'for fullname=%r.' % fullname)
+#                lst = md.searchMemberDataContents('fullname', fullname)
+#                uf_users = [x['username'] for x in lst]
 
             logger.debug(
                 'searchForMembers: searching PAS '
