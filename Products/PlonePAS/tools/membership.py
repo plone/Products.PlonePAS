@@ -214,9 +214,9 @@ class MembershipTool(BaseMembershipTool):
             u = member.getUser()
             if not (member.getProperty('listed', False) or is_manager):
                 continue
-            if name and not names_checked:
-                if (u.getUserName().lower().find(name) == -1 and
-                    member.getProperty('fullname').lower().find(name) == -1):
+            if fullname and not names_checked:
+                if (u.getUserName().lower().find(namefull) == -1 and
+                    member.getProperty('fullname').lower().find(fullname) == -1):
                     continue
             if email:
                 if member.getProperty('email').lower().find(email) == -1:
