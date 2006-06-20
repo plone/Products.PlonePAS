@@ -48,7 +48,7 @@ class MembershipTool(BaseMembershipTool):
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
 
-    user_search_keywords = ('fullname', 'exact_match')
+    user_search_keywords = ('login', 'fullname', 'exact_match')
 
     _properties = (getattr(BaseMembershipTool, '_properties', ()) +
                    ({'id': 'user_search_keywords',
