@@ -33,11 +33,10 @@ def wrap_method(klass, name, method, pattern=PATTERN):
     old_method = getattr(klass, name)
     if isWrapperMethod(old_method):
         logger.info('PlonePAS: *NOT* wrapping already wrapped method at %s.%s',
-            (klass.__name__, name))
+            klass.__name__, name)
         return
     else:
-        logger.info('PlonePAS: Wrapping method at %s.%s',
-            (klass.__name__, name))
+        logger.info('PlonePAS: Wrapping method at %s.%s', klass.__name__, name)
     new_name = pattern % name
     setattr(klass, new_name, old_method)
     setattr(method, ORIG_NAME, new_name)
