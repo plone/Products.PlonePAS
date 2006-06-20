@@ -65,10 +65,10 @@ class BasicOpsTestCase(PlonePASTestCase):
         raise RuntimeError, ("User %s: Whished roles: %s BUT current "
                              "roles: %s" % (user, wished_roles, actual_roles))
 
-    def createUser(self, name="created_user", password="secret",
+    def createUser(self, login="created_user", password="secret",
                    roles=[], groups=[], domains=()):
         self.acl_users.userFolderAddUser(
-            name,
+            login,
             password,
             roles = roles,
             groups = groups,
@@ -124,12 +124,14 @@ class BasicOpsTestCase(PlonePASTestCase):
         self.failIf(self.acl_users.getUser("created_user"))
 
     def test_search(self):
-        self.createUser()
+        self.createUser("created_user1")
+        self.createUser("created_user2")
         mt = self.portal.portal_membership
-        retlist = mt.searchForMembers(REQUEST=None, name="created_user")
+        retlist = mt.searchForMembers(REQUEST=None, login="created_user1")
         usernames = [user.getUserName() for user in retlist]
-        self.failUnless("created_user" in usernames,
-                        "'created_user' not in %s" % usernames)
+	self.assertEquals(len(usernames), 1) 
+        self.failUnless("created_user1" in usernames,
+                        "'created_user1' not in %s" % usernames)
 
     def test_setpw(self):
         # there is more than one place where one can set the password.

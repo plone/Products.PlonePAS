@@ -50,7 +50,7 @@ class MembershipTool(BaseMembershipTool):
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
 
-    user_search_keywords = ('fullname', 'exact_match')
+    user_search_keywords = ('login', 'fullname', 'exact_match')
 
     _properties = (getattr(BaseMembershipTool, '_properties', ()) +
                    ({'id': 'user_search_keywords',
@@ -217,7 +217,7 @@ class MembershipTool(BaseMembershipTool):
             if not (member.getProperty('listed', False) or is_manager):
                 continue
             if fullname and not names_checked:
-                if (u.getUserName().lower().find(name) == -1 and
+                if (u.getUserName().lower().find(fullname) == -1 and
                     member.getProperty('fullname').lower().find(fullname) == -1):
                     continue
             if email:
