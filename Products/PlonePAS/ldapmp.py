@@ -21,6 +21,7 @@ from Products.PlonePAS.plugins.group import PloneGroup
 from Products.LDAPUserFolder.utils import GROUP_MEMBER_MAP
 from Products.LDAPUserFolder.LDAPDelegate import filter_format
 from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
+from Products.LDAPMultiPlugins.LDAPMultiPlugin import LDAPMultiPlugin
 
 GROUP_PROPERTY_MAP = {
     # target property: ((possible key, as-is),)
@@ -99,3 +100,14 @@ def getPropertiesForUser(self, user, request=None):
     return properties
 
 wrap_method(LDAPPluginBase, 'getPropertiesForUser', getPropertiesForUser)
+
+def getGroupsForPrincipal(self, user, request=None, attr=None):
+    """ Fulfill GroupsPlugin requirements, but don't return any groups for groups """
+
+    if not isinstance(user, PloneGroup):
+        # It's not a PloneGroup, continue as usual
+        return call(self, 'getGroupsForPrincipal', user, request=request, attr=attr)
+
+    return ()
+
+wrap_method(LDAPMultiPlugin, 'getGroupsForPrincipal', getGroupsForPrincipal)
