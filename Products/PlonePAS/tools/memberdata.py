@@ -20,11 +20,10 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
-from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData
+
 try:
-    BaseMemberData(1)
-except:
-    # Plone 2.0.x is broken
+    from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData
+except ImportError:
     from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 
 
