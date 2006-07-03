@@ -1,0 +1,35 @@
+<dtml-var manage_page_header>
+
+<h2> Add A Group Aware Role Manager For PAS </h2>
+
+<p class="form-help">
+  install a group aware role manager. returns roles assigned to group 
+  a principal is a member of, in addition to the explicit roles
+  assigned directly to the principal.
+</p>
+
+<form action="manage_addGroupAwareRoleManager" method="POST">
+
+<table>
+
+<tr>
+   <td class="form-label"> Id </td>
+   <td> <input type="text" name="id" /> </td>
+</tr>
+<tr>
+   <td class="form-label"> Title </td>
+   <td> <input type="text" name="title" /> </td>
+</tr>
+<tr>
+   <td colspan="2"> 
+   <div class="form-element">
+    <input type="submit" value="add group aware role manager"/>
+   </div>
+   </td>
+</tr>
+</table>   
+
+</form>
+
+</body>
+</html>

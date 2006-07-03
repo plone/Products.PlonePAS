@@ -1,0 +1,13 @@
+
+ PlonePAS is released under the ZPL2.1
+
+ much of the code in PlonePAS is destined for pluggableauthservice in
+ zope corp cvs (upstream) and Plone proper. due to the licensing and
+ copyright differences between these two organizations i've set the
+ copyright to myself as the principal author in the interim to avoid
+ any legal hassles.
+
+
+
+
+ 

@@ -1,0 +1,40 @@
+
+items for consideration to upstream pas development
+
+ - implement aliases for standard apis that are implemented. 
+
+ - implement plugins and plugin types for standard operations.
+   
+   - user mod/user del
+ 
+ - introspection user source api ( user count, get user ids, get users )
+   
+   - use case implement standard api in pluggable optional fashion.
+   
+   - allow for user iteration on small user populations.
+   
+ - qualified id api distinct from getid
+
+   - merged logical user sources.
+
+ - local role plugins 
+  
+   - use case lrbl
+
+ - role manager w/ global group based roles
+
+ - plugin type registration?
+
+   - explicit api
+
+ - group as rich objects.. currently handled as strings in the system.
+   using getId w/ an isinstance check.
+
+ - property schema type definition
+
+ - mutable property sheet providers
+
+ - schema mutable property sheet providers
+
+ - get rid of junk plugins
+

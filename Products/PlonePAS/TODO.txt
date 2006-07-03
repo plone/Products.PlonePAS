@@ -1,0 +1,167 @@
+Blocker bugs
+
+ - None
+
+Major missing functionality
+
+ - Role creation
+
+Robustness and productization
+
+ - make sure listMemberIds works
+
+ - Caching of users seems to fail
+
+ - again with the failure of member property sets to take
+
+ - determine between AD and regular LDAP in install (see Install.py
+   bottom)
+
+ - disabled plone text boxes don't look disabled
+   either fix this, or change disabled action to be hidden + the text
+
+ - LDAPMultiPlugin doesn't provide getGroupMembers; only matters
+   when Group plugins of LDAPMulti are on. they're off by default.
+
+ - Should call ZCacheable_invalidate on methods that modify users and
+   groups. PAS doesn't call this either.
+
+ - searchGroups is only on id. We must at least do this. We could
+   add another call for searchGroups for 'name' as well so that we
+   search titles on those GroupEnumerators that support this.
+
+Other todo items
+
+ - make validate_emailaddr not try validation if email is readonly
+
+ - security declarations on new memberdata methods
+
+ - Verify why user records just created are marked as "orphaned" in
+   portal_memberdata. It could just be that they never logged in.
+
+ - PlonePAS groups tool: assure API implementation
+
+ - Should probably define group factory plugin
+
+ - PAS.plugins.ZODBGroupManager.removeGroup tries to remove every user
+   from group. Probably bad!
+
+ - membership tool wrapUser stupidly uses roles attribute. we want it to
+   use methods. until this is fixed, role mapping is broken
+
+ - User and group deletion should zero out roles and properties and such.
+
+ - LDAP
+
+   * implement IUserIntrospection interface
+
+   * default property mappings? at least for AD some should be possible.
+     on intranet is 'mail' -> 'email'
+
+Wishlist
+
+ - a more PAS-centric Plone UI might be a good idea.
+
+ - when LDAP (or any other non-mutable) and ZODB props installed, LDAP is higher priority.
+   When trying to set non-mutable (LDAP-provided) properties, we do a no-op to prevent shadowing.
+   Previously this was an error. However, this is not entirely satisfactory, as there is no
+   notice to the user that a value is immutable; even worse, the value would appear to change, since
+   personalize_form will display the value from the request.
+
+ - better framework for non-envisioned-by-author migrations.
+   see notes at bottom of Install.py
+
+ - handle LDAPGroupFolder?
+   see notes at bottom of Install.py
+
+ - get GRUFMultiPlugin working for complex upgrades. Or is that too ugly?
+
+ - seems LDAPMP doesn't provide properties on groups
+
+Stuff to go upstream
+
+ - PAS.searchUsers (and/or LDAP enumerateUsers) allows duplicates returned.
+
+ - PlonePAS groups tool: move GRUF/PAS common bits into Plone
+   GroupsTool, also interface
+
+ - Plone should include GroupData in its GroupDataTool.py. After this,
+   our GroupData or monkey-patch can use the Plone one.  Relatedly,
+   wrapUsers and wrapGroups should have a way of specifying the wrapping
+   object so it's easier to over-ride.
+
+ - plugins.user.UserManager.addUser changes should go into PAS
+
+ - PAS: listAssignedPrincipals doesn't properly fall back on None title.
+   (using get with default isn't quite enough.)
+
+ - need to not list too many members: either search only, or max results/list on low count
+
+Questions
+
+ - PAS role manager doesn't initially manage Owner. Why? And should we make it do so?
+ 
+ - should getUsers abort if list is too long?
+
+ - Should groups.getGroupById use new acl_users.getGroup?
+
+ - do we want another schema-setting mechanism for properties plugin? (see note)
+   related: sheet.py has the MutablePropertySheet schema coded in for
+   several basic types. is this all we need?
+
+ - does title not get to wrapped group?
+
+ - MemberDataTool.searchFulltextForMembers need to be fixed? Nothing uses it.
+
+ - install: 'setupRoles' needed? It's commented out and seems to be fine.
+
+ - how does member.getRoles work in GRUF? what permission should it be
+   in PlonePAS?
+   (jcc note: I don't remember the original motivation behind this item.)
+
+Notes
+
+ - we must turn off the ability to log out HTTP Basic Authed users, since
+   'resetCredentials' for that plugin raises Unauthorized, and that breaks
+   cookie logout. I'm not exactly sure why.
+
+ - prefs_group_details and prefs_group_edit don't need to be
+   customized for Plone 2.1 versions after 29 Apr 2005
+
+ - I don't like where prefs_group_details form ends up. Should go back to
+   prefs_group_members or itself. But, this is not a regression.
+
+ - We're dependent on GRUF for groups tools. This isn't a problem for now,
+   and GRUF will be around for a while. But Plone should provide the base
+   for groups tools, not GRUF. See items above.
+
+ - _doChangeGroup ignores groups to add. This doesn't bother Plone.
+
+ - LDAP: property managers plugins are moved to top, and group plugins disabled
+   I think this is sufficient, but are there more order changes needed?
+
+ - hooked up ZODBMutableProperties plugin schema to MemberData
+   properties as default, though it can support its own schema.
+   Should probably note that other plugins may not do this.
+
+ - schema changes with ZODBMutableProperties (as through
+   MemberData) may not take place on all existing users unless the server
+   is restarted. (we could clear the ZCache to fix this.)
+
+ - join_form manages to call addPropertySheet (probably through
+   _findUser, through getUserById) like six times.  may be for Anonymous.
+
+ - I've seen some strange lag on property updates on
+   ZOGBMutablePropertyManager. Haven't seen it recently. A caching thing?
+
+Outstanding Tests
+
+ - NOTE: I'm not entirely up with the status of tests. Some of these
+   might be done.
+
+ - adding, setting, deleting properties on users.
+
+ - checking function of global roles (users and groups) and
+   local roles (users and groups).
+
+ - make sure we're not using a name mangling version.
