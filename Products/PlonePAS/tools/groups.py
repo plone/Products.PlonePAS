@@ -16,6 +16,7 @@
 $Id$
 """
 import sys
+import logging
 from sets import Set
 
 from Acquisition import aq_base
@@ -35,6 +36,8 @@ from Products.PluggableAuthService.utils import classImplements, implementedBy
 from Products.PluggableAuthService.PluggableAuthService import \
                                     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
+
+log = logging.getLogger('PluggableAuthService').exception
 
 class NotSupported(Exception): pass
 
@@ -105,9 +108,7 @@ class GroupsTool(PloneGroupsTool):
             try:
                 groupmanagers = plugins.listPlugins(IGroupManagement)
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                LOG('PluggableAuthService', BLATHER,
-                    'Plugin listing error',
-                    error=sys.exc_info())
+                log('Plugin listing error')
                 groupmanagers = ()
 
             for group in groups:
@@ -116,9 +117,7 @@ class GroupsTool(PloneGroupsTool):
                         if gm.addPrincipalToGroup(id, group):
                             break
                     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                        LOG('PluggableAuthService', BLATHER,
-                            'AuthenticationPlugin %s error' %
-                            gm_id, error=sys.exc_info())
+                        log('AuthenticationPlugin %s error' % gm_id)
 
     security.declareProtected(DeleteGroups, 'removeGroup')
     def removeGroup(self, group_id, keep_workspaces=0):

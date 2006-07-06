@@ -79,13 +79,11 @@ class GroupAwareRoleManager( ZODBRoleManager ):
 
         o Raise KeyError if a role_id is unknown.
         """
-        if roles:
-            for role_id in roles:
-                if role_id not in ('Authenticated','Anonymous','Owner'):
-                    role_info = self._roles[ role_id ] # raise KeyError if unknown!
+        for role_id in roles:
+            if role_id not in ('Authenticated','Anonymous','Owner'):
+                role_info = self._roles[ role_id ] # raise KeyError if unknown!
 
-            self._principal_roles[ principal_id ] = tuple(roles)
-
+        self._principal_roles[ principal_id ] = tuple(roles)
 
     security.declarePrivate( 'getRolesForPrincipal' )
     def getRolesForPrincipal( self, principal, request=None ):

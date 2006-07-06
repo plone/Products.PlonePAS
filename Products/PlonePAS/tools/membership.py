@@ -50,7 +50,7 @@ class MembershipTool(BaseMembershipTool):
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
 
-    user_search_keywords = ('login', 'fullname', 'exact_match')
+    user_search_keywords = ('login', 'fullname', 'email', 'exact_match')
 
     _properties = (getattr(BaseMembershipTool, '_properties', ()) +
                    ({'id': 'user_search_keywords',
@@ -108,13 +108,16 @@ class MembershipTool(BaseMembershipTool):
         # users name, which is stored in the fullname property. We need to fix
         # that here so the right name is used when calling into PAS plugins.
         if 'name' in searchmap:
-            searchmap['fullname']=searchmap['name']
-            del searchmap['name']
+            searchmap['fullname'] = searchmap['name']
+            try:
+                del searchmap['name']
+            except (KeyError, AttributeError):
+                searchmap['name'] = None
 
         user_search = {}
         for key in self.user_search_keywords:
             value = searchmap.get(key, None)
-            if value is None:
+            if value is None or not value:
                 continue
             user_search[key] = value
 
@@ -160,15 +163,6 @@ class MembershipTool(BaseMembershipTool):
             return []
 
         if user_search:
-            # We first find in MemberDataTool users whose _full_ name
-            # match what we want.
-#            if fullname:
-#                logger.debug(
-#                    'searchForMembers: searching memberdata '
-#                    'for fullname=%r.' % fullname)
-#                lst = md.searchMemberDataContents('fullname', fullname)
-#                uf_users = [x['username'] for x in lst]
-
             logger.debug(
                 'searchForMembers: searching PAS '
                 'with arguments %r.' % user_search)
