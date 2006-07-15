@@ -43,9 +43,6 @@ from Products.PlonePAS.interfaces.capabilities import IGroupCapability, IAssignR
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.utils import getCharset
 
-from zLOG import LOG, INFO
-def log(msg):
-    LOG('PlonePAS', INFO, msg)
 
 class MemberDataTool(BaseMemberDataTool):
     """PAS-specific implementation of memberdata tool. Uses Plone

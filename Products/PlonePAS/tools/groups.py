@@ -24,7 +24,6 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from zLOG import LOG, BLATHER
 
 from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
