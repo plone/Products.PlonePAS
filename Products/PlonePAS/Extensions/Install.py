@@ -294,7 +294,10 @@ def grabUserData(portal, out):
         properties = {}
         for propid in props:
             properties[propid] = member.getProperty(propid, None)
-        userdata += ((id, password, roles, domains, properties),)
+        portrait=mtool.getPersonalPortrait(id)
+        if portrait is not None:
+            portrait=portrait.aq_base
+        userdata += ((id, password, roles, domains, properties, portrait),)
 
     print >> out, "...extract done"
     return userdata
@@ -305,6 +308,7 @@ def restoreUserData(portal, out, userdata):
     # re-add users
     # Password may be encypted or not: addUser will figure it out.
     mtool = getToolByName(portal, 'portal_membership')
+    mdtool = getToolByName(portal, 'portal_memberdata')
     emerg = portal.acl_users._emergency_user.getId()
     for u in userdata:
         if u[0] == emerg:
@@ -317,12 +321,15 @@ def restoreUserData(portal, out, userdata):
         # be careful of non-ZODB member sources, like LDAP
         member = mtool.getMemberById(u[0])
         if member is None:
-            mtool.addMember(*u)
+            mtool.addMember(*u[:-1])
             print >> out, " : adding member '%s'" % u[0]
         else:
             # set any properties. do we need anything else? roles, maybe?
             member.setMemberProperties(u[-1])
             print >> out, " : setting props on member '%s'" % member.getId()
+
+        if u[-1] is not None:
+            mdtool._setPortrait(u[-1], u[0])
 
     print >> out, "...restore done"
 
@@ -802,24 +809,23 @@ def install(self):
 
     if not EXISTING_UF:
         addPAS(portal, out)
-    else:
-        if not EXISTING_PAS:
-            # We've got a existing user folder, but it's not a PAS
-            # instance.
+    elif not EXISTING_PAS:
+        # We've got a existing user folder, but it's not a PAS
+        # instance.
 
-            goForMigration(portal, out)
+        goForMigration(portal, out)
 
-            userdata = grabUserData(portal, out)
-            groupdata, memberships = grabGroupData(portal, out)
+        userdata = grabUserData(portal, out)
+        groupdata, memberships = grabGroupData(portal, out)
 
-            ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
-            if (ldap_ufs or ldap_gf) and not CAN_LDAP:
-                raise Exception, ("LDAPUserFolders present, but LDAPMultiPlugins "
-                              "not present. To successfully auto-migrate, "
-                              "the LDAPMultiPlugins product must be installed. "
-                              "(%s, %s):%s" % (ldap_ufs, ldap_gf, CAN_LDAP))
+        ldap_ufs, ldap_gf = grabLDAPFolders(portal, out)
+        if (ldap_ufs or ldap_gf) and not CAN_LDAP:
+            raise Exception, ("LDAPUserFolders present, but LDAPMultiPlugins "
+                          "not present. To successfully auto-migrate, "
+                          "the LDAPMultiPlugins product must be installed. "
+                          "(%s, %s):%s" % (ldap_ufs, ldap_gf, CAN_LDAP))
 
-            replaceUserFolder(portal, out)
+        replaceUserFolder(portal, out)
 
     # Configure Challenge Chooser plugin if available
     challenge_chooser_setup(self, out)
