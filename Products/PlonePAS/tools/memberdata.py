@@ -21,10 +21,7 @@ from AccessControl import ClassSecurityInfo
 
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
 
-try:
-    from Products.CMFPlone.MemberDataTool import MemberData as BaseMemberData
-except ImportError:
-    from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
+from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 
 
 from Products.CMFCore.utils import getToolByName
