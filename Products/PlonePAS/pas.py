@@ -241,12 +241,17 @@ def getLocalRolesForDisplay(self, object):
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
     for one_user in local_roles:
-        username = one_user[0]
+        username = userid = one_user[0]
         roles = one_user[1]
         userType = 'user'
-        if self.getGroup(username):
+        if self.getGroup(userid):
             userType = 'group'
-        result.append((username, roles, userType, username))
+        else:
+            user = self.getUserById(userid) or self.getUser(username)
+            if user:
+                username = user.getUserName()
+                userid = user.getId()
+        result.append((username, roles, userType, userid))
     return tuple(result)
 PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
 
