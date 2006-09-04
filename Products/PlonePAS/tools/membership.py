@@ -172,7 +172,6 @@ class MembershipTool(BaseMembershipTool):
                 uf_users.append(uid)
 
         if uf_users:
-            names_checked = 1
             wrap = self.wrapUser
              # not getUser, we have userids here
             getUserById = acl_users.getUserById
@@ -183,6 +182,7 @@ class MembershipTool(BaseMembershipTool):
                     members.append(wrap(user))
 
             if (not email and
+                not fullname and
                 not roles and
                 not last_login_time):
                 logger.debug(
@@ -192,14 +192,12 @@ class MembershipTool(BaseMembershipTool):
 
         elif groupname:
             members = g_members
-            names_checked = 0
 
         else:
             # If the lists are not available, we just stupidly get the
             # members list. Only IUserIntrospection plugins participate
             # here.
             members = self.listMembers()
-            names_checked = 0
 
         # Now perform individual checks on each user
         res = []
@@ -210,7 +208,7 @@ class MembershipTool(BaseMembershipTool):
             u = member.getUser()
             if not (member.getProperty('listed', False) or is_manager):
                 continue
-            if fullname and not names_checked:
+            if fullname:
                 if (u.getUserName().lower().find(fullname) == -1 and
                     member.getProperty('fullname').lower().find(fullname) == -1):
                     continue
