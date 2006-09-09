@@ -28,18 +28,10 @@ from AccessControl import getSecurityManager, ClassSecurityInfo
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
 
-logger = logging.getLogger('Plone')
-
-try:
-    # Plone 2.1
-    from Products.CMFPlone.utils import utranslate as translate
-    from Products.CMFPlone.utils import _createObjectByType
-except ImportError:
-    # Plone 2.0
-    from Products.CMFPlone.PloneUtilities import translate
-    from Products.CMFPlone.PloneUtilities import _createObjectByType
+from Products.CMFPlone.utils import _createObjectByType
 from Products.PlonePAS.utils import cleanId
 
+logger = logging.getLogger('Plone')
 
 class MembershipTool(BaseMembershipTool):
     """PAS-based customization of MembershipTool.
@@ -73,7 +65,6 @@ class MembershipTool(BaseMembershipTool):
         if properties is not None:
             member = self.getMemberById(id)
             member.setMemberProperties(properties)
-
 
     security.declarePublic('searchForMembers')
     def searchForMembers(self, REQUEST=None, **kw):
@@ -272,15 +263,12 @@ class MembershipTool(BaseMembershipTool):
 
         if members is None:
             # no members area
-            # XXX exception?
             logger.debug('createMemberarea: members area does not exist.')
             return
-
 
         safe_member_id = cleanId(member_id)
         if hasattr(members, safe_member_id):
             # has already this member
-            # XXX exception?
             logger.debug(
                 'createMemberarea: member area '
                 'for %r already exists.' % safe_member_id)
@@ -300,7 +288,6 @@ class MembershipTool(BaseMembershipTool):
 
         # Get the user object from acl_users
         acl_users = self.__getPUS()
-        # SdS: According to Leo, our MOTUId, we should use getUserById here.
         user = acl_users.getUserById(member_id)
         if user is not None:
             user = user.__of__(acl_users)
@@ -311,40 +298,7 @@ class MembershipTool(BaseMembershipTool):
                 raise NotImplementedError, \
                     'cannot get user for member area creation'
 
-        ## translate the default content
-
-        # get some translation interfaces
-
-        translation_service = getToolByName(self, 'translation_service', None)
-        if translation_service is None:
-            # test environ, some other aberent sitch
-            return
-
-        utranslate = translation_service.utranslate
-        encode = translation_service.encode
-
-        # convert the member_id to unicode type
-        umember_id = translation_service.asunicodetype(member_id, errors='replace')
-
-        member_folder_title = utranslate(
-            'plone', 'title_member_folder',
-            {'member': umember_id}, self,
-            default = "%s" % umember_id)
-
-        member_folder_description = utranslate(
-            'plone', 'description_member_folder',
-            {'member': umember_id}, self,
-            default = '')
-
-        member_folder_index_html_title = utranslate(
-            'plone', 'title_member_folder_index_html',
-            {'member': umember_id}, self,
-            default = "Home page for %s" % umember_id)
-
-        # encode strings to site encoding as we dont like to store type unicode atm
-        member_folder_title = encode(member_folder_title, errors='replace')
-        member_folder_description = encode(member_folder_description, errors='replace')
-        member_folder_index_html_title = encode(member_folder_index_html_title, errors='replace')
+        member_object = self.getMemberById(member_id)
 
         ## Modify member folder
         member_folder = self.getHomeFolder(member_id)
@@ -353,8 +307,8 @@ class MembershipTool(BaseMembershipTool):
         member_folder.__ac_local_roles__ = None
         member_folder.manage_setLocalRoles(member_id, ['Owner'])
         # We use ATCT now use the mutators
-        member_folder.setTitle(member_folder_title)
-        member_folder.setDescription(member_folder_description)
+        fullname = member_object.getProperty('fullname')
+        member_folder.setTitle(fullname or member_id)
         member_folder.reindexObject()
 
         if not minimal:
@@ -362,17 +316,14 @@ class MembershipTool(BaseMembershipTool):
             # get the text from portal_skins automagically
             homepageText = getattr(self, 'homePageText', None)
             if homepageText:
-                member_object = self.getMemberById(member_id)
                 portal = getToolByName(self, 'portal_url')
                 # call the page template
                 content = homepageText(member=member_object, portal=portal).strip()
                 _createObjectByType('Document', member_folder, id='index_html')
                 hpt = getattr(member_folder, 'index_html')
                 # edit title, text and format
-                # XXX
-                hpt.setTitle(member_folder_index_html_title)
+                hpt.setTitle(fullname or member_id)
                 if hpt.meta_type == 'Document':
-                    # CMFDefault Document
                     hpt.edit(text_format='structured-text', text=content)
                 else:
                     hpt.update(text=content)
@@ -405,7 +356,6 @@ class MembershipTool(BaseMembershipTool):
             id = member.getMemberId()
 
         return cleanId(id)
-
 
     security.declarePublic('getHomeFolder')
     def getHomeFolder(self, id=None, verifyPermission=0):
@@ -443,7 +393,6 @@ class MembershipTool(BaseMembershipTool):
         """
         safe_id = self._getSafeMemberId(id)
         return BaseMembershipTool.changeMemberPortrait(self, portrait, safe_id)
-
 
 InitializeClass(MembershipTool)
 

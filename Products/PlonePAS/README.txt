@@ -9,7 +9,7 @@ not it will help you.
 
 Versions
 
-  - Currently targeted to Plone 2.1 and 2.5, and its standard dependencies.
+  - Currently targeted to Plone 3.0, and its standard dependencies.
 
 Depends On
 
