@@ -246,7 +246,7 @@ class MembershipTool(BaseMembershipTool):
     ## sanitize home folders (we may get URL-illegal ids)
 
     security.declarePublic('createMemberarea')
-    def createMemberarea(self, member_id=None, minimal=1):
+    def createMemberarea(self, member_id=None, minimal=True):
         """
         Create a member area for 'member_id' or the authenticated
         user, but don't assume that member_id is url-safe.
