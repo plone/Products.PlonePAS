@@ -19,7 +19,6 @@ $Id$
 import logging
 from DateTime import DateTime
 from sets import Set
-from types import StringTypes
 
 from Globals import InitializeClass
 
@@ -218,7 +217,7 @@ class MembershipTool(BaseMembershipTool):
             if last_login_time:
                 last_login = member.getProperty('last_login_time', '')
 
-                if type(last_login) in StringTypes:
+                if isinstance(last_login, basestring):
                     # value is a string when mem hasn't yet logged in
                     mem_last_login_time = DateTime(last_login or '2000/01/01')
                 else:

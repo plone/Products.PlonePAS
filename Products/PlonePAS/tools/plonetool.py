@@ -44,7 +44,6 @@ class PloneTool(BasePloneTool):
             if getattr(obj, '__ac_local_roles_block__', None):
                 obj.__ac_local_roles_block__ = None
 
-
         # Reindex the whole stuff.
         obj.reindexObjectSecurity()
 

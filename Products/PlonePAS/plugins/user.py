@@ -50,7 +50,6 @@ class UserManager(BasePlugin):
     """
 
     meta_type = 'User Manager'
-
     security = ClassSecurityInfo()
 
     def addUser(self, user_id, login_name, password):

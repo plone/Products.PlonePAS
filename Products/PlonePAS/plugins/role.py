@@ -47,6 +47,7 @@ def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
 manage_addGroupAwareRoleManagerForm = DTMLFile(
     '../zmi/GroupAwareRoleManagerForm', globals())
 
+
 class GroupAwareRoleManager( ZODBRoleManager ):
 
     meta_type = "Group Aware Role Manager"
@@ -69,7 +70,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
                         self.addRole( role )
                 except KeyError:
                     pass
-
 
     security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
     def assignRolesToPrincipal( self, roles, principal_id ):
@@ -98,7 +98,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         for pid in principal_ids:
             roles.extend( self._principal_roles.get( pid, () ) )
         return tuple( unique( roles ) )
-
 
     ## implement IAssignRoleCapability
 

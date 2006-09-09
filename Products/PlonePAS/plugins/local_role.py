@@ -57,7 +57,6 @@ class LocalRolesManager(LocalRolePlugin):
         self._id = self.id = id
         self.title = title
 
-
     #security.declarePrivate( 'getRolesInContext' )
     def getRolesInContext( self, user, object):
         user_id = user.getId()
@@ -70,11 +69,9 @@ class LocalRolesManager(LocalRolePlugin):
         object = aq_inner( object )
 
         while 1:
-
             local_roles = getattr( object, '__ac_local_roles__', None )
 
             if local_roles:
-
                 if callable( local_roles ):
                     local_roles = local_roles()
 
@@ -97,14 +94,12 @@ class LocalRolesManager(LocalRolePlugin):
             new = getattr( object, 'im_self', None )
 
             if new is not None:
-
                 object = aq_inner( new )
                 continue
 
             break
 
         return list( user.getRoles() ) + local.keys()
-
 
     #security.declarePrivate( 'checkLocalRolesAllowed' )
     def checkLocalRolesAllowed( self, user, object, object_roles ):
@@ -124,20 +119,17 @@ class LocalRolesManager(LocalRolePlugin):
             local_roles = getattr( inner_obj, '__ac_local_roles__', None )
 
             if local_roles:
-
                 if callable( local_roles ):
                     local_roles = local_roles()
 
                 dict = local_roles or {}
 
                 for principal_id in principal_ids:
-
                     local_roles = dict.get( principal_id, [] )
 
                     for role in object_roles:
 
                         if role in local_roles:
-
                             if user._check_context( object ):
                                 return 1
 
@@ -163,17 +155,15 @@ class LocalRolesManager(LocalRolePlugin):
 
         return None
 
-
     def getAllLocalRolesInContext(self, context):
         roles = {}
         object = aq_inner( context )
 
         while True:
 
-            local_roles = getattr( object, '__ac_local_roles__', None )
+            local_roles = getattr(object, '__ac_local_roles__', None)
 
             if local_roles:
-
                 if callable( local_roles ):
                     local_roles = local_roles()
 
@@ -184,7 +174,6 @@ class LocalRolesManager(LocalRolePlugin):
                         roles[principal]=Set()
 
                     roles[principal].update(localroles)
-
 
             inner = aq_inner( object )
             parent = aq_parent( inner )
@@ -199,16 +188,12 @@ class LocalRolesManager(LocalRolePlugin):
             new = getattr( object, 'im_self', None )
 
             if new is not None:
-
                 object = aq_inner( new )
                 continue
 
             break
 
         return roles
-
-
-
 
 classImplements(LocalRolesManager,
                 ILocalRolesPlugin, *implementedBy(LocalRolePlugin))

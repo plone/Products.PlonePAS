@@ -81,15 +81,6 @@ class MemberDataTool(BaseMemberDataTool):
         # the user as context.
         return m.__of__(self).__of__(u)
 
-#    ## use the default implementation instead; this doesn't meet the original expectation
-#    ## (I also don't think this is used anywhere!)
-#    def searchFulltextForMembers(self, s):
-#        """PAS-specific search for members by id, email, full name.
-#        """
-#        acl_users = getToolByName( self, 'acl_users')
-#        return acl_users.searchUsers(name=s, exact_match=False)
-#        # I don't think this is right: we need to return Members
-
     def deleteMemberData(self, member_id):
         """ Delete member data of specified member.
         """
@@ -119,7 +110,6 @@ class MemberDataTool(BaseMemberDataTool):
     ## plugin getter
     def _getPlugins(self):
         return self.acl_users.plugins
-
 
 InitializeClass(MemberDataTool)
 
@@ -208,11 +198,9 @@ class MemberData(BaseMemberData):
         # delegate back to the base implementation.
         return BaseMemberData.getProperty(self, id, default)
 
-
     def getPassword(self):
         """Returns None. Present to avoid NotImplementedError."""
         return None
-
 
     ## IManageCapabilities methods
 
@@ -226,7 +214,6 @@ class MemberData(BaseMemberData):
                 if IDeleteCapability.providedBy(manager):
                     return manager.allowDeletePrincipal(self.getId())
         return 0
-
 
     def canPasswordSet(self):
         """True iff user can change password."""
@@ -253,7 +240,6 @@ class MemberData(BaseMemberData):
             return mdata.hasProperty(prop_name)
         return 0
 
-
     def canWriteProperty(self, prop_name):
         """True iff the member/group property named in 'prop_name'
         can be changed.
@@ -276,7 +262,6 @@ class MemberData(BaseMemberData):
                 else:
                     break  # shadowed by read-only
         return 0
-
 
     def canAddToGroup(self, group_id):
         """True iff member can be added to group."""
@@ -311,8 +296,6 @@ class MemberData(BaseMemberData):
                 if IAssignRoleCapability.providedBy(manager):
                     return manager.allowRoleAssign(self.getId(), role_id)
         return 0
-
-
 
     ## plugin getters
 

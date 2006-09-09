@@ -100,7 +100,6 @@ class GRUFBridge( DelegatingMultiPlugin ):
         gruf_principal = gruf.getUser( pid )
         return gruf_principal.getGroupsWithoutPrefix()
 
-
     #################################
     # group management
 

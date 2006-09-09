@@ -46,6 +46,7 @@ def manage_addZODBMutablePropertyProvider(self, id, title='',
 manage_addZODBMutablePropertyProviderForm = DTMLFile(
     "../zmi/MutablePropertyProviderForm", globals())
 
+
 class ZODBMutablePropertyProvider(BasePlugin):
     """Storage for mutable properties in the ZODB for users/groups.
 

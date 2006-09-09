@@ -58,7 +58,6 @@ def manage_addGroupManager(self, id, title='', RESPONSE=None):
 class GroupManager(ZODBGroupManager):
 
     meta_type = "Group Manager"
-
     security = ClassSecurityInfo()
 
     def __init__(self, *args, **kw):
@@ -152,7 +151,6 @@ class GroupManager(ZODBGroupManager):
         if user_id in group_members: return 1
         return 0
 
-
     #################################
     # group wrapping mechanics
 
@@ -174,7 +172,6 @@ class GroupManager(ZODBGroupManager):
         #        return user.__of__(self)
 
         return PloneGroup(group_id, name).__of__(self)
-
 
     security.declarePrivate('_findGroup')
     def _findGroup(self, plugins, group_id, title=None, request=None):
@@ -210,9 +207,7 @@ class GroupManager(ZODBGroupManager):
             rolemakers = plugins.listPlugins(IRolesPlugin)
 
             for rolemaker_id, rolemaker in rolemakers:
-
                 roles = rolemaker.getRolesForPrincipal(group, request)
-
                 if roles:
                     group._addRoles(roles)
 
@@ -223,8 +218,7 @@ class GroupManager(ZODBGroupManager):
             if getattr(base_group, '_p_jar', None) is None:
                 self.ZCacheable_set(base_group
                                    , view_name=view_name
-                                   , keywords=keywords
-                                  )
+                                   , keywords=keywords)
 
         return group.__of__(self)
 
@@ -247,12 +241,10 @@ class GroupManager(ZODBGroupManager):
             view_name = createViewName('_verifyGroup', group_id)
             cached_info = self.ZCacheable_get(view_name=view_name
                                              , keywords=criteria
-                                             , default=None
-                                            )
+                                             , default=None)
 
             if cached_info is not None:
                 return cached_info
-
 
             enumerators = plugins.listPlugins(IGroupEnumerationPlugin)
 
@@ -328,11 +320,5 @@ class PloneGroup(PloneUser):
         """Since groups can't actually log in, do nothing.
         """
         return 0
-
-# there was a comment in the class before saying:
-#    # __implements__ = (IGroup,)  # this should be made true
-#
-# if this is ever implemented, it should be made like this
-# classImplements(PloneGroup, IGroup)
 
 InitializeClass(PloneGroup)

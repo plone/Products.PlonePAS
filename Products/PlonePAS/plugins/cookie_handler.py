@@ -39,7 +39,6 @@ def manage_addExtendedCookieAuthHelper(self, id, title='',
 manage_addExtendedCookieAuthHelperForm = DTMLFile("../zmi/ExtendedCookieAuthHelperForm", globals())
 
 
-
 class ExtendedCookieAuthHelper(BasePlugin):
     """Multi-plugin which adds ability to override the updating of cookie via
     a setAuthCookie method/script.
