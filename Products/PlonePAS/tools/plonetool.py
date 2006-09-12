@@ -20,6 +20,7 @@ from Globals import InitializeClass
 from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
 from Products.CMFCore import permissions as CMFCorePermissions
 from Products.CMFCore.utils import getToolByName
+from AccessControl import Unauthorized
 
 class PloneTool(BasePloneTool):
     """PAS-based customization of PloneTool. Uses CMFPlone's as base."""
