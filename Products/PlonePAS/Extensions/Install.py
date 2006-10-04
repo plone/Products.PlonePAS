@@ -18,11 +18,9 @@ $Id$
 
 from sets import Set
 from StringIO import StringIO
-from Acquisition import aq_base, aq_inner, aq_parent
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.Expression import Expression
-from Products.PluginRegistry.PluginRegistry import PluginRegistry
 
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
@@ -510,8 +508,8 @@ def migrateGroupDataTool(portal, out):
         gt._actions = actions
 
         print >> out, " ...restoring data"
-        for prop in properties:
-            updateProp(gt, prop)
+        
+        updateProperties(gt, properties)
 
     print >> out, " ...done"
 
@@ -539,8 +537,8 @@ def migrateMemberDataTool(portal, out):
 
     print >> out, " ...restoring data"
     mdtool = portal.portal_memberdata
-    for prop in properties:
-        updateProp(mdtool, prop)
+    
+    updateProperties(mdtool, properties)
 
     print >> out, " ...done"
 
@@ -555,6 +553,14 @@ def modActions(portal, out):
             action.condition = Expression("python:member.canPasswordSet()")
     cp._actions=_actions
 
+def updateProperties(tool, properties):
+    propsWithNoDeps = [prop for prop in properties if prop['type'] not in ('selection', )]
+    propsWithDeps = [prop for prop in properties if prop['type'] in ('selection', )]
+    for prop in propsWithNoDeps:
+        updateProp(tool, prop)
+    for prop in propsWithDeps:
+        updateProp(tool, prop)
+
 def updateProp(prop_manager, prop_dict):
     """Provided a PropertyManager and a property dict of {id, value,
     type}, set or update that property as applicable.
@@ -564,10 +570,14 @@ def updateProp(prop_manager, prop_dict):
     id = prop_dict['id']
     value = prop_dict['value']
     type = prop_dict['type']
+    if type in ('selection', 'multiple selection'):
+        value = prop_dict['select_variable']
     if prop_manager.hasProperty(id):
         prop_manager._updateProperty(id, value)
     else:
         prop_manager._setProperty(id, value, type)
+        if type in ('selection', 'multiple selection'):
+            prop_manager._updateProperty(id, prop_dict['value'])
 
 
 def grabLDAPFolders(portal, out):
@@ -759,9 +769,6 @@ def challenge_chooser_setup(self, out):
         if getattr(pas, m, None) is None:
             print >> out, 'Needed plugins have not been found, ignoring'
             return
-
-    from Products.PluggableAuthService.interfaces.plugins import \
-         IRequestTypeSniffer, IChallengeProtocolChooser
 
     found = uf.objectIds(['Challenge Protocol Chooser Plugin'])
     if not found:

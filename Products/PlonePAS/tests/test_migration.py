@@ -24,11 +24,9 @@ if __name__ == '__main__':
 
 from PlonePASTestCase import PlonePASTestCase
 
-from cStringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.Extensions.Install import grabUserData
-from Products.PlonePAS.Extensions.Install import grabGroupData
+
 class SanityCheck:
 
     _users = (
@@ -198,6 +196,86 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         self.checker.run('checkUserFolder')
+
+    def test_migrate_memberdata_with_selection_property(self):
+        self.loginAsPortalOwner()
+        pm = getToolByName(self.portal, 'portal_memberdata')
+        pm._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
+        pm._setProperty('choice', 'select_choice', 'selection')
+        pm._updateProperty('choice', 'A')
+        property = pm.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = pm.getProperty('choice')
+        self.assertEquals(property, 'A')
+        
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
+        
+        pm = getToolByName(self.portal, 'portal_memberdata')
+        property = pm.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = pm.getProperty('choice')
+        self.assertEquals(property, 'A')
+
+    def test_migrate_memberdata_with_multiple_selection_property(self):
+        self.loginAsPortalOwner()
+        pm = getToolByName(self.portal, 'portal_memberdata')
+        pm._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
+        pm._setProperty('choice', 'select_choice', 'multiple selection')
+        pm._updateProperty('choice', ('A', 'C'))
+        property = pm.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = pm.getProperty('choice')
+        self.assertEquals(property, ('A', 'C'))
+        
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
+        
+        pm = getToolByName(self.portal, 'portal_memberdata')
+        property = pm.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = pm.getProperty('choice')
+        self.assertEquals(property, ('A', 'C'))
+
+    def test_migrate_groupdata_with_selection_property(self):
+        self.loginAsPortalOwner()
+        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
+        gd._setProperty('choice', 'select_choice', 'selection')
+        gd._updateProperty('choice', 'A')
+        property = gd.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = gd.getProperty('choice')
+        self.assertEquals(property, 'A')
+        
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
+        
+        gd = getToolByName(self.portal, 'portal_groupdata')
+        property = gd.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = gd.getProperty('choice')
+        self.assertEquals(property, 'A')
+
+    def test_migrate_groupdata_with_multiple_selection_property(self):
+        self.loginAsPortalOwner()
+        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
+        gd._setProperty('choice', 'select_choice', 'multiple selection')
+        gd._updateProperty('choice', ('A', 'C'))
+        property = gd.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = gd.getProperty('choice')
+        self.assertEquals(property, ('A', 'C'))
+        
+        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
+        self.qi.installProduct('PlonePAS', reinstall=True)
+        
+        gd = getToolByName(self.portal, 'portal_groupdata')
+        property = gd.getProperty('select_choice')
+        self.assertEquals(property, ('A', 'B', 'C'))
+        property = gd.getProperty('choice')
+        self.assertEquals(property, ('A', 'C'))
 
     def test_migrate_no_user_folder_populated_users(self):
         self.loginAsPortalOwner()
