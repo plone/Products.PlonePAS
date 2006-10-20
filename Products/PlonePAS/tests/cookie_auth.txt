@@ -2,7 +2,7 @@ Test for Cookie Auth
 ====================
 
   >>> import base64
-  >>> from Products.PluggableAuthService.utils import implementedBy
+  >>> from zope.interface import implementedBy
   >>> from Interface.Implements import flattenInterfaces
   >>> from Products.PloneTestCase.PloneTestCase import portal_name
 

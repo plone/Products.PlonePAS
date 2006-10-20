@@ -25,13 +25,15 @@ from AccessControl.Permissions import manage_users as ManageUsers
 from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
+from zope.interface import implementedBy
+
 from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 from Products.CMFCore.utils import getToolByName, UniqueObject
 
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
-from Products.PluggableAuthService.utils import classImplements, implementedBy
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.PluggableAuthService import \
                                     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups

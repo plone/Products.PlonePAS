@@ -24,7 +24,9 @@ $Id$
 from Globals import DTMLFile, InitializeClass
 from OFS.ObjectManager import ObjectManager
 
-from Products.PluggableAuthService.utils import classImplements, implementedBy
+from zope.interface import implementedBy
+
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.DelegatingMultiPlugin \
      import DelegatingMultiPlugin
 from Products.PluggableAuthService.interfaces import plugins

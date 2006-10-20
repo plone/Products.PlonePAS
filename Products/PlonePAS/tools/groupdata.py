@@ -20,11 +20,13 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl import Unauthorized
 
+from zope.interface import implementedBy
+
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
 from Products.GroupUserFolder.GroupDataTool import _marker
 
-from Products.PluggableAuthService.utils import classImplements, implementedBy
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
 
