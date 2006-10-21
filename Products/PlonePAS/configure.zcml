@@ -1,0 +1,19 @@
+<configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:five="http://namespaces.zope.org/five">
+
+  <five:deprecatedManageAddDelete
+      class=".plugins.cookie_handler.ExtendedCookieAuthHelper" />
+
+  <five:deprecatedManageAddDelete
+      class=".plugins.role.GroupAwareRoleManager" />
+
+
+  <!-- The following statements are for Products.PluggableAuthService -->
+
+  <five:deprecatedManageAddDelete
+      class="Products.PluggableAuthService.plugins.ZODBRoleManager.ZODBRoleManager" />
+
+  <five:deprecatedManageAddDelete
+      class="Products.PluggableAuthService.PluggableAuthService.PluggableAuthService" />
+
+</configure>
