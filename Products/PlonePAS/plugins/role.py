@@ -24,7 +24,9 @@ from AccessControl import ClassSecurityInfo
 from Globals import DTMLFile, InitializeClass
 from Acquisition import aq_parent, aq_inner
 
-from Products.PluggableAuthService.utils import classImplements, implementedBy
+from zope.interface import implementedBy
+
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
 

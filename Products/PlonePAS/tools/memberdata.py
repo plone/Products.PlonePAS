@@ -19,6 +19,8 @@ from Globals import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 
+from zope.interface import implementedBy
+
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
 
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
@@ -28,7 +30,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.CMFPlone.MemberDataTool import _marker
 
-from Products.PluggableAuthService.utils import classImplements, implementedBy
+from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin, IRoleAssignerPlugin
 

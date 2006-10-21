@@ -21,12 +21,13 @@ $Id$
 from AccessControl import ClassSecurityInfo, AuthEncoding
 from Globals import InitializeClass, DTMLFile
 
+from zope.interface import implementedBy
+
 from Products.PlonePAS.interfaces.plugins import IUserManagement, IUserIntrospection
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
 
 from Products.PluggableAuthService.utils import createViewName
 from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.utils import implementedBy
 from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
 
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
