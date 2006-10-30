@@ -34,8 +34,6 @@ from plugins import ufactory
 from plugins import property
 from plugins import crumbler
 from plugins import cookie_handler
-from plugins import cookie_handler
-from plugins import cmfsearch
 
 #################################
 # pas monkies
@@ -81,7 +79,6 @@ try:
     registerMultiPlugin( property.ZODBMutablePropertyProvider.meta_type )
     registerMultiPlugin( crumbler.CookieCrumblingPlugin.meta_type )
     registerMultiPlugin( cookie_handler.ExtendedCookieAuthHelper.meta_type )
-    registerMultiPlugin( cmfsearch.CMFSearch.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
@@ -158,10 +155,3 @@ def initialize(context):
                            visibility = None
                            )
                            
-
-    context.registerClass( cmfsearch.CMFSearch,
-                           permission = add_user_folders,
-                           constructors = ( cmfsearch.manage_addCMFSearchForm,
-                                            cmfsearch.addCMFSearch ),
-                           visibility = None
-                           )
