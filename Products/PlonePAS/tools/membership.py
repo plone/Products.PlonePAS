@@ -192,7 +192,10 @@ class MembershipTool(BaseMembershipTool):
 
         elif groupname:
             members = g_members
-
+        elif searchmap.get('login'): 
+            # If the login is specified and doesn't match, 
+            # don't get all the members.
+            pass
         else:
             # If the lists are not available, we just stupidly get the
             # members list. Only IUserIntrospection plugins participate
@@ -239,6 +242,7 @@ class MembershipTool(BaseMembershipTool):
                     continue
 
             res.append(member)
+
         logger.debug('searchForMembers: finished.')
         return res
 
