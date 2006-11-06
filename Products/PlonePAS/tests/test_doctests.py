@@ -24,11 +24,14 @@ if __name__ == '__main__':
 import unittest
 from Testing import ZopeTestCase
 from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from Products.PloneTestCase.PloneTestCase import setupPloneSite
 
 from Products.CMFCore.utils import getToolByName
 
 from zExceptions.ExceptionFormatter import format_exception
 from ZPublisher.HTTPResponse import HTTPResponse
+
+setupPloneSite()
 
 # Silence Plone's handling of exceptions
 orig_exception = HTTPResponse.exception

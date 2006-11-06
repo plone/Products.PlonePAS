@@ -9,6 +9,7 @@ $Id$
 """
 
 from base64 import encodestring
+from urllib import quote
 from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass, DTMLFile
@@ -56,7 +57,7 @@ class ExtendedCookieAuthHelper(BasePlugin):
         if setAuthCookie:
             cookie_val = encodestring('%s:%s' % (login, new_password))
             cookie_val = cookie_val.rstrip()
-            setAuthCookie(response, self.cookie_name, cookie_val)
+            setAuthCookie(response, self.cookie_name, quote(cookie_val))
         else:
             BasePlugin.updateCredentials(self, request, response, login, new_password)
 

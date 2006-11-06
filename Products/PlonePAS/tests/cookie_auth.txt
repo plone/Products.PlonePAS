@@ -110,3 +110,14 @@ Login to Plone site using Cookie Auth should work too.
   ... Cookie: __ac=%s;
   ... """ % (portal_name, encoded), handle_errors=False)
   HTTP/1.1 200 OK...
+
+The cookie set by PlonePAS should be URL-quoted.
+
+  >>> print http(r"""
+  ... GET /%s/logged_in HTTP/1.1
+  ... Cookie: __ac=%s
+  ... """ % (portal_name, encoded), handle_errors=False)
+  HTTP/1.1 200 OK
+  ...
+  Set-Cookie: __ac="Og%3D%3D"; Path=/...
+
