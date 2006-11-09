@@ -2,6 +2,7 @@ Test for Cookie Auth
 ====================
 
   >>> import base64
+  >>> from urllib import quote
   >>> from zope.interface import implementedBy
   >>> from Interface.Implements import flattenInterfaces
   >>> from Products.PloneTestCase.PloneTestCase import portal_name
@@ -108,7 +109,7 @@ Login to Plone site using Cookie Auth should work too.
   >>> print http(r"""
   ... GET /%s/manage HTTP/1.1
   ... Cookie: __ac=%s;
-  ... """ % (portal_name, encoded), handle_errors=False)
+  ... """ % (portal_name, quote(encoded)), handle_errors=False)
   HTTP/1.1 200 OK...
 
 The cookie set by PlonePAS should be URL-quoted.
@@ -116,7 +117,7 @@ The cookie set by PlonePAS should be URL-quoted.
   >>> print http(r"""
   ... GET /%s/logged_in HTTP/1.1
   ... Cookie: __ac=%s
-  ... """ % (portal_name, encoded), handle_errors=False)
+  ... """ % (portal_name, quote(encoded)), handle_errors=False)
   HTTP/1.1 200 OK
   ...
   Set-Cookie: __ac="Og%3D%3D"; Path=/...
