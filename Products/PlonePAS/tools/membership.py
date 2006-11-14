@@ -85,6 +85,7 @@ class MembershipTool(BaseMembershipTool):
         Simple name searches are "fast".
         """
         logger.debug('searchForMembers: started.')
+
         acl_users = self.acl_users
         md = self.portal_memberdata
         groups_tool = self.portal_groups

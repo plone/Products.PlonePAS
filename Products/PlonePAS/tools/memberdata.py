@@ -260,6 +260,9 @@ class MemberData(BaseMemberData):
                 if not sheet.hasProperty(prop_name):
                     continue
                 if IMutablePropertySheet.providedBy(sheet):
+                    # BBB for plugins implementing an older version of IMutablePropertySheet
+                    if hasattr(sheet, 'canWriteProperty'):
+                        return sheet.canWriteProperty(user, prop_name)
                     return 1
                 else:
                     break  # shadowed by read-only

@@ -20,6 +20,10 @@ from Products.PluggableAuthService.interfaces.propertysheets \
 class IMutablePropertySheet( IPropertySheet ):
 
 
+    def canWriteProperty( object, id ):
+        """ Check if a property can be modified.
+        """
+
     def setProperty( object, id, value ):
         """
         """
