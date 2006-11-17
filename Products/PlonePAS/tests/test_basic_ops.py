@@ -133,6 +133,17 @@ class BasicOpsTestCase(PlonePASTestCase):
         self.failUnless("created_user1" in usernames,
                         "'created_user1' not in %s" % usernames)
 
+    def test_searchMissingInfo(self):
+        self.createUser("created_user1")
+        self.createUser("created_user2")
+        mt = self.portal.portal_membership
+        retlist = mt.searchForMembers(REQUEST=None, email="does@notexist.com")
+        self.failIf(len(retlist) != 0)
+        retlist = mt.searchForMembers(REQUEST=None, name="Does NotExist")
+        self.failIf(len(retlist) != 0)
+        retlist = mt.searchForMembers(REQUEST=None, login="doesnotexist")
+        self.failIf(len(retlist) != 0)
+
     def test_setpw(self):
         # there is more than one place where one can set the password.
         # insane. anyway we have to check the patch in pas.py userSetPassword 
