@@ -65,6 +65,10 @@ class GroupsTool(PloneGroupsTool):
         if groups is None:
             groups = []
 
+        # Check to see if a user with the id already exists fail if it does
+        results = self.acl_users.searchPrincipals(id=id)
+        if results:
+            return 0
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
         for mid, manager in managers:

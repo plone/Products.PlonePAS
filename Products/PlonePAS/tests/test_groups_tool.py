@@ -68,6 +68,17 @@ class GroupsToolTest(PlonePASTestCase):
         self.failUnless(isinstance(group, GroupData))
         self.failUnless(isinstance(aq_parent(group), PloneGroup))
 
+    def test_group_cannot_have_same_id_as_member(self):
+        mt = getToolByName(self.portal, 'portal_membership')
+        mt.addMember('groupconflict', 'pw', ['Member'], [],
+                     {'email': 'member1@host.com',
+                      'title': 'Member #1'})
+        success = self.gt.addGroup('groupconflict', ['Reviewer'], [],
+                                   {'email': 'group1@host.com',
+                                    'title': 'Group #1'})
+        self.failIf(success, 'Should not be able to add group with same id as '
+                    'user')
+
 class GroupWorkspacesTest(PlonePASTestCase):
 
     def afterSetUp(self):
