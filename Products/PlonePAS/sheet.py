@@ -113,7 +113,10 @@ class MutablePropertySheet(UserPropertySheet):
         provider.setPropertiesForUser(user, self)
 
     def _getPropertyProviderForUser(self, user):
-        return user.acl_users._getOb(self._id)
+        # XXX This assumes that the acl_users that we want is in the portal
+        # root. This may not always be the case.
+        portal = getToolByName(user.acl_users, 'portal_url').getPortalObject()
+        return portal.acl_users._getOb(self._id)
 
 classImplements(MutablePropertySheet,
                 IMutablePropertySheet)
