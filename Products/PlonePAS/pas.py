@@ -72,7 +72,10 @@ def _doDelUser(self, id):
                                    " delete users.")
 
     for userdeleter_id, userdeleter in userdeleters:
-        userdeleter.doDeleteUser(id)
+        try:
+            userdeleter.doDeleteUser(id)
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            pass
 PluggableAuthService._doDelUser = _doDelUser
 
 security.declareProtected(ManageUsers, 'userFolderDelUsers')
