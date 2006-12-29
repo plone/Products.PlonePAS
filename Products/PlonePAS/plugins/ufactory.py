@@ -25,11 +25,14 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
-from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+                import IPropertiesPlugin, IMutablePropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
+from Products.CMFPlone.MemberDataTool import _marker
+
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PlonePAS.utils import unique
+from Products.PlonePAS.utils import unique, getCharset
 
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
@@ -199,5 +202,36 @@ class PloneUser(PropertiedUser):
                 continue
             return allowed
         return None
+
+    def setProperties(self, **kw):
+        for sheet in self.getOrderedPropertySheets():
+            if not IMutablePropertySheet.providedBy(sheet):
+                continue
+
+            update={}
+            for (key,value) in kw.items():
+                if sheet.hasProperty(key):
+                    update[key]=value
+                    del kw[key]
+
+            if update:
+                sheet.setProperties(**update)
+
+
+    def getProperty(self, id, default=_marker):
+        for sheet in self.getOrderedPropertySheets():
+            if sheet.hasProperty(id):
+                value=sheet.getProperty(id)
+                if isinstance(value, unicode)
+                    # XXX Temporarily work around the fact that
+                    # property sheets blindly store and return
+                    # unicode. This is sub-optimal and should be
+                    # dealed with at the property sheets level by
+                    # using Zope's converters.
+                    charset = getCharset(self)
+                    return value.encode(charset)
+                return value
+
+        return default
 
 InitializeClass(PloneUser)
