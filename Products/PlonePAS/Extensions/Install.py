@@ -321,15 +321,15 @@ def restoreUserData(portal, out, userdata):
         # be careful of non-ZODB member sources, like LDAP
         member = mtool.getMemberById(u[0])
         if member is None:
-            mtool.addMember(*u[:-1])
+            mtool.addMember(*u[:4])
             print >> out, " : adding member '%s'" % u[0]
         else:
             # set any properties. do we need anything else? roles, maybe?
-            member.setMemberProperties(u[-1])
+            member.setMemberProperties(u[4])
             print >> out, " : setting props on member '%s'" % member.getId()
 
-        if u[-1] is not None:
-            mdtool._setPortrait(u[-1], u[0])
+        if u[5] is not None:
+            mdtool._setPortrait(u[5], u[0])
 
     print >> out, "...restore done"
 
