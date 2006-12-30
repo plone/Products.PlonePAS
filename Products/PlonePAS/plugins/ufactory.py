@@ -31,6 +31,7 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.CMFPlone.MemberDataTool import _marker
 
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.utils import unique, getCharset
 
 
