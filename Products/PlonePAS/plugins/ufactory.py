@@ -25,8 +25,7 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
-from Products.PluggableAuthService.interfaces.plugins \
-                import IPropertiesPlugin, IMutablePropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.CMFPlone.MemberDataTool import _marker
@@ -222,7 +221,7 @@ class PloneUser(PropertiedUser):
         for sheet in self.getOrderedPropertySheets():
             if sheet.hasProperty(id):
                 value=sheet.getProperty(id)
-                if isinstance(value, unicode)
+                if isinstance(value, unicode):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be
