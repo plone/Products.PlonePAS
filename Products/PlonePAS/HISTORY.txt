@@ -1,0 +1,8 @@
+Changelog for PlonePAS
+
+    (name of developer listed in brackets)
+
+PlonePAS 3.0.0 - Unreleased
+
+    - Added HISTORY.txt and updated version information.
+      [hannosch]

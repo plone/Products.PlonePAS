@@ -1,3 +1,0 @@
-* fixed migration of properties of type selection or multiple selection
-  on memberdata or groupdata
-  [gotcha]
