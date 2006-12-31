@@ -12,7 +12,6 @@ from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
 from Products.PlonePAS.Extensions.Install import migrate_root_uf
 from Products.PlonePAS.Extensions.Install import registerPluginTypes
 from Products.PlonePAS.Extensions.Install import setupPlugins
-from Products.PlonePAS.Extensions.Install import setupTools
 
 
 def addRolesToPlugIn(p):
@@ -56,9 +55,6 @@ def installPAS(portal):
     # A bunch of general configuration settings
     registerPluginTypes(portal.acl_users)
     setupPlugins(portal, out)
-
-    # Migrate tools
-    setupTools(portal, out)
 
     # TODO: This is highly questionable behaviour. Replacing the UF at the root.
     migrate_root_uf(portal, out)
