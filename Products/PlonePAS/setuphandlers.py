@@ -9,8 +9,9 @@ from Products.CMFPlone.migrations.v2_5.two51_two52 import \
     setLoginFormInCookieAuth
 
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
-from Products.PlonePAS.Extensions.Install import configurePlonePAS
 from Products.PlonePAS.Extensions.Install import migrate_root_uf
+from Products.PlonePAS.Extensions.Install import registerPluginTypes
+from Products.PlonePAS.Extensions.Install import setupPlugins
 from Products.PlonePAS.Extensions.Install import setupTools
 
 
@@ -45,10 +46,6 @@ def setupGroups(p):
 
 def installPAS(portal):
     out = StringIO()
-
-    # Simply delete any existing user folder at first
-    if 'acl_users' in portal.objectIds():
-        portal.manage_delObjects(['acl_users'])
     
     # Add user folder
     portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
@@ -57,7 +54,8 @@ def installPAS(portal):
     challenge_chooser_setup(portal, out)
 
     # A bunch of general configuration settings
-    configurePlonePAS(portal, out)
+    registerPluginTypes(portal.acl_users)
+    setupPlugins(portal, out)
 
     # Migrate tools
     setupTools(portal, out)

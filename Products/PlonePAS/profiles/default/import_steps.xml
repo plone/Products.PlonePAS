@@ -1,11 +1,17 @@
 <?xml version="1.0"?>
 <import-steps>
- <import-step id="plone-pas" version="20061230-01"
+ <import-step id="plonepas-contents" version="20061230-01"
+              handler="Products.PluggableAuthService.exportimport.importPAS"
+              title="Contents">
+  Import the PlonePAS' registry and plugins.
+ </import-step>
+ <import-step id="plonepas" version="20061230-01"
               handler="Products.PlonePAS.setuphandlers.setupPlonePAS"
               title="PlonePAS setup">
   <dependency step="componentregistry"/>
   <dependency step="controlpanel"/>
   <dependency step="memberdata-properties"/>
+  <dependency step="plonepas-contents"/>
   <dependency step="rolemap"/>
     PlonePAS installation step.
  </import-step>
