@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<export-steps>
- <export-step id="plonepas-contents"
-              handler="Products.PluggableAuthService.exportimport.exportPAS"
-              title="PlonePAS Contents">
-  Export the PlonePAS' registry and plugins.
- </export-step>
-</export-steps>
