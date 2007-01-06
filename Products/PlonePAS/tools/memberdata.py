@@ -72,9 +72,9 @@ class MemberDataTool(BaseMemberDataTool):
                 m = MemberData(base, id)
                 if temps is None:
                     self._v_temps = {id:m}
-                    if hasattr(self, 'REQUEST'):
+                    if hasattr(u, 'REQUEST'):
                         # No REQUEST during tests.
-                        self.REQUEST._hold(CleanupTemp(self))
+                        u.REQUEST._hold(CleanupTemp(self))
                 else:
                     temps[id] = m
         else:
