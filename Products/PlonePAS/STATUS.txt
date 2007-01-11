@@ -19,3 +19,4 @@ PlonePAS will also migrate existing LDAPUserFolder+GRUF setups. It
 will use the ADMultiPlugin by default: there's no LDAP/AD detection yet.
 
 Please also see the README and NOTES.
+
