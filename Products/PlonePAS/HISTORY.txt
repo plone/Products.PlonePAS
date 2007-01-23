@@ -6,3 +6,13 @@ PlonePAS 3.0.0 - Unreleased
 
     - Added HISTORY.txt and updated version information.
       [hannosch]
+
+    - Added support to import PloneUserFactory and added stub 
+      for ZODBMutableProperties. Attention: Latter needs a real
+      export and import! At the moment it do not export the 
+      propertysheets. This is a TODO. At least with this two 
+      additions PlonePAS import runs. Additional I needed to
+      hack PluginRegistry and and PluggableAuthService slightly.      
+      [jensens]
+      
+

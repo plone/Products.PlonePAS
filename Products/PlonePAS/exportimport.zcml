@@ -1,0 +1,26 @@
+<configure xmlns="http://namespaces.zope.org/zope">
+
+  <adapter
+      factory="Products.PluggableAuthService.plugins.exportimport.TitleOnlyExportImport"
+      provides="Products.GenericSetup.interfaces.IFilesystemExporter"
+      for="Products.PluggableAuthService.interfaces.plugins.IUserFactoryPlugin"
+      />
+  <adapter
+      factory="Products.PluggableAuthService.plugins.exportimport.TitleOnlyExportImport"
+      provides="Products.GenericSetup.interfaces.IFilesystemImporter"
+      for="Products.PluggableAuthService.interfaces.plugins.IUserFactoryPlugin"
+      /> 
+
+<!-- XXX This should point to an own export/import class! TitleOnly is far not enough -->
+  <adapter
+      factory="Products.PluggableAuthService.plugins.exportimport.TitleOnlyExportImport"
+      provides="Products.GenericSetup.interfaces.IFilesystemExporter"
+      for="Products.PlonePAS.interfaces.plugins.IMutablePropertiesPlugin"
+      />
+  <adapter
+      factory="Products.PluggableAuthService.plugins.exportimport.TitleOnlyExportImport"
+      provides="Products.GenericSetup.interfaces.IFilesystemImporter"
+      for="Products.PlonePAS.interfaces.plugins.IMutablePropertiesPlugin"
+      /> 
+
+</configure>
