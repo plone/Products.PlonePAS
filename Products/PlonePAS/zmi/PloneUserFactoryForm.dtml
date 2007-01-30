@@ -8,7 +8,7 @@
  roles black listing.
 </p>
 
-<form action="manage_addGroupManager" method="POST">
+<form action="manage_addPloneUserFactory" method="POST">
 
 <table>
 <tr>
