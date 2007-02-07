@@ -66,7 +66,7 @@ class GroupsTool(PloneGroupsTool):
             groups = []
 
         # Check to see if a user with the id already exists fail if it does
-        results = self.acl_users.searchPrincipals(id=id)
+        results = self.acl_users.searchPrincipals(id=id, exact_match=True)
         if results:
             return 0
         if not managers:
