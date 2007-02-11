@@ -243,8 +243,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
                       , id=None
                       , login=None
                       , exact_match=False
-                      , sort_by=None
-                      , max_results=None
                       , **kw
                       ):
 
