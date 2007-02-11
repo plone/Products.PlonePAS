@@ -55,10 +55,23 @@ class TestCMFSearch(PlonePASTestCase):
         self.assertEqual(results, ())
 
 
-    def testSimpleSearch(self):
-        results=self.pas.searchUsers(email="member1@host.com")
+    def testInexactStringSearch(self):
+        results=self.pas.searchUsers(email="member1@host.com", exact_match=False)
         results=[info['userid'] for info in results]
         self.assertEqual(results, ['member1'])
+
+        results=self.pas.searchUsers(email="@host.com", exact_match=False)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
+        results=self.pas.searchUsers(email="member1@host.com", exact_match=True)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
+        results=self.pas.searchUsers(email="@host.com", exact_match=True)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, [])
+
 
 
 def test_suite():

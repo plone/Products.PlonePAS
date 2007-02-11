@@ -80,7 +80,6 @@ try:
     registerMultiPlugin( property.ZODBMutablePropertyProvider.meta_type )
     registerMultiPlugin( crumbler.CookieCrumblingPlugin.meta_type )
     registerMultiPlugin( cookie_handler.ExtendedCookieAuthHelper.meta_type )
-    registerMultiPlugin( cmfsearch.CMFSearch.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
