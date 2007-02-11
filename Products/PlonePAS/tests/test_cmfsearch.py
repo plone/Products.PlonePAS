@@ -33,6 +33,12 @@ class TestCMFSearch(PlonePASTestCase):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
 
+        self.member_id = 'member1'
+        # Create a new Member
+        self.mt.addMember(self.member_id, 'pw', ['Member'], [],
+                     {'email': 'member1@host.com',
+                      'title': 'Member #1'})
+
         self.pas=getToolByName(self.portal, "acl_users")
         for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
             self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)
@@ -42,11 +48,6 @@ class TestCMFSearch(PlonePASTestCase):
         self.plugin=self.pas.cmfsearch
         self.pas.plugins.activatePlugin(IUserEnumerationPlugin, 'cmfsearch')
 
-        self.member_id = 'member1'
-        # Create a new Member
-        self.mt.addMember(self.member_id, 'pw', ['Member'], [],
-                     {'email': 'member1@host.com',
-                      'title': 'Member #1'})
 
     def testPluginActivate(self):
         plugins = self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']
