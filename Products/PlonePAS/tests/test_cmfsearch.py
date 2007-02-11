@@ -41,24 +41,24 @@ class TestCMFSearch(PlonePASTestCase):
 
         self.pas=getToolByName(self.portal, "acl_users")
         for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
-            self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)
-
-        self.pas.manage_addProduct["PlonePAS"].addCMFSearch(
-                id="cmfsearch", title="CMF Search plugin")
-        self.plugin=self.pas.cmfsearch
-        self.pas.plugins.activatePlugin(IUserEnumerationPlugin, 'cmfsearch')
+            if plugin!='mutable_properties':
+                self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)
 
 
-    def testPluginActivate(self):
+    def testPluginActivated(self):
         plugins = self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']
-        self.assertEqual('cmfsearch' in plugins, True)
+        self.assertEqual(plugins, ('mutable_properties',))
+
+
+    def testEmptySearch(self):
+        results=self.pas.searchUsers(email="something@somewhere.tld")
+        self.assertEqual(results, ())
 
 
     def testSimpleSearch(self):
-        self.assertEqual(
-            self.plugin.enumerateUsers(email="something@somewhere.tld",
-                    exact_match=False),
-            [] )
+        results=self.pas.searchUsers(email="member1@host.com")
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
 
 
 def test_suite():

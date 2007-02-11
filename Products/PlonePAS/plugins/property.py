@@ -16,6 +16,7 @@
 Mutable Property Provider
 $Id$
 """
+import copy
 from sets import Set
 
 from ZODB.PersistentMapping import PersistentMapping
@@ -27,6 +28,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
@@ -45,6 +47,10 @@ def manage_addZODBMutablePropertyProvider(self, id, title='',
 
 manage_addZODBMutablePropertyProviderForm = DTMLFile(
     "../zmi/MutablePropertyProviderForm", globals())
+
+
+def isStringType(data):
+    return isinstance(data, str) or isinstance(data, unicode)
 
 
 class ZODBMutablePropertyProvider(BasePlugin):
@@ -91,6 +97,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         # don't use _schema directly or you'll lose the fallback! use
         # _getSchema instead same for default values
 
+
     def _getSchema(self, isgroup=None):
         # this could probably stand to be cached
         datatool = isgroup and "portal_groupdata" or "portal_memberdata"
@@ -105,6 +112,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 mdschema = mdtool.propertyMap()
                 schema = [(elt['id'], elt['type']) for elt in mdschema]
         return schema
+
 
     def _getDefaultValues(self, isgroup=None):
         """Returns a dictionary mapping of property names to default values.
@@ -140,6 +148,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
             if defaultvalues.get("title"): defaultvalues["title"] = ""
         return defaultvalues
 
+
     def getPropertiesForUser(self, user, request=None):
         """Get property values for a user or group.
         Returns a dictionary of values or a PropertySheet.
@@ -162,6 +171,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         return MutablePropertySheet(self.id,
                                     schema=self._getSchema(isGroup), **data)
+
 
     def setPropertiesForUser(self, user, propertysheet):
         """Set the properties of a user or group based on the contents of a
@@ -191,6 +201,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         else:
             self._storage.insert(user.getId(), properties)
 
+
     def deleteUser(self, user_id):
         """Delete all user properties
         """
@@ -200,8 +211,68 @@ class ZODBMutablePropertyProvider(BasePlugin):
         except KeyError:
             pass
 
+
+
+    def testMemberData(self, memberdata, criteria, exact_match=False):
+        """Test if a memberdata matches the search criteria.
+        """
+        for (key, value) in criteria.items():
+            testvalue=memberdata.get(key, None)
+            if testvalue is None:
+                return False
+
+            if isStringType(testvalue):
+                testvalue=testvalue.lower()
+            if isStringType(value):
+                value=value.lower()
+                
+            if exact_match:
+                if value!=testvalue:
+                    return False
+            else:
+                if not isinstance(value, type(testvalue)):
+                    return False
+                if not isStringType(value):
+                    return False
+                if value not in testvalue:
+                    return False
+        return True
+
+
+    def enumerateUsers( self
+                      , id=None
+                      , login=None
+                      , exact_match=False
+                      , sort_by=None
+                      , max_results=None
+                      , **kw
+                      ):
+
+        """ See IUserEnumerationPlugin.
+        """
+        plugin_id = self.getId()
+
+        criteria=copy.copy(kw)
+        if id is not None:
+            criteria["id"]=id
+        if login is not None:
+            criteria["login"]=login
+
+        user_ids=[ user_id for (user_id, data) in self._storage.items()
+                    if self.testMemberData(data, criteria, exact_match)]
+
+        user_info=[ { 'id' : self.prefix + user_id,
+                     'login' : user_id,
+                     'pluginid' : plugin_id } for user_id in user_ids ]
+
+        return tuple(user_info)
+
+
+
 classImplements(ZODBMutablePropertyProvider,
-                IPropertiesPlugin, IMutablePropertiesPlugin)
+                IPropertiesPlugin,
+                IUserEnumerationPlugin,
+                IMutablePropertiesPlugin)
 
 InitializeClass(ZODBMutablePropertyProvider)
 

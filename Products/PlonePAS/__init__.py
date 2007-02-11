@@ -35,7 +35,6 @@ from plugins import property
 from plugins import crumbler
 from plugins import cookie_handler
 from plugins import cookie_handler
-from plugins import cmfsearch
 
 #################################
 # pas monkies
@@ -159,9 +158,3 @@ def initialize(context):
                            )
                            
 
-    context.registerClass( cmfsearch.CMFSearch,
-                           permission = add_user_folders,
-                           constructors = ( cmfsearch.manage_addCMFSearchForm,
-                                            cmfsearch.addCMFSearch ),
-                           visibility = None
-                           )
