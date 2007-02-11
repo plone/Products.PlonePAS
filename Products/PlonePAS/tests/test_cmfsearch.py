@@ -51,11 +51,14 @@ class TestCMFSearch(PlonePASTestCase):
 
 
     def testEmptySearch(self):
-        results=self.pas.searchUsers(email="something@somewhere.tld")
+        results=self.pas.searchUsers()
         self.assertEqual(results, ())
 
 
     def testInexactStringSearch(self):
+        results=self.pas.searchUsers(email="something@somewhere.tld")
+        self.assertEqual(results, ())
+
         results=self.pas.searchUsers(email="member1@host.com", exact_match=False)
         results=[info['userid'] for info in results]
         self.assertEqual(results, ['member1'])
@@ -71,6 +74,17 @@ class TestCMFSearch(PlonePASTestCase):
         results=self.pas.searchUsers(email="@host.com", exact_match=True)
         results=[info['userid'] for info in results]
         self.assertEqual(results, [])
+
+
+    def testBooleanSearch(self):
+        results=self.pas.searchUsers(visible_ids=True)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, [])
+
+        results=self.pas.searchUsers(visible_ids=False)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
 
 
 

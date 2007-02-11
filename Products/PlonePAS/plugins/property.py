@@ -230,12 +230,15 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 if value!=testvalue:
                     return False
             else:
-                if not isinstance(value, type(testvalue)):
-                    return False
-                if not isStringType(value):
-                    return False
-                if value not in testvalue:
-                    return False
+                try:
+                    if value not in testvalue:
+                        return False
+                except TypeError:
+                    # Fall back to exact match if we can check for sub-component
+                    if value!=testvalue:
+                        return False
+
+
         return True
 
 
@@ -255,6 +258,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
             criteria["id"]=id
         if login is not None:
             criteria["login"]=login
+
+        if not criteria:
+            return ()
 
         user_ids=[ user_id for (user_id, data) in self._storage.items()
                     if self.testMemberData(data, criteria, exact_match)]
