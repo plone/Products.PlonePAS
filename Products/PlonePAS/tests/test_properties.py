@@ -170,9 +170,69 @@ class PropertiesTest(PlonePASTestCase):
         expected = 'group1@anotherhost.qa'
         self.assertEquals(got, expected)
 
+
+class PropertySearchTest(PlonePASTestCase):
+    def afterSetUp(self):
+        self.mt = getToolByName(self.portal, 'portal_membership')
+        self.md = getToolByName(self.portal, 'portal_memberdata')
+
+        self.member_id = 'member1'
+        # Create a new Member
+        self.mt.addMember(self.member_id, 'pw', ['Member'], [],
+                     {'email': 'member1@host.com',
+                      'title': 'Member #1'})
+
+        self.pas=getToolByName(self.portal, "acl_users")
+        for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
+            if plugin!='mutable_properties':
+                self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)
+
+
+    def testPluginActivated(self):
+        plugins = self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']
+        self.assertEqual(plugins, ('mutable_properties',))
+
+
+    def testEmptySearch(self):
+        results=self.pas.searchUsers()
+        self.assertEqual(results, ())
+
+
+    def testInexactStringSearch(self):
+        results=self.pas.searchUsers(email="something@somewhere.tld")
+        self.assertEqual(results, ())
+
+        results=self.pas.searchUsers(email="member1@host.com", exact_match=False)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
+        results=self.pas.searchUsers(email="@host.com", exact_match=False)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
+        results=self.pas.searchUsers(email="member1@host.com", exact_match=True)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
+        results=self.pas.searchUsers(email="@host.com", exact_match=True)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, [])
+
+
+    def testBooleanSearch(self):
+        results=self.pas.searchUsers(visible_ids=True)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, [])
+
+        results=self.pas.searchUsers(visible_ids=False)
+        results=[info['userid'] for info in results]
+        self.assertEqual(results, ['member1'])
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(PropertiesTest))
+    suite.addTest(unittest.makeSuite(PropertySearchTest))
     return suite
 
 if __name__ == '__main__':
