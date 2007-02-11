@@ -33,14 +33,25 @@ class TestCMFSearch(PlonePASTestCase):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
 
-        pas=getToolByName(self.portal, "acl_users")
-        pas.manage_addProduct["PlonePAS"].addCMFSearch(
-                id="cmfsearch", title="CMF Search plugin")
+        self.pas=getToolByName(self.portal, "acl_users")
+        for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
+            self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)
 
-        self.plugin=pas.cmfsearch
+        self.pas.manage_addProduct["PlonePAS"].addCMFSearch(
+                id="cmfsearch", title="CMF Search plugin")
+        self.plugin=self.pas.cmfsearch
+        self.pas.plugins.activatePlugin(IUserEnumerationPlugin, 'cmfsearch')
+
+        self.member_id = 'member1'
+        # Create a new Member
+        self.mt.addMember(self.member_id, 'pw', ['Member'], [],
+                     {'email': 'member1@host.com',
+                      'title': 'Member #1'})
 
     def testPluginActivate(self):
-        self.plugin.manage_activateInterfaces(['IUserEnumerationPlugin'])
+        plugins = self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']
+        self.assertEqual('cmfsearch' in plugins, True)
+
 
     def testSimpleSearch(self):
         self.assertEqual(
@@ -51,7 +62,7 @@ class TestCMFSearch(PlonePASTestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(TestPAS))
+    suite.addTest(unittest.makeSuite(TestCMFSearch))
     return suite
 
 if __name__ == '__main__':
