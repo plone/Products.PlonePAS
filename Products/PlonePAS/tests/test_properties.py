@@ -27,6 +27,7 @@ from PlonePASTestCase import PlonePASTestCase
 from cStringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 
 class PropertiesTest(PlonePASTestCase):
 
@@ -40,6 +41,10 @@ class PropertiesTest(PlonePASTestCase):
                       'fullname': 'User #1'})
         member = mt.getMemberById('user1')
         self.failIf(member is None)
+
+        mt.addMember('user2', 'u2', ['Member'], [],
+                     {'email': 'user2@otherhost.com',
+                      'fullname': 'User #2'})
 
         # Assert user doesn't have the property yet
         self.failIf(member.hasProperty('age'))
@@ -195,7 +200,7 @@ class PropertySearchTest(PlonePASTestCase):
 
     def testEmptySearch(self):
         results=self.pas.searchUsers()
-        self.assertEqual(results, ())
+        self.assertEqual(len(results), 2)
 
 
     def testInexactStringSearch(self):

@@ -259,9 +259,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
         if login is not None:
             criteria["login"]=login
 
-        if not criteria:
-            return ()
-
         user_ids=[ user_id for (user_id, data) in self._storage.items()
                     if self.testMemberData(data, criteria, exact_match)]
 
