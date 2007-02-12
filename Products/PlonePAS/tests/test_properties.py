@@ -42,10 +42,6 @@ class PropertiesTest(PlonePASTestCase):
         member = mt.getMemberById('user1')
         self.failIf(member is None)
 
-        mt.addMember('user2', 'u2', ['Member'], [],
-                     {'email': 'user2@otherhost.com',
-                      'fullname': 'User #2'})
-
         # Assert user doesn't have the property yet
         self.failIf(member.hasProperty('age'))
 
@@ -181,11 +177,18 @@ class PropertySearchTest(PlonePASTestCase):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
 
-        self.member_id = 'member1'
         # Create a new Member
-        self.mt.addMember(self.member_id, 'pw', ['Member'], [],
+        self.mt.addMember('member1', 'pw', ['Member'], [],
                      {'email': 'member1@host.com',
                       'title': 'Member #1'})
+        member = self.mt.getMemberById('member1')
+        self.failIf(member is None)
+
+        self.mt.addMember('member2', 'pw', ['Member'], [],
+                     {'email': 'user2@otherhost.com',
+                      'fullname': 'User #2'})
+        member = self.mt.getMemberById('member2')
+        self.failIf(member is None)
 
         self.pas=getToolByName(self.portal, "acl_users")
         for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
@@ -231,7 +234,7 @@ class PropertySearchTest(PlonePASTestCase):
 
         results=self.pas.searchUsers(visible_ids=False)
         results=[info['userid'] for info in results]
-        self.assertEqual(results, ['member1'])
+        self.assertEqual(results, ['member1', 'member2'])
 
 
 def test_suite():
