@@ -564,11 +564,14 @@ def updateProp(prop_manager, prop_dict):
     id = prop_dict['id']
     value = prop_dict['value']
     type = prop_dict['type']
+    if type in ('selection', 'multiple selection'):
+        value = prop_dict['select_variable']
     if prop_manager.hasProperty(id):
         prop_manager._updateProperty(id, value)
     else:
         prop_manager._setProperty(id, value, type)
-
+        if type in ('selection', 'multiple selection'):
+            prop_manager._updateProperty(id, prop_dict['value'])
 
 def grabLDAPFolders(portal, out):
     """Get hold of any existing LDAPUserFolders so that we can put
