@@ -196,6 +196,13 @@ def setupPlugins(portal, out):
         print >> out, "Added Mutable Property Manager."
         activatePluginInterfaces(portal, "mutable_properties", out)
 
+    found = uf.objectIds(['Automatic Group Plugin'])
+    if not found:
+        plone_pas.manage_addAutoGroup('auto_group', "Automatic Group Provider",
+                "AuthenticatedUsers", "Authenticated Users (Virtual Group)")
+        print >> out, "Added Automatic Group."
+        activatePluginInterfaces(portal, "auto_group", out)
+
 
 def setupAuthPlugins(portal, pas, plone_pas, out,
                      deactivate_basic_reset=True,
