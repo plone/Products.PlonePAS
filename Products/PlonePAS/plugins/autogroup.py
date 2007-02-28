@@ -1,8 +1,11 @@
 from Globals import InitializeClass
+import Acquisition
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from Products.PluggableAuthService.utils import classImplements
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
+
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
@@ -17,6 +20,41 @@ def manage_addAutoGroup(self, id, title='', group='', description='', RESPONSE=N
     if RESPONSE is not None:
         return RESPONSE.redirect("%s/manage_workspace?manage_tabs_message=AutoGroup+plugin+added" %
                 self.absolute_url())
+
+
+class VirtualGroup(Acquisition.Implicit):
+    def __init__(self, id, description):
+        self.id = id
+        self.title = description
+
+    def getId(self):
+        return self.id
+
+    def getUserName(self):
+        return self.id
+
+    def getName(self):
+        return self.id
+
+    def getMemberIds(self, transitive=1):
+        return []
+
+    def getRolesInContext(self, context):
+        return []
+
+    def getRoles(self):
+        return []
+
+    def allowed(self, object, obect_roles=None):
+        return 0
+
+    def getDomains(self):
+        return []
+
+    def isGroup(self):
+        return True
+
+
 
 
 class AutoGroup(BasePlugin):
@@ -70,6 +108,26 @@ class AutoGroup(BasePlugin):
     def getGroupsForPrincipal(self, principal, request=None):
         return (self.group,)
 
-classImplements(AutoGroup, IGroupEnumerationPlugin, IGroupsPlugin)
+
+    # IGroupIntrospection implementation
+    def getGroupById(self, group_id):
+        if group_id != self.group:
+            raise KeyError, "Unknown group %s" % group_id
+
+        return VirtualGroup(self.group, self.description)
+
+
+    def getGroups(self):
+        return [self.getGroupById(id) for id in self.getGroupIds()]
+
+
+    def getGroupIds(self):
+        return [ self.group ]
+
+
+    def getGroupMembers(self, group_id):
+        return ()
+
+classImplements(AutoGroup, IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection)
 InitializeClass(AutoGroup)
 
