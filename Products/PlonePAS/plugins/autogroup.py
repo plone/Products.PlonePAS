@@ -112,7 +112,7 @@ class AutoGroup(BasePlugin):
     # IGroupIntrospection implementation
     def getGroupById(self, group_id):
         if group_id != self.group:
-            raise KeyError, "Unknown group %s" % group_id
+            return None
 
         return VirtualGroup(self.group, self.description)
 
