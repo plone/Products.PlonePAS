@@ -91,10 +91,13 @@ class AutoGroup(BasePlugin):
             return []
 
         if id:
-            if exact_match and id!=self.group:
+            id = id.lower()
+            mygroup = self.group.lower()
+
+            if exact_match and id!=mygroup:
                 return []
 
-            if not exact_match and id not in self.group:
+            if not exact_match and id not in mygroup:
                 return []
 
         return [ { 'id' : self.group,
