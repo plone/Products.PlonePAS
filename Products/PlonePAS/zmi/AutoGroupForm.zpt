@@ -32,10 +32,22 @@ group.
   </tr>
   <tr>
     <td align="left" valign="top">
+    <div class="form-label">
     Group id
+    </div>
     </td>
     <td align="left" valign="top">
     <input type="text" name="group" size="40" />
+    </td>
+  </tr>
+  <tr>
+    <td align="left" valign="top">
+    <div class="form-label">
+    Description
+    </div>
+    </td>
+    <td align="left" valign="top">
+    <input type="text" name="description" size="40" />
     </td>
   </tr>
   <tr>
