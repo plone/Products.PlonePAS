@@ -34,7 +34,7 @@ from plugins import ufactory
 from plugins import property
 from plugins import crumbler
 from plugins import cookie_handler
-from plugins import cookie_handler
+from plugins import autogroup
 
 #################################
 # pas monkies
@@ -80,6 +80,7 @@ try:
     registerMultiPlugin( property.ZODBMutablePropertyProvider.meta_type )
     registerMultiPlugin( crumbler.CookieCrumblingPlugin.meta_type )
     registerMultiPlugin( cookie_handler.ExtendedCookieAuthHelper.meta_type )
+    registerMultiPlugin( autogroup.AutoGroup.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
@@ -157,3 +158,9 @@ def initialize(context):
                            )
                            
 
+    context.registerClass( autogroup.AutoGroup,
+                           permission = add_user_folders,
+                           constructors = ( autogroup.manage_addAutoGroupForm,
+                                            autogroup.manage_addAutoGroup ),
+                           visibility = None
+                           )
