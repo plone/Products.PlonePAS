@@ -30,6 +30,8 @@ from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipToo
 from Products.CMFPlone.utils import _createObjectByType
 from Products.PlonePAS.utils import cleanId
 
+from zope.deprecation import deprecate
+
 logger = logging.getLogger('Plone')
 
 class MembershipTool(BaseMembershipTool):
@@ -66,6 +68,8 @@ class MembershipTool(BaseMembershipTool):
             member.setMemberProperties(properties)
 
     security.declarePublic('searchForMembers')
+    @deprecate("portal_membership.searchForMembers is deprecated and will "
+               "be removed in Plone 3.5. Use PAS searchUsers instead")
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
