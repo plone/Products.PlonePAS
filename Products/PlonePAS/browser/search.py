@@ -11,12 +11,8 @@ class PASSearchView(BrowserView):
         super(PASSearchView, self).__init__(context, request)
 
 
-    def searchUsers(self, **criteria):
-        self.pas = getToolByName(context(self), "acl_users")
-        return self.pas.searchUsers(**criteria)
-
-    
-    def searchUsersByRequest(self, request):
+    @staticmethod
+    def extractCriteriaFromRequest(request):
         criteria=request.form.copy()
 
         for key in [ "form.submitted", "submit" ]:
@@ -27,6 +23,24 @@ class PASSearchView(BrowserView):
             if not value:
                 del criteria[key]
 
+        return criteria
 
+
+    def searchUsers(self, **criteria):
+        self.pas = getToolByName(context(self), "acl_users")
+        return self.pas.searchUsers(**criteria)
+
+    
+    def searchUsersByRequest(self, request):
+        criteria=self.extractCriteriaFromRequest(request)
         return self.searchUsers(**criteria)
 
+
+    def searchGroups(self, **criteria):
+        self.pas = getToolByName(context(self), "acl_users")
+        return self.pas.searchGroups(**criteria)
+
+    
+    def searchGroupsByRequest(self, request):
+        criteria=self.extractCriteriaFromRequest(request)
+        return self.searchGroups(**criteria)

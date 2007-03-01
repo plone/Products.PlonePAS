@@ -17,3 +17,18 @@ class IPASSearchView(Interface):
         which have an empty string value.
         """
 
+
+    def searchGroups(exact_match=False, **critertia):
+        """Search for groups matching a set of criteria.
+
+        The criteria are a dictionary mapping group properties to values. 
+        """
+
+
+    def searchGroupsByRequest(request):
+        """Search for groups matching a set of criteria found in a request.
+
+        This method will look remove any obvious values from the request
+        which are not search criteria. It will also remove any fields
+        which have an empty string value.
+        """
