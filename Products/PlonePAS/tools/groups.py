@@ -26,6 +26,7 @@ from Globals import InitializeClass
 from OFS.SimpleItem import SimpleItem
 
 from zope.interface import implementedBy
+from zope.deprecation import deprecate
 
 from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
@@ -203,6 +204,8 @@ class GroupsTool(PloneGroupsTool):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
 
+    @deprecate("portal_groups.searchForGroups is deprecated and will "
+               "be removed in Plone 3.5. Use PAS searchGroups instead")
     def searchForGroups(self, REQUEST={}, **kw):
         """Search for groups by keyword.
         The following properties can be searched:
