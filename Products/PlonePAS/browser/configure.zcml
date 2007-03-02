@@ -11,7 +11,7 @@
       for="*"
       name="pas_search"
       class=".search.PASSearchView"
-      permission="PAS.SearchPrincipals"
+      permission="zope2.View"
       allowed_interface="Products.PlonePAS.interfaces.browser.IPASSearchView"
       />
 
