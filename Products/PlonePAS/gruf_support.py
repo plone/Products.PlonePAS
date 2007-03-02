@@ -91,7 +91,12 @@ def userSetGroups(self, id, groupnames):
     groups = Set(gtool.getGroupsForPrincipal(member))
     rmgroups = groups - groupnameset
     for gid in rmgroups:
-        gtool.removePrincipalFromGroup(id, gid)
+        try:
+            gtool.removePrincipalFromGroup(id, gid)
+        except KeyError:
+            # We could hit a group which does not allow user removal, such as
+            # created by our AutoGroup plugin.
+            pass
 
     # add groups
     try:
