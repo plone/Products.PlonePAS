@@ -24,6 +24,7 @@ $Id$
 """
 
 import logging
+from zope.deprecation import deprecate
 from sets import Set
 
 from Products.PluggableAuthService.PluggableAuthService import security
@@ -78,6 +79,7 @@ PluggableAuthService.authenticate__roles__ = ()
 
 #################################
 # compat code galore
+@deprecate("userSetGroups is deprecated. Use the PAS methods instead")
 def userSetGroups(self, id, groupnames):
     plugins = self.plugins
     gtool = getToolByName(self, "portal_groups")
@@ -109,6 +111,7 @@ def userSetGroups(self, id, groupnames):
 
 PluggableAuthService.userSetGroups = userSetGroups
 
+@deprecate("userFolderAddGroup is deprecated. Use the PAS methods instead")
 def userFolderAddGroup(self, name, roles, groups = (), **kw):
     gtool = getToolByName(self, 'portal_groups')
     return gtool.addGroup(name, roles, groups, **kw)
@@ -118,6 +121,7 @@ PluggableAuthService.userFolderAddGroup = userFolderAddGroup
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
 
+@deprecate("getUserIds is deprecated. Use the PAS methods instead")
 def getUserIds(self):
     plugins = self.plugins
 
@@ -138,6 +142,7 @@ def getUserIds(self):
     return results
 
 
+@deprecate("getUserNames is deprecated. Use the PAS methods instead")
 def getUserNames(self):
     plugins = self.plugins
 
