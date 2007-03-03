@@ -77,7 +77,7 @@ class GroupsTool(PloneGroupsTool):
             if success:
                 self.setRolesForGroup(id, roles)
                 for g in groups:
-                    manager.addPrincipalToGroup(g, id)
+                    manager.addPrincipalToGroup(id, g)
                 break
 
         if success:
