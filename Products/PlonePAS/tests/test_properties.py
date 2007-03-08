@@ -24,6 +24,10 @@ if __name__ == '__main__':
 
 from PlonePASTestCase import PlonePASTestCase
 
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import IMemberDataTool
+
 from cStringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
@@ -32,8 +36,8 @@ from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlu
 class PropertiesTest(PlonePASTestCase):
 
     def test_user_properties(self):
-        mt = getToolByName(self.portal, 'portal_membership')
-        md = getToolByName(self.portal, 'portal_memberdata')
+        mt = getUtility(IMembershipTool)
+        md = getUtility(IMemberDataTool)
 
         # Create a new Member
         mt.addMember('user1', 'u1', ['Member'], [],
@@ -174,8 +178,8 @@ class PropertiesTest(PlonePASTestCase):
 
 class PropertySearchTest(PlonePASTestCase):
     def afterSetUp(self):
-        self.mt = getToolByName(self.portal, 'portal_membership')
-        self.md = getToolByName(self.portal, 'portal_memberdata')
+        self.mt = getUtility(IMembershipTool)
+        self.md = getUtility(IMemberDataTool)
 
         # Create a new Member
         self.mt.addMember('member1', 'pw', ['Member'], [],

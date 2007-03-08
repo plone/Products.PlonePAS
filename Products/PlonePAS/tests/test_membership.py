@@ -25,12 +25,13 @@ if __name__ == '__main__':
 from Testing import ZopeTestCase
 from PlonePASTestCase import PlonePASTestCase
 
-from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IMembershipTool
 
 class TestMemberFolder(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.mt = getToolByName(self.portal, 'portal_membership')
+        self.mt = getUtility(IMembershipTool)
 
     def test_folder(self):
         assert self.mt.getHomeFolder() is not None

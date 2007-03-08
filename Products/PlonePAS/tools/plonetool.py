@@ -17,9 +17,11 @@ $Id$
 """
 from Globals import InitializeClass
 
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IMembershipTool
+
 from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
-from Products.CMFCore import permissions as CMFCorePermissions
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import ModifyPortalContent
 from AccessControl import Unauthorized
 
 class PloneTool(BasePloneTool):
@@ -33,8 +35,8 @@ class PloneTool(BasePloneTool):
         If 'status' is 1, roles will not be acquired.
         If 0 they will not be.
         """
-        mt = getToolByName(self, 'portal_membership')
-        if not mt.checkPermission(CMFCorePermissions.ModifyPortalContent, obj):
+        mt = getUtility(IMembershipTool)
+        if not mt.checkPermission(ModifyPortalContent, obj):
             raise Unauthorized
 
         # Set local role status...

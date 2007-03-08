@@ -16,7 +16,8 @@
 $Id$
 """
 
-from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IPropertiesTool
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
@@ -29,11 +30,10 @@ def unique(iterable):
 def getCharset(context):
     """Returns the site default charset, or utf-8.
     """
-    properties = getToolByName(context, 'portal_properties', None)
-    if properties is not None:
-        site_properties = getToolByName(properties, 'site_properties', None)
-        if site_properties is not None:
-            return site_properties.getProperty('default_charset')
+    properties = getUtility(IPropertiesTool)
+    site_properties = getattr(properties, 'site_properties', None)
+    if site_properties is not None:
+        return site_properties.getProperty('default_charset')
     return 'utf-8'
 
 def cleanId(id):

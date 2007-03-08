@@ -22,9 +22,14 @@ from sets import Set
 
 from Globals import InitializeClass
 
+from zope.component import getUtility
+from Products.CMFCore.interfaces import ICatalogTool
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import IURLTool
+
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
-from Products.CMFCore.utils import getToolByName
+
 from Products.CMFPlone.MembershipTool import MembershipTool as BaseMembershipTool
 
 from Products.CMFPlone.utils import _createObjectByType
@@ -252,8 +257,8 @@ class MembershipTool(BaseMembershipTool):
         """
         if not self.getMemberareaCreationFlag():
             return None
-        catalog = getToolByName(self, 'portal_catalog')
-        membership = getToolByName(self, 'portal_membership')
+        catalog = getUtility(ICatalogTool)
+        membership = getUtility(IMembershipTool)
         members = self.getMembersFolder()
 
         if not member_id:
@@ -320,7 +325,7 @@ class MembershipTool(BaseMembershipTool):
             # get the text from portal_skins automagically
             homepageText = getattr(self, 'homePageText', None)
             if homepageText:
-                portal = getToolByName(self, 'portal_url')
+                portal = getUtility(IURLTool)
                 # call the page template
                 content = homepageText(member=member_object, portal=portal).strip()
                 _createObjectByType('Document', member_folder, id='index_html')

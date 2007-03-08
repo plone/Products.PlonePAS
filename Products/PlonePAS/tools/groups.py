@@ -23,14 +23,11 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
 from Globals import InitializeClass
-from OFS.SimpleItem import SimpleItem
 
 from zope.interface import implementedBy
 from zope.deprecation import deprecate
 
-from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
-from Products.CMFCore.utils import getToolByName, UniqueObject
 
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin

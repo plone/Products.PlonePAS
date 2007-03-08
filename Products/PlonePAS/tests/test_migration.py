@@ -24,6 +24,10 @@ if __name__ == '__main__':
 
 from PlonePASTestCase import PlonePASTestCase
 
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import IMemberDataTool
+
 from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 
@@ -95,8 +99,8 @@ class SanityCheck:
                            (parent, self.portal, uf))
 
     def checkUsers(self):
-        mt = getToolByName(self.portal, 'portal_membership')
-        md = getToolByName(self.portal, 'portal_memberdata')
+        mt = getUtility(IMembershipTool)
+        md = getUtility(IMemberDataTool)
         propids = md.propertyIds()
         uf = self.uf()
         for uid, upw, uroles, udomains, uprops in self._users:
@@ -147,7 +151,7 @@ class SanityCheck:
                 self.tc.failUnless(propval == v, (gid, k, propval, v))
 
     def populateUsers(self):
-        mt = getToolByName(self.portal, 'portal_membership')
+        mt = getUtility(IMembershipTool)
         for u in self._users:
             member = mt.getMemberById(u[0])
             if member is None:
@@ -199,7 +203,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_memberdata_with_selection_property(self):
         self.loginAsPortalOwner()
-        pm = getToolByName(self.portal, 'portal_memberdata')
+        pm = getUtility(IMemberDataTool)
         pm._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         pm._setProperty('choice', 'select_choice', 'selection')
         pm._updateProperty('choice', 'A')
@@ -211,7 +215,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        pm = getToolByName(self.portal, 'portal_memberdata')
+        pm = getUtility(IMemberDataTool)
         property = pm.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = pm.getProperty('choice')
@@ -219,7 +223,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_memberdata_with_multiple_selection_property(self):
         self.loginAsPortalOwner()
-        pm = getToolByName(self.portal, 'portal_memberdata')
+        pm = getUtility(IMemberDataTool)
         pm._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         pm._setProperty('choice', 'select_choice', 'multiple selection')
         pm._updateProperty('choice', ('A', 'C'))
@@ -231,7 +235,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        pm = getToolByName(self.portal, 'portal_memberdata')
+        pm = getUtility(IMemberDataTool)
         property = pm.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = pm.getProperty('choice')

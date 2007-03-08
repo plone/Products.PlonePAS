@@ -25,7 +25,8 @@ from types import LongType, FloatType, InstanceType
 
 from DateTime.DateTime import DateTime
 
-from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IURLTool
 
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
@@ -115,7 +116,7 @@ class MutablePropertySheet(UserPropertySheet):
     def _getPropertyProviderForUser(self, user):
         # XXX This assumes that the acl_users that we want is in the portal
         # root. This may not always be the case.
-        portal = getToolByName(user.acl_users, 'portal_url').getPortalObject()
+        portal = getUtility(IURLTool).getPortalObject()
         return portal.acl_users._getOb(self._id)
 
 classImplements(MutablePropertySheet,

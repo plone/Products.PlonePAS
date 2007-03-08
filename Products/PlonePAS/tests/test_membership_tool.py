@@ -24,18 +24,21 @@ if __name__ == '__main__':
 
 from PlonePASTestCase import PlonePASTestCase
 
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import IMemberDataTool
+
 from cStringIO import StringIO
 from zExceptions import BadRequest
 from Acquisition import aq_base, aq_inner, aq_parent
-from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.plugins.ufactory import PloneUser
 
 class MembershipToolTest(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.mt = mt = getToolByName(self.portal, 'portal_membership')
-        self.md = md = getToolByName(self.portal, 'portal_memberdata')
+        self.mt = mt = getUtility(IMembershipTool)
+        self.md = md = getUtility(IMemberDataTool)
 
         self.member_id = 'member1'
         # Create a new Member
@@ -119,8 +122,8 @@ class MembershipToolTest(PlonePASTestCase):
 class MemberAreaTest(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.mt = mt = getToolByName(self.portal, 'portal_membership')
-        self.md = md = getToolByName(self.portal, 'portal_memberdata')
+        self.mt = mt = getUtility(IMembershipTool)
+        self.md = md = getUtility(IMemberDataTool)
         # Enable member-area creation
         self.mt.memberareaCreationFlag = 1
         # Those are all valid chars in Zope.
