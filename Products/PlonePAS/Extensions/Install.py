@@ -22,6 +22,10 @@ from StringIO import StringIO
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.Expression import Expression
 
+from zope.component import getUtility
+from Products.CMFCore.interfaces import IMemberDataTool
+from Products.CMFCore.interfaces import IMembershipTool
+
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from Products.PluggableAuthService.interfaces.plugins \
@@ -284,8 +288,8 @@ def grabUserData(portal, out):
     print >> out, "\nExtract Member information..."
 
     userdata = ()
-    mdtool = getToolByName(portal, 'portal_memberdata')
-    mtool = getToolByName(portal, 'portal_membership')
+    mdtool = getUtility(IMemberDataTool) 
+    mtool = getUtility(IMembershipTool)
 
     props = mdtool.propertyIds()
     members = mtool.listMembers()
@@ -312,8 +316,8 @@ def restoreUserData(portal, out, userdata):
 
     # re-add users
     # Password may be encypted or not: addUser will figure it out.
-    mtool = getToolByName(portal, 'portal_membership')
-    mdtool = getToolByName(portal, 'portal_memberdata')
+    mdtool = getUtility(IMemberDataTool) 
+    mtool = getUtility(IMembershipTool)
     emerg = portal.acl_users._emergency_user.getId()
     for u in userdata:
         if u[0] == emerg:
@@ -418,7 +422,7 @@ def migratePloneTool(portal, out):
 def migrateMembershipTool(portal, out):
     print >> out, "Membership Tool (portal_membership)"
 
-    mt = getToolByName(portal, 'portal_membership')
+    mt = getUtility(IMembershipTool)
     print >> out, " ...copying settings"
     memberareaCreationFlag = mt.getMemberareaCreationFlag()
     role_map = getattr(mt, 'role_map', None)
