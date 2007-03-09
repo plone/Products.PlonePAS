@@ -20,8 +20,10 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl import Unauthorized
 
+from zope.interface import implements
 from zope.interface import implementedBy
 
+from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
 from Products.GroupUserFolder.GroupDataTool import _marker
@@ -31,8 +33,11 @@ from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
 
 from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from Products.PlonePAS.tools.memberdata import MemberData
 
 import logging
 
@@ -44,11 +49,6 @@ try:
 except:
     _have_cleanup_temp = None
 
-from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
-
-from Products.PlonePAS.tools.memberdata import MemberData
-from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-
 
 class GroupDataTool(BaseGroupDataTool):
     """PAS-specific implementation of groupdata tool. Uses Plone
@@ -56,6 +56,7 @@ class GroupDataTool(BaseGroupDataTool):
     """
 
     meta_type = "PlonePAS GroupData Tool"
+    implements(IGroupDataTool)
 
     #### an exact copy from the base, so that we pick up the new GroupData.
     #### wrapGroup should have a GroupData factory method to over-ride (or even
@@ -282,7 +283,7 @@ class GroupData(BaseGroupData):
 
     def _groupdataHasProperty(self, prop_name):
         gdata = getToolByName(self, 'portal_groupdata', None)
-        if mdata:
+        if gdata:
             return gdata.hasProperty(prop_name)
         return 0
 

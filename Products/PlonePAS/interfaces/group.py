@@ -18,8 +18,9 @@ group interfaces for plone, based off existing group usage pre pas.
 $Id$
 """
 
+from zope.interface import Interface
 from Products.PluggableAuthService.interfaces import plugins
-from Products.PluggableAuthService.interfaces.plugins import Interface
+
 
 class IGroupManagement(Interface):
 
