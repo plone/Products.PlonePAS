@@ -24,6 +24,7 @@ from zope.interface import implements
 from zope.interface import implementedBy
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
 from Products.GroupUserFolder.GroupDataTool import _marker
@@ -93,6 +94,7 @@ class GroupDataTool(BaseGroupDataTool):
         return portal_group.__of__(self).__of__(g)
 
 InitializeClass(GroupDataTool)
+registerToolInterface('portal_groupdata', IGroupDataTool)
 
 
 class GroupData(BaseGroupData):

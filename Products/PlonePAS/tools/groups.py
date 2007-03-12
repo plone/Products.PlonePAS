@@ -27,6 +27,7 @@ from Globals import InitializeClass
 from zope.interface import implementedBy
 from zope.deprecation import deprecate
 
+from Products.CMFCore.utils import registerToolInterface
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 
 from Products.PlonePAS.interfaces import group as igroup
@@ -349,3 +350,4 @@ classImplements(GroupsTool,
                 (igroup.IGroupTool,))
 
 InitializeClass(GroupsTool)
+registerToolInterface('portal_groups', IGroupTool)
