@@ -350,4 +350,4 @@ classImplements(GroupsTool,
                 (igroup.IGroupTool,))
 
 InitializeClass(GroupsTool)
-registerToolInterface('portal_groups', IGroupTool)
+registerToolInterface('portal_groups', igroup.IGroupTool)
