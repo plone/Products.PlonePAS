@@ -27,9 +27,13 @@ from PlonePASTestCase import PlonePASTestCase
 from zope.component import getUtility
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IMemberDataTool
+from Products.CMFQuickInstallerTool.interfaces import IQuickInstallerTool
 
 from Acquisition import aq_base, aq_inner, aq_parent
-from Products.CMFCore.utils import getToolByName
+
+from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupDataTool
+
 
 class SanityCheck:
 
@@ -88,7 +92,7 @@ class SanityCheck:
         self.tc = testcase
 
     def uf(self):
-        return getToolByName(self.portal, 'acl_users')
+        return getattr(self.portal, 'acl_users')
 
     def checkUserFolder(self):
         uf = self.uf()
@@ -126,8 +130,8 @@ class SanityCheck:
                 self.tc.failUnless(propval == v, (uid, k, propval, v))
 
     def checkGroups(self):
-        gt = getToolByName(self.portal, 'portal_groups')
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gt = getUtility(IGroupTool)
+        gd = getUtility(IGroupDataTool)
         propids = gd.propertyIds()
         for gid, groles, gsubs, gprops in self._groups:
             group = gt.getGroupById(gid)
@@ -160,7 +164,7 @@ class SanityCheck:
                 member.setMemberProperties(u[-1])
 
     def populateGroups(self):
-        gt = getToolByName(self.portal, 'portal_groups')
+        gt = getUtility(IGroupTool)
         for g in self._groups:
             try:
                 gt.addGroup(*g[:-1], **g[-1])
@@ -190,7 +194,7 @@ class MigrationTest(BaseTest):
 
     def afterSetUp(self):
         BaseTest.afterSetUp(self)
-        self.qi = getToolByName(self.portal, 'portal_quickinstaller')
+        self.qi = getUtility(IQuickInstallerTool)
 
     def test_migrate_no_user_folder_empty(self):
         self.loginAsPortalOwner()
@@ -243,7 +247,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_groupdata_with_selection_property(self):
         self.loginAsPortalOwner()
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd = getUtility(IGroupDataTool)
         gd._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         gd._setProperty('choice', 'select_choice', 'selection')
         gd._updateProperty('choice', 'A')
@@ -255,7 +259,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd = getUtility(IGroupDataTool)
         property = gd.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = gd.getProperty('choice')
@@ -263,7 +267,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_groupdata_with_multiple_selection_property(self):
         self.loginAsPortalOwner()
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd = getUtility(IGroupDataTool)
         gd._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         gd._setProperty('choice', 'select_choice', 'multiple selection')
         gd._updateProperty('choice', ('A', 'C'))
@@ -275,7 +279,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd = getUtility(IGroupDataTool)
         property = gd.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = gd.getProperty('choice')

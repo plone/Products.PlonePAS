@@ -18,19 +18,22 @@ $Id$
 """
 import copy
 from sets import Set
+from zope.component import queryUtility
 
 from ZODB.PersistentMapping import PersistentMapping
 from BTrees.OOBTree import OOBTree
 from Globals import DTMLFile, InitializeClass
 
-from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.interfaces import IMemberDataTool
 
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
+
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 
 
@@ -100,13 +103,13 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
     def _getSchema(self, isgroup=None):
         # this could probably stand to be cached
-        datatool = isgroup and "portal_groupdata" or "portal_memberdata"
+        datatool = isgroup and IGroupDataTool or IMemberDataTool
 
         schema = self._schema
         if not schema:
             # if no schema is provided, use portal_memberdata properties
             schema = ()
-            mdtool = getToolByName(self, datatool, None)
+            mdtool = queryUtility(datatool)
             # Don't fail badly if tool is not available.
             if mdtool is not None:
                 mdschema = mdtool.propertyMap()
@@ -118,13 +121,13 @@ class ZODBMutablePropertyProvider(BasePlugin):
         """Returns a dictionary mapping of property names to default values.
         Defaults to portal_*data tool if necessary.
         """
-        datatool = isgroup and "portal_groupdata" or "portal_memberdata"
+        datatool = isgroup and IGroupDataTool or IMemberDataTool
 
         defaultvalues = self._defaultvalues
         if not self._schema:
             # if no schema is provided, use portal_*data properties
             defaultvalues = {}
-            mdtool = getToolByName(self, datatool, None)
+            mdtool = queryUtility(datatool)
             # Don't fail badly if tool is not available.
             if mdtool is not None:
                 # we rely on propertyMap and propertyItems mapping

@@ -30,8 +30,11 @@ from Products.CMFCore.interfaces import IMemberDataTool
 
 from cStringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
-from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+
+from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupDataTool
+
 
 class PropertiesTest(PlonePASTestCase):
 
@@ -105,8 +108,8 @@ class PropertiesTest(PlonePASTestCase):
         self.assertEquals(got, expected)
 
     def test_group_properties(self):
-        gt = getToolByName(self.portal, 'portal_groups')
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gt = getUtility(IGroupTool)
+        gd = getUtility(IGroupDataTool)
 
         self.loginAsPortalOwner()
 
@@ -194,7 +197,7 @@ class PropertySearchTest(PlonePASTestCase):
         member = self.mt.getMemberById('member2')
         self.failIf(member is None)
 
-        self.pas=getToolByName(self.portal, "acl_users")
+        self.pas = getattr(self.portal, "acl_users")
         for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
             if plugin!='mutable_properties':
                 self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)

@@ -17,14 +17,10 @@ pas alterations and monkies
 $Id$
 """
 from sets import Set
+from zope.component import getUtility
 
-from Acquisition import aq_inner, aq_parent
-from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.Permissions import manage_users as ManageUsers
 
-from Products.CMFCore.utils import getToolByName
-
-from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.PluggableAuthService import security
@@ -32,8 +28,10 @@ from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 
-from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
+from Products.PlonePAS.tools.groups import NotSupported
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 #################################
@@ -126,14 +124,14 @@ PluggableAuthService.userFolderAddUser = userFolderAddUser
 
 
 def _doAddGroup(self, id, roles, groups=None, **kw):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.addGroup(id, roles, groups, **kw)
 
 PluggableAuthService._doAddGroup = _doAddGroup
 
 # for prefs_group_manage compatibility. really should be using tool.
 def _doDelGroups(self, names):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     for group_id in names:
         gtool.removeGroup(group_id)
 
@@ -152,7 +150,7 @@ def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
 
     See also _doChangeUser
     """
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     gtool.editGroup(principal_id, roles, groups, **kw)
     return True
 PluggableAuthService._doChangeGroup = _doChangeGroup
@@ -175,19 +173,19 @@ PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
 
 security.declareProtected(ManageUsers, 'getGroups')
 def getGroups(self):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.listGroups()
 PluggableAuthService.getGroups = getGroups
 
 security.declareProtected(ManageUsers, 'getGroupNames')
 def getGroupNames(self):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.getGroupIds()
 PluggableAuthService.getGroupNames = getGroupNames
 
 security.declareProtected(ManageUsers, 'getGroupIds')
 def getGroupIds(self):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.getGroupIds()
 PluggableAuthService.getGroupIds = getGroupIds
 
@@ -219,7 +217,7 @@ PluggableAuthService.getGroupByName = getGroupByName
 
 security.declareProtected(ManageUsers, 'getGroupById')
 def getGroupById(self, id, default = None):
-    gtool = getToolByName(self, "portal_groups")
+    gtool = getUtility(IGroupTool)
     ret = gtool.getGroupById(id)
     if ret is None:
         return default

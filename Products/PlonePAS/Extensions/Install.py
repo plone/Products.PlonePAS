@@ -18,13 +18,16 @@ $Id$
 
 from sets import Set
 from StringIO import StringIO
-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.Expression import Expression
-
 from zope.component import getUtility
+from zope.component import queryUtility
+
+from Products.CMFCore.Expression import Expression
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.interfaces import IMembershipTool
+from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces import IControlPanel
+from Products.CMFQuickInstallerTool.interfaces import IQuickInstallerTool
 
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
@@ -40,10 +43,12 @@ from Products.PluggableAuthService.Extensions.upgrade \
      import replace_acl_users
 
 from Products.PlonePAS import config
+from Products.PlonePAS.interfaces import group as igroup
+from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PlonePAS.interfaces import group as igroup
 
 from Products.PlonePAS.tools.groups import GroupsTool
 from Products.PlonePAS.tools.groupdata import GroupDataTool
@@ -83,7 +88,7 @@ def activatePluginInterfaces(portal, plugin, out):
 
 def installProducts(portal, out):
     print >> out, "\nInstalling other products"
-    qi = getToolByName(portal, 'portal_quickinstaller')
+    qi = getUtility(IQuickInstallerTool)
 
     print >> out, " - PasswordResetTool"
     qi.installProduct('PasswordResetTool')
@@ -351,8 +356,8 @@ def grabGroupData(portal, out):
 
     groupdata = ()
     groupmemberships = {}
-    gdtool = getToolByName(portal, 'portal_groupdata', None)
-    gtool = getToolByName(portal, 'portal_groups', None)
+    gdtool = queryUtility(IGroupDataTool)
+    gtool = queryUtility(IGroupTool)
 
     if gdtool is None or gtool is None:
         print >> out, ('\nGroup-aware tools not found. Skipping '
@@ -385,7 +390,7 @@ def restoreGroupData(portal, out, groupdata, groupmemberships):
     print >> out, "\nRestoring Group information..."
 
     # re-add groups
-    gtool = getToolByName(portal, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     for g in groupdata:
         print >> out, " : adding group '%s' with members: " % g[0]
         gtool.addGroup(*g)
@@ -438,7 +443,7 @@ def migrateMembershipTool(portal, out):
     portal._setObject(MembershipTool.id, MembershipTool())
 
     # Get new tool.
-    mt = getToolByName(portal, 'portal_membership')
+    mt = getUtility(IMembershipTool)
 
     print >> out, " ...restoring settings"
     mt.memberareaCreationFlag = memberareaCreationFlag
@@ -454,7 +459,7 @@ def migrateMembershipTool(portal, out):
 
 def migrateGroupsTool(portal, out):
     print >> out, "Groups Tool (portal_groups)"
-    gt = getToolByName(portal, 'portal_groups', None)
+    gt = queryUtility(IGroupTool)
 
     HAS_GT = gt is not None
 
@@ -475,7 +480,7 @@ def migrateGroupsTool(portal, out):
     print >> out, " - Installing PAS Aware"
     portal._setObject(GroupsTool.id, GroupsTool())
 
-    gt = getToolByName(portal, 'portal_groups')
+    gt = getUtility(IGroupTool)
 
     if HAS_GT:
         print >> out, " ...restoring settings"
@@ -494,7 +499,7 @@ def migrateGroupDataTool(portal, out):
     # I don't think it's worth it
 
     print >> out, "GroupData Tool (portal_groupdata)"
-    gt = getToolByName(portal, 'portal_groupdata', None)
+    gt = queryUtility(IGroupDataTool)
 
     HAS_GT = gt is not None
 
@@ -512,7 +517,7 @@ def migrateGroupDataTool(portal, out):
 
     print >> out, " - Installing PAS Aware"
     portal._setObject(GroupDataTool.id, GroupDataTool())
-    gt = getToolByName(portal, 'portal_groupdata')
+    gt = getUtility(IGroupDataTool)
 
     if HAS_GT:
         print >> out, " ...restoring actions"
@@ -557,7 +562,7 @@ def migrateMemberDataTool(portal, out):
 def modActions(portal, out):
     """Change any actions necessary to support PAS."""
     # condition "set password" on capability
-    cp = getToolByName(portal, 'portal_controlpanel', None)
+    cp = getUtility(IControlPanel)
     _actions = cp._cloneActions()
     for action in _actions:
         if action.id=='MemberPassword':
@@ -807,7 +812,7 @@ def challenge_chooser_setup(self, out):
 
 def install(self):
     out = StringIO()
-    portal = getToolByName(self, 'portal_url').getPortalObject()
+    portal = getUtility(ISiteRoot)
 
     uf = getToolByName(self, 'acl_users')
 

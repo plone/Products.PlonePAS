@@ -2,12 +2,13 @@
 PlonePAS setup handlers.
 """
 
+from zope.component import getUtility
 from StringIO import StringIO
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.migrations.v2_5.two51_two52 import \
     setLoginFormInCookieAuth
 
+from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
 from Products.PlonePAS.Extensions.Install import migrate_root_uf
 from Products.PlonePAS.Extensions.Install import registerPluginTypes
@@ -22,7 +23,7 @@ def addRolesToPlugIn(p):
     Have to manually register the roles from the 'rolemap' step
     with the roles plug-in.
     """
-    uf = getToolByName(p, 'acl_users')
+    uf = getattr(p, 'acl_users')
     rmanager = uf.portal_role_manager
     roles = ('Reviewer', 'Member')
     existing = rmanager.listRoleIds()
@@ -35,7 +36,7 @@ def setupGroups(p):
     """
     Create Plone's default set of groups.
     """
-    gtool = getToolByName(p, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     existing = gtool.listGroupIds()
     if 'Administrators' not in existing:
         gtool.addGroup('Administrators', roles=['Manager'])

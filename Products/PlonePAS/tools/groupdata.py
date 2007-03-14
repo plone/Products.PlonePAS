@@ -20,10 +20,10 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl import Unauthorized
 
+from zope.component import queryUtility
 from zope.interface import implements
 from zope.interface import implementedBy
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
@@ -284,8 +284,8 @@ class GroupData(BaseGroupData):
         return 0
 
     def _groupdataHasProperty(self, prop_name):
-        gdata = getToolByName(self, 'portal_groupdata', None)
-        if gdata:
+        gdata = queryUtility(IGroupDataTool)
+        if gdata is not None:
             return gdata.hasProperty(prop_name)
         return 0
 

@@ -24,8 +24,6 @@ if __name__ == '__main__':
 
 from PlonePASTestCase import PlonePASTestCase
 
-from Products.CMFCore.utils import getToolByName
-
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.authservice \
