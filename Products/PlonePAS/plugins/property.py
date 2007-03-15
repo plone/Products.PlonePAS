@@ -262,7 +262,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         if login is not None:
             criteria["login"]=login
 
-        users=[ user for user in self._storage.items()
+        users=[ (user,data) for (user,data) in self._storage.items()
                     if self.testMemberData(data, criteria, exact_match)]
 
         user_info=[ { 'id' : self.prefix + user_id,
@@ -270,7 +270,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
                      'title' : data.get('fullname', user_id),
                      'description' : data.get('fullname', user_id),
                      'email' : data.get('email', ''),
-                     'pluginid' : plugin_id } for (user_id, data) in user_ids ]
+                     'pluginid' : plugin_id } for (user_id, data) in users ]
 
         return tuple(user_info)
 

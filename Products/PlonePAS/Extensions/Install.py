@@ -22,6 +22,9 @@ from zope.component import getUtility
 from zope.component import queryUtility
 
 from Products.CMFCore.Expression import Expression
+
+from zope.component.interfaces import ComponentLookupError
+from zope.component import getUtility
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import ISiteRoot
@@ -29,6 +32,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces import IControlPanel
 from Products.CMFQuickInstallerTool.interfaces import IQuickInstallerTool
 
+from Products.PluggableAuthService.interfaces.authservice \
+        import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from Products.PluggableAuthService.interfaces.plugins \
@@ -54,16 +59,15 @@ from Products.PlonePAS.tools.groups import GroupsTool
 from Products.PlonePAS.tools.groupdata import GroupDataTool
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.tools.memberdata import MemberDataTool
-from Products.PlonePAS.tools.plonetool import PloneTool
 
 from Products.PlonePAS.MigrationCheck import canAutoMigrate
 
-CAN_LDAP = 0
 try:
     import Products.LDAPMultiPlugins
-    CAN_LDAP = 1
+    CAN_LDAP = True
 except ImportError:
-    pass
+    CAN_LDAP = False
+
 
 def activatePluginInterfaces(portal, plugin, out):
     pas = portal.acl_users
@@ -86,6 +90,7 @@ def activatePluginInterfaces(portal, plugin, out):
     plugin_obj.manage_activateInterfaces(activatable)
     print >> out, plugin + " activated."
 
+
 def installProducts(portal, out):
     print >> out, "\nInstalling other products"
     qi = getUtility(IQuickInstallerTool)
@@ -93,10 +98,12 @@ def installProducts(portal, out):
     print >> out, " - PasswordResetTool"
     qi.installProduct('PasswordResetTool')
 
+
 def setupRoles(portal):
     rmanager = portal.acl_users.role_manager
     rmanager.addRole('Member', title="Portal Member")
     rmanager.addRole('Reviewer', title="Content Reviewer")
+
 
 def registerPluginType(pas, plugin_type, plugin_info):
     # Make sure there's no dupes in _plugin_types, otherwise your PAS
@@ -113,6 +120,7 @@ def registerPluginType(pas, plugin_type, plugin_info):
 
     # It's safe to assign over a existing key here.
     pas.plugins._plugin_type_info[plugin_type] =  plugin_info
+
 
 def registerPluginTypes(pas):
 
@@ -159,6 +167,7 @@ def registerPluginTypes(pas):
         }
 
     registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
+
 
 def setupPlugins(portal, out):
     uf = portal.acl_users
@@ -284,6 +293,7 @@ def configurePlonePAS(portal, out):
     setupPlugins(portal, out)
 #    setupRoles( portal )
 
+
 def grabUserData(portal, out):
     """Return a list of (id, password, roles, domains, properties)
     tuples for the users of the system.
@@ -293,11 +303,15 @@ def grabUserData(portal, out):
     print >> out, "\nExtract Member information..."
 
     userdata = ()
-    mdtool = getUtility(IMemberDataTool) 
-    mtool = getUtility(IMembershipTool)
+    try:
+        mdtool = getUtility(IMemberDataTool) 
+        mtool = getUtility(IMembershipTool)
+    except ComponentLookupError:
+        return userdata
 
     props = mdtool.propertyIds()
     members = mtool.listMembers()
+    userids=set()
     for member in members:
         id = member.getId()
         print >> out, " : %s" % id
@@ -312,9 +326,16 @@ def grabUserData(portal, out):
         if portrait is not None:
             portrait=portrait.aq_base
         userdata += ((id, password, roles, domains, properties, portrait),)
+        userids+=id
+
+    for (id,data) in mdtool._members.items():
+        if id not in userids:
+            userdata+= ((id, None, None, None, data.__dict__, None),)
+        userids+=id
 
     print >> out, "...extract done"
     return userdata
+
 
 def restoreUserData(portal, out, userdata):
     print >> out, "\nRestoring Member information..."
@@ -346,6 +367,7 @@ def restoreUserData(portal, out, userdata):
             mdtool._setPortrait(u[5], u[0])
 
     print >> out, "...restore done"
+
 
 def grabGroupData(portal, out):
     """Return a list of (id, roles, groups, properties) tuples for the
@@ -386,6 +408,7 @@ def grabGroupData(portal, out):
     print >> out, "...extract done"
     return groupdata, groupmemberships
 
+
 def restoreGroupData(portal, out, groupdata, groupmemberships):
     print >> out, "\nRestoring Group information..."
 
@@ -415,14 +438,18 @@ def setupTools(portal, out):
     migrateGroupDataTool(portal, out)
     modActions(portal, out)
 
+
 def migratePloneTool(portal, out):
     print >> out, "Plone Tool (plone_utils)"
-    print >> out, " ...nothing to migrate"
-    print >> out, " - Removing Default"
-    portal.manage_delObjects(['plone_utils'])
-    print >> out, " - Installing PAS Aware"
-    portal._setObject(PloneTool.id, PloneTool())
+    pt = portal.plone_utils
+    if pt.meta_type == 'PlonePAS Utilities Tool':
+        from Products.CMFPlone.PloneTool import PloneTool
+        print >> out, " - Removing obsolete PlonePAS version of the Plone Tool"
+        portal.manage_delObjects(['plone_utils'])
+        print >> out, " - Installing standard tool"
+        portal._setObject(PloneTool.id, PloneTool())
     print >> out, " ...done"
+
 
 def migrateMembershipTool(portal, out):
     print >> out, "Membership Tool (portal_membership)"
@@ -456,6 +483,7 @@ def migrateMembershipTool(portal, out):
     mt._actions = actions
 
     print >> out, " ...done"
+
 
 def migrateGroupsTool(portal, out):
     print >> out, "Groups Tool (portal_groups)"
@@ -494,6 +522,7 @@ def migrateGroupsTool(portal, out):
 
     print >> out, " ...done"
 
+
 def migrateGroupDataTool(portal, out):
     # this could be somewhat combined with migrateMemberDataTool, but
     # I don't think it's worth it
@@ -529,6 +558,7 @@ def migrateGroupDataTool(portal, out):
 
     print >> out, " ...done"
 
+
 def migrateMemberDataTool(portal, out):
     print >> out, "MemberData Tool (portal_memberdata)"
 
@@ -542,10 +572,10 @@ def migrateMemberDataTool(portal, out):
         elt['value'] = mdtool.getProperty(elt['id'])
 
     mdtool = None
-    print >> out, " - Removing Default"
+    print >> out, " - Removing existing portal_memberdata tool"
     portal.manage_delObjects(['portal_memberdata'])
 
-    print >> out, " - Installing PAS Aware"
+    print >> out, " - Installing PAS Aware tool"
     portal._setObject(MemberDataTool.id, MemberDataTool())
 
     print >> out, " ...restoring actions"
@@ -569,6 +599,7 @@ def modActions(portal, out):
             action.condition = Expression("python:member.canPasswordSet()")
     cp._actions=_actions
 
+
 def updateProperties(tool, properties):
     propsWithNoDeps = [prop for prop in properties if prop['type'] not in ('selection', )]
     propsWithDeps = [prop for prop in properties if prop['type'] in ('selection', )]
@@ -576,6 +607,7 @@ def updateProperties(tool, properties):
         updateProp(tool, prop)
     for prop in propsWithDeps:
         updateProp(tool, prop)
+
 
 def updateProp(prop_manager, prop_dict):
     """Provided a PropertyManager and a property dict of {id, value,
@@ -619,6 +651,7 @@ def grabLDAPFolders(portal, out):
 
     print >> out, "...done"
     return ldap_ufs, ldap_gf
+
 
 def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
     """Create appropriate plugins to replace destroyed LDAP user
@@ -676,6 +709,7 @@ def restoreLDAP(portal, out, ldap_ufs, ldap_gf):
             # move properties up
             pas.plugins.movePluginsUp(IPropertiesPlugin, [id])
 
+
 def replaceUserFolder(portal, out):
     print >> out, "\nUser folder replacement:"
 
@@ -686,9 +720,11 @@ def replaceUserFolder(portal, out):
 
     print >> out, "...replace done"
 
+
 def addPAS(portal, out):
     print >> out, " - Adding PAS user folder"
     portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+
 
 def goForMigration(portal, out):
     """Checks for supported configurations.
@@ -711,7 +747,7 @@ def migrate_root_uf(self, out):
     # Acquire parent user folder.
     parent = self.getPhysicalRoot()
     uf = getToolByName(parent, 'acl_users')
-    if uf.meta_type == PluggableAuthService.meta_type:
+    if IPluggableAuthService.providedBy(uf):
         # It's a PAS already, fixup if needed.
         pas_fixup(parent, out)
 
@@ -748,8 +784,7 @@ def pas_fixup(self, out):
          import _PLUGIN_TYPE_INFO, PluggableAuthService
 
     pas = getToolByName(self, 'acl_users')
-    if not pas.meta_type == PluggableAuthService.meta_type:
-        # Not a PAS, skip.
+    if not IPluggableAuthService.providedBy(pas):
         print >> out, 'PAS UF not found, skipping PAS fixup'
         return
 
@@ -810,6 +845,7 @@ def challenge_chooser_setup(self, out):
         print >> out, 'Found existing Request Type Sniffer Plugin.'
         activatePluginInterfaces(self, found[0], out)
 
+
 def install(self):
     out = StringIO()
     portal = getUtility(ISiteRoot)
@@ -817,7 +853,7 @@ def install(self):
     uf = getToolByName(self, 'acl_users')
 
     EXISTING_UF = 'acl_users' in portal.objectIds()
-    EXISTING_PAS = uf.meta_type == PluggableAuthService.meta_type
+    EXISTING_PAS = IPluggableAuthService.providedBy(uf)
 
     if EXISTING_PAS:
         # Fix possible missing PAS plugins registration.
@@ -826,11 +862,11 @@ def install(self):
         # Register PAS Plugin Types
         registerPluginTypes(uf)
 
-
     ldap_ufs, ldap_gf = None, None
     userdata=groupdata=memberships=()
 
     if not EXISTING_UF:
+        userdata = grabUserData(portal, out)
         addPAS(portal, out)
     elif not EXISTING_PAS:
         # We've got a existing user folder, but it's not a PAS
@@ -866,7 +902,8 @@ def install(self):
         restoreUserData(portal, out, userdata)
         restoreGroupData(portal, out, groupdata, memberships)
 
-    migrate_root_uf(self, out)
+   # XXX Why do we need to do this?
+   migrate_root_uf(self, out)
 
     print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()
@@ -874,7 +911,7 @@ def install(self):
 
 # Future refactor notes:
 #  we cannot tell automatically between LDAP and AD uses of LDAPUserFolder
-#    - except maybe sAMAAccountName
+#    - except maybe sAMAccountName
 #    - so some sort of UI is necessary
 #  should have some sort of facility for allowing easy extension of migration of UFs
 #    - register grab and restore methods, or something

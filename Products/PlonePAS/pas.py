@@ -34,6 +34,12 @@ from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
+# Register the PAS acl_users as a utility
+from Products.CMFCore.utils import registerToolInterface
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+registerToolInterface('acl_users', IPluggableAuthService)
+
+
 #################################
 # pas folder monkies - standard zope user folder api
 
@@ -267,12 +273,16 @@ def getUsers(self):
     # We should have a method that's cheap about returning number of users.
     retval = []
     plugins = self._getOb('plugins')
-    introspectors = self.plugins.listPlugins(IUserIntrospection)
+    try:
+        introspectors = self.plugins.listPlugins(IUserIntrospection)
+    except KeyError:
+        return retval
 
     for iid, introspector in introspectors:
         retval += introspector.getUsers()
 
     return retval
+
 PluggableAuthService.getUsers = getUsers
 PluggableAuthService.getPureUsers = getUsers   # this'll make listMembers work
 

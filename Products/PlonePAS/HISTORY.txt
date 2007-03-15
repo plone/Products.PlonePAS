@@ -4,8 +4,31 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
-    - Added HISTORY.txt and updated version information.
-      [hannosch]
+    - Deprecate the PlonePAS PloneTool; its changes have been merged in the
+      standard Plone version.
+      [wichert]
+
+    - Use getUtility instead of getToolByName. Use direct attribute access
+      in the install and migration code to work around utility lookup caching
+      returning older versions of tools.
+      [wichert]
+
+    - Deprecate user and group searching through CMF member and group tools
+      in favour of PAS enumeration.
+      [wichert]
+
+    - Refactor user searching in the membership tool to use standard PAS
+      searches.
+      [wichert]
+
+    - Add user enumeration capabilities to the mutable properties plugin.
+      [wichert]
+
+    - Add a new automatic group plugin which puts all users in a virtual
+      group. This is useful for permissions handling: since it is not
+      possible to add roles to users with the Authenticated role a
+      virtual group can be used instead.
+      [wichert]
 
     - Added support to import PloneUserFactory and added stub 
       for ZODBMutableProperties. Attention: Latter needs a real
@@ -15,4 +38,6 @@ PlonePAS 3.0.0 - Unreleased
       hack PluginRegistry and and PluggableAuthService slightly.      
       [jensens]
       
+    - Added HISTORY.txt and updated version information.
+      [hannosch]
 

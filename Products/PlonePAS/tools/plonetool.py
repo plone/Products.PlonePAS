@@ -15,46 +15,19 @@
 """
 $Id$
 """
+
+from zope.deprecation import deprecated
+
 from Globals import InitializeClass
-
-from zope.component import getUtility
-from Products.CMFCore.interfaces import IMembershipTool
-
 from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
-from Products.CMFCore.permissions import ModifyPortalContent
-from AccessControl import Unauthorized
 
 class PloneTool(BasePloneTool):
     """PAS-based customization of PloneTool. Uses CMFPlone's as base."""
 
     meta_type = "PlonePAS Utilities Tool"
 
-    def acquireLocalRoles(self, obj, status=1):
-        """
-        Enable or disable local role acquisition on the specified folder.
-        If 'status' is 1, roles will not be acquired.
-        If 0 they will not be.
-        """
-        mt = getUtility(IMembershipTool)
-        if not mt.checkPermission(ModifyPortalContent, obj):
-            raise Unauthorized
 
-        # Set local role status...
-        # set the variable (or unset it if it's defined)
-        if not status:
-            obj.__ac_local_roles_block__ = 1
-        else:
-            if getattr(obj, '__ac_local_roles_block__', None):
-                obj.__ac_local_roles_block__ = None
-
-        # Reindex the whole stuff.
-        obj.reindexObjectSecurity()
-
-    def isLocalRoleAcquired(self, folder):
-        """Return true if the specified folder allows local role acquisition.
-        """
-        if getattr(folder, '__ac_local_roles_block__', None):
-            return 0
-        return 1
+deprecated('PloneTool', 'Please use the standard CMFPlone PloneTool. '
+           'PlonePAS.tools.plonetool will be removed in Plone(PAS) 3.5')
 
 InitializeClass(PloneTool)

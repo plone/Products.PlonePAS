@@ -163,6 +163,7 @@ class SanityCheck:
             else:
                 member.setMemberProperties(u[-1])
 
+
     def populateGroups(self):
         gt = getUtility(IGroupTool)
         for g in self._groups:
@@ -286,6 +287,8 @@ class MigrationTest(BaseTest):
         self.assertEquals(property, ('A', 'C'))
 
     def test_migrate_no_user_folder_populated_users(self):
+        # XXX This will never work: removing acl_users means loosing all login
+        # information, so there is nothing useful to (re)create users
         self.loginAsPortalOwner()
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])

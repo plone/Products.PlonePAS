@@ -18,14 +18,14 @@ $Id$
 
 import logging
 from DateTime import DateTime
-from sets import Set
 
 from Globals import InitializeClass
 
 from zope.component import getUtility
 from Products.CMFCore.interfaces import ICatalogTool
 from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import IURLTool
+from Products.CMFCore.interfaces import IMemberDataTool
+from Products.CMFCore.interfaces import ISiteRoot
 
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
@@ -83,12 +83,12 @@ class MembershipTool(BaseMembershipTool):
         - email
         - last_login_time
         - before_specified_time
-        - roles
+        - roles (any role will cause a match)
         - groupname
 
         This is an 'AND' request.
 
-        When it takes 'name' as keyword (or in REQUEST) and searches on
+        When it takes 'name' as keyword (or in REQUEST) it  searches on
         Full name and id.
 
         Simple name searches are "fast".
@@ -96,7 +96,7 @@ class MembershipTool(BaseMembershipTool):
         logger.debug('searchForMembers: started.')
 
         acl_users = self.acl_users
-        md = self.portal_memberdata
+        md = getUtility(IMemberDataTool)
         groups_tool = self.portal_groups
 
         if REQUEST is not None:
@@ -139,82 +139,47 @@ class MembershipTool(BaseMembershipTool):
             email = None
 
         uf_users = []
-        members = []
-        g_userids, g_members = [], []
 
-        if groupname:
-            logger.debug(
-                'searchForMembers: searching groups '
-                'for title|name=%r.' % groupname)
-            groups = (groups_tool.searchForGroups(title=groupname) +
-                      groups_tool.searchForGroups(name=groupname))
+        logger.debug(
+            'searchForMembers: searching PAS '
+            'with arguments %r.' % user_search)
+        for user in acl_users.searchUsers(**user_search):
+            uid = user['userid']
+            uf_users.append(uid)
 
-            for group in groups:
-                for member in group.getGroupMembers():
-                    if (member not in g_members and
-                        not groups_tool.isGroup(member)):
-                        g_members.append(member)
-            g_userids = map(lambda x: x.getMemberId(), g_members)
-
-        if groupname and not g_userids:
-            logger.debug(
-                'searchForMembers: searching for groupname '
-                'found no users, immediate return.')
+        if not uf_users:
             return []
 
-        if user_search:
+        wrap = self.wrapUser
+        getUserById = acl_users.getUserById
+
+        members = [ getUserById(userid) for userid in set(uf_users)]
+        members = [ member for member in members if member is not None ]
+
+        if (not email and
+            not fullname and
+            not roles and
+            not groupname and
+            not last_login_time):
             logger.debug(
-                'searchForMembers: searching PAS '
-                'with arguments %r.' % user_search)
-            # This will allow us to retrieve users by their id or name
-            for user in acl_users.searchUsers(**user_search):
-                uid = user['userid']
-                uf_users.append(uid)
+                'searchForMembers: searching users '
+                'with no extra filter, immediate return.')
+            return members
 
-        if uf_users:
-            wrap = self.wrapUser
-             # not getUser, we have userids here
-            getUserById = acl_users.getUserById
-
-            for userid in Set(uf_users):
-                user=getUserById(userid)
-                if user is not None:
-                    members.append(wrap(user))
-
-            if (not email and
-                not fullname and
-                not roles and
-                not last_login_time):
-                logger.debug(
-                    'searchForMembers: searching users '
-                    'with no extra filter, immediate return.')
-                return members
-
-        elif groupname:
-            members = g_members
-
-        else:
-            # If the lists are not available, we just stupidly get the
-            # members list. Only IUserIntrospection plugins participate
-            # here.
-            members = self.listMembers()
 
         # Now perform individual checks on each user
         res = []
-        portal = self.portal_url.getPortalObject()
+        portal = getUtility(ISiteRoot)
 
         for member in members:
-            # user = md.wrapUser(u)
-            u = member.getUser()
+            u = member.getUser() # XXX wtf?
+
+            if groupname and groupname not in u.Groups():
+                continue
+
             if not (member.getProperty('listed', False) or is_manager):
                 continue
-            if fullname:
-                if (u.getUserName().lower().find(fullname) == -1 and
-                    member.getProperty('fullname').lower().find(fullname) == -1):
-                    continue
-            if email:
-                if member.getProperty('email').lower().find(email) == -1:
-                    continue
+
             if roles:
                 user_roles = member.getRoles()
                 found = 0
@@ -224,21 +189,22 @@ class MembershipTool(BaseMembershipTool):
                         break
                 if not found:
                     continue
+
             if last_login_time:
                 last_login = member.getProperty('last_login_time', '')
 
                 if isinstance(last_login, basestring):
-                    # value is a string when mem hasn't yet logged in
-                    mem_last_login_time = DateTime(last_login or '2000/01/01')
-                else:
-                    mem_last_login_time = last_login
+                    # value is a string when member hasn't yet logged in
+                   last_login = DateTime(last_login or '2000/01/01')
+                   
                 if before_specified_time:
-                    if mem_last_login_time >= last_login_time:
+                    if last_login >= last_login_time:
                         continue
-                elif mem_last_login_time < last_login_time:
+                elif last_login < last_login_time:
                     continue
 
             res.append(member)
+
         logger.debug('searchForMembers: finished.')
         return res
 
@@ -325,7 +291,7 @@ class MembershipTool(BaseMembershipTool):
             # get the text from portal_skins automagically
             homepageText = getattr(self, 'homePageText', None)
             if homepageText:
-                portal = getUtility(IURLTool)
+                portal = getUtility(ISiteRoot)
                 # call the page template
                 content = homepageText(member=member_object, portal=portal).strip()
                 _createObjectByType('Document', member_folder, id='index_html')

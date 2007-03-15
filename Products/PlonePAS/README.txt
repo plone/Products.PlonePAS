@@ -129,7 +129,7 @@ Authorship
   Dorneles Tremea at "PloneSolutions":http://plonesolutions.com
 
   Bugfixes, various development and merging with Plone:
-  Wichert Akkerman at "Amaze":http://www.amaze.nl
+  Wichert Akkerman at Simplon
 
   (Add yourself if you work on it!)
 
