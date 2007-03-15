@@ -902,8 +902,8 @@ def install(self):
         restoreUserData(portal, out, userdata)
         restoreGroupData(portal, out, groupdata, memberships)
 
-   # XXX Why do we need to do this?
-   migrate_root_uf(self, out)
+    # XXX Why do we need to do this?
+    migrate_root_uf(self, out)
 
     print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
     return out.getvalue()
