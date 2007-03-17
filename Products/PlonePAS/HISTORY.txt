@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
+    _ Add pas_info and pas_search browsr views.
+      [wichert]
+
     - Deprecate the PlonePAS PloneTool; its changes have been merged in the
       standard Plone version.
       [wichert]

@@ -1,5 +1,20 @@
 from zope.interface import Interface
 
+class IPASInfoView(Interface):
+
+    def hasLoginPasswordExtractor():
+        """Check if a login & password extraction plugin is active.
+
+        Check if there is a plugin with an enabled
+        ILoginPasswordExtractionPlugin interface. This can be used to
+        conditionally show username & password logins.
+        """
+
+    def hasOpenIDdExtractor():
+        """Check if an OpenID extraction plugin is active.
+        """
+
+
 class IPASSearchView(Interface):
 
     def searchUsers(exact_match=False, **critertia):

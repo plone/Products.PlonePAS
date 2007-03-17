@@ -9,6 +9,14 @@
 
   <browser:page
       for="*"
+      name="pas_info"
+      class=".info.PASInfoView"
+      permission="zope2.View"
+      allowed_interface="Products.PlonePAS.interfaces.browser.IPASInfoView"
+      />
+
+  <browser:page
+      for="*"
       name="pas_search"
       class=".search.PASSearchView"
       permission="zope2.View"
