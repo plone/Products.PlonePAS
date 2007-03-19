@@ -172,9 +172,7 @@ class MembershipTool(BaseMembershipTool):
         portal = getUtility(ISiteRoot)
 
         for member in members:
-            u = member.getUser() # XXX wtf?
-
-            if groupname and groupname not in u.Groups():
+            if groupname and groupname not in member.getGroupIds():
                 continue
 
             if not (member.getProperty('listed', False) or is_manager):
