@@ -187,8 +187,7 @@ def setupPlugins(portal, out):
     if not found:
         plone_pas.manage_addUserManager('source_users')
         print >> out, "Added User Manager."
-    activatePluginInterfaces(portal, 'source_users', out,
-            disable=['IUserEnumerationPlugin'])
+    activatePluginInterfaces(portal, 'source_users', out)
 
     found = uf.objectIds(['Group Aware Role Manager'])
     if not found:
