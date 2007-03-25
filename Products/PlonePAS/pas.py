@@ -19,7 +19,9 @@ $Id$
 from sets import Set
 from zope.component import getUtility
 
+from AccessControl import Unauthorized, getSecurityManager
 from AccessControl.Permissions import manage_users as ManageUsers
+from AccessControl.Permissions import manage_properties, change_permissions
 
 from Products.PluggableAuthService.PluggableAuthService import \
      PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
@@ -244,6 +246,10 @@ def getLocalRolesForDisplay(self, object):
 
     A GRUF method originally.
     """
+    # Perform security check on destination object
+    if not getSecurityManager().checkPermission(manage_properties, object):
+        raise Unauthorized(name = "getLocalRolesForDisplay")
+        
     result = []
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
@@ -388,6 +394,10 @@ def addRole( self, role ):
 PluggableAuthService.addRole = addRole
 
 def getAllLocalRoles( self, context ):
+    # Perform security check on destination object
+    if not getSecurityManager().checkPermission(change_permissions, context):
+        raise Unauthorized(name = "getAllLocalRoles")
+    
     plugins = self._getOb('plugins')
     lrmanagers = plugins.listPlugins(ILocalRolesPlugin)
 
