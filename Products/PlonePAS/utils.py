@@ -54,3 +54,14 @@ def decleanId(id):
        id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
        return url_unquote(id)
    return ''
+
+# postonly decorator is only available in Zope 2.8.9, 2.9.7, 2.10.3 and 2.11,
+# or in Hotfix_20070320.
+try:
+    from AccessControl.requestmethod import postonly
+except ImportError:
+    try:
+        from Products.Hotfix_20070320 import postonly
+    except ImportError:
+        def postonly(callable):
+            return callable

@@ -389,7 +389,10 @@ def getAllLocalRoles( self, context ):
     # Perform security check on destination object
     if not getSecurityManager().checkPermission(change_permissions, context):
         raise Unauthorized(name = "getAllLocalRoles")
+    return self._getAllLocalRoles(context)
+PluggableAuthService.getAllLocalRoles = getAllLocalRoles
     
+def _getAllLocalRoles(self, context):
     plugins = self._getOb('plugins')
     lrmanagers = plugins.listPlugins(ILocalRolesPlugin)
 
@@ -402,7 +405,5 @@ def getAllLocalRoles( self, context ):
             roles[k].update(v)
 
     return roles
-PluggableAuthService.getAllLocalRoles = getAllLocalRoles
-# Old name, used by CMFPlone.CatalogTool
-PluggableAuthService._getAllLocalRoles = getAllLocalRoles
+PluggableAuthService._getAllLocalRoles = _getAllLocalRoles
 
