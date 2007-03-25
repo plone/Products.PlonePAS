@@ -22,7 +22,7 @@ from Acquisition import aq_inner, aq_parent
 from AccessControl import Unauthorized, getSecurityManager
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.Permissions import manage_users as ManageUsers
-from AccessControl.Permissions import manage_properties
+from AccessControl.Permissions import manage_properties, change_permissions
 
 from Products.CMFCore.utils import getToolByName
 
