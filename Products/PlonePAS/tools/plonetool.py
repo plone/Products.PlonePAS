@@ -21,14 +21,12 @@ from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
 from Products.CMFCore import permissions as CMFCorePermissions
 from Products.CMFCore.utils import getToolByName
 
-from Products.PlonePAS.utils import postonly
-
 class PloneTool(BasePloneTool):
     """PAS-based customization of PloneTool. Uses CMFPlone's as base."""
 
     meta_type = "PlonePAS Utilities Tool"
 
-    def acquireLocalRoles(self, obj, status=1, REQUEST=None):
+    def acquireLocalRoles(self, obj, status=1):
         """
         Enable or disable local role acquisition on the specified folder.
         If 'status' is 1, roles will not be acquired.
@@ -49,7 +47,6 @@ class PloneTool(BasePloneTool):
 
         # Reindex the whole stuff.
         obj.reindexObjectSecurity()
-    acquireLocalRoles = postonly(acquireLocalRoles)
 
     def isLocalRoleAcquired(self, folder):
         """Return true if the specified folder allows local role acquisition.
