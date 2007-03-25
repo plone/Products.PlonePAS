@@ -19,8 +19,10 @@ $Id$
 from sets import Set
 
 from Acquisition import aq_inner, aq_parent
+from AccessControl import Unauthorized, getSecurityManager
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.Permissions import manage_users as ManageUsers
+from AccessControl.Permissions import manage_properties
 
 from Products.CMFCore.utils import getToolByName
 
@@ -240,6 +242,10 @@ def getLocalRolesForDisplay(self, object):
 
     A GRUF method originally.
     """
+    # Perform security check on destination object
+    if not getSecurityManager().checkPermission(manage_properties, object):
+        raise Unauthorized(name = "getLocalRolesForDisplay")
+        
     result = []
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
@@ -380,6 +386,10 @@ def addRole( self, role ):
 PluggableAuthService.addRole = addRole
 
 def getAllLocalRoles( self, context ):
+    # Perform security check on destination object
+    if not getSecurityManager().checkPermission(change_permissions, context):
+        raise Unauthorized(name = "getAllLocalRoles")
+    
     plugins = self._getOb('plugins')
     lrmanagers = plugins.listPlugins(ILocalRolesPlugin)
 
