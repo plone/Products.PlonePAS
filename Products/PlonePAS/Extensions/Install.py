@@ -70,7 +70,7 @@ except ImportError:
     CAN_LDAP = False
 
 
-def activatePluginInterfaces(portal, plugin, out):
+def activatePluginInterfaces(portal, plugin, out, disable=[]):
     pas = portal.acl_users
     plugin_obj = pas[plugin]
 
@@ -83,8 +83,12 @@ def activatePluginInterfaces(portal, plugin, out):
             interface = info['interface']
             interface_name = info['id']
             if plugin_obj.testImplements(interface):
-                activatable.append(interface_name)
-                print >> out, " - Activating: " + info['title']
+                if interface_name in disable:
+                    disable.append(interface_name)
+                    print >> out, " - Disabling: " + info['title']
+                else:
+                    activatable.append(interface_name)
+                    print >> out, " - Activating: " + info['title']
     except AttributeError:
         print >> out, "It looks like you have a non-PAS acl_users folder. "
         print >> out, "Please remove it before installing PlonePAS."
@@ -183,7 +187,8 @@ def setupPlugins(portal, out):
     if not found:
         plone_pas.manage_addUserManager('source_users')
         print >> out, "Added User Manager."
-        activatePluginInterfaces(portal, 'source_users', out)
+    activatePluginInterfaces(portal, 'source_users', out,
+            disable=['IUserEnumerationPlugin'])
 
     found = uf.objectIds(['Group Aware Role Manager'])
     if not found:
@@ -259,7 +264,8 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
         plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
                                                      cookie_name=cookie_name)
     print >> out, "Added Extended Cookie Auth Helper."
-    activatePluginInterfaces(portal, 'credentials_cookie_auth', out)
+    activatePluginInterfaces(portal, 'credentials_cookie_auth', out,
+            disable=['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin'])
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
     if 'login_form' in credentials_cookie_auth.objectIds():
