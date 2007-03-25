@@ -61,6 +61,7 @@ from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.tools.memberdata import MemberDataTool
 
 from Products.PlonePAS.MigrationCheck import canAutoMigrate
+from plone.session.plugins.session import manage_addSessionPlugin
 
 try:
     import Products.LDAPMultiPlugins
@@ -220,6 +221,12 @@ def setupPlugins(portal, out):
                 "AuthenticatedUsers", "Authenticated Users (Virtual Group)")
         print >> out, "Added Automatic Group."
         activatePluginInterfaces(portal, "auto_group", out)
+
+    found = uf.objectIds(['Plone Session Plugin'])
+    if not found:
+        manage_addSessionPlugin(plone_pas, 'session')
+        print >> out, "Added Plone Session Plugin."
+        activatePluginInterfaces(portal, "session", out)
 
 
 def setupAuthPlugins(portal, pas, plone_pas, out,

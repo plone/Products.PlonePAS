@@ -7,10 +7,6 @@ from Products.PlonePAS.interfaces.browser import IPASSearchView
 class PASSearchView(BrowserView):
     implements(IPASSearchView)
 
-    def __init__(self, context, request):
-        super(PASSearchView, self).__init__(context, request)
-
-
     @staticmethod
     def extractCriteriaFromRequest(request):
         criteria=request.form.copy()
