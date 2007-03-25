@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
+    - Update installation logic to use plone.session for cookies
+      [wichert]
+
     _ Add pas_info and pas_search browsr views.
       [wichert]
 
