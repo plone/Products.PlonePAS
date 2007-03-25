@@ -245,7 +245,11 @@ def getLocalRolesForDisplay(self, object):
     # Perform security check on destination object
     if not getSecurityManager().checkPermission(manage_properties, object):
         raise Unauthorized(name = "getLocalRolesForDisplay")
-        
+    
+    return self._getLocalRolesForDisplay(object)
+PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+    
+def _getLocalRolesForDisplay(self, object):
     result = []
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
@@ -262,7 +266,7 @@ def getLocalRolesForDisplay(self, object):
                 userid = user.getId()
         result.append((username, roles, userType, userid))
     return tuple(result)
-PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+PluggableAuthService._getLocalRolesForDisplay = _getLocalRolesForDisplay
 
 
 def getUsers(self):
