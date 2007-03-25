@@ -249,7 +249,11 @@ def getLocalRolesForDisplay(self, object):
     # Perform security check on destination object
     if not getSecurityManager().checkPermission(manage_properties, object):
         raise Unauthorized(name = "getLocalRolesForDisplay")
-        
+    
+    return self._getLocalRolesForDisplay(object)
+PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+    
+def _getLocalRolesForDisplay(self, object):
     result = []
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
@@ -266,7 +270,7 @@ def getLocalRolesForDisplay(self, object):
                 userid = user.getId()
         result.append((username, roles, userType, userid))
     return tuple(result)
-PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+PluggableAuthService._getLocalRolesForDisplay = _getLocalRolesForDisplay
 
 
 def getUsers(self):
@@ -397,7 +401,10 @@ def getAllLocalRoles( self, context ):
     # Perform security check on destination object
     if not getSecurityManager().checkPermission(change_permissions, context):
         raise Unauthorized(name = "getAllLocalRoles")
+    return self._getAllLocalRoles(context)
+PluggableAuthService.getAllLocalRoles = getAllLocalRoles
     
+def _getAllLocalRoles(self, context):
     plugins = self._getOb('plugins')
     lrmanagers = plugins.listPlugins(ILocalRolesPlugin)
 
@@ -410,7 +417,5 @@ def getAllLocalRoles( self, context ):
             roles[k].update(v)
 
     return roles
-PluggableAuthService.getAllLocalRoles = getAllLocalRoles
-# Old name, used by CMFPlone.CatalogTool
-PluggableAuthService._getAllLocalRoles = getAllLocalRoles
+PluggableAuthService._getAllLocalRoles = _getAllLocalRoles
 
