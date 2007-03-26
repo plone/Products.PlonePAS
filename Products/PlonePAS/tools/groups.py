@@ -28,6 +28,7 @@ from OFS.SimpleItem import SimpleItem
 from zope.interface import implementedBy
 
 from Products.CMFPlone import ToolNames
+from Products.CMFPlone.utils import postonly
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 from Products.CMFCore.utils import getToolByName, UniqueObject
 
@@ -56,7 +57,8 @@ class GroupsTool(PloneGroupsTool):
     # basic group mgmt
     ##
 
-    def addGroup(self, id, roles = [], groups = [], properties=None, *args, **kw):
+    def addGroup(self, id, roles = [], groups = [], properties=None, 
+                 REQUEST=None, *args, **kw):
         group = None
         success = 0
         managers = self._getGroupManagers()
@@ -86,8 +88,9 @@ class GroupsTool(PloneGroupsTool):
             self.createGrouparea(id)
 
         return success
+    addGroup = postonly(addGroup)
 
-    def editGroup(self, id, roles=None, groups=None, *args, **kw):
+    def editGroup(self, id, roles=None, groups=None, REQUEST=None, *args, **kw):
         """Edit the given group with the supplied roles.
 
         Passwords for groups seem to be irrelevant.
@@ -123,9 +126,10 @@ class GroupsTool(PloneGroupsTool):
                             break
                     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                         log('AuthenticationPlugin %s error' % gm_id)
+    editGroup = postonly(editGroup)
 
     security.declareProtected(DeleteGroups, 'removeGroup')
-    def removeGroup(self, group_id, keep_workspaces=0):
+    def removeGroup(self, group_id, keep_workspaces=0, REQUEST=None):
         """Remove a single group, including group workspace, unless
         keep_workspaces==true.
         """
@@ -147,9 +151,10 @@ class GroupsTool(PloneGroupsTool):
                     gwf._delObject(workspace_id)
 
         return retval
+    removeGroup = postonly(removeGroup)
 
     security.declareProtected(DeleteGroups, 'removeGroups')
-    def removeGroups(self, ids, keep_workspaces=0):
+    def removeGroups(self, ids, keep_workspaces=0, REQUEST=None):
         """Remove the group in the provided list (if possible).
 
         Will by default remove this group's GroupWorkspace if it exists. You may
@@ -157,22 +162,24 @@ class GroupsTool(PloneGroupsTool):
         """
         for id in ids:
             self.removeGroup(id, keep_workspaces)
+    removeGroups = postonly(removeGroups)
 
     security.declareProtected(ManageGroups, 'setRolesForGroup')
-    def setRolesForGroup(self, group_id, roles=()):
+    def setRolesForGroup(self, group_id, roles=(), REQUEST=None):
         rmanagers = self._getPlugins().listPlugins(IRoleAssignerPlugin)
         if not (rmanagers):
             raise NotImplementedError, ('There is no plugin that can '
                                         'assign roles to groups')
         for rid, rmanager in rmanagers:
             rmanager.assignRolesToPrincipal(roles, group_id)
+    setRolesForGroup = postonly(setRolesForGroup)
 
     ##
     # basic principal mgmt
     ##
 
     security.declareProtected(ManageGroups, 'addPrincipalToGroup')
-    def addPrincipalToGroup(self, principal_id, group_id):
+    def addPrincipalToGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
@@ -180,9 +187,10 @@ class GroupsTool(PloneGroupsTool):
             if manager.addPrincipalToGroup(principal_id, group_id):
                 return True
         return False
+    addPrincipalToGroup = postonly(addPrincipalToGroup)
 
     security.declareProtected(ManageGroups, 'removePrincipalFromGroup')
-    def removePrincipalFromGroup(self, principal_id, group_id):
+    def removePrincipalFromGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported, 'No plugins allow for group management'
@@ -190,6 +198,7 @@ class GroupsTool(PloneGroupsTool):
             if manager.removePrincipalFromGroup(principal_id, group_id):
                 return True
         return False
+    removePrincipalFromGroup = postonly(removePrincipalFromGroup)
 
 
     ##
