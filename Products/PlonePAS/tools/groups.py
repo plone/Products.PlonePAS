@@ -22,13 +22,13 @@ from sets import Set
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
+from AccessControl.requestmethod import postonly
 from Globals import InitializeClass
 
 from zope.interface import implementedBy
 from zope.deprecation import deprecate
 
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFPlone.utils import postonly
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 
 from Products.PlonePAS.interfaces import group as igroup
