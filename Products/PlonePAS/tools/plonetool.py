@@ -17,7 +17,7 @@ $Id$
 """
 from Globals import InitializeClass
 
-from Products.CMFPlone.utils import postonly
+from Products.PlonePAS.utils import postonly
 from Products.CMFPlone.PloneTool import PloneTool as BasePloneTool
 from Products.CMFCore import permissions as CMFCorePermissions
 from Products.CMFCore.utils import getToolByName
