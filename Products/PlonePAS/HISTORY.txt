@@ -47,3 +47,32 @@ PlonePAS 3.0.0 - Unreleased
     - Added HISTORY.txt and updated version information.
       [hannosch]
 
+
+PlonePAS 2.3 - May 30, 2007
+
+    - Protect the tools with postonly security modifiers.
+      [mj]
+
+    - Update GRUF compatibility functions to use the same security checks
+      as GRUF itself uses.
+      [mj]
+
+    - Fix migration to handle properties of selection or multiple selection
+      types.
+      [reinout]
+
+    - Correct creation of groups wich default group managers.
+      [dreamcatcher]
+
+    - Fix migration from GRUF sites: also include the member properties in the
+      migration.
+      [tesdal]
+
+    - Correct the test for creation of groups with the same id as users: search
+      for the exact id, not substrings.
+      [tesdal]
+      
+    - Fix bad form action which made it impossible to add a plone user factory
+      plugin through the ZMI. Backported from trunk.
+      [wichert]
+
