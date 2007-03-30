@@ -28,9 +28,10 @@ from OFS.SimpleItem import SimpleItem
 from zope.interface import implementedBy
 
 from Products.CMFPlone import ToolNames
-from Products.CMFPlone.utils import postonly
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
 from Products.CMFCore.utils import getToolByName, UniqueObject
+
+from Products.PlonePAS.utils import postonly
 
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
