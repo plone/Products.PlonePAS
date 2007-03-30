@@ -50,6 +50,10 @@ PlonePAS 3.0.0 - Unreleased
 
 PlonePAS 2.3 - May 30, 2007
 
+    - Use a local postonly decorator so PlonePAS can be used with Plone 
+      2.5, 2.5.1 and 2.5.2.
+      [wichert]
+
     - Protect the tools with postonly security modifiers.
       [mj]
 
