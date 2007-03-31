@@ -53,7 +53,7 @@ def _doAddUser(self, login, password, roles, domains, groups=None, **kw ):
 
 PluggableAuthService._doAddUser = _doAddUser
 
-def _doDelUsers(self, names):
+def _doDelUsers(self, names, REQUEST=None):
     """
     Delete users given by a list of user ids.
     Has no return value, like the original.
@@ -64,7 +64,7 @@ def _doDelUsers(self, names):
 PluggableAuthService._doDelUsers = _doDelUsers
 
  
-def _doDelUser(self, id, REQUEST=None):
+def _doDelUser(self, id):
     """
     Given a user id, hand off to a deleter plugin if available.
     """
