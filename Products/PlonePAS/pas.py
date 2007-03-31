@@ -64,7 +64,7 @@ def _doDelUsers(self, names):
 PluggableAuthService._doDelUsers = _doDelUsers
 
  
-def _doDelUser(self, id):
+def _doDelUser(self, id, REQUEST=None):
     """
     Given a user id, hand off to a deleter plugin if available.
     """
@@ -86,7 +86,8 @@ security.declareProtected(ManageUsers, 'userFolderDelUsers')
 PluggableAuthService.userFolderDelUsers = postonly(PluggableAuthService._doDelUsers)
 
 
-def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None, **kw):
+def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
+                  REQUEST=None, **kw):
     """
     Given a principal id, change its password, roles, domains, iff
     respective plugins for such exist.
@@ -121,7 +122,7 @@ PluggableAuthService.userFolderEditUser = postonly(PluggableAuthService._doChang
 # ttw alias
 # XXX need to security restrict these methods, no base class sec decl
 #PluggableAuthService.userFolderAddUser__roles__ = ()
-def userFolderAddUser(self, login, password, roles, domains, groups=None, **kw ):
+def userFolderAddUser(self, login, password, roles, domains, groups=None, REQUEST=None, **kw ):
     self._doAddUser(login, password, roles, domains, **kw)
     if groups is not None:
         self.userSetGroups(login, groups)
@@ -136,7 +137,7 @@ def _doAddGroup(self, id, roles, groups=None, **kw):
 PluggableAuthService._doAddGroup = _doAddGroup
 
 # for prefs_group_manage compatibility. really should be using tool.
-def _doDelGroups(self, names):
+def _doDelGroups(self, names, REQUEST=None):
     gtool = getToolByName(self, 'portal_groups')
     for group_id in names:
         gtool.removeGroup(group_id)
@@ -147,7 +148,7 @@ security.declareProtected(ManageUsers, 'userFolderDelGroups')
 PluggableAuthService.userFolderDelGroups = postonly(PluggableAuthService._doDelGroups)
 
 
-def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
+def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
     """
     Given a group's id, change its roles, domains, iff respective
     plugins for such exist.
