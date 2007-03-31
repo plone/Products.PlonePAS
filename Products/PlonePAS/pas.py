@@ -38,6 +38,8 @@ from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlu
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
+from Products.CMFPlone.utils import postonly
+
 #################################
 # pas folder monkies - standard zope user folder api
 
@@ -81,7 +83,7 @@ def _doDelUser(self, id):
 PluggableAuthService._doDelUser = _doDelUser
 
 security.declareProtected(ManageUsers, 'userFolderDelUsers')
-PluggableAuthService.userFolderDelUsers = PluggableAuthService._doDelUsers
+PluggableAuthService.userFolderDelUsers = postonly(PluggableAuthService._doDelUsers)
 
 
 def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None, **kw):
@@ -113,7 +115,7 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None, 
 PluggableAuthService._doChangeUser = _doChangeUser
 
 security.declareProtected(ManageUsers, 'userFolderEditUser')
-PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser
+PluggableAuthService.userFolderEditUser = postonly(PluggableAuthService._doChangeUser)
 
 
 # ttw alias
@@ -124,7 +126,7 @@ def userFolderAddUser(self, login, password, roles, domains, groups=None, **kw )
     if groups is not None:
         self.userSetGroups(login, groups)
 
-PluggableAuthService.userFolderAddUser = userFolderAddUser
+PluggableAuthService.userFolderAddUser = postonly(userFolderAddUser)
 
 
 def _doAddGroup(self, id, roles, groups=None, **kw):
@@ -142,7 +144,7 @@ def _doDelGroups(self, names):
 PluggableAuthService._doDelGroups = _doDelGroups
 
 security.declareProtected(ManageUsers, 'userFolderDelGroups')
-PluggableAuthService.userFolderDelGroups = PluggableAuthService._doDelGroups
+PluggableAuthService.userFolderDelGroups = postonly(PluggableAuthService._doDelGroups)
 
 
 def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
@@ -172,7 +174,7 @@ def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
 PluggableAuthService._updateGroup = _updateGroup
 
 security.declareProtected(ManageUsers, 'userFolderEditGroup')
-PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
+PluggableAuthService.userFolderEditGroup = postonly(PluggableAuthService._doChangeGroup)
 
 
 security.declareProtected(ManageUsers, 'getGroups')
