@@ -4,14 +4,13 @@
 
 # $Id: PlonePASTestCase.py 18188 2006-01-19 20:48:45Z wichert $
 
+from Testing import ZopeTestCase
 
 from zope.app.tests.placelesssetup import setUp, tearDown
 from Products.Five import zcml
-import Products.statusmessages
-
-from Testing import ZopeTestCase
 from Products.PloneTestCase import PloneTestCase
 from Products.PloneTestCase.setup import PLONE25
+import Products.statusmessages
 
 PloneTestCase.setupPloneSite(products=('PlonePAS',))
 

@@ -30,7 +30,7 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.utils import unique
-
+from Products.PlonePAS.odict import OrderedDict
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
                                           globals())
@@ -73,6 +73,10 @@ class PloneUser(PropertiedUser):
     #################################
     # GRUF API
     _isGroup = False
+
+    def __init__( self, id, login=None ):
+        super( PloneUser, self).__init__( id, login )
+        self._propertysheets = OrderedDict()
 
     security.declarePublic('isGroup')
     def isGroup(self):
@@ -133,12 +137,7 @@ class PloneUser(PropertiedUser):
 
     security.declarePrivate('getOrderedPropertySheets')
     def getOrderedPropertySheets(self):
-        source_provider_keys = [plugin_id for plugin_id, plugin in
-                                self._getPropertyPlugins()]
-        provider_keys = self.listPropertysheets()
-        sheets = [self.getPropertysheet(pk) for pk in source_provider_keys
-                  if pk in provider_keys]
-        return sheets
+        return self._propertysheets.values()
 
     #################################
     # local roles plugin type delegation
