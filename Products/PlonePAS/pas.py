@@ -38,7 +38,7 @@ from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlu
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
-from Products.CMFPlone.utils import postonly
+from Products.PlonePAS.utils import postonly
 
 #################################
 # pas folder monkies - standard zope user folder api

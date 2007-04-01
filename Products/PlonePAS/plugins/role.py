@@ -35,7 +35,7 @@ from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
 
 from Products.PluggableAuthService.permissions import ManageUsers
 
-from Products.CMFPlone.utils import postonly
+from Products.PlonePAS.utils import postonly
 
 def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
     """
