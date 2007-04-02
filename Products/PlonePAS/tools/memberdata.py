@@ -41,6 +41,7 @@ from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswo
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability, IAssignRoleCapability
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.utils import getCharset
+from Products.PlonePAS.utils import postonly
 
 
 class MemberDataTool(BaseMemberDataTool):
@@ -92,7 +93,7 @@ class MemberDataTool(BaseMemberDataTool):
 #        return acl_users.searchUsers(name=s, exact_match=False)
 #        # I don't think this is right: we need to return Members
 
-    def deleteMemberData(self, member_id):
+    def deleteMemberData(self, member_id, REQUEST=None):
         """ Delete member data of specified member.
         """
         sheets = None
@@ -117,6 +118,7 @@ class MemberDataTool(BaseMemberDataTool):
                 return 1
             else:
                 return 0
+    deleteMemberData = postonly(deleteMemberData)
 
     ## plugin getter
     def _getPlugins(self):
