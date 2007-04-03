@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id$
+$Id: utils.py 40008 2007-03-30 13:57:57Z wichert $
 """
 
 from Products.CMFCore.utils import getToolByName

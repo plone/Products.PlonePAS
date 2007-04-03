@@ -28,7 +28,7 @@ GRUFisms are API in GRUF that aren't in our implementation of PAS. The set of
 difference between GRUF and PAS are cached; if PAS changes and you need to
 refresh, just delete whatsOutThere.dat or pass in 'refresh' as the first arg.
 
-$Id$
+$Id: seeWhatsOutThere.py 35196 2006-12-29 21:50:54Z wichert $
 """
 import os, sys, re
 from pprint import pprint

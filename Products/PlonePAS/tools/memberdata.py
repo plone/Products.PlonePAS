@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id$
+$Id: memberdata.py 40136 2007-04-02 00:31:10Z ramon $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base

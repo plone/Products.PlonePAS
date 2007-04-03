@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id$
+$Id: groupdata.py 40125 2007-04-01 21:02:47Z alecm $
 """
 from Globals import InitializeClass
 from Acquisition import aq_base
