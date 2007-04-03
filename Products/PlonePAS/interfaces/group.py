@@ -15,7 +15,6 @@
 """
 group interfaces for plone, based off existing group usage pre pas.
 
-$Id: group.py 38906 2007-03-09 23:57:39Z hannosch $
 """
 
 from zope.interface import Interface

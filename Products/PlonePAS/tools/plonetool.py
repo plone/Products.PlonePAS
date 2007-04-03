@@ -13,7 +13,6 @@
 #
 ##############################################################################
 """
-$Id: plonetool.py 39158 2007-03-15 13:30:14Z wichert $
 """
 
 from zope.deprecation import deprecated

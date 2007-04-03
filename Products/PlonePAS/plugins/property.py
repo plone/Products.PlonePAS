@@ -14,7 +14,6 @@
 ##############################################################################
 """
 Mutable Property Provider
-$Id: property.py 39158 2007-03-15 13:30:14Z wichert $
 """
 import copy
 from sets import Set

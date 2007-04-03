@@ -13,7 +13,6 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py 35203 2006-12-30 01:33:58Z hannosch $
 """
 
 from AccessControl import ClassSecurityInfo

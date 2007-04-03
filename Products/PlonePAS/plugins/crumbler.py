@@ -17,7 +17,6 @@
 Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
 
-$Id: crumbler.py 21958 2006-04-09 13:42:38Z wichert $
 """
 from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo

@@ -1,5 +1,4 @@
 """
-$Id: test_caching.py 39132 2007-03-14 21:10:36Z hannosch $
 """
 
 import os, sys

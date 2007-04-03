@@ -20,7 +20,6 @@ A Local Roles Plugin Implementation that respects Black Listing markers.
 ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
-$Id: local_role.py 32111 2006-10-21 10:46:43Z hannosch $
 """
 
 from sets import Set

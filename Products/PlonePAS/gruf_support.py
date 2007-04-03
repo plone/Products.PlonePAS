@@ -20,7 +20,6 @@ experimenting with pas flexibility on an existing system.
 
 open question if this mode will be supported at all
 
-$Id: gruf_support.py 39132 2007-03-14 21:10:36Z hannosch $
 """
 
 import logging

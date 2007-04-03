@@ -17,7 +17,6 @@ group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
-$Id: role.py 32111 2006-10-21 10:46:43Z hannosch $
 """
 
 from AccessControl import ClassSecurityInfo
