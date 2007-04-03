@@ -15,7 +15,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 
-$Id$
+$Id: user.py 32111 2006-10-21 10:46:43Z hannosch $
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding

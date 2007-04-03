@@ -16,7 +16,7 @@
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
-$Id$
+$Id: group.py 32111 2006-10-21 10:46:43Z hannosch $
 """
 
 import logging

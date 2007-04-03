@@ -14,7 +14,7 @@
 ##############################################################################
 """
 pas alterations and monkies
-$Id$
+$Id: pas.py 39737 2007-03-25 16:54:40Z mj $
 """
 from sets import Set
 from zope.component import getUtility

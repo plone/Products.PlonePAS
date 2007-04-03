@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id$
+$Id: plugins.py 19381 2006-02-16 01:18:52Z alecm $
 """
 
 from Products.PluggableAuthService.interfaces import plugins

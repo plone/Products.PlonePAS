@@ -18,7 +18,7 @@ acts as a bridge between gruf and pas. fufilling group, role, and principal
 management plugin functionalities within pas via delegation to a contained gruf
 instance.
 
-$Id$
+$Id: gruf.py 32111 2006-10-21 10:46:43Z hannosch $
 """
 
 from Globals import DTMLFile, InitializeClass

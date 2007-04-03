@@ -16,7 +16,7 @@
 Define certain interfaces that a plugin must meet if it is to allow
 certain operations to be done by the Plone UI.
 
-$Id$
+$Id: capabilities.py 11144 2005-08-18 20:04:49Z dreamcatcher $
 """
 
 from Products.PluggableAuthService.interfaces.plugins import Interface

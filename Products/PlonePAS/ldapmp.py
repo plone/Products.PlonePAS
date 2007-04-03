@@ -13,7 +13,7 @@
 #
 ##############################################################################
 """
-$Id$
+$Id: ldapmp.py 26036 2006-07-11 22:56:18Z rochael $
 """
 
 from Products.PlonePAS.patch import call, wrap_method
