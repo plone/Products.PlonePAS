@@ -13,7 +13,6 @@
 #
 ##############################################################################
 """
-$Id: ufactory.py 40115 2007-04-01 12:44:43Z k_vertigo $
 """
 
 from AccessControl import ClassSecurityInfo
