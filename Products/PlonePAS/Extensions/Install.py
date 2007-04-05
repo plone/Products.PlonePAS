@@ -73,8 +73,6 @@ def activatePluginInterfaces(portal, plugin, out, disable=[]):
     pas = portal.acl_users
     plugin_obj = pas[plugin]
 
-    interfaces = plugin_obj.listInterfaces()
-
     activatable = []
 
     try:
