@@ -8,6 +8,7 @@ the portal the ability to provide a setAuthCookie method.
 $Id$
 """
 
+from AccessControl.SecurityManagement import getSecurityManager
 from base64 import encodestring
 from urllib import quote
 from Acquisition import aq_base
@@ -16,6 +17,8 @@ from Globals import InitializeClass, DTMLFile
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
 from Products.PluggableAuthService.utils import classImplements
+from Products.PluggableAuthService.interfaces.authservice \
+        import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import \
         ILoginPasswordHostExtractionPlugin, IChallengePlugin,  \
         ICredentialsUpdatePlugin, ICredentialsResetPlugin
@@ -77,10 +80,19 @@ class ExtendedCookieAuthHelper(BasePlugin):
         login = request.get('__ac_name', '')
         password = request.get('__ac_password', '')
 
-        pas_instance = self._getPAS()
+        user = getSecurityManager().getUser()
+        user_pas = user.aq_parent
 
-        if pas_instance is not None:
-            pas_instance.updateCredentials(request, response, login, password)
+        if IPluggableAuthService.providedBy(user_pas):
+            # Delegate to the users own PAS if possible
+            user_pas.updateCredentials(request, response, login, password)
+        else:
+            # User does not originate from a PAS user folder, so lets try
+            # to do our own thing.
+            # XXX Perhaps we should do nothing here; test with pure User Folder!
+            pas_instance = self._getPAS()
+            if pas_instance is not None:
+                pas_instance.updateCredentials(request, response, login, password)
 
 
 classImplements(ExtendedCookieAuthHelper,
