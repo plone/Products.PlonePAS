@@ -4,6 +4,12 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
+    - Modify login method for the cookie plugin to perform the credential
+      update in the PAS of the user instead of the PAS of the plugin. This
+      helps in making sure that users will only authenticate against their
+      own user folder, so we get all their roles, properties, etc. correctly.
+      [wichert]
+
     - Update installation logic to use plone.session for cookies
       [wichert]
 
