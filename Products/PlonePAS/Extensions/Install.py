@@ -260,8 +260,12 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
         plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
                                                      cookie_name=cookie_name)
     print >> out, "Added Extended Cookie Auth Helper."
+    if deactivate_basic_reset:
+        disable=['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
+    else:
+        disable=[]
     activatePluginInterfaces(portal, 'credentials_cookie_auth', out,
-            disable=['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin'])
+            disable=disable)
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
     if 'login_form' in credentials_cookie_auth.objectIds():
