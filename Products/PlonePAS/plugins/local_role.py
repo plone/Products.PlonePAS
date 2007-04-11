@@ -66,17 +66,17 @@ class LocalRolesManager(LocalRolePlugin):
         principal_ids = list( group_ids )
         principal_ids.insert( 0, user_id )
 
-        local ={}
+        local = {}
         object = aq_inner( object )
 
         while 1:
             local_roles = getattr( object, '__ac_local_roles__', None )
 
+            if local_roles and callable( local_roles ):
+                local_roles = local_roles()
+            
             if local_roles:
-                if callable( local_roles ):
-                    local_roles = local_roles()
-
-                dict = local_roles or {}
+                dict = local_roles
 
                 for principal_id in principal_ids:
                     for role in dict.get( principal_id, [] ):
@@ -119,21 +119,24 @@ class LocalRolesManager(LocalRolePlugin):
 
             local_roles = getattr( inner_obj, '__ac_local_roles__', None )
 
-            if local_roles:
-                if callable( local_roles ):
-                    local_roles = local_roles()
+            if local_roles and callable( local_roles ):
+                local_roles = local_roles()
 
-                dict = local_roles or {}
+            if local_roles:
+                dict = local_roles
 
                 for principal_id in principal_ids:
                     local_roles = dict.get( principal_id, [] )
 
-                    for role in object_roles:
+                    # local_roles is empty most of the time, where as
+                    # object_roles is usually not.
+                    if not local_roles:
+                        continue
 
+                    for role in object_roles:
                         if role in local_roles:
                             if user._check_context( object ):
                                 return 1
-
                             return 0
 
             inner = aq_inner( inner_obj )
@@ -164,15 +167,16 @@ class LocalRolesManager(LocalRolePlugin):
 
             local_roles = getattr(object, '__ac_local_roles__', None)
 
-            if local_roles:
-                if callable( local_roles ):
-                    local_roles = local_roles()
+            if local_roles and callable( local_roles ):
+                local_roles = local_roles()
 
-                dict = local_roles or {}
+            if local_roles:
+                    
+                dict = local_roles
 
                 for principal, localroles in dict.items():
                     if not principal in roles:
-                        roles[principal]=Set()
+                        roles[principal] = Set()
 
                     roles[principal].update(localroles)
 
