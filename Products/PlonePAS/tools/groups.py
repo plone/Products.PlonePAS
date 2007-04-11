@@ -210,9 +210,9 @@ class GroupsTool(PloneGroupsTool):
             group = self.wrapGroup(group)
         return group
 
+    security.declareProtected(ManageGroups, 'searchGroups')
     @deprecate("portal_groups.searchForGroups is deprecated and will "
                "be removed in Plone 3.5. Use PAS searchGroups instead")
-    security.declareProtected(ManageGroups, 'searchGroups')
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
@@ -306,9 +306,9 @@ class GroupsTool(PloneGroupsTool):
             groups.extend(introspector.getGroups())
         return [self.wrapGroup(elt) for elt in groups]
 
+    security.declareProtected(ViewGroups, 'getGroupIds')
     @deprecate("portal_groups.listGroups is deprecated and will "
                "be removed in Plone 3.5. Use PAS searchGroups instead")
-    security.declareProtected(ViewGroups, 'getGroupIds')
     def getGroupIds(self):
         groups = []
         introspectors = self._getGroupIntrospectors()
@@ -318,10 +318,10 @@ class GroupsTool(PloneGroupsTool):
 
     listGroupIds = getGroupIds
 
+    security.declareProtected(ViewGroups, 'getGroupMembers')
     @deprecate("portal_groups.getGroupMembers is deprecated and will "
                "be removed in Plone 3.5. Use PAS to get a group and check "
                "its members instead.")
-    security.declareProtected(ViewGroups, 'getGroupMembers')
     def getGroupMembers(self, group_id):
         members = []
         introspectors = self._getGroupIntrospectors()
@@ -332,10 +332,10 @@ class GroupsTool(PloneGroupsTool):
         return members
 
 
+    security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
     @deprecate("portal_groups.getGroupsForPrincipal is deprecated and will "
                "be removed in Plone 3.5. Use PAS to get a principal and check "
                "its group list instead.")
-    security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
     def getGroupsForPrincipal(self, principal):
         introspectors = self._getGroupIntrospectors()
         for iid, introspector in introspectors:
