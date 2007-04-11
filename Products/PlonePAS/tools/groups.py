@@ -210,6 +210,8 @@ class GroupsTool(PloneGroupsTool):
             group = self.wrapGroup(group)
         return group
 
+    @deprecate("portal_groups.searchForGroups is deprecated and will "
+               "be removed in Plone 3.5. Use PAS searchGroups instead")
     security.declareProtected(ManageGroups, 'searchGroups')
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
@@ -293,7 +295,8 @@ class GroupsTool(PloneGroupsTool):
 
         return groups
 
-
+    @deprecate("portal_groups.listGroups is deprecated and will "
+               "be removed in Plone 3.5. Use PAS searchGroups instead")
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
@@ -303,6 +306,8 @@ class GroupsTool(PloneGroupsTool):
             groups.extend(introspector.getGroups())
         return [self.wrapGroup(elt) for elt in groups]
 
+    @deprecate("portal_groups.listGroups is deprecated and will "
+               "be removed in Plone 3.5. Use PAS searchGroups instead")
     security.declareProtected(ViewGroups, 'getGroupIds')
     def getGroupIds(self):
         groups = []
@@ -313,6 +318,9 @@ class GroupsTool(PloneGroupsTool):
 
     listGroupIds = getGroupIds
 
+    @deprecate("portal_groups.getGroupMembers is deprecated and will "
+               "be removed in Plone 3.5. Use PAS to get a group and check "
+               "its members instead.")
     security.declareProtected(ViewGroups, 'getGroupMembers')
     def getGroupMembers(self, group_id):
         members = []
@@ -323,6 +331,10 @@ class GroupsTool(PloneGroupsTool):
                 break
         return members
 
+
+    @deprecate("portal_groups.getGroupsForPrincipal is deprecated and will "
+               "be removed in Plone 3.5. Use PAS to get a principal and check "
+               "its group list instead.")
     security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
     def getGroupsForPrincipal(self, principal):
         introspectors = self._getGroupIntrospectors()
