@@ -4,6 +4,10 @@ Changelog for PlonePAS
 
 PlonePAS 2.3 - May 30, 2007
 
+    - Optomise the local roles plugin for the common case where
+      local_roles is empty
+      [dreamcatcher]
+
     - Use a local postonly decorator so PlonePAS can be used with Plone 
       2.5, 2.5.1 and 2.5.2.
       [wichert]
