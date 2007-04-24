@@ -49,7 +49,7 @@ class MembershipTool(BaseMembershipTool):
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
 
-    user_search_keywords = ('login', 'fullname', 'email', 'exact_match')
+    user_search_keywords = ('login', 'fullname', 'email', 'exact_match', 'sort_by', 'max_results')
 
     _properties = (getattr(BaseMembershipTool, '_properties', ()) +
                    ({'id': 'user_search_keywords',
@@ -174,8 +174,13 @@ class MembershipTool(BaseMembershipTool):
             wrap = self.wrapUser
              # not getUser, we have userids here
             getUserById = acl_users.getUserById
+            
+            # respect sorting, dsu sort the minimal set with original ordering
+            uf_users = [ (uf_users.index(i), i) for i in Set(uf_users)]
+            uf_users.sort()
+            uf_users = [ u[1] for u in uf_users]
 
-            for userid in Set(uf_users):
+            for userid in uf_users:
                 user=getUserById(userid)
                 if user is not None:
                     members.append(wrap(user))

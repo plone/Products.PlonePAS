@@ -2,6 +2,17 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 2.5 - Unreleased
+
+    - membership tool search mechanism now passes all arguments
+      specified in the pas enumeration plugin interface to the
+      underlying plugin. 
+      [k_vertigo]
+
+    - membership tool member search now respects sorted results from a
+      pas user enumeration plugin.
+      [k_vertigo]
+
 PlonePAS 2.4 - April 15, 2007
 
     - Optomise the local roles plugin for the common case where
