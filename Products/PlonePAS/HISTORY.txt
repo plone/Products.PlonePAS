@@ -20,9 +20,7 @@ PlonePAS 3.0.0 - Unreleased
       standard Plone version.
       [wichert]
 
-    - Use getUtility instead of getToolByName. Use direct attribute access
-      in the install and migration code to work around utility lookup caching
-      returning older versions of tools.
+    - Use getUtility to get the portal object.
       [wichert]
 
     - Deprecate user and group searching through CMF member and group tools
