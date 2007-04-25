@@ -19,13 +19,13 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 
 from zope.interface import implementedBy
-from zope.component import getUtility
-from Products.CMFCore.interfaces import IMemberDataTool
 
 from Products.CMFPlone.MemberDataTool import MemberDataTool as BaseMemberDataTool
 
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 
+
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.CMFPlone.MemberDataTool import _marker
 
@@ -236,8 +236,10 @@ class MemberData(BaseMemberData):
         return 0
 
     def _memberdataHasProperty(self, prop_name):
-        mdata = getUtility(IMemberDataTool)
-        return mdata.hasProperty(prop_name)
+        mdata = getToolByName(self, 'portal_memberdata', None)
+        if mdata:
+            return mdata.hasProperty(prop_name)
+        return 0
 
     def canWriteProperty(self, prop_name):
         """True iff the member/group property named in 'prop_name'

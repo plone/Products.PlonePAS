@@ -57,10 +57,10 @@ Make sure cookie plugin is installed and activated.
   ...     for id, plugin in active:
   ...         if id == 'credentials_cookie_auth':
   ...            print True
-  <...IExtractionPlugin...> True
-  <...IChallengePlugin...> True
-  <...ICredentialsUpdatePlugin...> True
-  <...ICredentialsResetPlugin...> True
+  <...IExtraction...> True
+  <...IChallenge...> True
+  <...ICredentialsUpdate...> True
+  <...ICredentialsReset...> True
 
 Login to Plone site using Cookie Auth should work too.
 

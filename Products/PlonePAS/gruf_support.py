@@ -23,22 +23,20 @@ open question if this mode will be supported at all
 """
 
 import logging
-from sets import Set
-from zope.component import getUtility
 from zope.deprecation import deprecate
+from sets import Set
 
 from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins \
      import IRoleAssignerPlugin, IAuthenticationPlugin
-
 from Products.PlonePAS.interfaces.group import IGroupManagement
-from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
-logger = logging.getLogger('Plone')
+from Products.CMFCore.utils import getToolByName
 
+logger = logging.getLogger('Plone')
 
 def authenticate(self, name, password, request):
 
@@ -83,7 +81,7 @@ PluggableAuthService.authenticate__roles__ = ()
 @deprecate("userSetGroups is deprecated. Use the PAS methods instead")
 def userSetGroups(self, id, groupnames):
     plugins = self.plugins
-    gtool = getUtility(IGroupTool)
+    gtool = getToolByName(self, "portal_groups")
 
     member = self.getUser(id)
     groupnameset = Set(groupnames)
@@ -119,7 +117,7 @@ PluggableAuthService.userSetGroups = userSetGroups
 
 @deprecate("userFolderAddGroup is deprecated. Use the PAS methods instead")
 def userFolderAddGroup(self, name, roles, groups = (), **kw):
-    gtool = getUtility(IGroupTool)
+    gtool = getToolByName(self, 'portal_groups')
     return gtool.addGroup(name, roles, groups, **kw)
 
 PluggableAuthService.userFolderAddGroup = userFolderAddGroup

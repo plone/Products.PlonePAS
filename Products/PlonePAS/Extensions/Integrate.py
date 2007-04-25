@@ -16,9 +16,6 @@
 This external method installs PAS as a plugin of GRUF.
 """
 
-from zope.component import getUtility
-
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 from Products.GroupUserFolder.GRUFFolders import GRUFUsers
 
@@ -49,7 +46,7 @@ def addPAS( gruf ):
 def integrate( self ):
 
     out = StringIO()
-    portal = getUtility(ISiteRoot)
+    portal = getToolByName(self, 'portal_url').getPortalObject()
 
     print >> out, "Adding PAS as a GRUF User Source"
     addPAS( portal.acl_users )

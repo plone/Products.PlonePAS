@@ -25,6 +25,8 @@ from Testing import ZopeTestCase
 from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
 
+from Products.CMFCore.utils import getToolByName
+
 from zExceptions.ExceptionFormatter import format_exception
 from ZPublisher.HTTPResponse import HTTPResponse
 

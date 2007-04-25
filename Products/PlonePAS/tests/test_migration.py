@@ -23,16 +23,8 @@ if __name__ == '__main__':
 
 from PlonePASTestCase import PlonePASTestCase
 
-from zope.component import getUtility
-from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import IMemberDataTool
-from Products.CMFQuickInstallerTool.interfaces import IQuickInstallerTool
-
 from Acquisition import aq_base, aq_inner, aq_parent
-
-from Products.PlonePAS.interfaces.group import IGroupTool
-from Products.PlonePAS.interfaces.group import IGroupDataTool
-
+from Products.CMFCore.utils import getToolByName
 
 class SanityCheck:
 
@@ -91,7 +83,7 @@ class SanityCheck:
         self.tc = testcase
 
     def uf(self):
-        return getattr(self.portal, 'acl_users')
+        return getToolByName(self.portal, 'acl_users')
 
     def checkUserFolder(self):
         uf = self.uf()
@@ -102,8 +94,8 @@ class SanityCheck:
                            (parent, self.portal, uf))
 
     def checkUsers(self):
-        mt = getUtility(IMembershipTool)
-        md = getUtility(IMemberDataTool)
+        mt = getToolByName(self.portal, 'portal_membership')
+        md = getToolByName(self.portal, 'portal_memberdata')
         propids = md.propertyIds()
         uf = self.uf()
         for uid, upw, uroles, udomains, uprops in self._users:
@@ -129,8 +121,8 @@ class SanityCheck:
                 self.tc.failUnless(propval == v, (uid, k, propval, v))
 
     def checkGroups(self):
-        gt = getUtility(IGroupTool)
-        gd = getUtility(IGroupDataTool)
+        gt = getToolByName(self.portal, 'portal_groups')
+        gd = getToolByName(self.portal, 'portal_groupdata')
         propids = gd.propertyIds()
         for gid, groles, gsubs, gprops in self._groups:
             group = gt.getGroupById(gid)
@@ -154,7 +146,7 @@ class SanityCheck:
                 self.tc.failUnless(propval == v, (gid, k, propval, v))
 
     def populateUsers(self):
-        mt = getUtility(IMembershipTool)
+        mt = getToolByName(self.portal, 'portal_membership')
         for u in self._users:
             member = mt.getMemberById(u[0])
             if member is None:
@@ -164,7 +156,7 @@ class SanityCheck:
 
 
     def populateGroups(self):
-        gt = getUtility(IGroupTool)
+        gt = getToolByName(self.portal, 'portal_groups')
         for g in self._groups:
             try:
                 gt.addGroup(*g[:-1], **g[-1])
@@ -194,7 +186,7 @@ class MigrationTest(BaseTest):
 
     def afterSetUp(self):
         BaseTest.afterSetUp(self)
-        self.qi = getUtility(IQuickInstallerTool)
+        self.qi = getToolByName(self.portal, 'portal_quickinstaller')
 
     def test_migrate_no_user_folder_empty(self):
         self.loginAsPortalOwner()
@@ -207,7 +199,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_memberdata_with_selection_property(self):
         self.loginAsPortalOwner()
-        pm = getUtility(IMemberDataTool)
+        pm = getToolByName(self.portal, 'portal_memberdata')
         pm._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         pm._setProperty('choice', 'select_choice', 'selection')
         pm._updateProperty('choice', 'A')
@@ -219,7 +211,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        pm = getUtility(IMemberDataTool)
+        pm = getToolByName(self.portal, 'portal_memberdata')
         property = pm.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = pm.getProperty('choice')
@@ -227,7 +219,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_memberdata_with_multiple_selection_property(self):
         self.loginAsPortalOwner()
-        pm = getUtility(IMemberDataTool)
+        pm = getToolByName(self.portal, 'portal_memberdata')
         pm._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         pm._setProperty('choice', 'select_choice', 'multiple selection')
         pm._updateProperty('choice', ('A', 'C'))
@@ -239,7 +231,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        pm = getUtility(IMemberDataTool)
+        pm = getToolByName(self.portal, 'portal_memberdata')
         property = pm.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = pm.getProperty('choice')
@@ -247,7 +239,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_groupdata_with_selection_property(self):
         self.loginAsPortalOwner()
-        gd = getUtility(IGroupDataTool)
+        gd = getToolByName(self.portal, 'portal_groupdata')
         gd._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         gd._setProperty('choice', 'select_choice', 'selection')
         gd._updateProperty('choice', 'A')
@@ -259,7 +251,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        gd = getUtility(IGroupDataTool)
+        gd = getToolByName(self.portal, 'portal_groupdata')
         property = gd.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = gd.getProperty('choice')
@@ -267,7 +259,7 @@ class MigrationTest(BaseTest):
 
     def test_migrate_groupdata_with_multiple_selection_property(self):
         self.loginAsPortalOwner()
-        gd = getUtility(IGroupDataTool)
+        gd = getToolByName(self.portal, 'portal_groupdata')
         gd._setProperty('select_choice', ('A', 'B', 'C'), 'lines')
         gd._setProperty('choice', 'select_choice', 'multiple selection')
         gd._updateProperty('choice', ('A', 'C'))
@@ -279,7 +271,7 @@ class MigrationTest(BaseTest):
         self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
         self.qi.installProduct('PlonePAS', reinstall=True)
         
-        gd = getUtility(IGroupDataTool)
+        gd = getToolByName(self.portal, 'portal_groupdata')
         property = gd.getProperty('select_choice')
         self.assertEquals(property, ('A', 'B', 'C'))
         property = gd.getProperty('choice')

@@ -22,26 +22,22 @@ if __name__ == '__main__':
     execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from PlonePASTestCase import PlonePASTestCase
-from Testing.ZopeTestCase import user_name
-
-from zope.component import getUtility
 
 from cStringIO import StringIO
 from zExceptions import BadRequest
 from Acquisition import aq_base, aq_inner, aq_parent
 from AccessControl import Permissions
 from AccessControl import Unauthorized
-
-from Products.PlonePAS.interfaces.group import IGroupTool
-from Products.PlonePAS.interfaces.group import IGroupDataTool
+from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
+from Testing.ZopeTestCase import user_name
 
 class GroupsToolTest(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.gt = gt = getUtility(IGroupTool)
-        self.gd = gd = getUtility(IGroupDataTool)
+        self.gt = gt = getToolByName(self.portal, 'portal_groups')
+        self.gd = gd = getToolByName(self.portal, 'portal_groupdata')
 
         self.group_id = 'group1'
         # Create a new Group
@@ -74,8 +70,8 @@ class GroupsToolTest(PlonePASTestCase):
 class GroupWorkspacesTest(PlonePASTestCase):
 
     def afterSetUp(self):
-        self.gt = gt = getUtility(IGroupTool)
-        self.gd = gd = getUtility(IGroupDataTool)
+        self.gt = gt = getToolByName(self.portal, 'portal_groups')
+        self.gd = gd = getToolByName(self.portal, 'portal_groupdata')
         # Enable group-area creation
         self.gt.groupWorkspacesCreationFlag = 1
         # Those are all valid chars in Zope.

@@ -21,10 +21,9 @@ from DateTime import DateTime
 from Globals import InitializeClass
 
 from zope.component import getUtility
-from Products.CMFCore.interfaces import ICatalogTool
-from Products.CMFCore.interfaces import IMembershipTool
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.utils import getToolByName
 
 # for createMemberArea...
 from AccessControl import getSecurityManager, ClassSecurityInfo
@@ -94,9 +93,9 @@ class MembershipTool(BaseMembershipTool):
         """
         logger.debug('searchForMembers: started.')
 
-        acl_users = self.acl_users
-        md = getUtility(IMemberDataTool)
-        groups_tool = self.portal_groups
+        acl_users = getToolByName(self, "acl_users")
+        md = getToolByName(self, "portal_memberdata")
+        groups_tool = getToolByName(self, "portal_groups")
 
         if REQUEST is not None:
             searchmap = REQUEST
@@ -220,8 +219,8 @@ class MembershipTool(BaseMembershipTool):
         """
         if not self.getMemberareaCreationFlag():
             return None
-        catalog = getUtility(ICatalogTool)
-        membership = getUtility(IMembershipTool)
+        catalog = getToolByName(self, 'portal_catalog')
+        membership = getToolByName(self, 'portal_membership')
         members = self.getMembersFolder()
 
         if not member_id:

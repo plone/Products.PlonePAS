@@ -15,7 +15,7 @@
 """
 """
 
-from zope.component import getUtility
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.interfaces import IPropertiesTool
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
@@ -29,7 +29,7 @@ def unique(iterable):
 def getCharset(context):
     """Returns the site default charset, or utf-8.
     """
-    properties = getUtility(IPropertiesTool)
+    properties = getToolByName(context, "portal_properties")
     site_properties = getattr(properties, 'site_properties', None)
     if site_properties is not None:
         return site_properties.getProperty('default_charset')
