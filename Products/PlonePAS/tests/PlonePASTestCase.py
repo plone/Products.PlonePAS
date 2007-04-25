@@ -10,8 +10,6 @@ PloneTestCase.setupPloneSite()
 
 from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
 
-ZopeTestCase.installProduct('plone.session')
-
 # Stub test case just in case we need custom stuff at some point
 class PlonePASTestCase(PloneTestCase.PloneTestCase):
     '''TestCase for Plone testing'''
