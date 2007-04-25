@@ -610,8 +610,8 @@ def modActions(portal, out):
 
 
 def updateProperties(tool, properties):
-    propsWithNoDeps = [prop for prop in properties if prop['type'] not in ('selection', )]
-    propsWithDeps = [prop for prop in properties if prop['type'] in ('selection', )]
+    propsWithNoDeps = [prop for prop in properties if prop['type'] not in ('selection', 'multiple selection')]
+    propsWithDeps = [prop for prop in properties if prop['type'] in ('selection', 'multiple selection')]
     for prop in propsWithNoDeps:
         updateProp(tool, prop)
     for prop in propsWithDeps:
@@ -633,8 +633,8 @@ def updateProp(prop_manager, prop_dict):
         prop_manager._updateProperty(id, value)
     else:
         prop_manager._setProperty(id, value, type)
-        if type in ('selection', 'multiple selection'):
-            prop_manager._updateProperty(id, prop_dict['value'])
+    if type in ('selection', 'multiple selection'):
+        prop_manager._updateProperty(id, prop_dict['value'])
 
 
 def grabLDAPFolders(portal, out):
