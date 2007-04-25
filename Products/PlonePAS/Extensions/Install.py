@@ -335,12 +335,12 @@ def grabUserData(portal, out):
         if portrait is not None:
             portrait=portrait.aq_base
         userdata += ((id, password, roles, domains, properties, portrait),)
-        userids+=id
+        userids.add(id)
 
     for (id,data) in mdtool._members.items():
         if id not in userids:
             userdata+= ((id, None, None, None, data.__dict__, None),)
-        userids+=id
+            userids.add(id)
 
     print >> out, "...extract done"
     return userdata
