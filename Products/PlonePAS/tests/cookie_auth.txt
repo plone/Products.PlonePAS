@@ -59,8 +59,8 @@ Make sure cookie plugin is installed and activated.
   ...            print True
   <...IExtraction...> True
   <...IChallenge...> True
-  <...ICredentialsUpdate...> True
-  <...ICredentialsReset...> True
+  <...ICredentialsUpdate...> 
+  <...ICredentialsReset...> 
 
 Login to Plone site using Cookie Auth should work too.
 
