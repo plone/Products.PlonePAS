@@ -4,6 +4,13 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
+    - Filter duplicate search results.
+      [laz, wichert]
+
+    - Add a sort_by option to the search methods to allow sorting of results
+      by a property. 
+      [laz, wichert]
+
     - Modify login method for the cookie plugin to perform the credential
       update in the PAS of the user instead of the PAS of the plugin. This
       helps in making sure that users will only authenticate against their

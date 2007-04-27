@@ -22,21 +22,40 @@ class PASSearchView(BrowserView):
         return criteria
 
 
-    def searchUsers(self, **criteria):
-        self.pas = getToolByName(context(self), "acl_users")
-        return self.pas.searchUsers(**criteria)
+    @staticmethod
+    def merge(results, key):
+        return dict([(result[key], result) for result in results]).values()
 
-    
-    def searchUsersByRequest(self, request):
+
+    def sort(self, results, key):
+        self.pas=getToolByName(context(self), "acl_users")
+        
+        def compare(a,b):
+            return cmp(a.get(key, "").lower(), b.get(key, "").lower())
+
+        results.sort(cmp=compare)
+
+        return results
+
+
+    def searchUsers(self, sort_by=None, **criteria):
+        self.pas=getToolByName(context(self), "acl_users")
+        results=self.merge(self.pas.searchUsers(**criteria), "userid")
+        if sort_by is not None:
+            results=self.sort(searchResults, sort_by)
+        return results
+
+
+    def searchUsersByRequest(self, request, sort_by=None):
         criteria=self.extractCriteriaFromRequest(request)
-        return self.searchUsers(**criteria)
+        return self.searchUsers(key=key, sort_by="userid", **criteria)
 
 
     def searchGroups(self, **criteria):
-        self.pas = getToolByName(context(self), "acl_users")
+        self.pas=getToolByName(context(self), "acl_users")
         return self.pas.searchGroups(**criteria)
 
-    
+
     def searchGroupsByRequest(self, request):
         criteria=self.extractCriteriaFromRequest(request)
         return self.searchGroups(**criteria)
