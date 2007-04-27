@@ -15,11 +15,7 @@
 """
 """
 
-import os, sys
 import unittest
-
-if __name__ == '__main__':
-    execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from PlonePASTestCase import PlonePASTestCase
 
@@ -159,5 +155,3 @@ def test_suite():
     suite.addTest(unittest.makeSuite(BasicOpsTestCase))
     return suite
 
-if __name__ == '__main__':
-    framework()

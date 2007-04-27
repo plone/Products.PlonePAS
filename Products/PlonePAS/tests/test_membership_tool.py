@@ -15,7 +15,6 @@
 """
 """
 
-import os, sys
 import unittest
 
 if __name__ == '__main__':
@@ -163,5 +162,3 @@ def test_suite():
     suite.addTest(unittest.makeSuite(MemberAreaTest))
     return suite
 
-if __name__ == '__main__':
-    framework()
