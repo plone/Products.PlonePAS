@@ -32,6 +32,7 @@ from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPl
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
+from AccessControl.requestmethod import postonly
 
 # Register the PAS acl_users as a utility
 from Products.CMFCore.utils import registerToolInterface
@@ -52,7 +53,7 @@ def _doAddUser(self, login, password, roles, domains, groups=None, **kw ):
 
 PluggableAuthService._doAddUser = _doAddUser
 
-def _doDelUsers(self, names):
+def _doDelUsers(self, names, REQUEST=None):
     """
     Delete users given by a list of user ids.
     Has no return value, like the original.
@@ -82,10 +83,11 @@ def _doDelUser(self, id):
 PluggableAuthService._doDelUser = _doDelUser
 
 security.declareProtected(ManageUsers, 'userFolderDelUsers')
-PluggableAuthService.userFolderDelUsers = PluggableAuthService._doDelUsers
+PluggableAuthService.userFolderDelUsers = postonly(PluggableAuthService._doDelUsers)
 
 
-def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None, **kw):
+def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
+                  REQUEST=None, **kw):
     """
     Given a principal id, change its password, roles, domains, iff
     respective plugins for such exist.
@@ -114,18 +116,18 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None, 
 PluggableAuthService._doChangeUser = _doChangeUser
 
 security.declareProtected(ManageUsers, 'userFolderEditUser')
-PluggableAuthService.userFolderEditUser = PluggableAuthService._doChangeUser
+PluggableAuthService.userFolderEditUser = postonly(PluggableAuthService._doChangeUser)
 
 
 # ttw alias
 # XXX need to security restrict these methods, no base class sec decl
 #PluggableAuthService.userFolderAddUser__roles__ = ()
-def userFolderAddUser(self, login, password, roles, domains, groups=None, **kw ):
+def userFolderAddUser(self, login, password, roles, domains, groups=None, REQUEST=None, **kw ):
     self._doAddUser(login, password, roles, domains, **kw)
     if groups is not None:
         self.userSetGroups(login, groups)
 
-PluggableAuthService.userFolderAddUser = userFolderAddUser
+PluggableAuthService.userFolderAddUser = postonly(userFolderAddUser)
 
 
 def _doAddGroup(self, id, roles, groups=None, **kw):
@@ -135,7 +137,7 @@ def _doAddGroup(self, id, roles, groups=None, **kw):
 PluggableAuthService._doAddGroup = _doAddGroup
 
 # for prefs_group_manage compatibility. really should be using tool.
-def _doDelGroups(self, names):
+def _doDelGroups(self, names, REQUEST=None):
     gtool = getToolByName(self, 'portal_groups')
     for group_id in names:
         gtool.removeGroup(group_id)
@@ -143,10 +145,10 @@ def _doDelGroups(self, names):
 PluggableAuthService._doDelGroups = _doDelGroups
 
 security.declareProtected(ManageUsers, 'userFolderDelGroups')
-PluggableAuthService.userFolderDelGroups = PluggableAuthService._doDelGroups
+PluggableAuthService.userFolderDelGroups = postonly(PluggableAuthService._doDelGroups)
 
 
-def _doChangeGroup(self, principal_id, roles, groups=None, **kw):
+def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
     """
     Given a group's id, change its roles, domains, iff respective
     plugins for such exist.
@@ -173,7 +175,7 @@ def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
 PluggableAuthService._updateGroup = _updateGroup
 
 security.declareProtected(ManageUsers, 'userFolderEditGroup')
-PluggableAuthService.userFolderEditGroup = PluggableAuthService._doChangeGroup
+PluggableAuthService.userFolderEditGroup = postonly(PluggableAuthService._doChangeGroup)
 
 
 security.declareProtected(ManageUsers, 'getGroups')

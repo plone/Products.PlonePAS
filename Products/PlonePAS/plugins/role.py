@@ -34,6 +34,7 @@ from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
 
 from Products.PluggableAuthService.permissions import ManageUsers
 
+from AccessControl.requestmethod import postonly
 
 def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
     """
@@ -73,7 +74,7 @@ class GroupAwareRoleManager( ZODBRoleManager ):
                     pass
 
     security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
-    def assignRolesToPrincipal( self, roles, principal_id ):
+    def assignRolesToPrincipal( self, roles, principal_id, REQUEST=None ):
         """ Assign a specific set of roles, and only those roles, to a principal.
 
         o no return value
@@ -85,6 +86,7 @@ class GroupAwareRoleManager( ZODBRoleManager ):
                 role_info = self._roles[ role_id ] # raise KeyError if unknown!
 
         self._principal_roles[ principal_id ] = tuple(roles)
+    assignRolesToPrincipal = postonly(assignRolesToPrincipal)
 
     security.declarePrivate( 'getRolesForPrincipal' )
     def getRolesForPrincipal( self, principal, request=None ):

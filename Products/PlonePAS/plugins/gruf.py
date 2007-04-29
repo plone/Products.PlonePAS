@@ -29,6 +29,7 @@ from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.DelegatingMultiPlugin \
      import DelegatingMultiPlugin
 from Products.PluggableAuthService.interfaces import plugins
+from AccessControl.requestmethod import postonly
 
 
 def manage_addGRUFBridge(self, id, title='', RESPONSE=None ):
@@ -105,29 +106,35 @@ class GRUFBridge( DelegatingMultiPlugin ):
     # group management
 
     # gruf assumes it is the canonical source for both users and groups
-    def addGroup(self, group_id):
+    def addGroup(self, group_id, REQUEST=None):
         self._getUserFolder().userFolderAddGroup( group_id, (), () )
         return True
+    addGroup = postonly(addGroup)
 
-    def addPrincipalToGroup(self, principal_id, group_id):
+    def addPrincipalToGroup(self, principal_id, group_id, REQUEST=None):
         group = self._getUserFolder().getGroupById( group_id )
         group.addMember( principal_id )
+    addPrincipalToGroup = postonly(addPrincipalToGroup)
 
     # XXX need to fix this api, its too ambigious
-    def updateGroup(self, group_id, **kw):
+    def updateGroup(self, group_id, REQUEST=None, **kw):
         pass
+    updateGroup = postonly(updateGroup)
 
-    def setRolesForGroup(self, group_id, roles=() ):
+    def setRolesForGroup(self, group_id, roles=(), REQUEST=None):
         # doing it this way will lose subgroups..
         self._getUserFolder().userFolderEditGroup( group_id, roles )
+    setRolesForGroup = postonly(setRolesForGroup)
 
-    def removeGroup(self, group_id):
+    def removeGroup(self, group_id, REQUEST=None):
         return self._getUserFolder().userFolderDelGroups( (group_id, ) )
+    removeGroup = postonly(removeGroup)
 
-    def removePrincipalFromGroup(self, principal_id, group_id):
+    def removePrincipalFromGroup(self, principal_id, group_id, REQUEST=None):
         group = self._getUserFolder().getGroupById( group_id )
         group.removeMember( principal_id )
         return True
+    removePrincipalFromGroup = postonly(removePrincipalFromGroup)
 
     #################################
     # group introspection

@@ -38,6 +38,7 @@ from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.tools.memberdata import MemberData
+from AccessControl.requestmethod import postonly
 
 import logging
 
@@ -182,18 +183,20 @@ class GroupData(BaseGroupData):
     def _getGRUF(self,):
         return self.acl_users
 
-    def addMember(self, id):
+    def addMember(self, id, REQUEST=None):
         """ Add the existing member with the given id to the group"""
         if not self.canAdministrateGroup():
             raise Unauthorized, "You cannot add a member to the group."
         self._getGroup().addMember(id)
+    addMember = postonly(addMember)
 
-    def removeMember(self, id):
+    def removeMember(self, id, REQUEST=None):
         """Remove the member with the provided id from the group.
         """
         if not self.canAdministrateGroup():
             raise Unauthorized, "You cannot remove a member from the group."
         self._getGroup().removeMember(id)
+    removeMember = postonly(removeMember)
 
     def getAllGroupMembers(self, ):
         """
