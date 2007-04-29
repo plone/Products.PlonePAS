@@ -183,20 +183,20 @@ class GroupData(BaseGroupData):
     def _getGRUF(self,):
         return self.acl_users
 
+    @postonly
     def addMember(self, id, REQUEST=None):
         """ Add the existing member with the given id to the group"""
         if not self.canAdministrateGroup():
             raise Unauthorized, "You cannot add a member to the group."
         self._getGroup().addMember(id)
-    addMember = postonly(addMember)
 
+    @postonly
     def removeMember(self, id, REQUEST=None):
         """Remove the member with the provided id from the group.
         """
         if not self.canAdministrateGroup():
             raise Unauthorized, "You cannot remove a member from the group."
         self._getGroup().removeMember(id)
-    removeMember = postonly(removeMember)
 
     def getAllGroupMembers(self, ):
         """

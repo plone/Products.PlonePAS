@@ -83,6 +83,7 @@ class MemberDataTool(BaseMemberDataTool):
         # the user as context.
         return m.__of__(self).__of__(u)
 
+    @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
         """ Delete member data of specified member.
         """
@@ -108,7 +109,6 @@ class MemberDataTool(BaseMemberDataTool):
                 return 1
             else:
                 return 0
-    deleteMemberData = postonly(deleteMemberData)
 
     ## plugin getter
     def _getPlugins(self):
