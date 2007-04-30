@@ -56,6 +56,16 @@ class GroupAwareRoleManager( ZODBRoleManager ):
 
     security = ClassSecurityInfo()
 
+    def updateRolesList(self):
+        role_holder = aq_parent( aq_inner( self._getPAS() ) )
+        for role in getattr( role_holder, '__ac_roles__', () ):
+            if role not in ('Anonymous', 'Authenticated') and \
+                    role not in self._roles:
+                self.addRole( role )
+            except KeyError:
+                pass
+
+
     # don't blow up if manager already exists; mostly for ZopeVersionControl
     def manage_afterAdd( self, item, container ):
 
@@ -65,13 +75,7 @@ class GroupAwareRoleManager( ZODBRoleManager ):
             pass
 
         if item is self:
-            role_holder = aq_parent( aq_inner( container ) )
-            for role in getattr( role_holder, '__ac_roles__', () ):
-                try:
-                    if role not in ('Anonymous', 'Authenticated'):
-                        self.addRole( role )
-                except KeyError:
-                    pass
+            self.updateRolesList()
 
     security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
     def assignRolesToPrincipal( self, roles, principal_id, REQUEST=None ):
@@ -114,6 +118,21 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         if present: return 1   # if we have a role, we can assign it
                                # slightly naive, but should be okay.
         return 0
+
+    def listRoleIds(self):
+        self.updateRolesList()
+        ZODBRoleManager.listRoleIds(self)
+
+    def getRoleInfo(self, role_id):
+        if role_id not in self._roles:
+            self.updateRolesList()
+        ZODBRoleManager.getRoleInfo(self, role_id)
+
+    def getRoleInfo(self, role_id):
+        if role_id not in self._roles:
+            self.updateRolesList()
+        ZODBRoleManager.getRoleInfo(self, role_id)
+
 
 classImplements(GroupAwareRoleManager,
                 IAssignRoleCapability, *implementedBy(ZODBRoleManager))
