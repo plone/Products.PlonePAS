@@ -88,7 +88,13 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         """
         for role_id in roles:
             if role_id not in ('Authenticated','Anonymous','Owner'):
-                role_info = self._roles[ role_id ] # raise KeyError if unknown!
+                try:
+                    role_info = self._roles[ role_id ] # raise KeyError if unknown!
+                except KeyError:
+                    # Lazily update our roles list and try again
+                    self.updateRolesList()
+                    role_info = self._roles[ role_id ] # raise KeyError if unknown!
+
 
         self._principal_roles[ principal_id ] = tuple(roles)
     assignRolesToPrincipal = postonly(assignRolesToPrincipal)
