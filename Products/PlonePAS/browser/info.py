@@ -1,17 +1,19 @@
 from zope.interface import implements
 from plone.memoize.instance import memoize
-from Products.CMFPlone.utils import BrowserView, context
+
+from Acquisition import aq_inner
 from Products.PlonePAS.interfaces.browser import IPASInfoView
 from Products.PluggableAuthService.interfaces.plugins \
                 import IExtractionPlugin, ILoginPasswordExtractionPlugin
 from Products.CMFCore.utils import getToolByName
+from Products.Five import BrowserView
 
 
 class PASInfoView(BrowserView):
     implements(IPASInfoView)
 
     def checkExtractorForInterface(self, interface):
-        acl=getToolByName(context(self), "acl_users")
+        acl = getToolByName(aq_inner(self.context), "acl_users")
         plugins=acl.plugins.listPlugins(IExtractionPlugin)
 
         for plugin in plugins:
