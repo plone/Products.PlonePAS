@@ -61,9 +61,10 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         for role in getattr( role_holder, '__ac_roles__', () ):
             if role not in ('Anonymous', 'Authenticated') and \
                     role not in self._roles:
-                self.addRole( role )
-            except KeyError:
-                pass
+                try:
+                    self.addRole( role )
+                except KeyError:
+                    pass
 
 
     # don't blow up if manager already exists; mostly for ZopeVersionControl
