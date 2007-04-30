@@ -122,17 +122,17 @@ class GroupAwareRoleManager( ZODBRoleManager ):
 
     def listRoleIds(self):
         self.updateRolesList()
-        ZODBRoleManager.listRoleIds(self)
+        return ZODBRoleManager.listRoleIds(self)
 
     def getRoleInfo(self, role_id):
         if role_id not in self._roles:
             self.updateRolesList()
-        ZODBRoleManager.getRoleInfo(self, role_id)
+        return ZODBRoleManager.getRoleInfo(self, role_id)
 
     def getRoleInfo(self, role_id):
         if role_id not in self._roles:
             self.updateRolesList()
-        ZODBRoleManager.getRoleInfo(self, role_id)
+        return ZODBRoleManager.getRoleInfo(self, role_id)
 
 
 classImplements(GroupAwareRoleManager,

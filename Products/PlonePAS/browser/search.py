@@ -31,10 +31,10 @@ class PASSearchView(BrowserView):
     def sort(self, results, key):
         self.pas=getToolByName(aq_inner(self.context), "acl_users")
         
-        def compare(a,b):
-            return cmp(a.get(key, "").lower(), b.get(key, "").lower())
+        def key(a):
+            return a.get(key, "").lower()
 
-        results.sort(cmp=compare)
+        results.sort(key=key)
 
         return results
 
