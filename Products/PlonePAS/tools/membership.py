@@ -20,9 +20,6 @@ from DateTime import DateTime
 
 from Globals import InitializeClass
 
-from zope.component import getUtility
-from Products.CMFCore.interfaces import IMemberDataTool
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 
 # for createMemberArea...
@@ -46,7 +43,8 @@ class MembershipTool(BaseMembershipTool):
     meta_type = "PlonePAS Membership Tool"
     security = ClassSecurityInfo()
 
-    user_search_keywords = ('login', 'fullname', 'email', 'exact_match')
+    user_search_keywords = ('login', 'fullname', 'email', 'exact_match',
+                            'sort_by', 'max_results')
 
     _properties = (getattr(BaseMembershipTool, '_properties', ()) +
                    ({'id': 'user_search_keywords',
@@ -167,7 +165,7 @@ class MembershipTool(BaseMembershipTool):
 
         # Now perform individual checks on each user
         res = []
-        portal = getUtility(ISiteRoot)
+        portal = getToolByName(self, 'portal_url').getPortalObject()
 
         for member in members:
             if groupname and groupname not in member.getGroupIds():
@@ -287,7 +285,7 @@ class MembershipTool(BaseMembershipTool):
             # get the text from portal_skins automagically
             homepageText = getattr(self, 'homePageText', None)
             if homepageText:
-                portal = getUtility(ISiteRoot)
+                portal = getToolByName(self, "portal_url").getPortalObject()
                 # call the page template
                 content = homepageText(member=member_object, portal=portal).strip()
                 _createObjectByType('Document', member_folder, id='index_html')
