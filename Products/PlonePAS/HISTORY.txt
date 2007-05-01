@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
+    - Modify the roles plugin to lazily update its roles list from the portal.
+      [wichert]
+
     - Filter duplicate search results.
       [laz, wichert]
 
@@ -57,6 +60,22 @@ PlonePAS 3.0.0 - Unreleased
       
     - Added HISTORY.txt and updated version information.
       [hannosch]
+
+
+PlonePAS 2.4 - April 15, 2007
+
+    - Optomise the local roles plugin for the common case where
+      local_roles is empty
+      [dreamcatcher]
+
+    - the plone user was assuming a one to one mapping between property plugin
+      and user property sheet, and stripping away additional ones as part of
+      the retrieval of ordered sheets, instead, it now stores all
+      propertysheets in an ordered dictionary, so this assumption is not needed
+      [k_vertigo]
+
+    - More postonly security changes
+      [alecm, ramon]
 
 
 PlonePAS 2.3 - May 30, 2007
