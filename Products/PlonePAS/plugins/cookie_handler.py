@@ -23,8 +23,6 @@ from Products.PluggableAuthService.interfaces.plugins import \
         ILoginPasswordHostExtractionPlugin, IChallengePlugin,  \
         ICredentialsUpdatePlugin, ICredentialsResetPlugin
 
-from Products.CMFPlone.utils import log
-
 
 def manage_addExtendedCookieAuthHelper(self, id, title='',
                                        RESPONSE=None, **kw):

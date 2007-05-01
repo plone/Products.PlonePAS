@@ -19,7 +19,7 @@ management (ie. rw) capabilities.
 """
 
 import logging
-from Acquisition import Implicit, aq_parent, aq_base, aq_inner
+from Acquisition import aq_base
 from BTrees.OOBTree import OOBTree, OOSet
 from Globals import DTMLFile
 from Globals import InitializeClass
@@ -29,7 +29,7 @@ from zope.interface import implementedBy
 
 from Products.PluggableAuthService.PluggableAuthService import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName

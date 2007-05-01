@@ -204,7 +204,7 @@ def getGroup(self, group_id):
     introspectors = self.plugins.listPlugins(IGroupIntrospection)
 
     if not introspectors:
-        raise NotSupported, 'No plugins allow for group management'
+        raise ValueError, 'No plugins allow for group management'
     for iid, introspector in introspectors:
         group = introspector.getGroupById(group_id)
         if group is not None:

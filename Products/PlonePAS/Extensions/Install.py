@@ -22,12 +22,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.Expression import Expression
 
 from zope.component.interfaces import ComponentLookupError
-from Products.CMFCore.interfaces import IMemberDataTool
-from Products.CMFCore.interfaces import IMembershipTool
-from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import IControlPanel
-from Products.CMFQuickInstallerTool.interfaces import IQuickInstallerTool
 
 from Products.PluggableAuthService.interfaces.authservice \
         import IPluggableAuthService
@@ -39,8 +33,6 @@ from Products.PluggableAuthService.interfaces.plugins \
      import ICredentialsResetPlugin
 from Products.PluggableAuthService.interfaces.plugins \
      import IChallengePlugin
-from Products.PluggableAuthService.PluggableAuthService \
-     import PluggableAuthService
 from Products.PluggableAuthService.Extensions.upgrade \
      import replace_acl_users
 

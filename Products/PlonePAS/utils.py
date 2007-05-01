@@ -16,7 +16,6 @@
 """
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.interfaces import IPropertiesTool
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 

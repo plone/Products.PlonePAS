@@ -21,7 +21,6 @@ instance.
 """
 
 from Globals import DTMLFile, InitializeClass
-from OFS.ObjectManager import ObjectManager
 
 from zope.interface import implementedBy
 

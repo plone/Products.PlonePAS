@@ -27,7 +27,7 @@ from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 
-from Products.CMFCore.CookieCrumbler import CookieCrumbler, manage_addCC
+from Products.CMFCore.CookieCrumbler import manage_addCC
 
 CC_ID = 'cookie_auth'
 

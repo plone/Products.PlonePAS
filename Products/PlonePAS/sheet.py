@@ -19,7 +19,7 @@ also a property schema type registry which is extensible.
 
 """
 
-from types import StringTypes, BooleanType, IntType
+from types import StringTypes, IntType
 from types import LongType, FloatType, InstanceType
 
 from DateTime.DateTime import DateTime
