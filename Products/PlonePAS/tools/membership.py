@@ -105,10 +105,7 @@ class MembershipTool(BaseMembershipTool):
         # that here so the right name is used when calling into PAS plugins.
         if 'name' in searchmap:
             searchmap['fullname'] = searchmap['name']
-            try:
-                del searchmap['name']
-            except (KeyError, AttributeError):
-                searchmap['name'] = None
+            del searchmap['name']
 
         user_search = {}
         for key in self.user_search_keywords:
