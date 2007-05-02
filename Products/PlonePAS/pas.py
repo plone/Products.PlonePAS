@@ -418,3 +418,13 @@ def _getAllLocalRoles(self, context):
     return roles
 PluggableAuthService._getAllLocalRoles = _getAllLocalRoles
 
+from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager
+def noKeywordEnumerateusers(self, id=None, login=None, exact_match=False,
+        sort_by=None, max_results=None, **kw):
+    if kw:
+        return ()
+    return self._oldEnumerateUsers(id, login, exact_match, sort_by,
+            max_results, **kw)
+
+ZODBUserManager._oldEnumerateUsers = ZODBUserManager.enumerateUsers
+ZODBUserManager.enumerateUsers = noKeywordEnumerateusers
