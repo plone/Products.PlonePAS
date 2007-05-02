@@ -107,12 +107,8 @@ class MembershipTool(BaseMembershipTool):
             searchmap['fullname'] = searchmap['name']
             del searchmap['name']
 
-        user_search = {}
-        for key in self.user_search_keywords:
-            value = searchmap.get(key, None)
-            if value is None or not value:
-                continue
-            user_search[key] = value
+        user_search = dict([ x for x in searchmap.items() 
+                                if x[0] in self.user_search_keywords and x[1]])
 
         fullname = searchmap.get('fullname', None)
         email = searchmap.get('email', None)
