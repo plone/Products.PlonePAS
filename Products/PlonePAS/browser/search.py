@@ -43,7 +43,7 @@ class PASSearchView(BrowserView):
         self.pas=getToolByName(aq_inner(self.context), "acl_users")
         results=self.merge(self.pas.searchUsers(**criteria), "userid")
         if sort_by is not None:
-            results=self.sort(searchResults, sort_by)
+            results=self.sort(results, sort_by)
         return results
 
 
