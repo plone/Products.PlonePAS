@@ -49,7 +49,7 @@ class PASSearchView(BrowserView):
 
     def searchUsersByRequest(self, request, sort_by=None):
         criteria=self.extractCriteriaFromRequest(request)
-        return self.searchUsers(key=key, sort_by="userid", **criteria)
+        return self.searchUsers(sort_by="userid", **criteria)
 
 
     def searchGroups(self, **criteria):
