@@ -88,7 +88,7 @@ def initialize(context):
 
     tools = ( GroupsTool, GroupDataTool, MembershipTool, MemberDataTool, PloneTool )
 
-    plone_utils.ToolInit('PlonePAS Tools',
+    plone_utils.ToolInit('PlonePAS Tool',
                          tools=tools,
                          icon='tool.gif',
                          ).initialize(context)

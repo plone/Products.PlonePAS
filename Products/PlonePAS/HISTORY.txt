@@ -4,6 +4,12 @@ Changelog for PlonePAS
 
 PlonePAS 3.0.0 - Unreleased
 
+    - Fixed tool names in ToolInit, so the permission has a proper name. This
+      closes http://dev.plone.org/plone/ticket/6525.
+      [hannosch]
+
+PlonePAS 3.0-beta5 - May 2, 2007
+
     - Modify the roles plugin to lazily update its roles list from the portal.
       [wichert]
 
