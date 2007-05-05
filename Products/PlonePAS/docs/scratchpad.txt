@@ -10,6 +10,3 @@
  so really we want to take it out of the plugin system, and just use
  interface to define api/marker on a dynamic return value from the
  prop interface.
-
-
- 

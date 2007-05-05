@@ -6,8 +6,3 @@
  copyright differences between these two organizations i've set the
  copyright to myself as the principal author in the interim to avoid
  any legal hassles.
-
-
-
-
- 
