@@ -56,7 +56,6 @@ if config.PAS_INSIDE_GRUF:
 
 #################################
 # new groups tool
-from tools.plonetool import PloneTool
 from tools.membership import MembershipTool
 from tools.memberdata import MemberDataTool
 from tools.groups import GroupsTool
@@ -85,7 +84,7 @@ except RuntimeError:
 
 def initialize(context):
 
-    tools = ( GroupsTool, GroupDataTool, MembershipTool, MemberDataTool, PloneTool )
+    tools = ( GroupsTool, GroupDataTool, MembershipTool, MemberDataTool )
 
     plone_utils.ToolInit('PlonePAS Tool',
                          tools=tools,
