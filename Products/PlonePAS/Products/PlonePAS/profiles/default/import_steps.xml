@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<import-steps>
+ <import-step id="plonepas" version="20061230-01"
+              handler="Products.PlonePAS.setuphandlers.setupPlonePAS"
+              title="PlonePAS setup">
+  <dependency step="componentregistry"/>
+  <dependency step="controlpanel"/>
+  <dependency step="memberdata-properties"/>
+  <dependency step="plonepas-contents"/>
+  <dependency step="rolemap"/>
+    PlonePAS installation step.
+ </import-step>
+</import-steps>

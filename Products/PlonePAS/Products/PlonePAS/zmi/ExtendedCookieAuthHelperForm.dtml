@@ -1,0 +1,30 @@
+<dtml-var manage_page_header>
+
+<h2> Add An ExtendedCookieAuthHelper For PAS</h2>
+
+
+<form action="manage_addExtendedCookieAuthHelper" method="POST">
+
+<table>
+<tr>
+   <td class="form-label"> Id </td>
+   <td> <input type="text" name="id" /> </td>
+</tr>
+<tr>
+   <td class="form-label"> Title </td>
+   <td> <input type="text" name="title" /> </td>
+</tr>
+<tr>
+   <td colspan="2"> 
+    <div class="form-element">
+     <input type="submit" value="submit"/>
+     </div>
+   </td>
+</tr>
+
+</table>
+
+</form>
+
+</body>
+</html>

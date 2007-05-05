@@ -1,0 +1,118 @@
+Changelog for PlonePAS
+
+    (name of developer listed in brackets)
+
+PlonePAS 3.0.0 - Unreleased
+
+    - Fixed tool names in ToolInit, so the permission has a proper name. This
+      closes http://dev.plone.org/plone/ticket/6525.
+      [hannosch]
+
+PlonePAS 3.0-beta5 - May 2, 2007
+
+    - Modify the roles plugin to lazily update its roles list from the portal.
+      [wichert]
+
+    - Filter duplicate search results.
+      [laz, wichert]
+
+    - Add a sort_by option to the search methods to allow sorting of results
+      by a property. 
+      [laz, wichert]
+
+    - Modify login method for the cookie plugin to perform the credential
+      update in the PAS of the user instead of the PAS of the plugin. This
+      helps in making sure that users will only authenticate against their
+      own user folder, so we get all their roles, properties, etc. correctly.
+      [wichert]
+
+    - Update installation logic to use plone.session for cookies
+      [wichert]
+
+    - Add pas_info and pas_search browsr views.
+      [wichert]
+
+    - Deprecate the PlonePAS PloneTool; its changes have been merged in the
+      standard Plone version.
+      [wichert]
+
+    - Use getUtility to get the portal object.
+      [wichert]
+
+    - Deprecate user and group searching through CMF member and group tools
+      in favour of PAS enumeration.
+      [wichert]
+
+    - Refactor user searching in the membership tool to use standard PAS
+      searches.
+      [wichert]
+
+    - Add user enumeration capabilities to the mutable properties plugin.
+      [wichert]
+
+    - Add a new automatic group plugin which puts all users in a virtual
+      group. This is useful for permissions handling: since it is not
+      possible to add roles to users with the Authenticated role a
+      virtual group can be used instead.
+      [wichert]
+
+    - Added support to import PloneUserFactory and added stub 
+      for ZODBMutableProperties. Attention: Latter needs a real
+      export and import! At the moment it do not export the 
+      propertysheets. This is a TODO. At least with this two 
+      additions PlonePAS import runs. Additional I needed to
+      hack PluginRegistry and and PluggableAuthService slightly.      
+      [jensens]
+      
+    - Added HISTORY.txt and updated version information.
+      [hannosch]
+
+
+PlonePAS 2.4 - April 15, 2007
+
+    - Optomise the local roles plugin for the common case where
+      local_roles is empty
+      [dreamcatcher]
+
+    - the plone user was assuming a one to one mapping between property plugin
+      and user property sheet, and stripping away additional ones as part of
+      the retrieval of ordered sheets, instead, it now stores all
+      propertysheets in an ordered dictionary, so this assumption is not needed
+      [k_vertigo]
+
+    - More postonly security changes
+      [alecm, ramon]
+
+
+PlonePAS 2.3 - May 30, 2007
+
+    - Use a local postonly decorator so PlonePAS can be used with Plone 
+      2.5, 2.5.1 and 2.5.2.
+      [wichert]
+
+    - Protect the tools with postonly security modifiers.
+      [mj]
+
+    - Update GRUF compatibility functions to use the same security checks
+      as GRUF itself uses.
+      [mj]
+
+    - Fix migration to handle properties of selection or multiple selection
+      types.
+      [reinout]
+
+    - Correct creation of groups wich default group managers.
+      [dreamcatcher]
+
+    - Fix migration from GRUF sites: also include the member properties in the
+      migration.
+      [tesdal]
+
+    - Correct the test for creation of groups with the same id as users: search
+      for the exact id, not substrings.
+      [tesdal]
+      
+    - Fix bad form action which made it impossible to add a plone user factory
+      plugin through the ZMI. Backported from trunk.
+      [wichert]
+

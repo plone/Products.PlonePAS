@@ -1,0 +1,22 @@
+Some Plone UI functionality will not work with all plugins.
+many plugins cannot modify users/properties/groups/etc. There is some
+capabilities checking now, so that things that cannot be changed will not
+appear changable.
+
+PlonePAS implements a good deal of the API expected of a UserFolder
+and of GRUF. However, no systematic determination of interface
+fulfillment has been made, beyond that used by the Plone UI. Over time
+GRUF compatibilty will be removed in favour of a new interface on top
+of PAS.
+
+PlonePAS will currently migrate the users and groups of a default
+Plone setup. Other setups may work. Please see the README.
+
+Using GRUF as a multi-source may work, but hasn't been looked at
+recently.
+
+PlonePAS will also migrate existing LDAPUserFolder+GRUF setups. It
+will use the ADMultiPlugin by default: there's no LDAP/AD detection yet.
+
+Please also see the README and NOTES.
+
