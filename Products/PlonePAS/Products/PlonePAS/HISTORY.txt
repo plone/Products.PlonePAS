@@ -2,7 +2,17 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.0.0 - Unreleased
+PlonePAS 3.0b6 - May 5, 2007
+
+    - Fixed two migration related test failures.
+      [hannosch]
+
+    - Spring cleaning, removed some cruft, pyflaked and corrected some more
+      undefined names.
+      [hannosch]
+
+    - New package layout, following standard Python package conventions.
+      [hannosch]
 
     - Fixed tool names in ToolInit, so the permission has a proper name. This
       closes http://dev.plone.org/plone/ticket/6525.
