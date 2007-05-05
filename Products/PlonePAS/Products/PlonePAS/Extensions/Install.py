@@ -488,7 +488,9 @@ def migrateMembershipTool(portal, out):
 
 def migrateGroupsTool(portal, out):
     print >> out, "Groups Tool (portal_groups)"
-    gt = getToolByName(portal, 'portal_groups', None)
+    # We only want the physical object in the portal, getToolByName could give
+    # us a registered utility as well
+    gt = getattr(portal, 'portal_groups', None)
 
     HAS_GT = gt is not None
 
@@ -529,7 +531,9 @@ def migrateGroupDataTool(portal, out):
     # I don't think it's worth it
 
     print >> out, "GroupData Tool (portal_groupdata)"
-    gt = getToolByName(portal, 'portal_groupdata', None)
+    # We only want the physical object in the portal, getToolByName could give
+    # us a registered utility as well
+    gt = getattr(portal, 'portal_groupdata', None)
 
     HAS_GT = gt is not None
 
