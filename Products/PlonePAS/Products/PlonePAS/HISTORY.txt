@@ -4,6 +4,10 @@ Changelog for PlonePAS
 
 PlonePAS 3.0b7 - Unreleased
 
+    - Removed the five:registerPackage statement again. It causes problems in a
+      ZEO environment.
+      [hannosch]
+
     - Removed our version of the Plone tool from ToolInit. It won't get an icon
       anymore and you cannot add it, but existing instances still work. We
       migrate all instances back to the regular tool anyways.

@@ -7,10 +7,6 @@
 
   <include file="exportimport.zcml" />
 
-  <five:registerPackage
-      package="."
-      initialize=".initialize" />
-
   <five:deprecatedManageAddDelete
       class=".plugins.cookie_handler.ExtendedCookieAuthHelper" />
 
