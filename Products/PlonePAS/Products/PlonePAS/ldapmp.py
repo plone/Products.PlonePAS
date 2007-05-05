@@ -17,8 +17,6 @@
 
 from Products.PlonePAS.patch import call, wrap_method
 from Products.PlonePAS.plugins.group import PloneGroup
-from Products.LDAPUserFolder.utils import GROUP_MEMBER_MAP
-from Products.LDAPUserFolder.LDAPDelegate import filter_format
 from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
 from Products.LDAPMultiPlugins.LDAPMultiPlugin import LDAPMultiPlugin
 

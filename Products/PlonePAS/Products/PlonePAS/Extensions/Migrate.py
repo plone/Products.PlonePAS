@@ -16,8 +16,7 @@
 Minimalist GRUF Migration
 """
 from StringIO import StringIO
-from Products.CMFCore.utils import getToolByName
-from Install import install, activatePluginInterfaces
+from Install import install
 
 def migrate(self):
     """

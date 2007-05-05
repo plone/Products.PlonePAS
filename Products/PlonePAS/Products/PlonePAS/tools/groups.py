@@ -14,13 +14,11 @@
 ##############################################################################
 """
 """
-import sys
 import logging
 from sets import Set
 
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
-from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
 from Globals import InitializeClass
 
@@ -102,7 +100,8 @@ class GroupsTool(PloneGroupsTool):
         if not g:
             raise KeyError, 'Trying to edit a non-existing group: %s' % id
 
-        if roles: self.setRolesForGroup(id, roles)
+        if roles:
+            self.setRolesForGroup(id, roles)
         g.setGroupProperties(kw)
         if groups:
             # remove absent groups
@@ -110,11 +109,11 @@ class GroupsTool(PloneGroupsTool):
             p_groups = Set(self.getGroupsForPrincipal(g))
             rmgroups = p_groups - groupset
             for gid in rmgroups:
-                self.removePrincipalFromGroup(principal_id, gid)
+                self.removePrincipalFromGroup(g, gid)
 
             # add groups
             try:
-                groupmanagers = plugins.listPlugins(IGroupManagement)
+                groupmanagers = self.acl_users.plugins.listPlugins(igroup.IGroupManagement)
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 log('Plugin listing error')
                 groupmanagers = ()

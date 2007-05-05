@@ -20,7 +20,6 @@ from Products.PluggableAuthService import registerMultiPlugin
 from Products.CMFPlone import utils as plone_utils
 
 import config
-#import MigrationCheck
 
 #################################
 # plugins

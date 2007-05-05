@@ -30,7 +30,7 @@ from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins \
-     import IRoleAssignerPlugin, IAuthenticationPlugin
+     import IAuthenticationPlugin
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 

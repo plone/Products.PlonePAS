@@ -20,10 +20,8 @@ main use.. cmfmember integration w/ properties providers
 """
 
 from AccessControl import ClassSecurityInfo
-from Globals import InitializeClass
-from Products.Archetypes.public import setSecurity, registerStorage, IStorage
+from Products.Archetypes.public import IStorage
 from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.interfaces.plugins import IPropertiesProvider
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
 class PASStorage(object):
@@ -44,7 +42,7 @@ class PASStorage(object):
         for sheet in sheets:
             if sheet.hasProperty( name ):
                 if IMutablePropertySheet.providedBy( sheet ):
-                    sheet.setProperty( k, v )
+                    sheet.setProperty( name, value )
                 else:
                     raise RuntimeError("mutable property provider shadowed by read only provider")
 
