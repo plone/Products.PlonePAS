@@ -29,13 +29,9 @@ class PASSearchView(BrowserView):
 
 
     def sort(self, results, key):
-        self.pas=getToolByName(aq_inner(self.context), "acl_users")
-        
-        def key(a):
+        def key_func(a):
             return a.get(key, "").lower()
-
-        results.sort(key=key)
-
+        results.sort(key=key_func)
         return results
 
 

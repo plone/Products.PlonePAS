@@ -1,0 +1,10 @@
+;-*-Doctest-*-
+===========
+Search View
+===========
+
+    >>> from Products.PlonePAS.browser.search import PASSearchView
+    >>> view = PASSearchView(None, None)
+    >>> results = [{'userid': 'foo'}, {'userid': 'bar'}]
+    >>> view.sort(results, 'userid')
+    [{'userid': 'bar'}, {'userid': 'foo'}]
