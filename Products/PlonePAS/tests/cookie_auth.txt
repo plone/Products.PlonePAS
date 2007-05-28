@@ -64,7 +64,8 @@ Make sure cookie plugin is installed and activated.
 
 Login to Plone site using Cookie Auth should work too.
 
-  >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
+  >>> encoded = base64.encodestring('%s:%s' %
+  ...     (user_name.encode('hex'), user_password.encode('hex'))) 
   >>> print http(r"""
   ... GET /%s/manage HTTP/1.1
   ... Cookie: __ac=%s;
@@ -105,7 +106,8 @@ Login to Plone Site using Basic Auth works.
 
 Login to Plone site using Cookie Auth should work too.
 
-  >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
+  >>> encoded = base64.encodestring('%s:%s' %
+  ...     (user_name.encode('hex'), user_password.encode('hex'))) 
   >>> print http(r"""
   ... GET /%s/manage HTTP/1.1
   ... Cookie: __ac=%s;

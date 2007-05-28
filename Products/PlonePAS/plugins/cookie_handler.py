@@ -56,7 +56,8 @@ class ExtendedCookieAuthHelper(BasePlugin):
 
         setAuthCookie = getattr(self, 'setAuthCookie', None)
         if setAuthCookie:
-            cookie_val = encodestring('%s:%s' % (login, new_password))
+            cookie_val = encodestring('%s:%s' % (
+                    login.encode('hex'), new_password.encode('hex')))
             cookie_val = cookie_val.rstrip()
             setAuthCookie(response, self.cookie_name, quote(cookie_val))
         else:
