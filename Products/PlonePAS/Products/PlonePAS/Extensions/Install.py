@@ -462,7 +462,7 @@ def migrateMembershipTool(portal, out):
     membersfolder_id = mt.membersfolder_id
 
     print >> out, " ...copying actions"
-    actions = mt._actions
+    actions = getattr(mt, '_actions', None)
 
     print >> out, " - Removing Default"
     portal.manage_delObjects(['portal_membership'])
@@ -480,8 +480,9 @@ def migrateMembershipTool(portal, out):
     if membersfolder_id:
         mt.membersfolder_id = membersfolder_id
 
-    print >> out, " ...restoring actions"
-    mt._actions = actions
+    if actions is not None:
+        print >> out, " ...restoring actions"
+        mt._actions = actions
 
     print >> out, " ...done"
 
@@ -503,7 +504,7 @@ def migrateGroupsTool(portal, out):
         groupWorkspaceContainerType =  gt.getGroupWorkspaceContainerType()
 
         print >> out, " ...copying actions"
-        actions = gt._actions
+        actions = getattr(gt, '_actions', None)
 
         print >> out, " - Removing Default"
         portal.manage_delObjects(['portal_groups'])
@@ -520,8 +521,9 @@ def migrateGroupsTool(portal, out):
         gt.setGroupWorkspaceType(groupWorkspaceType)
         gt.setGroupWorkspaceContainerType(groupWorkspaceContainerType)
 
-        print >> out, " ...restoring actions"
-        gt._actions = actions
+        if actions is not None:
+            print >> out, " ...restoring actions"
+            gt._actions = actions
 
     print >> out, " ...done"
 
@@ -539,7 +541,7 @@ def migrateGroupDataTool(portal, out):
 
     if HAS_GT:
         print >> out, " ...copying actions"
-        actions = gt._actions
+        actions = getattr(gt, '_actions', None)
 
         print >> out, " ...extracting data"
         properties = gt._properties
@@ -554,8 +556,9 @@ def migrateGroupDataTool(portal, out):
     gt = getToolByName(portal, 'portal_groupdata')
 
     if HAS_GT:
-        print >> out, " ...restoring actions"
-        gt._actions = actions
+        if actions is not None:
+            print >> out, " ...restoring actions"
+            gt._actions = actions
 
         print >> out, " ...restoring data"
         
@@ -568,7 +571,7 @@ def migrateMemberDataTool(portal, out):
     print >> out, "MemberData Tool (portal_memberdata)"
 
     print >> out, " ...copying actions"
-    actions = portal.portal_memberdata._actions
+    actions = getattr(portal.portal_memberdata, '_actions')
 
     print >> out, "  ...extracting data"
     mdtool = portal.portal_memberdata
@@ -583,8 +586,9 @@ def migrateMemberDataTool(portal, out):
     print >> out, " - Installing PAS Aware tool"
     portal._setObject(MemberDataTool.id, MemberDataTool())
 
-    print >> out, " ...restoring actions"
-    portal.portal_memberdata._actions = actions
+    if actions is not None:
+        print >> out, " ...restoring actions"
+        portal.portal_memberdata._actions = actions
 
     print >> out, " ...restoring data"
     mdtool = portal.portal_memberdata
