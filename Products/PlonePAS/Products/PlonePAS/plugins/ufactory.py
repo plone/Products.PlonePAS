@@ -277,7 +277,10 @@ class PloneUser(PropertiedUser):
             return allowed
         return None
 
-    def setProperties(self, **kw):
+    def setProperties(self, properties=None, **kw):
+        if properties is None:
+            properties=kw
+
         for sheet in self.getOrderedPropertySheets():
             if not IMutablePropertySheet.providedBy(sheet):
                 continue
