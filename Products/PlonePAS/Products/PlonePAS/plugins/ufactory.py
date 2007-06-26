@@ -275,7 +275,7 @@ class PloneUser(PropertiedUser):
                     del kw[key]
 
             if update:
-                sheet.setProperties(**update)
+                sheet.setProperties(self, update)
 
 
     def getProperty(self, id, default=_marker):
