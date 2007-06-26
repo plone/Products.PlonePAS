@@ -571,7 +571,7 @@ def migrateMemberDataTool(portal, out):
     print >> out, "MemberData Tool (portal_memberdata)"
 
     print >> out, " ...copying actions"
-    actions = getattr(portal.portal_memberdata, '_actions')
+    actions = getattr(portal.portal_memberdata, '_actions', None)
 
     print >> out, "  ...extracting data"
     mdtool = portal.portal_memberdata
