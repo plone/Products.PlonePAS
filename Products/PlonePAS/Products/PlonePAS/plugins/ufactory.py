@@ -32,7 +32,9 @@ from Products.CMFPlone.MemberDataTool import _marker
 
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -169,6 +171,18 @@ class PloneUser(PropertiedUser):
             for mid, manager in managers:
                 if IDeleteCapability.providedBy(manager):
                     return manager.allowDeletePrincipal(self.getId())
+        return False
+
+    security.declarePublic('canRemoveFromGroup')
+    def canRemoveFromGroup(self, group_id):
+        """True iff member can be removed from group."""
+        # IGroupManagement provides IGroupCapability
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IGroupManagement)
+        if managers:
+            for mid, manager in managers:
+                if IGroupCapability.providedBy(manager):
+                    return manager.allowGroupRemove(self.getId(), group_id)
         return False
 
     security.declarePublic('getPropertysheet')
