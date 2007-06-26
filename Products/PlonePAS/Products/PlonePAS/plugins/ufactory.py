@@ -25,10 +25,15 @@ from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.CMFPlone.MemberDataTool import _marker
 
+from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.utils import unique, getCharset
@@ -79,7 +84,15 @@ class PloneUser(PropertiedUser):
     def __init__( self, id, login=None ):
         super( PloneUser, self).__init__( id, login )
         self._propertysheets = OrderedDict()
+
+    def _getPAS(self):
+        # XXX This is not very optimal *at all*
+        return self.acl_users
         
+    def _getPlugins(self):
+        # XXX This is not very optimal *at all*
+        return self._getPAS().plugins
+
     security.declarePublic('isGroup')
     def isGroup(self):
         """Return 1 if this user is a group abstraction"""
@@ -109,6 +122,55 @@ class PloneUser(PropertiedUser):
 
     #################################
     # acquisition aware
+
+    security.declarePublic('canWriteProperty')
+    def canWriteProperty(self, prop_name):
+        for sheet in self.getOrderedPropertySheets():
+            if not sheet.hasProperty(prop_name):
+                continue
+            if IMutablePropertySheet.providedBy(sheet):
+                return True
+            else:
+                break  # shadowed by read-only
+        return False
+
+
+    security.declarePublic('canAssignRole')
+    def canAssignRole(self, role_id):
+        """True iff member can be assigned role. Role id is string."""
+        # IRoleAssignerPlugin provides IAssignRoleCapability
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IRoleAssignerPlugin)
+        if managers:
+            for mid, manager in managers:
+                if IAssignRoleCapability.providedBy(manager):
+                    return manager.allowRoleAssign(self.getId(), role_id)
+        return False
+
+    security.declarePublic('canPasswordSet')
+    def canPasswordSet(self):
+        """True iff user can change password."""
+        # IUserManagement provides doChangeUser
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IUserManagement)
+        if managers:
+            for mid, manager in managers:
+                if IPasswordSetCapability.providedBy(manager):
+                    return manager.allowPasswordSet(self.getId())
+        return False
+
+    security.declarePublic('canDelete')
+    def canDelete(self):
+        """True iff user can be removed from the Plone UI."""
+        # IUserManagement provides doDeleteUser
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IUserManagement)
+        if managers:
+            for mid, manager in managers:
+                if IDeleteCapability.providedBy(manager):
+                    return manager.allowDeletePrincipal(self.getId())
+        return False
+
     security.declarePublic('getPropertysheet')
     def getPropertysheet(self, id):
         """ -> propertysheet (wrapped if supported)
@@ -135,7 +197,7 @@ class PloneUser(PropertiedUser):
         self._propertysheets[id] = sheet
 
     def _getPropertyPlugins(self):
-        return self.acl_users.plugins.listPlugins(IPropertiesPlugin)
+        return self._getPAS().plugins.listPlugins(IPropertiesPlugin)
 
     security.declarePrivate('getOrderedPropertySheets')
     def getOrderedPropertySheets(self):
@@ -145,7 +207,7 @@ class PloneUser(PropertiedUser):
     # local roles plugin type delegation
 
     def _getLocalRolesPlugins(self):
-        return self.acl_users.plugins.listPlugins(ILocalRolesPlugin)
+        return self._getPAS().plugins.listPlugins(ILocalRolesPlugin)
 
     def getRolesInContext(self, object):
         lrmanagers = self._getLocalRolesPlugins()
