@@ -66,7 +66,7 @@ class MemberDataTool(BaseMemberDataTool):
             members[id] = MemberData(base, id)
         # Return a wrapper with self as containment and
         # the user as context.
-        return m.__of__(self).__of__(u)
+        return members[id].__of__(self).__of__(u)
 
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
