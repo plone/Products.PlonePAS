@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.0b8 - UNRELEASED
 
+    - Use the proper API to get the containing PAS in the group plugin
+      [wichert]
+
     - Fix setting user properties on the user object.
       [wichert]
 

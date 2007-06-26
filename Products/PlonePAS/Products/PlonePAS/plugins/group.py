@@ -101,7 +101,7 @@ class GroupManager(ZODBGroupManager):
     # introspection interface
 
     def getGroupById(self, group_id, default=None):
-        plugins = self.acl_users._getOb('plugins')
+        plugins = self._getPAS()._getOb('plugins')
 
         group_id = self._verifyGroup(plugins, group_id=group_id)
         title = None
@@ -201,7 +201,7 @@ class GroupManager(ZODBGroupManager):
                 if data:
                     group.addPropertysheet(propfinder_id, data)
 
-            groups = self.acl_users._getGroupsForPrincipal(group, request
+            groups = self._getPAS()._getGroupsForPrincipal(group, request
                                                 , plugins=plugins)
             group._addGroups(groups)
 
