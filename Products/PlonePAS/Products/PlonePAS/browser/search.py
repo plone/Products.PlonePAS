@@ -1,4 +1,3 @@
-from Acquisition import aq_inner
 from zope.interface import implements
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
@@ -36,7 +35,7 @@ class PASSearchView(BrowserView):
 
 
     def searchUsers(self, sort_by=None, **criteria):
-        self.pas=getToolByName(aq_inner(self.context), "acl_users")
+        self.pas=getToolByName(self.context, "acl_users")
         results=self.merge(self.pas.searchUsers(**criteria), "userid")
         if sort_by is not None:
             results=self.sort(results, sort_by)
@@ -49,7 +48,7 @@ class PASSearchView(BrowserView):
 
 
     def searchGroups(self, **criteria):
-        self.pas=getToolByName(aq_inner(self.context), "acl_users")
+        self.pas=getToolByName(self.context, "acl_users")
         return self.pas.searchGroups(**criteria)
 
 
