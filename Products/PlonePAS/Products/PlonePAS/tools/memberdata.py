@@ -197,10 +197,9 @@ class MemberData(BaseMemberData):
         # IUserManagement provides doDeleteUser
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IUserManagement)
-        if managers:
-            for mid, manager in managers:
-                if IDeleteCapability.providedBy(manager):
-                    return manager.allowDeletePrincipal(self.getId())
+        for mid, manager in managers:
+            if IDeleteCapability.providedBy(manager):
+                return manager.allowDeletePrincipal(self.getId())
         return 0
 
     def canPasswordSet(self):
@@ -208,10 +207,9 @@ class MemberData(BaseMemberData):
         # IUserManagement provides doChangeUser
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IUserManagement)
-        if managers:
-            for mid, manager in managers:
-                if IPasswordSetCapability.providedBy(manager):
-                    return manager.allowPasswordSet(self.getId())
+        for mid, manager in managers:
+            if IPasswordSetCapability.providedBy(manager):
+                return manager.allowPasswordSet(self.getId())
         return 0
 
     def passwordInClear(self):
