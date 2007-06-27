@@ -4,6 +4,10 @@ Changelog for PlonePAS
 
 PlonePAS 3.0b8 - UNRELEASED
 
+    - Correct logic in MemberData capability methods: any plugin is
+      allowed to (re)set a password, delete the user or add roles. 
+      [wichert]
+
     - Use the proper API to get the containing PAS in the group plugin
       [wichert]
 

@@ -353,19 +353,19 @@ class GroupsTool(PloneGroupsTool):
 
     security.declarePrivate('_getGroupManagers')
     def _getGroupManagers(self):
-        return self.acl_users.plugins.listPlugins(
+        return self._getPlugins().listPlugins(
             igroup.IGroupManagement
             )
 
     security.declarePrivate('_getGroupIntrospectors')
     def _getGroupIntrospectors(self):
-        return self.acl_users.plugins.listPlugins(
+        return self._getPlugins().listPlugins(
             igroup.IGroupIntrospection
             )
 
     security.declarePrivate('_getGroupSpaceManagers')
     def _getGroupSpaceManagers(self):
-        return self.acl_users.plugins.listPlugins(
+        return self._getPlugins().listPlugins(
             igroup.IGroupSpaceManagers
             )
 
