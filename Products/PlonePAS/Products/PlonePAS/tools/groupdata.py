@@ -30,7 +30,9 @@ from Products.GroupUserFolder.GroupDataTool import _marker
 
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.authservice \
-     import IPluggableAuthService
+        import IPluggableAuthService
+from Products.PluggableAuthService.PluggableAuthService \
+        import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.group import IGroupDataTool
@@ -188,7 +190,15 @@ class GroupData(BaseGroupData):
         """ Add the existing member with the given id to the group"""
         if not self.canAdministrateGroup():
             raise Unauthorized, "You cannot add a member to the group."
-        self._getGroup().addMember(id)
+        
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IGroupManagement)
+        for mid, manager in managers:
+            try:
+                if manager.addPrincipalToGroup(id, self.getId()):
+                    break
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                pass
 
     @postonly
     def removeMember(self, id, REQUEST=None):
@@ -196,7 +206,16 @@ class GroupData(BaseGroupData):
         """
         if not self.canAdministrateGroup():
             raise Unauthorized, "You cannot remove a member from the group."
-        self._getGroup().removeMember(id)
+
+        plugins = self._getPlugins()
+        managers = plugins.listPlugins(IGroupManagement)
+        for mid, manager in managers:
+            try:
+                if manager.removePrincipalFromGroup(id, self.getId()):
+                    break
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                pass
+
 
     def getAllGroupMembers(self, ):
         """

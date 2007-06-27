@@ -257,11 +257,10 @@ class MemberData(BaseMemberData):
         # IGroupManagement provides IGroupCapability
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
-        if managers:
-            for mid, manager in managers:
-                if (IGroupCapability.providedBy(manager) and
-                        manager.allowGroupAdd(self.getId(), group_id)):
-                    return True
+        for mid, manager in managers:
+            if (IGroupCapability.providedBy(manager) and
+                    manager.allowGroupAdd(self.getId(), group_id)):
+                return True
         return False
 
     def canRemoveFromGroup(self, group_id):
@@ -269,11 +268,10 @@ class MemberData(BaseMemberData):
         # IGroupManagement provides IGroupCapability
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
-        if managers:
-            for mid, manager in managers:
-                if (IGroupCapability.providedBy(manager) and
-                        manager.allowGroupRemove(self.getId(), group_id)):
-                    return True
+        for mid, manager in managers:
+            if (IGroupCapability.providedBy(manager) and
+                    manager.allowGroupRemove(self.getId(), group_id)):
+                return True
         return False
 
 
@@ -282,11 +280,10 @@ class MemberData(BaseMemberData):
         # IRoleAssignerPlugin provides IAssignRoleCapability
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IRoleAssignerPlugin)
-        if managers:
-            for mid, manager in managers:
-                if (IAssignRoleCapability.providedBy(manager) and
-                        manager.allowRoleAssign(self.getId(), role_id)):
-                    return True
+        for mid, manager in managers:
+            if (IAssignRoleCapability.providedBy(manager) and
+                    manager.allowRoleAssign(self.getId(), role_id)):
+                return True
         return False
 
     ## plugin getters
