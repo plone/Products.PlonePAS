@@ -10,9 +10,6 @@ PlonePAS 3.0b8 - UNRELEASED
     - Fix setting user properties on the user object.
       [wichert]
 
-    - Added capability check methods to PloneUser. These allow pure users to
-      be user in the Plone user management. 
-      [wichert]
 
 PlonePAS 3.0b7 - May 5, 2007
 
