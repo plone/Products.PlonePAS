@@ -72,7 +72,6 @@ class MemberDataTool(BaseMemberDataTool):
     def deleteMemberData(self, member_id, REQUEST=None):
         """ Delete member data of specified member.
         """
-        sheets = None
         if IPluggableAuthService.providedBy(self.acl_users):
             # It's a PAS! Whee!
             # XXX: can we safely assume that user name == member_id
@@ -87,13 +86,12 @@ class MemberDataTool(BaseMemberDataTool):
 
         # we won't always have PlonePAS users, due to acquisition,
         # nor are guaranteed property sheets
-        if not sheets:
-            members = self._members
-            if members.has_key(member_id):
-                del members[member_id]
-                return 1
-            else:
-                return 0
+        members = self._members
+        if members.has_key(member_id):
+            del members[member_id]
+            return 1
+        else:
+            return 0
 
     ## plugin getter
     def _getPlugins(self):
@@ -198,9 +196,10 @@ class MemberData(BaseMemberData):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IUserManagement)
         for mid, manager in managers:
-            if IDeleteCapability.providedBy(manager):
-                return manager.allowDeletePrincipal(self.getId())
-        return 0
+            if (IDeleteCapability.providedBy(manager) and
+                    manager.allowDeletePrincipal(self.getId())):
+                return True
+        return False
 
     def canPasswordSet(self):
         """True iff user can change password."""
@@ -208,9 +207,10 @@ class MemberData(BaseMemberData):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IUserManagement)
         for mid, manager in managers:
-            if IPasswordSetCapability.providedBy(manager):
-                return manager.allowPasswordSet(self.getId())
-        return 0
+            if (IPasswordSetCapability.providedBy(manager) and
+                    manager.allowPasswordSet(self.getId())):
+                return True
+        return False
 
     def passwordInClear(self):
         """True iff password can be retrieved in the clear (not hashed.)
@@ -247,10 +247,10 @@ class MemberData(BaseMemberData):
                     # BBB for plugins implementing an older version of IMutablePropertySheet
                     if hasattr(sheet, 'canWriteProperty'):
                         return sheet.canWriteProperty(user, prop_name)
-                    return 1
+                    return True
                 else:
                     break  # shadowed by read-only
-        return 0
+        return False
 
     def canAddToGroup(self, group_id):
         """True iff member can be added to group."""
@@ -259,9 +259,10 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if IGroupCapability.providedBy(manager):
-                    return manager.allowGroupAdd(self.getId(), group_id)
-        return 0
+                if (IGroupCapability.providedBy(manager) and
+                        manager.allowGroupAdd(self.getId(), group_id)):
+                    return True
+        return False
 
     def canRemoveFromGroup(self, group_id):
         """True iff member can be removed from group."""
@@ -270,9 +271,10 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if IGroupCapability.providedBy(manager):
-                    return manager.allowGroupRemove(self.getId(), group_id)
-        return 0
+                if (IGroupCapability.providedBy(manager) and
+                        manager.allowGroupRemove(self.getId(), group_id)):
+                    return True
+        return False
 
 
     def canAssignRole(self, role_id):
@@ -282,9 +284,10 @@ class MemberData(BaseMemberData):
         managers = plugins.listPlugins(IRoleAssignerPlugin)
         if managers:
             for mid, manager in managers:
-                if IAssignRoleCapability.providedBy(manager):
-                    return manager.allowRoleAssign(self.getId(), role_id)
-        return 0
+                if (IAssignRoleCapability.providedBy(manager) and
+                        manager.allowRoleAssign(self.getId(), role_id)):
+                    return True
+        return False
 
     ## plugin getters
 
