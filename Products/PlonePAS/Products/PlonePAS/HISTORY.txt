@@ -2,6 +2,11 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 3.0 - UNRELEASED
+
+    - Add event classes for logged-in and logged-out events.
+      [wichert]
+
 PlonePAS 3.0rc1 - July 8, 2007
 
     - Correct logic in MemberData capability methods: any plugin is
