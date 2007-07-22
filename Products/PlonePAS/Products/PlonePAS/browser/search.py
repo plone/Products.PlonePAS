@@ -55,3 +55,13 @@ class PASSearchView(BrowserView):
     def searchGroupsByRequest(self, request):
         criteria=self.extractCriteriaFromRequest(request)
         return self.searchGroups(**criteria)
+
+
+    def getPhysicalPath(self):
+        # We call various PAS methods which can be ZCached. The ZCache
+        # infrastructure relies on getPhysicalPath on the context being
+        # available, which this view does not have, it not being a
+        # persistent object. So we fake things and return the physical path
+        # for our context.
+        return self.context.getPhysicalPath()
+

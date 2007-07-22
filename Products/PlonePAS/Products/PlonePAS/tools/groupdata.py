@@ -287,14 +287,15 @@ class GroupData(BaseGroupData):
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if IDeleteCapability.providedBy(manager):
-                    return manager.allowDeletePrincipal(self.getId())
-        return 0
+                if (IDeleteCapability.providedBy(manager) and
+                        manager.allowDeletePrincipal(self.getId())):
+                    return True
+        return False
 
     def canPasswordSet(self):
         """Always false for groups, which have no password.
         """
-        return 0
+        return False
 
     def passwordInClear(self):
         """True iff password can be retrieved in the clear (not hashed.)
@@ -302,7 +303,7 @@ class GroupData(BaseGroupData):
         False for PAS. It provides no API for getting passwords,
         though it would be possible to add one in the future.
         """
-        return 0
+        return Flase
 
     def _groupdataHasProperty(self, prop_name):
         gdata = getToolByName(self, 'portal_groupdata', None)
