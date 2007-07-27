@@ -2,7 +2,11 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.0 - UNRELEASED
+PlonePAS 3.0 - July 27, 2007
+
+    - Fake a getPhysicalPath on our search view so ZCacheing works properly
+      everywhere.
+      [wichert]
 
     - Add event classes for logged-in and logged-out events.
       [wichert]
