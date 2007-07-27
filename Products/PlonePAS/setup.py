@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import sys, os
 
-version = '3.0rc2'
+version = '3.0rc3'
 
 setup(name='Products.PlonePAS',
       version=version,
@@ -14,7 +14,7 @@ setup(name='Products.PlonePAS',
         "Programming Language :: Python",
       ],
       keywords='Zope CMF Plone PAS authentication',
-      author='Kapil Thangavelu',
+      author='Kapil Thangavelu, Wichert Akkerman',
       author_email='plone-developers@lists.sourceforge.net',
       url='http://svn.plone.org/svn/collective/PlonePAS/trunk',
       license='ZPL',
