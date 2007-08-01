@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 2.5 - Unreleased
 
+    - Check if the portal_groups tool is presend in our PAS monkeys.
+      [wichert]
+
     - membership tool search mechanism now passes all arguments
       specified in the pas enumeration plugin interface to the
       underlying plugin. 
