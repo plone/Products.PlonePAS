@@ -57,7 +57,7 @@ def authenticate(self, name, password, request):
         try:
             uid_and_name = auth.authenticateCredentials(credentials)
 
-            if uid_and_name == None:
+            if uid_and_name is None:
                 continue
 
             user_id, name = uid_and_name
