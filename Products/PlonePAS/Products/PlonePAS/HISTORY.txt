@@ -2,7 +2,12 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.0 - July 27, 2007
+PlonePAS 3.0 - August 16, 2007
+
+   - Fix check for authenticateCredentials return value
+     [rossp]
+
+PlonePAS 3.0rc2 - July 27, 2007
 
     - Fake a getPhysicalPath on our search view so ZCacheing works properly
       everywhere.
