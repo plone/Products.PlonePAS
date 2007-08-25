@@ -2,6 +2,11 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 3.1 - Unreleased
+
+    - Fixed some tool icons to point to existing icons.
+      [hannosch]
+
 PlonePAS 3.0 - August 16, 2007
 
    - Fix check for authenticateCredentials return value

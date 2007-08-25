@@ -49,6 +49,7 @@ class MemberDataTool(BaseMemberDataTool):
     """
 
     meta_type = "PlonePAS MemberData Tool"
+    toolicon = 'tool.gif'
 
     #### an exact copy from the base, so that we pick up the new MemberData.
     #### wrapUser should have a MemberData factory method to over-ride (or even
