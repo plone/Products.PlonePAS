@@ -47,7 +47,7 @@ class GroupsTool(PloneGroupsTool):
     id = 'portal_groups'
     meta_type = 'PlonePAS Groups Tool'
     security = ClassSecurityInfo()
-    toolicon = 'skins/plone_images/group.gif'
+    toolicon = 'tool.gif'
 
     ##
     # basic group mgmt

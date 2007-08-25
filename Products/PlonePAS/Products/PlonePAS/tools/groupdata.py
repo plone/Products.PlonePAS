@@ -59,6 +59,7 @@ class GroupDataTool(BaseGroupDataTool):
     """
 
     meta_type = "PlonePAS GroupData Tool"
+    toolicon = 'tool.gif'
     implements(IGroupDataTool)
 
     #### an exact copy from the base, so that we pick up the new GroupData.

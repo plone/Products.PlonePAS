@@ -41,6 +41,7 @@ class MembershipTool(BaseMembershipTool):
     """
 
     meta_type = "PlonePAS Membership Tool"
+    toolicon = 'tool.gif'
     security = ClassSecurityInfo()
 
     user_search_keywords = ('login', 'fullname', 'email', 'exact_match',
