@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.1 - Unreleased
 
+    - Update the roles for a group did not invalidate the _findGroup cache.
+      [wichert]
+
     - Fixed some tool icons to point to existing icons.
       [hannosch]
 

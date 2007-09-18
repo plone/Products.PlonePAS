@@ -53,6 +53,11 @@ class GroupsTool(PloneGroupsTool):
     # basic group mgmt
     ##
 
+    security.declarePrivate('invalidateGroup')
+    def invalidateGroup(self, id):
+        view_name = '_findGroup-%s' % id
+        self.acl_users.ZCacheable_invalidate(view_name=view_name)
+
     @postonly
     def addGroup(self, id, roles = [], groups = [], properties=None, 
                  REQUEST=None, *args, **kw):
@@ -149,6 +154,7 @@ class GroupsTool(PloneGroupsTool):
                 if hasattr(aq_base(gwf), workspace_id):
                     gwf._delObject(workspace_id)
 
+        self.invalidateGroup(group_id)
         return retval
 
     security.declareProtected(DeleteGroups, 'removeGroups')
@@ -172,6 +178,7 @@ class GroupsTool(PloneGroupsTool):
         for rid, rmanager in rmanagers:
             rmanager.assignRolesToPrincipal(roles, group_id)
 
+        self.invalidateGroup(group_id)
     ##
     # basic principal mgmt
     ##
