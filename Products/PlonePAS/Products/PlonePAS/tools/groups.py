@@ -118,7 +118,7 @@ class GroupsTool(PloneGroupsTool):
 
             # add groups
             try:
-                groupmanagers = self.acl_users.plugins.listPlugins(igroup.IGroupManagement)
+                groupmanagers = self._getGroupManagers()
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 log('Plugin listing error')
                 groupmanagers = ()
