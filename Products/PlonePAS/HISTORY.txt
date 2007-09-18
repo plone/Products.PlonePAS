@@ -4,7 +4,11 @@ Changelog for PlonePAS
 
 PlonePAS 2.5 - Unreleased
 
-    - Check if the portal_groups tool is presend in our PAS monkeys.
+    - Updating the roles for a group did not invalidate the _findGroup cache.
+      (merged from trunk).
+      [wichert]
+
+    - Check if the portal_groups tool is present in our PAS monkeys.
       [wichert]
 
     - membership tool search mechanism now passes all arguments

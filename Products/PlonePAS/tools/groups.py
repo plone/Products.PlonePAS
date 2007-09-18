@@ -14,21 +14,16 @@
 ##############################################################################
 """
 """
-import sys
 import logging
 from sets import Set
 
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
-from AccessControl.Permissions import manage_users as ManageUsers
 from Globals import InitializeClass
-from OFS.SimpleItem import SimpleItem
 
 from zope.interface import implementedBy
 
-from Products.CMFPlone import ToolNames
 from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
-from Products.CMFCore.utils import getToolByName, UniqueObject
 
 from Products.PlonePAS.utils import postonly
 
@@ -56,6 +51,12 @@ class GroupsTool(PloneGroupsTool):
     ##
     # basic group mgmt
     ##
+
+    security.declarePrivate('invalidateGroup')
+    def invalidateGroup(self, id):
+        view_name = '_findGroup-%s' % id
+        self.acl_users.ZCacheable_invalidate(view_name=view_name)
+
 
     def addGroup(self, id, roles = [], groups = [], properties=None, 
                  REQUEST=None, *args, **kw):
@@ -110,11 +111,11 @@ class GroupsTool(PloneGroupsTool):
             p_groups = Set(self.getGroupsForPrincipal(g))
             rmgroups = p_groups - groupset
             for gid in rmgroups:
-                self.removePrincipalFromGroup(principal_id, gid)
+                self.removePrincipalFromGroup(g, gid)
 
             # add groups
             try:
-                groupmanagers = plugins.listPlugins(IGroupManagement)
+                groupmanagers = self._getGroupManagers()
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 log('Plugin listing error')
                 groupmanagers = ()
@@ -150,6 +151,7 @@ class GroupsTool(PloneGroupsTool):
                 if hasattr(aq_base(gwf), workspace_id):
                     gwf._delObject(workspace_id)
 
+        self.invalidateGroup(group_id)
         return retval
     removeGroup = postonly(removeGroup)
 
@@ -172,6 +174,8 @@ class GroupsTool(PloneGroupsTool):
                                         'assign roles to groups')
         for rid, rmanager in rmanagers:
             rmanager.assignRolesToPrincipal(roles, group_id)
+        self.invalidateGroup(group_id)
+
     setRolesForGroup = postonly(setRolesForGroup)
 
     ##
