@@ -313,7 +313,7 @@ class GroupsTool(PloneGroupsTool):
         return [self.wrapGroup(elt) for elt in groups]
 
     security.declareProtected(ViewGroups, 'getGroupIds')
-    @deprecate("portal_groups.listGroups is deprecated and will "
+    @deprecate("portal_groups.getGroupIds is deprecated and will "
                "be removed in Plone 3.5. Use PAS searchGroups instead")
     def getGroupIds(self):
         groups = []
