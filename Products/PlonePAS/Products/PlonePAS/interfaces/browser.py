@@ -27,7 +27,7 @@ class IPASSearchView(Interface):
         """
 
 
-    def searchUsersByRequest(request, sortKey=None):
+    def searchUsersByRequest(request, sort_by=None):
         """Search for users matching a set of criteria found in a request.
 
         This method will look remove any obvious values from the request
