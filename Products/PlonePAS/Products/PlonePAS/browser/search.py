@@ -11,7 +11,7 @@ class PASSearchView(BrowserView):
     def extractCriteriaFromRequest(request):
         criteria=request.form.copy()
 
-        for key in [ "form.submitted", "submit" ]:
+        for key in [ "form.submitted", "submit", 'b_start', 'b_size']:
             if key in criteria:
                 del criteria[key]
 
