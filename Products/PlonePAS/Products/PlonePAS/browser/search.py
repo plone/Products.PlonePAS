@@ -11,7 +11,7 @@ class PASSearchView(BrowserView):
     def extractCriteriaFromRequest(request):
         criteria=request.form.copy()
 
-        for key in [ "form.submitted", "submit" ]:
+        for key in [ "form.submitted", "submit", 'b_start', 'b_size']:
             if key in criteria:
                 del criteria[key]
 
@@ -44,7 +44,7 @@ class PASSearchView(BrowserView):
 
     def searchUsersByRequest(self, request, sort_by=None):
         criteria=self.extractCriteriaFromRequest(request)
-        return self.searchUsers(sort_by="userid", **criteria)
+        return self.searchUsers(sort_by=sort_by, **criteria)
 
 
     def searchGroups(self, **criteria):
