@@ -2,7 +2,7 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.1 - Unreleased
+PlonePAS 3.1 - October 8, 2007
 
     - Improve handing of sorting for searches.
       [csenger]
