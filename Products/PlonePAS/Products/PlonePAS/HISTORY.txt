@@ -4,11 +4,8 @@ Changelog for PlonePAS
 
 PlonePAS 3.1 - Unreleased
 
-    - Added support for searching across multiple user properties in one go.
-      Limi put me up to this. Plone's Sharing tab (and other places) will take
-      advantage of this momentarily to allow finding users by login, not just by
-      fullname. Should this be factored up to PAS proper?
-      [erikrose]
+    - Improve handing of sorting for searches.
+      [csenger]
 
     - Updating the roles for a group did not invalidate the _findGroup cache.
       [wichert]
