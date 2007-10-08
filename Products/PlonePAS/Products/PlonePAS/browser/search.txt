@@ -5,54 +5,6 @@ Search View
 
     >>> from Products.PlonePAS.browser.search import PASSearchView
     >>> view = PASSearchView(None, None)
-
-Test sort()
------------
-
     >>> results = [{'userid': 'foo'}, {'userid': 'bar'}]
     >>> view.sort(results, 'userid')
     [{'userid': 'bar'}, {'userid': 'foo'}]
-
-Test searchInFields()
----------------------
-
-Stub out a fake search routine:
-
-    >>> fakeUsers = [{'login': 'fgf123', 'name': 'Fred Finster'},
-    ...              {'login': 'hih321', 'name': 'Harvey Hoofcumber'}]
-    >>> def fakeSearch(**criteria):
-    ...     results = fakeUsers
-    ...     for k, v in criteria.items():
-    ...         results = [r for r in results if r.get(k) == v]
-    ...     return results
-    ... 
-
-Searching by login id should work:
-
-    >>> len(list(view.searchInFields(fakeSearch, ['login', 'name'], 'fgf123')))
-    1
-
-Specifying an explicit login=something should override the look-in-any-field
-behavior:
-
-    >>> len(list(view.searchInFields(fakeSearch, ['login', 'name'], 'fgf123', login="This won't be found.")))
-    0
-
-And because the constraints {'fgf123' in any human-facing field} and {'Nor will
-this.' in the name field} aren't both satisfied for any one user, this returns
-nothing:
-
-    >>> len(list(view.searchInFields(fakeSearch, ['login', 'name'], 'fgf123', name='Nor will this.')))
-    0
-
-But these two constraints are both satisfied. (Merge, because an implementation
-detail causes 2 to be returned, but we don't want the test to fail if only 1
-does someday.)
-
-    >>> len(list(view.merge(view.searchInFields(fakeSearch, ['login', 'name'], 'fgf123', name='Fred Finster'), 'login')))
-    1
-
-Make sure searching by fullname using the any_field kwarg works:
-
-    >>> len(list(view.searchInFields(fakeSearch, ['login', 'name'], 'Fred Finster')))
-    1
