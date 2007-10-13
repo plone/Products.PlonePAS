@@ -63,6 +63,25 @@ class GroupsToolTest(PlonePASTestCase):
         self.failUnless(isinstance(group, GroupData))
         self.failUnless(isinstance(aq_parent(group), PloneGroup))
 
+    def test_edit_group(self):
+        # Use the tool way to edit a group.
+        properties = {
+            'email': 'group1@host2.com',
+            'title': 'Group #1 new title'
+        }
+        self.gt.editGroup(self.group_id, roles=['Manager'],
+            **properties)
+
+        # test edition of roles and properties
+        group = self.gt.getGroupById(self.group_id)
+        self.failUnless(group.has_role('Manager'))
+        self.assertEqual(group.getProperty('email'), properties['email'])
+        self.assertEqual(group.getProperty('title'), properties['title'])
+
+        # test for empty list of roles
+        self.gt.editGroup(self.group_id, roles=[])
+        self.failUnless(group.has_role('Authenticated'))
+
 class GroupWorkspacesTest(PlonePASTestCase):
 
     def afterSetUp(self):

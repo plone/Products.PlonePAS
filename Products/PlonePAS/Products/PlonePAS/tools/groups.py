@@ -105,7 +105,7 @@ class GroupsTool(PloneGroupsTool):
         if not g:
             raise KeyError, 'Trying to edit a non-existing group: %s' % id
 
-        if roles:
+        if roles is not None:
             self.setRolesForGroup(id, roles)
         g.setGroupProperties(kw)
         if groups:
