@@ -63,20 +63,16 @@ def activatePluginInterfaces(portal, plugin, out, disable=[]):
 
     activatable = []
 
-    try:
-        for info in plugin_obj.plugins.listPluginTypeInfo():
-            interface = info['interface']
-            interface_name = info['id']
-            if plugin_obj.testImplements(interface):
-                if interface_name in disable:
-                    disable.append(interface_name)
-                    print >> out, " - Disabling: " + info['title']
-                else:
-                    activatable.append(interface_name)
-                    print >> out, " - Activating: " + info['title']
-    except AttributeError:
-        print >> out, "It looks like you have a non-PAS acl_users folder. "
-        print >> out, "Please remove it before installing PlonePAS."
+    for info in plugin_obj.plugins.listPluginTypeInfo():
+        interface = info['interface']
+        interface_name = info['id']
+        if plugin_obj.testImplements(interface):
+            if interface_name in disable:
+                disable.append(interface_name)
+                print >> out, " - Disabling: " + info['title']
+            else:
+                activatable.append(interface_name)
+                print >> out, " - Activating: " + info['title']
     plugin_obj.manage_activateInterfaces(activatable)
     print >> out, plugin + " activated."
 
@@ -270,7 +266,6 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
     assert not ccs, "Extra cookie crumblers found."
     print >> out, "Removed old Cookie Crumbler"
 
-
     found = uf.objectIds(['HTTP Basic Auth Helper'])
     if not found:
         pas.addHTTPBasicAuthHelper('credentials_basic_auth',
@@ -279,10 +274,10 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
     activatePluginInterfaces(portal, 'credentials_basic_auth', out)
 
     if deactivate_basic_reset:
-        pas.plugins.deactivatePlugin(ICredentialsResetPlugin,
+        uf.plugins.deactivatePlugin(ICredentialsResetPlugin,
                                      'credentials_basic_auth')
     if deactivate_cookie_challenge:
-        pas.plugins.deactivatePlugin(IChallengePlugin,
+        uf.plugins.deactivatePlugin(IChallengePlugin,
                                      'credentials_cookie_auth')
 
 
