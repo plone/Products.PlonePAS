@@ -24,5 +24,8 @@ setup(name='Products.PlonePAS',
       download_url='http://plone.org/products/plonepas',
       install_requires=[
         'setuptools',
+        'Products.GenericSetup',
+        'plone.memoize',
+        'plone.openid',
       ],
 )
