@@ -24,5 +24,6 @@ setup(name='Products.PlonePAS',
       download_url='http://plone.org/products/plonepas',
       install_requires=[
         'setuptools',
+        'plone.memoize',
       ],
 )
