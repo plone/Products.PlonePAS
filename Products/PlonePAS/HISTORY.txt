@@ -4,6 +4,10 @@ Changelog for PlonePAS
 
 PlonePAS 2.5 - Unreleased
 
+    - Fixed method editGroup in groups tool. Now, if argument roles is an
+      empty list, all roles are removed. Fixes #5739.
+      [rsantos]
+
     - Updating the roles for a group did not invalidate the _findGroup cache.
       (merged from trunk).
       [wichert]
