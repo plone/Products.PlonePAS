@@ -87,8 +87,8 @@ class ZODBMutablePropertyProvider(BasePlugin):
             schema = _guessSchema(kw)
             defaultvalues = kw
         else:
-            schema = [(name, type) for name, type, value in schema]
             valuetuples = [(name, value) for name, type, value in schema]
+            schema = [(name, type) for name, type, value in schema]
             for name, value in valuetuples: defaultvalues[name] = value
         self._schema = tuple(schema)
         self._defaultvalues = defaultvalues

@@ -23,6 +23,8 @@ from cStringIO import StringIO
 from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
+
 
 class PropertiesTest(PlonePASTestCase):
 
@@ -166,6 +168,40 @@ class PropertiesTest(PlonePASTestCase):
         expected = 'group1@anotherhost.qa'
         self.assertEquals(got, expected)
 
+
+    def test_schema_for_mutable_property_provider(self):
+        """Add a schema to a ZODBMutablePropertyProvider.
+        """
+
+        # Schema is list of tuples with name, type (string), value.
+        # From the types it seems only 'lines' is handled differently.
+        address_schema = [
+            ('addresses', 'lines', ['Here', 'There']),
+            ('city', 'str', 'Somewhere'),
+            ('telephone', 'int', 1234567),
+            ]
+
+        # This used to give a ValueError, so we just check that it
+        # does not.
+        provider = ZODBMutablePropertyProvider(
+            'address_plugin', "Address Plugin", schema=address_schema)
+
+        # When this test passes, we are happy already, but let's add a
+        # few more basic tests.
+
+        # Create a new Member
+        mt = getToolByName(self.portal, 'portal_membership')
+        mt.addMember('user1', 'u1', ['Member'], [],
+                     {'email': 'user1@host.com',
+                      'fullname': 'User #1'})
+        member = mt.getMemberById('user1')
+        sheet = provider.getPropertiesForUser(member)
+        self.assertEqual(
+            sheet.propertyIds(), ['addresses', 'city', 'telephone'])
+        self.assertEqual(sheet.propertyInfo('city'), 
+                         {'type': 'str', 'id': 'city', 'mode': ''})
+        self.assertEqual(sheet.getProperty('addresses'), ('Here', 'There'))
+ 
 
 class PropertySearchTest(PlonePASTestCase):
     def afterSetUp(self):
