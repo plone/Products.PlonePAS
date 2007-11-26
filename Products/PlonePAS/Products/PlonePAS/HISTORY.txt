@@ -88,7 +88,7 @@ PlonePAS 3.0-beta5 - May 2, 2007
     - Update installation logic to use plone.session for cookies
       [wichert]
 
-    - Add pas_info and pas_search browsr views.
+    - Add pas_info and pas_search browser views.
       [wichert]
 
     - Deprecate the PlonePAS PloneTool; its changes have been merged in the
