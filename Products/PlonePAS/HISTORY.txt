@@ -2,6 +2,9 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 2.6 - UNRELEASED
+
+
 PlonePAS 2.5 - December 3, 2007
 
     - Fixed method editGroup in groups tool. Now, if argument roles is an
