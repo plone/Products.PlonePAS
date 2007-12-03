@@ -2,7 +2,7 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 2.5 - Unreleased
+PlonePAS 2.5 - December 3, 2007
 
     - Fixed method editGroup in groups tool. Now, if argument roles is an
       empty list, all roles are removed. Fixes #5739.
