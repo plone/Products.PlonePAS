@@ -2,6 +2,20 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 3.2 - Febuary 15, 2007
+
+    _ Fix schema handling for ZODBMutablePropertyProvider initialisation.
+      [maurits]
+
+    - Remove some exception swalling from the installation logic so errors
+      are not hidden.
+      [hannosch]
+
+    - Correct handling an empty roles list when modifying groups.
+      This fixes http://dev.plone.org/plone/ticket/6994
+      [rsantos]
+
+
 PlonePAS 3.1 - October 8, 2007
 
     - Improve handing of sorting for searches.
