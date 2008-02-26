@@ -100,7 +100,7 @@ class LocalRolesManager(LocalRolePlugin):
 
             break
 
-        return list( user.getRoles() ) + local.keys()
+        return local.keys()
 
     #security.declarePrivate( 'checkLocalRolesAllowed' )
     def checkLocalRolesAllowed( self, user, object, object_roles ):
