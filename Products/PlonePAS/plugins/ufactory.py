@@ -161,6 +161,7 @@ class PloneUser(PropertiedUser):
         roles = []
         for lrid, lrmanager in lrmanagers:
             roles.extend(lrmanager.getRolesInContext(self, object))
+        roles.extend(self.getRoles())
         return unique(roles)
 
     def allowed(self, object, object_roles = None):
