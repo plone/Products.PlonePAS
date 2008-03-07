@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.3 - March 7, 2007
 
+    - Add metadata.xml to the GenericSetup profile.
+      [wichert]
+
     - Move global role lookup out of the local role plugin. Part of the
       PLIP 127 merge for Plone 3.1.
       [alecm]
