@@ -2,6 +2,13 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 3.3 - March 7, 2007
+
+    - Move global role lookup out of the local role plugin. Part of the
+      PLIP 127 merge for Plone 3.1.
+      [alecm]
+
+
 PlonePAS 3.2 - Febuary 15, 2007
 
     _ Fix schema handling for ZODBMutablePropertyProvider initialisation.
