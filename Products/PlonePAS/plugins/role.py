@@ -115,10 +115,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
 
     ## implement IAssignRoleCapability
 
-    def getRoleInfo(self, role_id):
-        """Over-ride parent to not explode when getting role info by role_id."""
-        return self._roles.get(role_id,None)
-
     def allowRoleAssign(self, user_id, role_id):
         """True iff this plugin will allow assigning a certain user a certain role."""
         present = self.getRoleInfo(role_id)
@@ -129,6 +125,10 @@ class GroupAwareRoleManager( ZODBRoleManager ):
     def listRoleIds(self):
         self.updateRolesList()
         return ZODBRoleManager.listRoleIds(self)
+
+    def listRoleInfo(self):
+        self.updateRolesList()
+        return ZODBRoleManager.listRoleInfo(self)
 
     def getRoleInfo(self, role_id):
         if role_id not in self._roles:

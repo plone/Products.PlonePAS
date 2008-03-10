@@ -4,6 +4,16 @@ Changelog for PlonePAS
 
 PlonePAS 4.0 - Unreleased
 
+
+PlonePAS 3.4 - Unreleased
+
+    - Fix listRoleInfo on the role plugin to also lazily update the list
+      of portal roles.
+      [wichert]
+
+
+PlonePAS 3.3 - March 7, 2007
+
     - Added metadata.xml file to the profile.
       [hannosch]
 
