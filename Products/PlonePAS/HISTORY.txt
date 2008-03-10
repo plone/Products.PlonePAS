@@ -2,6 +2,13 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 3.4 - Unreleased
+
+    - Fix listRoleInfo on the role plugin to also lazily update the list
+      of portal roles.
+      [wichert]
+
+
 PlonePAS 3.3 - March 7, 2007
 
     - Add metadata.xml to the GenericSetup profile.
