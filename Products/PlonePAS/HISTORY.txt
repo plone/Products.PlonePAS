@@ -4,10 +4,13 @@ Changelog for PlonePAS
 
 PlonePAS 3.4 - Unreleased
 
+    - Ignore but log users without passwords during migration from pre-PAS, as
+      these cannot be added to any standard user source.
+      [hannosch]
+
     - Fix listRoleInfo on the role plugin to also lazily update the list
       of portal roles.
       [wichert]
-
 
 PlonePAS 3.3 - March 7, 2007
 
@@ -17,7 +20,6 @@ PlonePAS 3.3 - March 7, 2007
     - Move global role lookup out of the local role plugin. Part of the
       PLIP 127 merge for Plone 3.1.
       [alecm]
-
 
 PlonePAS 3.2 - Febuary 15, 2007
 
@@ -31,7 +33,6 @@ PlonePAS 3.2 - Febuary 15, 2007
     - Correct handling an empty roles list when modifying groups.
       This fixes http://dev.plone.org/plone/ticket/6994
       [rsantos]
-
 
 PlonePAS 3.1 - October 8, 2007
 

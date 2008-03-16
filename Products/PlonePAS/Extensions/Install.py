@@ -352,8 +352,11 @@ def restoreUserData(portal, out, userdata):
         # be careful of non-ZODB member sources, like LDAP
         member = mtool.getMemberById(u[0])
         if member is None:
-            mtool.addMember(*u[:5])
-            print >> out, " : adding member '%s'" % u[0]
+            if u[1] is not None:
+                mtool.addMember(*u[:5])
+                print >> out, " : adding member '%s'" % u[0]
+            else:
+                print >> out, " : ignored member '%s' without password." % u[0]
         else:
             # set any properties. do we need anything else? roles, maybe?
             member.setMemberProperties(u[4])
