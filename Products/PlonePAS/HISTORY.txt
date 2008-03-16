@@ -7,6 +7,10 @@ PlonePAS 4.0 - Unreleased
 
 PlonePAS 3.4 - Unreleased
 
+    - Ignore but log users without passwords during migration from pre-PAS, as
+      these cannot be added to any standard user source.
+      [hannosch]
+
     - Fix listRoleInfo on the role plugin to also lazily update the list
       of portal roles.
       [wichert]
@@ -25,6 +29,7 @@ PlonePAS 3.3 - March 7, 2007
 
     - Fixed some tool icons to point to existing icons.
       [hannosch]
+
 
 PlonePAS 3.0 - August 16, 2007
 
@@ -51,7 +56,6 @@ PlonePAS 3.0rc1 - July 8, 2007
 
     - Fix setting user properties on the user object.
       [wichert]
-
 
 PlonePAS 3.0b7 - May 5, 2007
 
@@ -187,4 +191,3 @@ PlonePAS 2.3 - May 30, 2007
     - Fix bad form action which made it impossible to add a plone user factory
       plugin through the ZMI. Backported from trunk.
       [wichert]
-
