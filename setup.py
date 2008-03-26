@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '3.3dev'
+version = '3.4'
 
 setup(name='Products.PlonePAS',
       version=version,
@@ -15,7 +15,7 @@ setup(name='Products.PlonePAS',
       keywords='Zope CMF Plone PAS authentication',
       author='Kapil Thangavelu, Wichert Akkerman',
       author_email='plone-developers@lists.sourceforge.net',
-      url='http://svn.plone.org/svn/collective/PlonePAS/trunk',
+      url='http://svn.plone.org/svn/collective/Products.PlonePAS/trunk',
       license='ZPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['Products'],

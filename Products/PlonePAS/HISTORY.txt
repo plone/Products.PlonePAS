@@ -2,7 +2,7 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.4 - Unreleased
+PlonePAS 3.4 - March 26, 2008
 
     - Ignore but log users without passwords during migration from pre-PAS, as
       these cannot be added to any standard user source.
@@ -12,7 +12,8 @@ PlonePAS 3.4 - Unreleased
       of portal roles.
       [wichert]
 
-PlonePAS 3.3 - March 7, 2007
+
+PlonePAS 3.3 - March 7, 2008
 
     - Add metadata.xml to the GenericSetup profile.
       [wichert]
@@ -21,7 +22,7 @@ PlonePAS 3.3 - March 7, 2007
       PLIP 127 merge for Plone 3.1.
       [alecm]
 
-PlonePAS 3.2 - Febuary 15, 2007
+PlonePAS 3.2 - Febuary 15, 2008
 
     _ Fix schema handling for ZODBMutablePropertyProvider initialisation.
       [maurits]
