@@ -5,8 +5,12 @@ PlonePAS setup handlers.
 from StringIO import StringIO
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.migrations.v2_5.two51_two52 import \
-    setLoginFormInCookieAuth
+
+try:
+    from Products.CMFPlone.migrations.v2_5.two51_two52 import \
+        setLoginFormInCookieAuth
+except ImportError:
+    from Products.CMFPlone.migrations.v2_5 import setLoginFormInCookieAuth
 
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
 from Products.PlonePAS.Extensions.Install import migrate_root_uf

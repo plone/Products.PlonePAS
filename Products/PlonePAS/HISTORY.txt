@@ -7,6 +7,9 @@ PlonePAS 4.0 - Unreleased
 
 PlonePAS 3.4 - Unreleased
 
+    - Added BBB code for changed setLoginFormInCookieAuth upgrade method.
+      [hannosch]
+
     - Ignore but log users without passwords during migration from pre-PAS, as
       these cannot be added to any standard user source.
       [hannosch]
