@@ -7,11 +7,11 @@ the portal the ability to provide a setAuthCookie method.
 
 $Id$
 """
-
 from AccessControl.SecurityManagement import getSecurityManager
 from base64 import encodestring
 from urllib import quote
 from Acquisition import aq_base
+from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Globals import InitializeClass, DTMLFile
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
@@ -79,7 +79,7 @@ class ExtendedCookieAuthHelper(BasePlugin):
         password = request.get('__ac_password', '')
 
         user = getSecurityManager().getUser()
-        user_pas = user.aq_parent
+        user_pas = aq_parent(user)
 
         if IPluggableAuthService.providedBy(user_pas):
             # Delegate to the users own PAS if possible
