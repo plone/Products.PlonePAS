@@ -4,7 +4,6 @@ Test for Cookie Auth
   >>> import base64
   >>> from urllib import quote
   >>> from zope.interface import implementedBy
-  >>> from Interface.Implements import flattenInterfaces
   >>> from Products.PloneTestCase.PloneTestCase import portal_name
 
 User in Plone Site
@@ -43,7 +42,7 @@ Make sure cookie plugin is installed and activated.
   >>> plugins = uf.plugins
   >>> cookie = uf['credentials_cookie_auth']
 
-  >>> ifaces = flattenInterfaces(tuple(implementedBy(cookie.__class__)))
+  >>> ifaces = tuple(implementedBy(cookie.__class__).flattened())
 
   >>> actives = []
   >>> for iface in ifaces:

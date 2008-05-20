@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 4.0 - Unreleased
 
+    - Purged old Zope 2 Interface interfaces for Zope 2.12 compatibility.
+      (only a test in this case)
+      [elro]
 
 PlonePAS 3.4 - Unreleased
 
