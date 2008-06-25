@@ -9,7 +9,7 @@ PlonePAS 4.0 - Unreleased
       [elro]
 
 
-PlonePAS 3.5 - UNRELEASED
+PlonePAS 3.5 - June 25, 2008
 
     - Make PASSearchView.merge actually merge search results. Its previous
       behaviour was quite nasty: it preferred search results from the
