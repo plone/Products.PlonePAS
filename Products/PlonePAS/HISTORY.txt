@@ -2,7 +2,7 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.6 - UNRELEASED
+PlonePAS 3.6 - June 25, 2008
 
     - Modify PloneGroup.getMemberIds to use all IGroupIntrospection plugins
       to get the group members. This makes it possible to list members in
