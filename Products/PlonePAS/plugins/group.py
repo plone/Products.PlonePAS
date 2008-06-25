@@ -296,7 +296,19 @@ class PloneGroup(PloneUser):
         transitive groups.
         """
         # acquired from the groups_source
-        return self.getGroupMembers(self.getId())
+        plugins = self._getPAS().plugins
+        introspectors = plugins.listPlugins(IGroupIntrospection)
+        members=[]
+        for iid, introspector in introspectors:
+            try:
+                members.extend(list(introspector.getGroupMembers(self.getId())))
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                logger.info(
+                    'PluggableAuthService: getGroupMembers %s error',
+                    iid, exc_info=1)
+
+        return members
+
 
     security.declarePublic('addMember')
     def addMember(self, id):

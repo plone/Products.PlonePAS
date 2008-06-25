@@ -4,6 +4,10 @@ Changelog for PlonePAS
 
 PlonePAS 3.6 - UNRELEASED
 
+    - Modify PloneGroup.getMemberIds to use all IGroupIntrospection plugins
+      to get the group members. This makes it possible to list members in
+      an LDAP group.
+      [wichert]
 
 PlonePAS 3.5 - June 25, 2008
 
