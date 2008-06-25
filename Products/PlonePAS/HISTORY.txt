@@ -4,6 +4,11 @@ Changelog for PlonePAS
 
 PlonePAS 3.5 - UNRELEASED
 
+    - Make PASSearchView.merge actually merge search results. Its previous
+      behaviour was quite nasty: it preferred search results from the
+      enumeration plugin with the lowest priority!
+      [wichert]
+
 
 PlonePAS 3.4 - March 26, 2008
 
