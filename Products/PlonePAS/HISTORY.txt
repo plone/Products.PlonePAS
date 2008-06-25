@@ -8,7 +8,16 @@ PlonePAS 4.0 - Unreleased
       (only a test in this case)
       [elro]
 
-PlonePAS 3.4 - Unreleased
+
+PlonePAS 3.5 - UNRELEASED
+
+    - Make PASSearchView.merge actually merge search results. Its previous
+      behaviour was quite nasty: it preferred search results from the
+      enumeration plugin with the lowest priority!
+      [wichert]
+
+
+PlonePAS 3.4 - March 26, 2008
 
     - Added BBB code for changed setLoginFormInCookieAuth upgrade method.
       [hannosch]

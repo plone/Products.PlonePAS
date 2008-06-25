@@ -24,7 +24,17 @@ class PASSearchView(BrowserView):
 
     @staticmethod
     def merge(results, key):
-        return dict([(result[key], result) for result in results]).values()
+        output={}
+        for entry in results:
+            id=entry[key]
+            if id not in output:
+                output[id]=entry.copy()
+            else:
+                buf=entry.copy()
+                buf.update(output[id])
+                output[id]=buf
+
+        return output.values()
 
 
     def sort(self, results, key):
