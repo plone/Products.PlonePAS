@@ -4,6 +4,9 @@ Changelog for PlonePAS
 
 PlonePAS 3.7 - UNRELEASED
 
+    - Adjusted deprecation warnings to point to Plone 4.0 instead of Plone 3.5
+      since we changed the version numbering again.
+      [hannosch]
 
 PlonePAS 3.6 - June 25, 2008
 

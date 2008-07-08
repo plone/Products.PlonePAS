@@ -218,13 +218,13 @@ class GroupsTool(PloneGroupsTool):
 
     security.declareProtected(ManageGroups, 'searchGroups')
     @deprecate("portal_groups.searchForGroups is deprecated and will "
-               "be removed in Plone 3.5. Use PAS searchGroups instead")
+               "be removed in Plone 4.0. Use PAS searchGroups instead")
     def searchGroups(self, *args, **kw):
         # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
 
     @deprecate("portal_groups.searchForGroups is deprecated and will "
-               "be removed in Plone 3.5. Use PAS searchGroups instead")
+               "be removed in Plone 4.0. Use PAS searchGroups instead")
     def searchForGroups(self, REQUEST={}, **kw):
         """Search for groups by keyword.
         The following properties can be searched:
@@ -302,7 +302,7 @@ class GroupsTool(PloneGroupsTool):
         return groups
 
     @deprecate("portal_groups.listGroups is deprecated and will "
-               "be removed in Plone 3.5. Use PAS searchGroups instead")
+               "be removed in Plone 4.0. Use PAS searchGroups instead")
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
@@ -314,7 +314,7 @@ class GroupsTool(PloneGroupsTool):
 
     security.declareProtected(ViewGroups, 'getGroupIds')
     @deprecate("portal_groups.getGroupIds is deprecated and will "
-               "be removed in Plone 3.5. Use PAS searchGroups instead")
+               "be removed in Plone 4.0. Use PAS searchGroups instead")
     def getGroupIds(self):
         groups = []
         introspectors = self._getGroupIntrospectors()
@@ -326,7 +326,7 @@ class GroupsTool(PloneGroupsTool):
 
     security.declareProtected(ViewGroups, 'getGroupMembers')
     @deprecate("portal_groups.getGroupMembers is deprecated and will "
-               "be removed in Plone 3.5. Use PAS to get a group and check "
+               "be removed in Plone 4.0. Use PAS to get a group and check "
                "its members instead.")
     def getGroupMembers(self, group_id):
         members = []
@@ -340,7 +340,7 @@ class GroupsTool(PloneGroupsTool):
 
     security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
     @deprecate("portal_groups.getGroupsForPrincipal is deprecated and will "
-               "be removed in Plone 3.5. Use PAS to get a principal and check "
+               "be removed in Plone 4.0. Use PAS to get a principal and check "
                "its group list instead.")
     def getGroupsForPrincipal(self, principal):
         introspectors = self._getGroupIntrospectors()

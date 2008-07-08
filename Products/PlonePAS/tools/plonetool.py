@@ -27,6 +27,6 @@ class PloneTool(BasePloneTool):
 
 
 deprecated('PloneTool', 'Please use the standard CMFPlone PloneTool. '
-           'PlonePAS.tools.plonetool will be removed in Plone(PAS) 3.5')
+           'PlonePAS.tools.plonetool will be removed in Plone(PAS) 4.0')
 
 InitializeClass(PloneTool)

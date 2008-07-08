@@ -71,7 +71,7 @@ class MembershipTool(BaseMembershipTool):
 
     security.declarePublic('searchForMembers')
     @deprecate("portal_membership.searchForMembers is deprecated and will "
-               "be removed in Plone 3.5. Use PAS searchUsers instead")
+               "be removed in Plone 4.0. Use PAS searchUsers instead")
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
