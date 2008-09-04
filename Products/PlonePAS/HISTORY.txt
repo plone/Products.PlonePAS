@@ -4,6 +4,11 @@ Changelog for PlonePAS
 
 PlonePAS 4.0 - Unreleased
 
+    - Removed five:deprecatedManageAddDelete directives for
+      Products.PluggableAuthService as this is now done in that
+      package already (which would conflict with our zcml).
+      [maurits]
+
     - Purged old Zope 2 Interface interfaces for Zope 2.12 compatibility.
       (only a test in this case)
       [elro]
