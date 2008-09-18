@@ -14,12 +14,4 @@
       class=".plugins.role.GroupAwareRoleManager" />
 
 
-  <!-- The following statements are for Products.PluggableAuthService -->
-
-  <five:deprecatedManageAddDelete
-      class="Products.PluggableAuthService.plugins.ZODBRoleManager.ZODBRoleManager" />
-
-  <five:deprecatedManageAddDelete
-      class="Products.PluggableAuthService.PluggableAuthService.PluggableAuthService" />
-
 </configure>
