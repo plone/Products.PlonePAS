@@ -2,7 +2,10 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.7 - UNRELEASED
+PlonePAS 3.8 - UNRELEASED
+
+
+PlonePAS 3.7 - September 28, 2008
 
     - Removed deprecation zcml statements for PluggableAuthService components:
       these are now in PluggableAuthService itself.
