@@ -304,7 +304,7 @@ class GroupData(BaseGroupData):
         False for PAS. It provides no API for getting passwords,
         though it would be possible to add one in the future.
         """
-        return Flase
+        return False
 
     def _groupdataHasProperty(self, prop_name):
         gdata = getToolByName(self, 'portal_groupdata', None)
