@@ -4,6 +4,13 @@ Changelog for PlonePAS
 
 PlonePAS 3.8 - UNRELEASED
 
+    - Fixed our OrderedDict to be unpickable with pickle protocol 2. On
+      unpickling a __init__ method is not called and an optimization in
+      protocol 2 would call __setitem__ without the _list to be initialized.
+      Even using a __getstate__ / __setstate__ combination wouldn't work
+      around that. This change was found in using membrane and
+      MemcachedManager.
+      [hannosch, tesdal]
 
 PlonePAS 3.7 - September 28, 2008
 
