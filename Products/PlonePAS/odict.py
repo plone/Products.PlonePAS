@@ -6,9 +6,11 @@
 
 class OrderedDict(dict):
     """A Dictionary that returns keys/values/items in the order they were added"""
-    def __init__(self, d=None, **kwargs):
-        self._list = []
-        self.update(d, **kwargs)
+    def __new__(cls, d=None, **kwargs):
+        instance = super(OrderedDict, cls).__new__(cls)
+        instance._list = []
+        instance.update(d, **kwargs)
+        return instance
     def keys(self):
         return list(self._list)
     def clear(self):
