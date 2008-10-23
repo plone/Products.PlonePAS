@@ -2,6 +2,17 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
+PlonePAS 3.2.1 - October 23, 2008
+
+    - Fixed our OrderedDict to be unpickable with pickle protocol 2. On
+      unpickling a __init__ method is not called and an optimization in
+      protocol 2 would call __setitem__ without the _list to be initialized.
+      Even using a __getstate__ / __setstate__ combination wouldn't work
+      around that. This problem was found in using membrane and
+      MemcachedManager.
+      [hannosch, tesdal]
+
+
 PlonePAS 3.2 - Febuary 15, 2007
 
     _ Fix schema handling for ZODBMutablePropertyProvider initialisation.
