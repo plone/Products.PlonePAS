@@ -6,16 +6,28 @@ from StringIO import StringIO
 
 from Products.CMFCore.utils import getToolByName
 
-try:
-    from Products.CMFPlone.migrations.v2_5.two51_two52 import \
-        setLoginFormInCookieAuth
-except ImportError:
-    from Products.CMFPlone.migrations.v2_5 import setLoginFormInCookieAuth
-
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
 from Products.PlonePAS.Extensions.Install import migrate_root_uf
 from Products.PlonePAS.Extensions.Install import registerPluginTypes
 from Products.PlonePAS.Extensions.Install import setupPlugins
+
+
+def setLoginFormInCookieAuth(context, out=None):
+    """Makes sure the cookie auth redirects to 'require_login' instead
+       of 'login_form'."""
+    uf = getattr(context, 'acl_users', None)
+    if uf is None or getattr(uf.aq_base, '_getOb', None) is None:
+        # we have no user folder or it's not a PAS folder, do nothing
+        return
+    cookie_auth = uf._getOb('credentials_cookie_auth', None)
+    if cookie_auth is None:
+        # there's no cookie auth object, do nothing
+        return
+    current_login_form = cookie_auth.getProperty('login_path')
+    if current_login_form != 'login_form':
+        # it's customized already, do nothing
+        return
+    cookie_auth.manage_changeProperties(login_path='require_login')
 
 
 def addRolesToPlugIn(p):
