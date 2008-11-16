@@ -117,7 +117,6 @@ class MembershipTool(BaseMembershipTool):
         last_login_time = searchmap.get('last_login_time', None)
         before_specified_time = searchmap.get('before_specified_time', None)
         groupname = searchmap.get('groupname', '').strip()
-        is_manager = self.checkPermission('Manage portal', self)
 
         if fullname:
             fullname = fullname.strip().lower()
@@ -163,9 +162,6 @@ class MembershipTool(BaseMembershipTool):
 
         for member in members:
             if groupname and groupname not in member.getGroupIds():
-                continue
-
-            if not (member.getProperty('listed', False) or is_manager):
                 continue
 
             if roles:

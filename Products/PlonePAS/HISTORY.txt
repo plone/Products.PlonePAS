@@ -4,6 +4,10 @@ Changelog for PlonePAS
 
 PlonePAS 4.0 - Unreleased
 
+    - Removed 'listed' member property support from one of the many search
+      functions following Plone.
+      [hannosch]
+
     - Copied setLoginFormInCookieAuth from CMFPlone migrations.
       [hannosch]
 
