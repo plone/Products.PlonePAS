@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Merged all code for the group data tool from GRUF into this package.
+  [hannosch]
+
 - Removed the GRUFBridge plugin. PAS inside GRUF isn't supported anymore.
   [hannosch]
 
