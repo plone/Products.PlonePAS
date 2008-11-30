@@ -1,24 +1,4 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-"""
-
 import unittest
-
-if __name__ == '__main__':
-    execfile(os.path.join(os.path.dirname(sys.argv[0]), 'framework.py'))
 
 from PlonePASTestCase import PlonePASTestCase
 
@@ -131,7 +111,7 @@ class MemberAreaTest(PlonePASTestCase):
 
         # Create a new User
         self.portal.acl_users._doAddUser(*minfo)
-	self.mt.createMemberArea,(mid)
+        self.mt.createMemberArea,(mid)
 
     def test_funky_member_ids_2(self):
         # Forward-slash is not allowed

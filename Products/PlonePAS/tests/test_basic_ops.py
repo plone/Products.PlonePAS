@@ -1,20 +1,3 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-"""
-
 import unittest
 
 from PlonePASTestCase import PlonePASTestCase
@@ -27,7 +10,6 @@ from Products.PluggableAuthService.interfaces.authservice \
      import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins \
      import IRolesPlugin
-
 
 
 class BasicOpsTestCase(PlonePASTestCase):
@@ -92,7 +74,7 @@ class BasicOpsTestCase(PlonePASTestCase):
         self.compareRoles(None, "created_user", ['Member'])
 
     def test_edit_userDefinedRole(self):
-	roleplugins = self.acl_users.plugins.listPlugins(IRolesPlugin)
+        roleplugins = self.acl_users.plugins.listPlugins(IRolesPlugin)
         for id, plugin in roleplugins:
             try:
                 plugin.addRole('r1')
@@ -124,7 +106,7 @@ class BasicOpsTestCase(PlonePASTestCase):
         mt = self.portal.portal_membership
         retlist = mt.searchForMembers(REQUEST=None, login="created_user1")
         usernames = [user.getUserName() for user in retlist]
-	self.assertEquals(len(usernames), 1) 
+        self.assertEquals(len(usernames), 1)
         self.failUnless("created_user1" in usernames,
                         "'created_user1' not in %s" % usernames)
 
@@ -148,8 +130,7 @@ class BasicOpsTestCase(PlonePASTestCase):
             if result is not None:
                 break
         self.failUnless(result)        
-        
-        
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(BasicOpsTestCase))

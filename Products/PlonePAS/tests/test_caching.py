@@ -1,6 +1,3 @@
-"""
-"""
-
 import unittest
 
 from Products.CMFCore.utils import getToolByName
