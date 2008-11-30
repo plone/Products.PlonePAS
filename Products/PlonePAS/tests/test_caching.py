@@ -72,12 +72,9 @@ class BasicOpsTestCase(PlonePASTestCase):
                                           'ZCacheable_get')
 
         self.assertEquals(collector.results, [])
-        # creating a user already populates the cache, but it also looks
-        # the user up, so we must have got only misses so far
-        self.createUser()
-        self.assertEquals(collector.results, [None] * len(collector.results))
         # creating a user does not necessarily insert a cache entry,
         # so retrieve the user twice to test caching.
+        self.createUser()
         u = self.acl_users.getUser("created_user")
         u = self.acl_users.getUser("created_user")
         self.assertEquals(id(collector.results[-1]), id(u.aq_base),

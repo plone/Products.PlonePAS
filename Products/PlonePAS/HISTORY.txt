@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed the user folder migration code and cleaned up tests.
+  [hannosch]
+
 - Moved all code from the four tools from CMFPlone into this package.
   [hannosch]
 
