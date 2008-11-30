@@ -1,20 +1,3 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-"""
-
 from AccessControl.Permissions import add_user_folders
 from Products.PluggableAuthService import registerMultiPlugin
 from Products.CMFPlone import utils as plone_utils
@@ -23,7 +6,6 @@ import config
 
 #################################
 # plugins
-from plugins import gruf
 from plugins import user
 from plugins import group
 from plugins import role
@@ -68,7 +50,6 @@ from Extensions import *
 #################################
 # register plugins with pas
 try:
-    registerMultiPlugin( gruf.GRUFBridge.meta_type )
     registerMultiPlugin( user.UserManager.meta_type )
     registerMultiPlugin( group.GroupManager.meta_type )
     registerMultiPlugin( role.GroupAwareRoleManager.meta_type )
@@ -95,13 +76,6 @@ def initialize(context):
                            permission = add_user_folders,
                            constructors = ( role.manage_addGroupAwareRoleManagerForm,
                                             role.manage_addGroupAwareRoleManager ),
-                           visibility = None
-                           )
-
-    context.registerClass( gruf.GRUFBridge,
-                           permission = add_user_folders,
-                           constructors = ( gruf.manage_addGRUFBridgeForm,
-                                            gruf.manage_addGRUFBridge ),
                            visibility = None
                            )
 

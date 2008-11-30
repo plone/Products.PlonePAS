@@ -4,6 +4,13 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed the GRUFBridge plugin. PAS inside GRUF isn't supported anymore.
+  [hannosch]
+
+- Merged tests moved from CMFPlone into the same modules as the existing
+  tests and normalized file names.
+  [hannosch]
+
 - Modernized tests and introduce a proper base testcase and layer.
   [hannosch]
 
