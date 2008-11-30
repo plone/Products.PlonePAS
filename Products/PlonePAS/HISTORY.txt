@@ -4,6 +4,10 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Merged all code for the groups tool from GRUF into this package, we are
+  officially GRUF-dependency-free :)
+  [hannosch]
+
 - Merged all code for the group data tool from GRUF into this package.
   [hannosch]
 

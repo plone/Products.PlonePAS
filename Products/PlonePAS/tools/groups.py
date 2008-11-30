@@ -7,26 +7,38 @@ from zope.interface import implements
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
+from AccessControl.User import nobody
 from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
+from ZODB.POSException import ConflictError
 
+from Products.CMFCore.permissions import ManagePortal
+from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFPlone.utils import base_hasattr
+from Products.CMFCore.utils import UniqueObject
+from Products.CMFCore.utils import _checkPermission
 
-from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.PluggableAuthService import \
                                     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 
-from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
-from Products.GroupUserFolder.GroupsTool import GroupsTool as BaseTool
+from Products.PlonePAS.interfaces import group as igroup
+from Products.PlonePAS.permissions import AddGroups
+from Products.PlonePAS.permissions import ManageGroups
+from Products.PlonePAS.permissions import DeleteGroups
+from Products.PlonePAS.permissions import ViewGroups
+from Products.PlonePAS.permissions import SetGroupOwnership
 
-log = logging.getLogger('PluggableAuthService').exception
+
+logger = logging.getLogger('PluggableAuthService')
 
 class NotSupported(Exception): pass
 
-class GroupsTool(BaseTool):
-    """
-    Replace the GRUF groups tool with PAS-specific methods.
+class GroupsTool(UniqueObject, SimpleItem):
+    """ This tool accesses group data through a acl_users object.
+
+    It can be replaced with something that groups member data in a
+    different way.
     """
 
     implements(igroup.IGroupTool)
@@ -37,15 +49,24 @@ class GroupsTool(BaseTool):
     toolicon = 'tool.gif'
 
     # No group workspaces by default
+    groupworkspaces_id = "groups"
+    groupworkspaces_title = "Groups"
     groupWorkspacesCreationFlag = 0
+    groupWorkspaceType = "Folder"
+    groupWorkspaceContainerType = "Folder"
 
     ##
     # basic group mgmt
     ##
 
+    security.declareProtected(AddGroups, 'addGroup')
     @postonly
     def addGroup(self, id, roles = [], groups = [], properties=None, 
                  REQUEST=None, *args, **kw):
+        """Create a group, and a group workspace if the toggle is on, with the supplied id, roles, and domains.
+
+        Underlying user folder must support adding users via the usual Zope API.
+        Passwords for groups ARE irrelevant in GRUF."""
         group = None
         success = 0
         managers = self._getGroupManagers()
@@ -77,6 +98,7 @@ class GroupsTool(BaseTool):
 
         return success
 
+    security.declareProtected(ManageGroups, 'editGroup')
     @postonly
     def editGroup(self, id, roles=None, groups=None, REQUEST=None, *args, **kw):
         """Edit the given group with the supplied roles.
@@ -105,7 +127,7 @@ class GroupsTool(BaseTool):
             try:
                 groupmanagers = self.acl_users.plugins.listPlugins(igroup.IGroupManagement)
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                log('Plugin listing error')
+                logger.exception('Plugin listing error')
                 groupmanagers = ()
 
             for group in groups:
@@ -114,7 +136,7 @@ class GroupsTool(BaseTool):
                         if gm.addPrincipalToGroup(id, group):
                             break
                     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                        log('AuthenticationPlugin %s error' % gm_id)
+                        logger.exception('AuthenticationPlugin %s error' % gm_id)
 
     security.declareProtected(DeleteGroups, 'removeGroup')
     @postonly
@@ -193,6 +215,7 @@ class GroupsTool(BaseTool):
     # group getters
     ##
 
+    security.declareProtected(ViewGroups, 'getGroupById')
     def getGroupById(self, group_id):
         group = self.acl_users.getGroup(group_id)
         if group is not None:
@@ -200,10 +223,9 @@ class GroupsTool(BaseTool):
         return group
 
     security.declareProtected(ManageGroups, 'searchGroups')
-    @deprecate("portal_groups.searchForGroups is deprecated and will "
+    @deprecate("portal_groups.searchGroups is deprecated and will "
                "be removed in Plone 3.5. Use PAS searchGroups instead")
     def searchGroups(self, *args, **kw):
-        # XXX document interface.. returns a list of dictionaries
         return self.acl_users.searchGroups(*args, **kw)
 
     @deprecate("portal_groups.searchForGroups is deprecated and will "
@@ -233,23 +255,12 @@ class GroupsTool(BaseTool):
             dict = kw
 
         name = dict.get('name', None)
-        #email = dict.get('email', None)
-        #roles = dict.get('roles', None)
-        #title = dict.get('title', None)
         title_or_name = dict.get('title_or_name', None)
         if name:
             name = name.strip().lower()
         if not name:
             name = None
         if title_or_name: name = title_or_name
-        #if email:
-        #    email = email.strip().lower()
-        #if not email:
-        #    email = None
-        #if title:
-        #    title = title.strip().lower()
-        #if not title:
-        #    title = None
 
         md_groups = []
         uf_groups = []
@@ -277,13 +288,9 @@ class GroupsTool(BaseTool):
                     continue             # Kill dupes
                 groups.append(getGroupById(groupid))
 
-            #if not email and \
-            #       not roles and \
-            #       not last_login_time:
-            #    return groups
-
         return groups
 
+    security.declareProtected(ViewGroups, 'listGroups')
     @deprecate("portal_groups.listGroups is deprecated and will "
                "be removed in Plone 3.5. Use PAS searchGroups instead")
     def listGroups(self):
@@ -379,17 +386,229 @@ class GroupsTool(BaseTool):
 
         return groupinfo
 
+    security.declareProtected(ViewGroups, 'getGroupsByUserId')
+    def getGroupsByUserId(self, userid):
+        """Return a list of the groups the user corresponding to 'userid' belongs to."""
+        #log("getGroupsByUserId(%s)" % userid)
+        user = self.acl_users.getUser(userid)
+        #log("user '%s' is in groups %s" % (userid, user.getGroups()))
+        if user:
+            groups = user.getGroups() or []
+        else:
+            groups = []
+        return [self.getGroupById(elt) for elt in groups]
+
+    security.declareProtected(ViewGroups, 'listGroupNames')
+    def listGroupNames(self):
+        """Return a list of the available groups' ids as entered (without group prefixes)."""
+        return self.acl_users.getGroupNames()
+
+    security.declarePublic("isGroup")
+    def isGroup(self, u):
+        """Test if a user/group object is a group or not.
+        You must pass an object you get earlier with wrapUser() or wrapGroup()
+        """
+        base = aq_base(u)
+        if hasattr(base, "isGroup") and base.isGroup():
+            return 1
+        return 0
+
+    security.declareProtected(SetGroupOwnership, 'setGroupOwnership')
+    @postonly
+    def setGroupOwnership(self, group, object, REQUEST=None):
+        """Make the object 'object' owned by group 'group' (a portal_groupdata-ish object).
+
+        For GRUF this is easy. Others may have to re-implement."""
+        user = group.getGroup()
+        if user is None:
+            raise ValueError, "Invalid group: '%s'." % (group, )
+        object.changeOwnership(user)
+        object.manage_setLocalRoles(user.getId(), ['Owner'])
+
+    security.declareProtected(ManagePortal, 'setGroupWorkspacesFolder')
+    def setGroupWorkspacesFolder(self, id="", title=""):
+        """ Set the location of the Group Workspaces folder by id.
+
+        The Group Workspaces Folder contains all the group workspaces, just like the
+        Members folder contains all the member folders.
+
+         If anyone really cares, we can probably make the id work as a path as well,
+         but for the moment it's only an id for a folder in the portal root, just like the
+         corresponding MembershipTool functionality. """
+        self.groupworkspaces_id = id.strip()
+        self.groupworkspaces_title = title
+
+    security.declareProtected(ManagePortal, 'getGroupWorkspacesFolderId')
+    def getGroupWorkspacesFolderId(self):
+        """ Get the Group Workspaces folder object's id.
+
+        The Group Workspaces Folder contains all the group workspaces, just like the
+        Members folder contains all the member folders. """
+        return self.groupworkspaces_id
+
+    security.declareProtected(ManagePortal, 'getGroupWorkspacesFolderTitle')
+    def getGroupWorkspacesFolderTitle(self):
+        """ Get the Group Workspaces folder object's title.
+        """
+        return self.groupworkspaces_title
+
+    security.declarePublic('getGroupWorkspacesFolder')
+    def getGroupWorkspacesFolder(self):
+        """ Get the Group Workspaces folder object.
+
+        The Group Workspaces Folder contains all the group workspaces, just like the
+        Members folder contains all the member folders. """
+        parent = self.aq_inner.aq_parent
+        folder = getattr(parent, self.getGroupWorkspacesFolderId(), None)
+        return folder
+
+    security.declareProtected(ManagePortal, 'toggleGroupWorkspacesCreation')
+    def toggleGroupWorkspacesCreation(self, REQUEST=None):
+        """ Toggles the flag for creation of a GroupWorkspaces folder upon creation of the group. """
+        if not hasattr(self, 'groupWorkspacesCreationFlag'):
+            self.groupWorkspacesCreationFlag = 0
+
+        self.groupWorkspacesCreationFlag = not self.groupWorkspacesCreationFlag
+
+        m = self.groupWorkspacesCreationFlag and 'turned on' or 'turned off'
+
+    security.declareProtected(ManagePortal, 'getGroupWorkspacesCreationFlag')
+    def getGroupWorkspacesCreationFlag(self):
+        """Return the (boolean) flag indicating whether the Groups Tool will create a group workspace
+        upon the creation of the group (if one doesn't exist already). """
+        return self.groupWorkspacesCreationFlag
+
+    security.declareProtected(AddGroups, 'createGrouparea')
     def createGrouparea(self, id):
-        """
-        Override the method to make sure the groups folder gets indexed,
-        GRUF makes a policy decision to unindex the groups folder.
-        """
+        """Create a space in the portal for the given group, much like member home
+        folders."""
+        parent = self.aq_inner.aq_parent
         workspaces = self.getGroupWorkspacesFolder()
-        BaseTool.createGrouparea(self, id)
-        if workspaces is None:
-            workspaces = self.getGroupWorkspacesFolder()
-            if base_hasattr(workspaces, 'reindexObject'):
-                workspaces.reindexObject()
+        pt = getToolByName( self, 'portal_types' )
+
+        if id and self.getGroupWorkspacesCreationFlag():
+            if workspaces is None:
+                # add GroupWorkspaces folder
+                pt.constructContent(
+                    type_name = self.getGroupWorkspaceContainerType(),
+                    container = parent,
+                    id = self.getGroupWorkspacesFolderId(),
+                    )
+                workspaces = self.getGroupWorkspacesFolder()
+                workspaces.setTitle(self.getGroupWorkspacesFolderTitle())
+                workspaces.setDescription("Container for " + self.getGroupWorkspacesFolderId())
+                # how about ownership?
+
+                # this stuff like MembershipTool...
+                workspaces._setProperty('right_slots', (), 'lines')
+                
+            if workspaces is not None and not hasattr(workspaces.aq_base, id):
+                # add workspace to GroupWorkspaces folder
+                pt.constructContent(
+                    type_name = self.getGroupWorkspaceType(),
+                    container = workspaces,
+                    id = id,
+                    )
+                space = self.getGroupareaFolder(id)
+                space.setTitle("%s workspace" % id)
+                space.setDescription("Container for objects shared by this group")
+
+                if hasattr(space, 'setInitialGroup'):
+                    # GroupSpaces can have their own policies regarding the group
+                    # that they are created for.
+                    user = self.getGroupById(id).getGroup()
+                    if user is not None:
+                        space.setInitialGroup(user)
+                else:
+                    space.manage_delLocalRoles(space.users_with_local_role('Owner'))
+                    self.setGroupOwnership(self.getGroupById(id), space)
+
+                # Hook to allow doing other things after grouparea creation.
+                notify_script = getattr(workspaces, 'notifyGroupAreaCreated', None)
+                if notify_script is not None:
+                    notify_script()
+
+                # Re-indexation
+                portal_catalog = getToolByName( self, 'portal_catalog' )
+                portal_catalog.reindexObject(space)
+
+    security.declareProtected(ManagePortal, 'getGroupWorkspaceType')
+    def getGroupWorkspaceType(self):
+        """Return the Type (as in TypesTool) to make the GroupWorkspace."""
+        return self.groupWorkspaceType
+
+    security.declareProtected(ManagePortal, 'setGroupWorkspaceType')
+    def setGroupWorkspaceType(self, type):
+        """Set the Type (as in TypesTool) to make the GroupWorkspace."""
+        self.groupWorkspaceType = type
+
+    security.declareProtected(ManagePortal, 'getGroupWorkspaceContainerType')
+    def getGroupWorkspaceContainerType(self):
+        """Return the Type (as in TypesTool) to make the GroupWorkspace."""
+        return self.groupWorkspaceContainerType
+
+    security.declareProtected(ManagePortal, 'setGroupWorkspaceContainerType')
+    def setGroupWorkspaceContainerType(self, type):
+        """Set the Type (as in TypesTool) to make the GroupWorkspace."""
+        self.groupWorkspaceContainerType = type
+
+    security.declarePublic('getGroupareaFolder')
+    def getGroupareaFolder(self, id=None, verifyPermission=0):
+        """Returns the object of the group's work area."""
+        workspaces = self.getGroupWorkspacesFolder()
+        if workspaces:
+            try:
+                folder = workspaces[id]
+                if verifyPermission and not _checkPermission('View', folder):
+                    # Don't return the folder if the user can't get to it.
+                    return None
+                return folder
+            except KeyError: pass
+        return None
+
+    security.declarePublic('getGroupareaURL')
+    def getGroupareaURL(self, id=None, verifyPermission=0):
+        """Returns the full URL to the group's work area."""
+        ga = self.getGroupareaFolder(id, verifyPermission)
+        if ga is not None:
+            return ga.absolute_url()
+        else:
+            return None
+
+    security.declarePrivate('wrapGroup')
+    def wrapGroup(self, g, wrap_anon=0):
+        ''' Sets up the correct acquisition wrappers for a group
+        object and provides an opportunity for a portal_memberdata
+        tool to retrieve and store member data independently of
+        the user object.
+        '''
+        b = getattr(g, 'aq_base', None)
+        if b is None:
+            # u isn't wrapped at all.  Wrap it in self.acl_users.
+            b = g
+            g = g.__of__(self.acl_users)
+        if (b is nobody and not wrap_anon) or hasattr(b, 'getMemberId'):
+            # This user is either not recognized by acl_users or it is
+            # already registered with something that implements the
+            # member data tool at least partially.
+            return g
+
+        parent = self.aq_inner.aq_parent
+        base = getattr(parent, 'aq_base', None)
+        if hasattr(base, 'portal_groupdata'):
+            # Get portal_groupdata to do the wrapping.
+            gd = getToolByName(parent, 'portal_groupdata')
+            try:
+                #log("wrapping group %s" % g)
+                portal_group = gd.wrapGroup(g)
+                return portal_group
+            except ConflictError:
+                raise
+            except:
+                logger.exception('Error during wrapGroup')
+        # Failed.
+        return g
+
 
 InitializeClass(GroupsTool)
 registerToolInterface('portal_groups', igroup.IGroupTool)

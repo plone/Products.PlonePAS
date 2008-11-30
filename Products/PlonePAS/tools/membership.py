@@ -287,7 +287,7 @@ class MembershipTool(BaseTool):
         _createObjectByType(self.memberarea_type, members, id=safe_member_id)
 
         # Get the user object from acl_users
-        acl_users = self.__getPUS()
+        acl_users = getToolByName(self, "acl_users")
         user = acl_users.getUserById(member_id)
         if user is not None:
             user = user.__of__(acl_users)
