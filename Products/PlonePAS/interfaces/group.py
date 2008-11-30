@@ -86,34 +86,6 @@ class IGroupIntrospection(Interface):
         return the members of the given group
         """
 
-class IGroupSpaceManagement(Interface):
-
-    def getGroupSpaceContainer(self):
-        """
-        return the group space container
-        """
-
-    def setGroupSpaceCreationFlag(flag):
-        """
-        set the creation flag, ie. whether or not to create
-        group spaces.
-        """
-
-    def getGroupSpaceForGroup(group_id):
-        """
-        return the groupspace for the given group id
-        """
-
-    def getGroupSpaceURL(group_id):
-        """
-        return the url to the groupspace for the given group
-        """
-
-    def createGroupSpace(group_id):
-        """
-        create a groupspace for the given group id
-        """
-
 
 class IGroupDataTool(Interface):
 
@@ -124,8 +96,7 @@ class IGroupDataTool(Interface):
 
 class IGroupTool(IGroupIntrospection,
                   IGroupManagement,
-                  plugins.IGroupsPlugin,
-                  IGroupSpaceManagement):
+                  plugins.IGroupsPlugin):
 
     """
     Defines an interface for managing and introspecting and

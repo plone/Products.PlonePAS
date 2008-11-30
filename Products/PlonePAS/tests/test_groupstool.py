@@ -4,7 +4,6 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from AccessControl import Permissions
 from AccessControl import Unauthorized
-from zExceptions import BadRequest
 
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
@@ -75,41 +74,11 @@ class GroupsToolTest(base.TestCase):
         self.failUnless(group.has_role('Authenticated'))
 
 
-class GroupWorkspacesTest(base.TestCase):
-
-    def afterSetUp(self):
-        self.gt = gt = getToolByName(self.portal, 'portal_groups')
-        self.gd = gd = getToolByName(self.portal, 'portal_groupdata')
-        # Enable group-area creation
-        self.gt.groupWorkspacesCreationFlag = 1
-        # Those are all valid chars in Zope.
-        self.gid = "Group #1 - Houston, TX. ($100)"
-        self.loginAsPortalOwner()
-
-    def test_funky_group_ids_1(self):
-        gid = self.gid
-        ginfo = (gid, ['Reviewer'], [],
-                 {'email': 'group1@host.com',
-                  'title': 'Group #1'})
-        # Create a new Group
-        self.gt.addGroup(*ginfo)
-
-    def test_funky_group_ids_2(self):
-        # Forward-slash is not allowed
-        gid = self.gid + '/'
-        ginfo = (gid, ['Reviewer'], [],
-                 {'email': 'group1@host.com',
-                  'title': 'Group #1'})
-        # Create a new Group
-        self.failUnlessRaises(BadRequest, self.gt.addGroup, *ginfo)
-
-
 class TestMethodProtection(base.TestCase):
     # GroupData has wrong security declarations
 
     def afterSetUp(self):
         self.groups = self.portal.portal_groups
-        self.groups.groupWorkspacesCreationFlag = 0
         self.groups.addGroup('foo')
         self.groupdata = self.groups.getGroupById('foo')
 
@@ -143,7 +112,6 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         self.membership = self.portal.portal_membership
         self.acl_users = self.portal.acl_users
         self.groups = self.portal.portal_groups
-        self.groups.groupWorkspacesCreationFlag = 0
         self._trap_warning_output()
 
         if 'auto_group' in self.acl_users.objectIds():
@@ -156,8 +124,6 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
     def testAddGroup(self):
         self.groups.addGroup('foo', [], [])
         self.assertEqual(self.groups.listGroupIds(), ['foo'])
-        # No group workspace should have been created
-        self.failIf(hasattr(aq_base(self.portal), self.groups.getGroupWorkspacesFolderId()))
 
     def testGetGroupById(self):
         self.groups.addGroup('foo', [], [])
@@ -271,128 +237,10 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         self._free_warning_output()
 
 
-class TestGroupWorkspacesFolder(base.TestCase, WarningInterceptor):
-
-    def afterSetUp(self):
-        self.membership = self.portal.portal_membership
-        self.acl_users = self.portal.acl_users
-        self.groups = self.portal.portal_groups
-        self.groups.groupWorkspacesCreationFlag = 0
-        self._trap_warning_output()
-
-        if 'auto_group' in self.acl_users.objectIds():
-            self.acl_users.manage_delObjects(['auto_group'])
-        # Note that this is not a proper portal type (anymore) but we don't care
-        self.portal.manage_addPortalFolder(self.groups.getGroupWorkspacesFolderId())
-
-        # Nuke Administators and Reviewers groups added in 2.1a2 migrations
-        # (and any other migrated-in groups) to avoid test confusion
-        self.groups.removeGroups(self.groups.listGroupIds())
-
-    def testGetGroupWorkspacesFolder(self):
-        self.failIfEqual(self.groups.getGroupWorkspacesFolder(), None)
-
-    def testCreateGrouparea(self):
-        self.groups.addGroup('foo', [], [])
-        self.groups.toggleGroupWorkspacesCreation()
-        # TODO: Requires typestool
-        self.groups.createGrouparea('foo')
-        self.failUnless(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testNotCreateGrouparea(self):
-        self.groups.addGroup('foo', [], [])
-        # Creation flag is False
-        self.groups.createGrouparea('foo')
-        self.failIf(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testCreateGroupareaCreatesGroupWorkspacesFolder(self):
-        self.groups.addGroup('foo', [], [])
-        self.groups.toggleGroupWorkspacesCreation()
-        self.portal._delObject(self.groups.getGroupWorkspacesFolderId())
-        # Members cannot create folders in the portal root
-        self.setRoles(['Manager'])
-        self.groups.createGrouparea('foo')
-        self.failUnless(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testCreateGroupareaIndexesGroupWorkspacesFolder(self):
-        self.groups.addGroup('foo', [], [])
-        self.groups.toggleGroupWorkspacesCreation()
-        self.portal._delObject(self.groups.getGroupWorkspacesFolderId())
-        # Members cannot create folders in the portal root
-        self.setRoles(['Manager'])
-        self.groups.createGrouparea('foo')
-        cat_results = self.portal.portal_catalog(getId =
-                                     self.groups.getGroupWorkspacesFolderId())
-        self.assertEqual(len(cat_results), 1)
-        self.assertEqual(cat_results[0].getObject(),
-                                       self.groups.getGroupWorkspacesFolder())
-
-    def testAddGroupCreatesGrouparea(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.failUnless(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testGetGroupareaFolder(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.failIfEqual(self.groups.getGroupareaFolder('foo'), None)
-
-    def testGetGroupareaURL(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.failIfEqual(self.groups.getGroupareaURL('foo'), None)
-
-    def testGetGroupareaFolderPermission(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.acl_users.userSetGroups(default_user, groupnames=['foo'])
-        user = self.acl_users.getUser(default_user)
-        self.failUnless(user.has_permission('View Groups', self.groups.getGroupWorkspacesFolder()))
-
-    def testAddGroup(self):
-        self.groups.addGroup('foo', [], [])
-        self.assertEqual(self.groups.listGroupIds(), ['foo'])
-        # No group workspace should have been created
-        self.failIf(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testAddGroupWithWorkspace(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.assertEqual(self.groups.listGroupIds(), ['foo'])
-        # A group workspace should have been created
-        self.failUnless(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testRemoveGroups(self):
-        self.groups.addGroup('foo', [], [])
-        self.groups.removeGroups(['foo'])
-        self.assertEqual(len(self.groups.listGroupIds()), 0)
-
-    def testRemoveGroupsWithWorkspace(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.groups.removeGroups(['foo'])
-        self.assertEqual(len(self.groups.listGroupIds()), 0)
-        # Group workspace should have been removed
-        self.failIf(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def testRemoveGroupsKeepingWorkspaces(self):
-        self.groups.toggleGroupWorkspacesCreation()
-        self.groups.addGroup('foo', [], [])
-        self.groups.removeGroups(['foo'], keep_workspaces=1)
-        self.assertEqual(len(self.groups.listGroupIds()), 0)
-        # Group workspace should still be present
-        self.failUnless(hasattr(aq_base(self.groups.getGroupWorkspacesFolder()), 'foo'))
-
-    def beforeTearDown(self):
-        self._free_warning_output()
-
-
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(GroupsToolTest))
-    suite.addTest(unittest.makeSuite(GroupWorkspacesTest))
     suite.addTest(unittest.makeSuite(TestMethodProtection))
     suite.addTest(unittest.makeSuite(TestGroupsTool))
-    suite.addTest(unittest.makeSuite(TestGroupWorkspacesFolder))
     return suite
 

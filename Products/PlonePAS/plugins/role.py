@@ -135,11 +135,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
             self.updateRolesList()
         return ZODBRoleManager.getRoleInfo(self, role_id)
 
-    def getRoleInfo(self, role_id):
-        if role_id not in self._roles:
-            self.updateRolesList()
-        return ZODBRoleManager.getRoleInfo(self, role_id)
-
 
 classImplements(GroupAwareRoleManager,
                 IAssignRoleCapability, *implementedBy(ZODBRoleManager))

@@ -19,7 +19,6 @@ class TestGroupDataTool(base.TestCase):
         self.acl_users = self.portal.acl_users
         self.groups = self.portal.portal_groups
         self.groupdata = self.portal.portal_groupdata
-        self.groups.groupWorkspacesCreationFlag = 0
         self.groups.addGroup('foo')
         # MUST reset _v_ attributes!
         self.groupdata._v_temps = None
@@ -43,7 +42,6 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         self.acl_users = self.portal.acl_users
         self.groups = self.portal.portal_groups
         self.groupdata = self.portal.portal_groupdata
-        self.groups.groupWorkspacesCreationFlag = 0
         self.groups.addGroup('foo')
         if 'auto_group' in self.acl_users.objectIds():
             self.acl_users.manage_delObjects(['auto_group'])
@@ -150,7 +148,6 @@ class TestMethodProtection(base.TestCase):
 
     def afterSetUp(self):
         self.groups = self.portal.portal_groups
-        self.groups.groupWorkspacesCreationFlag = 0
         self.groups.addGroup('foo')
         self.groupdata = self.groups.getGroupById('foo')
 

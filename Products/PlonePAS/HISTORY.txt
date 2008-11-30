@@ -4,6 +4,10 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed support for group workspaces. This part from GRUF hasn't been
+  supported for many releases anymore.
+  [hannosch]
+
 - Merged all code for the groups tool from GRUF into this package, we are
   officially GRUF-dependency-free :)
   [hannosch]
