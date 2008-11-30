@@ -4,8 +4,6 @@ Simply extends the standard CookieAuthHelper provided via regular
 PluggableAuthService but overrides the updateCookie mechanism to
 provide similar functionality as CookieCrumbler does... by giving
 the portal the ability to provide a setAuthCookie method.
-
-$Id$
 """
 
 from AccessControl.SecurityManagement import getSecurityManager

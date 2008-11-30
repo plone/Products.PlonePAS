@@ -1,20 +1,3 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-"""
-
 from Products.PluggableAuthService.interfaces import plugins
 from Products.PluggableAuthService.interfaces.plugins import Interface
 
@@ -75,7 +58,6 @@ class ILocalRolesPlugin(Interface):
         The roles are returned in a dictionary mapping a principal (a
         user or a group) to the set of roles assigned to it.
         """
-
 
 
 class IUserManagement(plugins.IUserAdderPlugin):

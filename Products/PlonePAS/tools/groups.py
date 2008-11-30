@@ -1,5 +1,4 @@
 import logging
-from sets import Set
 
 from zope.deprecation import deprecate
 from zope.interface import implements
@@ -107,8 +106,8 @@ class GroupsTool(UniqueObject, SimpleItem):
         g.setGroupProperties(kw)
         if groups:
             # remove absent groups
-            groupset = Set(groups)
-            p_groups = Set(self.getGroupsForPrincipal(g))
+            groupset = set(groups)
+            p_groups = set(self.getGroupsForPrincipal(g))
             rmgroups = p_groups - groupset
             for gid in rmgroups:
                 self.removePrincipalFromGroup(g, gid)

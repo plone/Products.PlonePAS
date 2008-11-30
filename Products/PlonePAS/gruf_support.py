@@ -1,10 +1,7 @@
-"""
-gruf specific hacks to pas, to make it play well in gruf
-"""
+# gruf specific hacks to pas, to make it play well in gruf
 
 import logging
 from zope.deprecation import deprecate
-from sets import Set
 
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
@@ -63,10 +60,10 @@ def userSetGroups(self, id, groupnames):
     gtool = getToolByName(self, "portal_groups")
 
     member = self.getUser(id)
-    groupnameset = Set(groupnames)
+    groupnameset = set(groupnames)
 
     # remove absent groups
-    groups = Set(gtool.getGroupsForPrincipal(member))
+    groups = set(gtool.getGroupsForPrincipal(member))
     rmgroups = groups - groupnameset
     for gid in rmgroups:
         try:

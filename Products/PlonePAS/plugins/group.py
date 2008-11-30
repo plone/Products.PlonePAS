@@ -1,17 +1,3 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
 """
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
@@ -162,16 +148,6 @@ class GroupManager(ZODBGroupManager):
         PloneGroup.  But, the code's still here, just commented out.
         This method based on PluggableAuthervice._createUser
         """
-
-        #factories = plugins.listPlugins(IUserFactoryPlugin)
-
-        #for factory_id, factory in factories:
-
-        #    user = factory.createUser(user_id, name)
-
-        #    if user is not None:
-        #        return user.__of__(self)
-
         return PloneGroup(group_id, name).__of__(self)
 
     security.declarePrivate('_findGroup')

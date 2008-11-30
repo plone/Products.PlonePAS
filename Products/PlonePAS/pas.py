@@ -1,6 +1,5 @@
 # pas alterations and monkies
 
-from sets import Set
 from Products.CMFCore.utils import getToolByName
 
 from AccessControl import Unauthorized, getSecurityManager
@@ -385,7 +384,7 @@ def _getAllLocalRoles(self, context):
         newroles=lrmanager.getAllLocalRolesInContext(context)
         for k,v in newroles.items():
             if k not in roles:
-                roles[k]=Set()
+                roles[k]=set()
             roles[k].update(v)
 
     return roles

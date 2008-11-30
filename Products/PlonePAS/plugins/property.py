@@ -1,22 +1,7 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
 """
 Mutable Property Provider
 """
 import copy
-from sets import Set
 
 from ZODB.PersistentMapping import PersistentMapping
 from BTrees.OOBTree import OOBTree
@@ -92,9 +77,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
             for name, value in valuetuples: defaultvalues[name] = value
         self._schema = tuple(schema)
         self._defaultvalues = defaultvalues
-
-        # don't use _schema directly or you'll lose the fallback! use
-        # _getSchema instead same for default values
 
 
     def _getSchema(self, isgroup=None):
@@ -188,7 +170,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]
         if allowed_prop_keys:
-            prop_names = Set(properties.keys()) - Set(allowed_prop_keys)
+            prop_names = set(properties.keys()) - set(allowed_prop_keys)
             if prop_names:
                 raise ValueError, 'Unknown Properties: %r' % prop_names
 
@@ -209,7 +191,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
             del self._storage[user_id]
         except KeyError:
             pass
-
 
 
     def testMemberData(self, memberdata, criteria, exact_match=False):
@@ -269,7 +250,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
                      'pluginid' : plugin_id } for (user_id, data) in users ]
 
         return tuple(user_info)
-
 
 
 classImplements(ZODBMutablePropertyProvider,

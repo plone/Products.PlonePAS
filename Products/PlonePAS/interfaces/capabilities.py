@@ -1,22 +1,5 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-Define certain interfaces that a plugin must meet if it is to allow
-certain operations to be done by the Plone UI.
-
-"""
+# Define certain interfaces that a plugin must meet if it is to allow
+# certain operations to be done by the Plone UI.
 
 from Products.PluggableAuthService.interfaces.plugins import Interface
 
@@ -39,14 +22,6 @@ class IPasswordSetCapability(Interface):
         """True iff this plugin can set the password of a certain user."""
 
 
-#class IPasswordClearCapability(Interface):
-#    """Interface for plugin to say if it allows for deletion of a user.
-#    For Plone UI.
-#    """
-#
-#    def passwordInClear(self, user_id):
-#        """True iff this plugin provides a clear-text password for a certain user."""
-
 class IGroupCapability(Interface):
     """Interface for plugin to say if it allows for deletion of a user.
     For Plone UI.
@@ -66,7 +41,6 @@ class IAssignRoleCapability(Interface):
 
     def allowRoleAssign(self, id, role):
         """True iff this plugin will allow assigning a certain principal a certain role."""
-
 
 
 class IManageCapabilities(Interface):

@@ -4,6 +4,10 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Cleaned up annoying license headers in all files. We have a central place
+  to state the license.
+  [hannosch]
+
 - Started cleaning up deprecated methods and comments.
   [hannosch]
 

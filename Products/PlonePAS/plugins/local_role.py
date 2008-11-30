@@ -1,20 +1,4 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-# Portions Copyright (c) 2001 Zope Corporation and Contributors. All Rights Reserved.
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
 """
-
 A Local Roles Plugin Implementation that respects Black Listing markers.
 
 ie. containers/objects which denote that they do not wish to acquire local
@@ -22,7 +6,6 @@ roles from their containment structure.
 
 """
 
-from sets import Set
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner, aq_parent
 from Globals import DTMLFile, InitializeClass
@@ -109,7 +92,6 @@ class LocalRolesManager(LocalRolePlugin):
         # we can incur only the overhead required to find a match.
         inner_obj = aq_inner( object )
         user_id = user.getId()
-        # [ x.getId() for x in user.getGroups() ]
         group_ids = user.getGroups()
 
         principal_ids = list( group_ids )
@@ -176,7 +158,7 @@ class LocalRolesManager(LocalRolePlugin):
 
                 for principal, localroles in dict.items():
                     if not principal in roles:
-                        roles[principal] = Set()
+                        roles[principal] = set()
 
                     roles[principal].update(localroles)
 
