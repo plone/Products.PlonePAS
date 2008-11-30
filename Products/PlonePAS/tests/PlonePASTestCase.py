@@ -1,9 +1,3 @@
-#
-# PlonePASTestCase
-#
-
-# $Id: PlonePASTestCase.py 18188 2006-01-19 20:48:45Z wichert $
-
 from Testing import ZopeTestCase
 from Products.PloneTestCase import PloneTestCase
 PloneTestCase.setupPloneSite()
