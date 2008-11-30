@@ -1,8 +1,9 @@
 from Acquisition import aq_base
-from Products.CMFCore.tests.base.testcase import WarningInterceptor
 
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.PloneTestCase.ptc import default_user
-from Products.PloneTestCase.ptc import PloneTestCase
+
+from Products.PlonePAS.tests import base
 
 
 def sortTuple(t):
@@ -11,7 +12,7 @@ def sortTuple(t):
     return tuple(l)
 
 
-class TestGroupsTool(PloneTestCase, WarningInterceptor):
+class TestGroupsTool(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
@@ -145,7 +146,7 @@ class TestGroupsTool(PloneTestCase, WarningInterceptor):
         self._free_warning_output()
 
 
-class TestGroupWorkspacesFolder(PloneTestCase, WarningInterceptor):
+class TestGroupWorkspacesFolder(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership

@@ -3,7 +3,8 @@ from AccessControl import Unauthorized
 
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.PloneTestCase.ptc import default_user
-from Products.PloneTestCase.ptc import PloneTestCase
+
+from Products.PlonePAS.tests import base
 
 
 def sortTuple(t):
@@ -12,7 +13,7 @@ def sortTuple(t):
     return tuple(l)
 
 
-class TestGroupDataTool(PloneTestCase):
+class TestGroupDataTool(base.TestCase):
 
     def afterSetUp(self):
         self.acl_users = self.portal.acl_users
@@ -34,7 +35,7 @@ class TestGroupDataTool(PloneTestCase):
         self.assertEqual(g.aq_parent.aq_parent.__class__.__name__, 'GroupManager')
 
 
-class TestGroupData(PloneTestCase, WarningInterceptor):
+class TestGroupData(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
@@ -145,7 +146,7 @@ class TestGroupData(PloneTestCase, WarningInterceptor):
         self._free_warning_output()
 
 
-class TestMethodProtection(PloneTestCase):
+class TestMethodProtection(base.TestCase):
 
     def afterSetUp(self):
         self.groups = self.portal.portal_groups

@@ -1,15 +1,13 @@
 import unittest
 
-from PlonePASTestCase import PlonePASTestCase
-
-from cStringIO import StringIO
-from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
+from Products.PlonePAS.tests import base
 
 
-class PropertiesTest(PlonePASTestCase):
+class PropertiesTest(base.TestCase):
 
     def test_user_properties(self):
         mt = getToolByName(self.portal, 'portal_membership')
@@ -151,7 +149,6 @@ class PropertiesTest(PlonePASTestCase):
         expected = 'group1@anotherhost.qa'
         self.assertEquals(got, expected)
 
-
     def test_schema_for_mutable_property_provider(self):
         """Add a schema to a ZODBMutablePropertyProvider.
         """
@@ -186,7 +183,7 @@ class PropertiesTest(PlonePASTestCase):
         self.assertEqual(sheet.getProperty('addresses'), ('Here', 'There'))
  
 
-class PropertySearchTest(PlonePASTestCase):
+class PropertySearchTest(base.TestCase):
     def afterSetUp(self):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
@@ -209,16 +206,13 @@ class PropertySearchTest(PlonePASTestCase):
             if plugin!='mutable_properties':
                 self.pas.plugins.deactivatePlugin(IUserEnumerationPlugin, plugin)
 
-
     def testPluginActivated(self):
         plugins = self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']
         self.assertEqual(plugins, ('mutable_properties',))
 
-
     def testEmptySearch(self):
         results=self.pas.searchUsers()
         self.assertEqual(len(results), 2)
-
 
     def testInexactStringSearch(self):
         results=self.pas.searchUsers(email="something@somewhere.tld")
@@ -239,7 +233,6 @@ class PropertySearchTest(PlonePASTestCase):
         results=self.pas.searchUsers(email="@host.com", exact_match=True)
         results=[info['userid'] for info in results]
         self.assertEqual(results, [])
-
 
     def testBooleanSearch(self):
         results=self.pas.searchUsers(visible_ids=True)

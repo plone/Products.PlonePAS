@@ -15,10 +15,11 @@ from Products.PloneTestCase.ptc import default_password
 from Products.PloneTestCase.ptc import default_user
 from Products.PloneTestCase.ptc import portal_name
 from Products.PloneTestCase.ptc import portal_owner
-from Products.PloneTestCase.ptc import PloneTestCase
+
+from Products.PlonePAS.tests import base
 
 
-class TestMembershipTool(PloneTestCase, WarningInterceptor):
+class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
@@ -349,7 +350,7 @@ class TestMembershipTool(PloneTestCase, WarningInterceptor):
         self._free_warning_output()
 
 
-class TestCreateMemberarea(PloneTestCase):
+class TestCreateMemberarea(base.TestCase):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
@@ -418,7 +419,7 @@ class TestCreateMemberarea(PloneTestCase):
         memberfolder = self.membership.getHomeFolder('user2')
         self.failIf(memberfolder, 'createMemberarea created memberarea despite flag')
 
-class TestMemberareaSetup(PloneTestCase):
+class TestMemberareaSetup(base.TestCase):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
@@ -456,7 +457,7 @@ class TestMemberareaSetup(PloneTestCase):
             self.failIf('index_html' in self.home.objectIds())
 
 
-class TestSearchForMembers(PloneTestCase, WarningInterceptor):
+class TestSearchForMembers(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.memberdata = self.portal.portal_memberdata
@@ -528,7 +529,7 @@ class TestSearchForMembers(PloneTestCase, WarningInterceptor):
         self._free_warning_output()
 
 
-class TestDefaultUserAndPasswordNotChanged(PloneTestCase):
+class TestDefaultUserAndPasswordNotChanged(base.TestCase):
     # A test for a silly transaction/persistency bug in PlonePAS
 
     def afterSetUp(self):
@@ -541,7 +542,7 @@ class TestDefaultUserAndPasswordNotChanged(PloneTestCase):
         self.failIf(self.membership.testCurrentPassword('geheim'))
 
 
-class TestMethodProtection(PloneTestCase):
+class TestMethodProtection(base.TestCase):
     # MembershipTool is missing security declarations
     # http://dev.plone.org/plone/ticket/5432
 

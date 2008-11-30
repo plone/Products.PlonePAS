@@ -1,12 +1,13 @@
 from DateTime import DateTime
 from OFS.Image import Image
+
 from Products.CMFPlone.tests import dummy
-
 from Products.PloneTestCase.ptc import default_user
-from Products.PloneTestCase.ptc import PloneTestCase
+
+from Products.PlonePAS.tests import base
 
 
-class TestMemberDataTool(PloneTestCase):
+class TestMemberDataTool(base.TestCase):
 
     def afterSetUp(self):
         self.memberdata = self.portal.portal_memberdata

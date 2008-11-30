@@ -1,14 +1,11 @@
 import unittest
 from Testing import ZopeTestCase
-from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
-from Products.PloneTestCase.PloneTestCase import setupPloneSite
-
-from Products.CMFCore.utils import getToolByName
 
 from zExceptions.ExceptionFormatter import format_exception
 from ZPublisher.HTTPResponse import HTTPResponse
 
-setupPloneSite()
+from Products.PlonePAS.tests import base
+
 
 # Silence Plone's handling of exceptions
 orig_exception = HTTPResponse.exception
@@ -38,7 +35,7 @@ def test_suite():
     suite = unittest.TestSuite()
     DocFileSuite = ZopeTestCase.FunctionalDocFileSuite
     tests = (
-        ('cookie_auth.txt', FunctionalTestCase),
+        ('cookie_auth.txt', base.FunctionalTestCase),
         )
 
     for fname, klass in tests:

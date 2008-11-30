@@ -1,10 +1,7 @@
 import unittest
 
-from Products.CMFCore.utils import getToolByName
-from PlonePASTestCase import PlonePASTestCase
+from Products.PlonePAS.tests import base
 
-from Products.PluggableAuthService.interfaces.authservice \
-     import IPluggableAuthService
 
 class IntrospectorMethodWrapper:
     count = 0
@@ -35,6 +32,7 @@ class IntrospectorMethodWrapper:
         setattr(self.klass, self.name, self.klass.__counted_method__)
         del self.klass.__counted_method__
 
+
 class CollectResultsWrapper(IntrospectorMethodWrapper):
 
     def __init__(self, klass, name):
@@ -46,7 +44,8 @@ class CollectResultsWrapper(IntrospectorMethodWrapper):
         self.results.append(result)
         return result
 
-class BasicOpsTestCase(PlonePASTestCase):
+
+class BasicOpsTestCase(base.TestCase):
 
     def afterSetUp(self):
         self.loginAsPortalOwner()

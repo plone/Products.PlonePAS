@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Modernized tests and introduce a proper base testcase and layer.
+  [hannosch]
+
 - Removed cookie auth tests, these don't work anymore with plone.session.
   [hannosch]
 

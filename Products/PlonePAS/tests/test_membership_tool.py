@@ -1,15 +1,15 @@
 import unittest
 
-from PlonePASTestCase import PlonePASTestCase
+from Acquisition import aq_base, aq_parent
 
-from cStringIO import StringIO
-from zExceptions import BadRequest
-from Acquisition import aq_base, aq_inner, aq_parent
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.tools.memberdata import MemberData
-from Products.PlonePAS.plugins.ufactory import PloneUser
 
-class MembershipToolTest(PlonePASTestCase):
+from Products.PlonePAS.plugins.ufactory import PloneUser
+from Products.PlonePAS.tests import base
+from Products.PlonePAS.tools.memberdata import MemberData
+
+
+class MembershipToolTest(base.TestCase):
 
     def afterSetUp(self):
         self.mt = mt = getToolByName(self.portal, 'portal_membership')
@@ -94,7 +94,8 @@ class MembershipToolTest(PlonePASTestCase):
         for aa, cc in ac:
             self.failUnless(aa==cc)
 
-class MemberAreaTest(PlonePASTestCase):
+
+class MemberAreaTest(base.TestCase):
 
     def afterSetUp(self):
         self.mt = mt = getToolByName(self.portal, 'portal_membership')
@@ -135,6 +136,7 @@ class MemberAreaTest(PlonePASTestCase):
         self.mt.memberareaCreationFlag = 0
         self.mt.createMemberArea('bar')
         self.failIf('bar' in self.portal.Members.objectIds())
+
 
 def test_suite():
     suite = unittest.TestSuite()

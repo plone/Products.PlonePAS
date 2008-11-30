@@ -1,18 +1,19 @@
 import unittest
 
-from PlonePASTestCase import PlonePASTestCase
-
-from cStringIO import StringIO
-from zExceptions import BadRequest
-from Acquisition import aq_base, aq_inner, aq_parent
+from Acquisition import aq_base, aq_parent
 from AccessControl import Permissions
 from AccessControl import Unauthorized
+from zExceptions import BadRequest
+
 from Products.CMFCore.utils import getToolByName
+from Products.PloneTestCase.ptc import default_user
+
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
-from Testing.ZopeTestCase import user_name
+from Products.PlonePAS.tests import base
 
-class GroupsToolTest(PlonePASTestCase):
+
+class GroupsToolTest(base.TestCase):
 
     def afterSetUp(self):
         self.gt = gt = getToolByName(self.portal, 'portal_groups')
@@ -65,7 +66,8 @@ class GroupsToolTest(PlonePASTestCase):
         self.gt.editGroup(self.group_id, roles=[])
         self.failUnless(group.has_role('Authenticated'))
 
-class GroupWorkspacesTest(PlonePASTestCase):
+
+class GroupWorkspacesTest(base.TestCase):
 
     def afterSetUp(self):
         self.gt = gt = getToolByName(self.portal, 'portal_groups')
@@ -93,7 +95,8 @@ class GroupWorkspacesTest(PlonePASTestCase):
         # Create a new Group
         self.failUnlessRaises(BadRequest, self.gt.addGroup, *ginfo)
 
-class TestMethodProtection(PlonePASTestCase):
+
+class TestMethodProtection(base.TestCase):
     # GroupData has wrong security declarations
 
     def afterSetUp(self):
@@ -104,26 +107,26 @@ class TestMethodProtection(PlonePASTestCase):
 
     def testAnonAddMember(self):
         self.logout()
-        self.assertRaises(Unauthorized, self.groupdata.addMember, user_name)
+        self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
 
     def testAnonRemoveMember(self):
         self.logout()
-        self.assertRaises(Unauthorized, self.groupdata.removeMember, user_name)
+        self.assertRaises(Unauthorized, self.groupdata.removeMember, default_user)
 
     def testMemberAddMember(self):
-        self.assertRaises(Unauthorized, self.groupdata.addMember, user_name)
+        self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
 
     def testMemberRemoveMember(self):
-        self.assertRaises(Unauthorized, self.groupdata.removeMember, user_name)
+        self.assertRaises(Unauthorized, self.groupdata.removeMember, default_user)
 
     def testManagerAddMember(self):
         self.setPermissions([Permissions.manage_users])
-        self.groupdata.addMember(user_name)
+        self.groupdata.addMember(default_user)
 
     def testManagerRemoveMember(self):
         self.setPermissions([Permissions.manage_users])
-        self.groupdata.addMember(user_name)
-        self.groupdata.removeMember(user_name)
+        self.groupdata.addMember(default_user)
+        self.groupdata.removeMember(default_user)
 
 
 def test_suite():

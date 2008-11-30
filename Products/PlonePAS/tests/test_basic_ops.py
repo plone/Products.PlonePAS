@@ -1,9 +1,5 @@
 import unittest
 
-from PlonePASTestCase import PlonePASTestCase
-
-from Products.CMFCore.utils import getToolByName
-
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.authservice \
@@ -11,8 +7,10 @@ from Products.PluggableAuthService.interfaces.authservice \
 from Products.PluggableAuthService.interfaces.plugins \
      import IRolesPlugin
 
+from Products.PlonePAS.tests import base
 
-class BasicOpsTestCase(PlonePASTestCase):
+
+class BasicOpsTestCase(base.TestCase):
 
     def afterSetUp(self):
         self.loginAsPortalOwner()
