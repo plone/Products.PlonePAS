@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed cookie auth tests, these don't work anymore with plone.session.
+  [hannosch]
+
 - Moved over all tests for the four tools from CMFPlone.
   [hannosch]
 

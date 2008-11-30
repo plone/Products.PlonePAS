@@ -4,7 +4,7 @@ Test for Cookie Auth
   >>> import base64
   >>> from urllib import quote
   >>> from zope.interface import implementedBy
-  >>> from Products.PloneTestCase.PloneTestCase import portal_name
+  >>> from Products.PloneTestCase.ptc import portal_name
 
 User in Plone Site
 ------------------
@@ -61,15 +61,6 @@ Make sure cookie plugin is installed and activated.
   <...ICredentialsUpdate...> 
   <...ICredentialsReset...> 
 
-Login to Plone site using Cookie Auth should work too.
-
-  >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
-  >>> print http(r"""
-  ... GET /%s/manage HTTP/1.1
-  ... Cookie: __ac=%s;
-  ... """ % (portal_name, encoded), handle_errors=False)
-  HTTP/1.1 200 OK...
-
 User in parent folder
 ---------------------
 
@@ -101,23 +92,3 @@ Login to Plone Site using Basic Auth works.
   ... Authorization: Basic %s:%s
   ... """ % (portal_name, user_name, user_password), handle_errors=False)
   HTTP/1.1 200 OK...
-
-Login to Plone site using Cookie Auth should work too.
-
-  >>> encoded = base64.encodestring('%s:%s' % (user_name, user_password))
-  >>> print http(r"""
-  ... GET /%s/manage HTTP/1.1
-  ... Cookie: __ac=%s;
-  ... """ % (portal_name, quote(encoded)), handle_errors=False)
-  HTTP/1.1 200 OK...
-
-The cookie set by PlonePAS should be URL-quoted.
-
-  >>> print http(r"""
-  ... GET /%s/logged_in HTTP/1.1
-  ... Cookie: __ac=%s
-  ... """ % (portal_name, quote(encoded)), handle_errors=False)
-  HTTP/1.1 200 OK
-  ...
-  Set-Cookie: __ac="Og%3D%3D"; Path=/...
-
