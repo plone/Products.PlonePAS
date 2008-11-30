@@ -1,19 +1,3 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-"""
 from Globals import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
@@ -24,9 +8,8 @@ from zope.interface import implementedBy
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFPlone.GroupDataTool import GroupDataTool as BaseGroupDataTool
 from Products.GroupUserFolder.GroupDataTool import GroupData as BaseGroupData
-from Products.GroupUserFolder.GroupDataTool import _marker
+from Products.GroupUserFolder.GroupDataTool import GroupDataTool as BaseTool
 
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.authservice \
@@ -45,6 +28,7 @@ from AccessControl.requestmethod import postonly
 import logging
 
 logger = logging.getLogger('Plone')
+_marker = object()
 
 try:
     from Products.CMFCore.MemberDataTool import CleanupTemp
@@ -53,7 +37,7 @@ except:
     _have_cleanup_temp = None
 
 
-class GroupDataTool(BaseGroupDataTool):
+class GroupDataTool(BaseTool):
     """PAS-specific implementation of groupdata tool. Uses Plone
     GroupDataTool as a base.
     """

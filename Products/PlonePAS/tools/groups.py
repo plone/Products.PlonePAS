@@ -1,53 +1,43 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-"""
 import logging
 from sets import Set
+
+from zope.deprecation import deprecate
+from zope.interface import implements
 
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
 from Globals import InitializeClass
 
-from zope.interface import implementedBy
-from zope.deprecation import deprecate
-
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFPlone.GroupsTool import GroupsTool as PloneGroupsTool
+from Products.CMFPlone.utils import base_hasattr
 
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.PluggableAuthService import \
                                     _SWALLOWABLE_PLUGIN_EXCEPTIONS
+
 from Products.GroupUserFolder.GroupsToolPermissions import ViewGroups, DeleteGroups, ManageGroups
+from Products.GroupUserFolder.GroupsTool import GroupsTool as BaseTool
 
 log = logging.getLogger('PluggableAuthService').exception
 
 class NotSupported(Exception): pass
 
-class GroupsTool(PloneGroupsTool):
+class GroupsTool(BaseTool):
     """
     Replace the GRUF groups tool with PAS-specific methods.
     """
+
+    implements(igroup.IGroupTool)
 
     id = 'portal_groups'
     meta_type = 'PlonePAS Groups Tool'
     security = ClassSecurityInfo()
     toolicon = 'tool.gif'
+
+    # No group workspaces by default
+    groupWorkspacesCreationFlag = 0
 
     ##
     # basic group mgmt
@@ -369,9 +359,37 @@ class GroupsTool(PloneGroupsTool):
             igroup.IGroupSpaceManagers
             )
 
-classImplements(GroupsTool,
-                *tuple(implementedBy(PloneGroupsTool)) +
-                (igroup.IGroupTool,))
+    ##
+    # BBB
+    ##
+
+    security.declarePublic('getGroupInfo')
+    def getGroupInfo(self, groupId):
+        """
+        Return default group info of any group
+        """
+        group = self.getGroupById(groupId)
+
+        if group is None:
+            return None
+
+        groupinfo = { 'title'    : group.getProperty('title'),
+                      'description' : group.getProperty('description'),
+                    }
+
+        return groupinfo
+
+    def createGrouparea(self, id):
+        """
+        Override the method to make sure the groups folder gets indexed,
+        GRUF makes a policy decision to unindex the groups folder.
+        """
+        workspaces = self.getGroupWorkspacesFolder()
+        BaseTool.createGrouparea(self, id)
+        if workspaces is None:
+            workspaces = self.getGroupWorkspacesFolder()
+            if base_hasattr(workspaces, 'reindexObject'):
+                workspaces.reindexObject()
 
 InitializeClass(GroupsTool)
 registerToolInterface('portal_groups', igroup.IGroupTool)

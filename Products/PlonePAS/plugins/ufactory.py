@@ -27,8 +27,6 @@ from Products.PluggableAuthService.interfaces.propertysheets import IPropertyShe
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
-from Products.CMFPlone.MemberDataTool import _marker
-
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.utils import unique, getCharset
@@ -36,6 +34,8 @@ from Products.PlonePAS.odict import OrderedDict
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
                                           globals())
+
+_marker = object()
 
 def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
     """

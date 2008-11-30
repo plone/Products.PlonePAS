@@ -430,24 +430,11 @@ def restoreGroupData(portal, out, groupdata, groupmemberships):
 def setupTools(portal, out):
     print >> out, "\nTools:"
 
-    migratePloneTool(portal, out)
     migrateMembershipTool(portal, out)
     migrateGroupsTool(portal, out)
     migrateMemberDataTool(portal, out)
     migrateGroupDataTool(portal, out)
     modActions(portal, out)
-
-
-def migratePloneTool(portal, out):
-    print >> out, "Plone Tool (plone_utils)"
-    pt = portal.plone_utils
-    if pt.meta_type == 'PlonePAS Utilities Tool':
-        from Products.CMFPlone.PloneTool import PloneTool
-        print >> out, " - Removing obsolete PlonePAS version of the Plone Tool"
-        portal.manage_delObjects(['plone_utils'])
-        print >> out, " - Installing standard tool"
-        portal._setObject(PloneTool.id, PloneTool())
-    print >> out, " ...done"
 
 
 def migrateMembershipTool(portal, out):
