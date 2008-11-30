@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Switched the installation progress reporting to the logging framework.
+  [hannosch]
+
 - Cleaned up annoying license headers in all files. We have a central place
   to state the license.
   [hannosch]

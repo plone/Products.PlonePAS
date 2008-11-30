@@ -1,9 +1,3 @@
-"""
-PlonePAS setup handlers.
-"""
-
-from StringIO import StringIO
-
 from Products.CMFCore.utils import getToolByName
 
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
@@ -12,7 +6,7 @@ from Products.PlonePAS.Extensions.Install import registerPluginTypes
 from Products.PlonePAS.Extensions.Install import setupPlugins
 
 
-def setLoginFormInCookieAuth(context, out=None):
+def setLoginFormInCookieAuth(context):
     """Makes sure the cookie auth redirects to 'require_login' instead
        of 'login_form'."""
     uf = getattr(context, 'acl_users', None)
@@ -60,20 +54,18 @@ def setupGroups(site):
 
 
 def installPAS(portal):
-    out = StringIO()
-    
     # Add user folder
     portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
 
     # Configure Challenge Chooser plugin if available
-    challenge_chooser_setup(portal, out)
+    challenge_chooser_setup(portal)
 
     # A bunch of general configuration settings
     registerPluginTypes(portal.acl_users)
-    setupPlugins(portal, out)
+    setupPlugins(portal)
 
     # TODO: This is highly questionable behaviour. Replacing the UF at the root.
-    migrate_root_uf(portal, out)
+    migrate_root_uf(portal)
 
 
 def setupPlonePAS(context):
@@ -83,10 +75,8 @@ def setupPlonePAS(context):
     # Only run step if a flag file is present (e.g. not an extension profile)
     if context.readDataFile('plone-pas.txt') is None:
         return
-    out = []
     site = context.getSite()
     installPAS(site)
     addRolesToPlugIn(site)
     setupGroups(site)
-
-    setLoginFormInCookieAuth(site, out)
+    setLoginFormInCookieAuth(site)

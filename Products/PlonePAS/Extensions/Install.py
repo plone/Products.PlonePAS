@@ -1,5 +1,3 @@
-from StringIO import StringIO
-
 from Products.CMFCore.utils import getToolByName
 
 from Products.PluggableAuthService.interfaces.authservice \
@@ -19,8 +17,11 @@ from Products.PlonePAS.interfaces import group as igroup
 
 from plone.session.plugins.session import manage_addSessionPlugin
 
+import logging
+logger = logging.getLogger('PlonePAS setup')
 
-def activatePluginInterfaces(portal, plugin, out, disable=[]):
+
+def activatePluginInterfaces(portal, plugin, disable=[]):
     pas = portal.acl_users
     plugin_obj = pas[plugin]
 
@@ -32,19 +33,16 @@ def activatePluginInterfaces(portal, plugin, out, disable=[]):
         if plugin_obj.testImplements(interface):
             if interface_name in disable:
                 disable.append(interface_name)
-                print >> out, " - Disabling: " + info['title']
+                logger.debug("Disabling: " + info['title'])
             else:
                 activatable.append(interface_name)
-                print >> out, " - Activating: " + info['title']
+                logger.debug("Activating: " + info['title'])
     plugin_obj.manage_activateInterfaces(activatable)
-    print >> out, plugin + " activated."
+    logger.debug(plugin + " activated.")
 
 
-def installProducts(portal, out):
-    print >> out, "\nInstalling other products"
+def installProducts(portal):
     qi = getToolByName(portal, 'portal_quickinstaller')
-
-    print >> out, " - PasswordResetTool"
     qi.installProduct('PasswordResetTool')
 
 
@@ -118,70 +116,70 @@ def registerPluginTypes(pas):
     registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
 
 
-def setupPlugins(portal, out):
+def setupPlugins(portal):
     uf = portal.acl_users
-    print >> out, "\nPlugin setup"
+    logger.debug("\nPlugin setup")
 
     pas = uf.manage_addProduct['PluggableAuthService']
     plone_pas = uf.manage_addProduct['PlonePAS']
 
-    setupAuthPlugins(portal, pas, plone_pas, out)
+    setupAuthPlugins(portal, pas, plone_pas)
 
     found = uf.objectIds(['User Manager'])
     if not found:
         plone_pas.manage_addUserManager('source_users')
-        print >> out, "Added User Manager."
-    activatePluginInterfaces(portal, 'source_users', out)
+        logger.debug("Added User Manager.")
+    activatePluginInterfaces(portal, 'source_users')
 
     found = uf.objectIds(['Group Aware Role Manager'])
     if not found:
         plone_pas.manage_addGroupAwareRoleManager('portal_role_manager')
-        print >> out, "Added Group Aware Role Manager."
-        activatePluginInterfaces(portal, 'portal_role_manager', out)
+        logger.debug("Added Group Aware Role Manager.")
+        activatePluginInterfaces(portal, 'portal_role_manager')
 
     found = uf.objectIds(['Local Roles Manager'])
     if not found:
         plone_pas.manage_addLocalRolesManager('local_roles')
-        print >> out, "Added Group Aware Role Manager."
-        activatePluginInterfaces(portal, 'local_roles', out)
+        logger.debug("Added Group Aware Role Manager.")
+        activatePluginInterfaces(portal, 'local_roles')
 
     found = uf.objectIds(['Group Manager'])
     if not found:
         plone_pas.manage_addGroupManager('source_groups')
-        print >> out, "Added ZODB Group Manager."
-        activatePluginInterfaces(portal, 'source_groups', out)
+        logger.debug("Added ZODB Group Manager.")
+        activatePluginInterfaces(portal, 'source_groups')
 
     found = uf.objectIds(['Plone User Factory'])
     if not found:
         plone_pas.manage_addPloneUserFactory('user_factory')
-        print >> out, "Added Plone User Factory."
-        activatePluginInterfaces(portal, "user_factory", out)
+        logger.debug("Added Plone User Factory.")
+        activatePluginInterfaces(portal, "user_factory")
 
     found = uf.objectIds(['ZODB Mutable Property Provider'])
     if not found:
         plone_pas.manage_addZODBMutablePropertyProvider('mutable_properties')
-        print >> out, "Added Mutable Property Manager."
-        activatePluginInterfaces(portal, "mutable_properties", out)
+        logger.debug("Added Mutable Property Manager.")
+        activatePluginInterfaces(portal, "mutable_properties")
 
     found = uf.objectIds(['Automatic Group Plugin'])
     if not found:
         plone_pas.manage_addAutoGroup('auto_group', "Automatic Group Provider",
                 "AuthenticatedUsers", "Authenticated Users (Virtual Group)")
-        print >> out, "Added Automatic Group."
-        activatePluginInterfaces(portal, "auto_group", out)
+        logger.debug("Added Automatic Group.")
+        activatePluginInterfaces(portal, "auto_group")
 
     found = uf.objectIds(['Plone Session Plugin'])
     if not found:
         manage_addSessionPlugin(plone_pas, 'session')
-        print >> out, "Added Plone Session Plugin."
-        activatePluginInterfaces(portal, "session", out)
+        logger.debug("Added Plone Session Plugin.")
+        activatePluginInterfaces(portal, "session")
 
 
-def setupAuthPlugins(portal, pas, plone_pas, out,
+def setupAuthPlugins(portal, pas, plone_pas,
                      deactivate_basic_reset=True,
                      deactivate_cookie_challenge=False):
     uf = portal.acl_users
-    print >> out, " cookie plugin setup"
+    logger.debug("Cookie plugin setup")
 
     login_path = 'login_form'
     logout_path = 'logged_out'
@@ -193,48 +191,36 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
         logout_path = crumbler.logout_page
         cookie_name = crumbler.auth_cookie
 
-    # note: old versions of PlonePAS (< 0.4.2) may leave a 'Cookie
-    #       Auth Helper' by the same name
-    found = uf.objectIds(['Cookie Auth Helper'])
-    if found and 'credentials_cookie_auth' in found:
-        print >> out, " old credentials_cookie_auth found; removing"
-        login_path = uf.credentials_cookie_auth.login_path
-        cookie_name = uf.credentials_cookie_auth.cookie_name
-        uf.manage_delObjects(['credentials_cookie_auth'])
-
     found = uf.objectIds(['Extended Cookie Auth Helper'])
     if not found:
         plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
                                                      cookie_name=cookie_name)
-    print >> out, "Added Extended Cookie Auth Helper."
+    logger.debug("Added Extended Cookie Auth Helper.")
     if deactivate_basic_reset:
         disable=['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
     else:
         disable=[]
-    activatePluginInterfaces(portal, 'credentials_cookie_auth', out,
+    activatePluginInterfaces(portal, 'credentials_cookie_auth',
             disable=disable)
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
     if 'login_form' in credentials_cookie_auth.objectIds():
         credentials_cookie_auth.manage_delObjects(ids=['login_form'])
-        print >> out, "Removed default login_form from credentials cookie auth."
+        logger.debug("Removed default login_form from credentials cookie auth.")
     credentials_cookie_auth.cookie_name = cookie_name
     credentials_cookie_auth.login_path = login_path
 
     # remove cookie crumbler(s)
     if 'cookie_authentication' in portal.objectIds():
         portal.manage_delObjects(['cookie_authentication'])
-
-    ccs = portal.objectValues('Cookie Crumbler')
-    assert not ccs, "Extra cookie crumblers found."
-    print >> out, "Removed old Cookie Crumbler"
+    logger.debug("Removed old Cookie Crumbler")
 
     found = uf.objectIds(['HTTP Basic Auth Helper'])
     if not found:
         pas.addHTTPBasicAuthHelper('credentials_basic_auth',
                                title="HTTP Basic Auth")
-    print >> out, "Added Basic Auth Helper."
-    activatePluginInterfaces(portal, 'credentials_basic_auth', out)
+    logger.debug("Added Basic Auth Helper.")
+    activatePluginInterfaces(portal, 'credentials_basic_auth')
 
     if deactivate_basic_reset:
         uf.plugins.deactivatePlugin(ICredentialsResetPlugin,
@@ -244,16 +230,12 @@ def setupAuthPlugins(portal, pas, plone_pas, out,
                                      'credentials_cookie_auth')
 
 
-def configurePlonePAS(portal, out):
+def configurePlonePAS(portal):
     """Add the necessary objects to make a usable PAS instance
     """
-    installProducts(portal, out)
+    installProducts(portal)
     registerPluginTypes(portal.acl_users)
-    setupPlugins(portal, out)
-
-
-def setupTools(portal, out):
-    print >> out, "\nTools:"
+    setupPlugins(portal)
 
 
 def updateProperties(tool, properties):
@@ -284,21 +266,21 @@ def updateProp(prop_manager, prop_dict):
         prop_manager._updateProperty(id, prop_dict['value'])
 
 
-def addPAS(portal, out):
-    print >> out, " - Adding PAS user folder"
+def addPAS(portal):
+    logger.debug("Adding PAS user folder")
     portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
 
 
-def migrate_root_uf(self, out):
+def migrate_root_uf(self):
     # Acquire parent user folder.
     parent = self.getPhysicalRoot()
     uf = getToolByName(parent, 'acl_users')
     if IPluggableAuthService.providedBy(uf):
         # It's a PAS already, fixup if needed.
-        pas_fixup(parent, out)
+        pas_fixup(parent)
 
         # Configure Challenge Chooser plugin if available
-        challenge_chooser_setup(parent, out)
+        challenge_chooser_setup(parent)
         return
 
     if not uf.meta_type == 'User Folder':
@@ -306,7 +288,7 @@ def migrate_root_uf(self, out):
         return
 
     # It's a standard User Folder, replace it.
-    replace_acl_users(parent, out)
+    replace_acl_users(parent)
 
     # Get the new uf
     uf = getToolByName(parent, 'acl_users')
@@ -314,24 +296,24 @@ def migrate_root_uf(self, out):
     pas = uf.manage_addProduct['PluggableAuthService']
     plone_pas = uf.manage_addProduct['PlonePAS']
     # Setup authentication plugins
-    setupAuthPlugins(parent, pas, plone_pas, out,
+    setupAuthPlugins(parent, pas, plone_pas,
                      deactivate_basic_reset=False,
                      deactivate_cookie_challenge=True)
 
     # Activate *all* interfaces for user manager. IUserAdder is not
     # activated for some reason by default.
-    activatePluginInterfaces(parent, 'users', out)
+    activatePluginInterfaces(parent, 'users')
 
     # Configure Challenge Chooser plugin if available
-    challenge_chooser_setup(parent, out)
+    challenge_chooser_setup(parent)
 
-def pas_fixup(self, out):
+def pas_fixup(self):
     from Products.PluggableAuthService.PluggableAuthService \
          import _PLUGIN_TYPE_INFO
 
     pas = getToolByName(self, 'acl_users')
     if not IPluggableAuthService.providedBy(pas):
-        print >> out, 'PAS UF not found, skipping PAS fixup'
+        logger.debug('PAS UF not found, skipping PAS fixup.')
         return
 
     plugins = pas['plugins']
@@ -339,9 +321,9 @@ def pas_fixup(self, out):
     plugin_types = list(set(plugins._plugin_types))
     for key, id, title, description in _PLUGIN_TYPE_INFO:
         if key in plugin_types:
-            print >> out, "Plugin type '%s' already registered." % id
+            logger.debug("Plugin type '%s' already registered." % id)
             continue
-        print >> out, "Plugin type '%s' was not registered." % id
+        logger.debug("Plugin type '%s' was not registered." % id)
         plugin_types.append(key)
         plugins._plugin_type_info[key] = {
             'id': id,
@@ -354,7 +336,7 @@ def pas_fixup(self, out):
     # Re-assign because it's a non-persistent property.
     plugins._plugin_types = plugin_types
 
-def challenge_chooser_setup(self, out):
+def challenge_chooser_setup(self):
     uf = getToolByName(self, 'acl_users')
     plugins = uf['plugins']
     pas = uf.manage_addProduct['PluggableAuthService']
@@ -364,36 +346,35 @@ def challenge_chooser_setup(self, out):
            'addRequestTypeSnifferPlugin')
     for m in req:
         if getattr(pas, m, None) is None:
-            print >> out, 'Needed plugins have not been found, ignoring'
+            logger.debug('Needed plugins have not been found, ignoring')
             return
 
     found = uf.objectIds(['Challenge Protocol Chooser Plugin'])
     if not found:
-        print >> out, 'Adding Challenge Protocol Chooser Plugin.'
+        logger.debug('Adding Challenge Protocol Chooser Plugin.')
         pas.addChallengeProtocolChooserPlugin(
             'chooser',
             mapping=config.DEFAULT_PROTO_MAPPING)
-        activatePluginInterfaces(self, 'chooser', out)
+        activatePluginInterfaces(self, 'chooser')
     else:
         assert len(found) == 1, 'Found extra plugins %s' % found
-        print >> out, 'Found existing Challenge Protocol Chooser Plugin.'
+        logger.debug('Found existing Challenge Protocol Chooser Plugin.')
         plugin = uf[found[0]]
         plugin.manage_updateProtocolMapping(mapping=config.DEFAULT_PROTO_MAPPING)
-        activatePluginInterfaces(self, found[0], out)
+        activatePluginInterfaces(self, found[0])
 
     found = uf.objectIds(['Request Type Sniffer Plugin'])
     if not found:
-        print >> out, 'Adding Request Type Sniffer Plugin.'
+        logger.debug('Adding Request Type Sniffer Plugin.')
         pas.addRequestTypeSnifferPlugin('sniffer')
-        activatePluginInterfaces(self, 'sniffer', out)
+        activatePluginInterfaces(self, 'sniffer')
     else:
         assert len(found) == 1, 'Found extra plugins %s' % found
-        print >> out, 'Found existing Request Type Sniffer Plugin.'
-        activatePluginInterfaces(self, found[0], out)
+        logger.debug('Found existing Request Type Sniffer Plugin.')
+        activatePluginInterfaces(self, found[0])
 
 
 def install(self):
-    out = StringIO()
     portal = getToolByName(self, 'portal_url').getPortalObject()
 
     uf = getToolByName(self, 'acl_users')
@@ -401,23 +382,20 @@ def install(self):
     EXISTING_UF = 'acl_users' in portal.objectIds()
 
     # Fix possible missing PAS plugins registration.
-    pas_fixup(self, out)
+    pas_fixup(self)
 
     # Register PAS Plugin Types
     registerPluginTypes(uf)
 
     if not EXISTING_UF:
-        addPAS(portal, out)
+        addPAS(portal)
 
     # Configure Challenge Chooser plugin if available
-    challenge_chooser_setup(self, out)
+    challenge_chooser_setup(self)
 
-    configurePlonePAS(portal, out)
-
-    setupTools(portal, out)
+    configurePlonePAS(portal)
 
     # We need to do this, as we cannot inherit users from a non-PAS folder
-    migrate_root_uf(self, out)
+    migrate_root_uf(self)
 
-    print >> out, "\nSuccessfully installed %s." % config.PROJECTNAME
-    return out.getvalue()
+    logger.debug("\nSuccessfully installed PlonePAS.")
