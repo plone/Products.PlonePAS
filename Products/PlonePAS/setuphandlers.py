@@ -47,15 +47,15 @@ def addRolesToPlugIn(p):
             rmanager.addRole(role)
 
 
-def setupGroups(p):
+def setupGroups(site):
     """
     Create Plone's default set of groups.
     """
-    gtool = getToolByName(p, 'portal_groups')
-    existing = gtool.listGroupIds()
-    if 'Administrators' not in existing:
+    uf = getToolByName(site, 'acl_users')
+    gtool = getToolByName(site, 'portal_groups')
+    if not uf.searchGroups(id='Administrators'):
         gtool.addGroup('Administrators', roles=['Manager'])
-    if 'Reviewers' not in existing:
+    if not uf.searchGroups(id='Reviewers'):
         gtool.addGroup('Reviewers', roles=['Reviewer'])
 
 

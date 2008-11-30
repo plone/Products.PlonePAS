@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Started cleaning up deprecated methods and comments.
+  [hannosch]
+
 - Removed support for group workspaces. This part from GRUF hasn't been
   supported for many releases anymore.
   [hannosch]

@@ -35,7 +35,7 @@ from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.utils import cleanId
 
 default_portrait = 'defaultUser.gif'
-logger = logging.getLogger('Plone')
+logger = logging.getLogger('PlonePAS')
 
 
 class MembershipTool(BaseTool):

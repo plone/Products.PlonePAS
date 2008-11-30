@@ -1,32 +1,11 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
 """
 gruf specific hacks to pas, to make it play well in gruf
-
-in general its not recommended, but its a low risk mechanism for
-experimenting with pas flexibility on an existing system.
-
-open question if this mode will be supported at all
-
 """
 
 import logging
 from zope.deprecation import deprecate
 from sets import Set
 
-from Products.PluggableAuthService.PluggableAuthService import security
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins \
@@ -36,7 +15,7 @@ from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
 from Products.CMFCore.utils import getToolByName
 
-logger = logging.getLogger('Plone')
+logger = logging.getLogger('PlonePAS')
 
 def authenticate(self, name, password, request):
 
@@ -115,13 +94,6 @@ def userSetGroups(self, id, groupnames):
 
 PluggableAuthService.userSetGroups = userSetGroups
 
-@deprecate("userFolderAddGroup is deprecated. Use the PAS methods instead")
-def userFolderAddGroup(self, name, roles, groups = (), **kw):
-    gtool = getToolByName(self, 'portal_groups')
-    return gtool.addGroup(name, roles, groups, **kw)
-
-PluggableAuthService.userFolderAddGroup = userFolderAddGroup
-
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
 
@@ -168,26 +140,3 @@ def getUserNames(self):
 
 PluggableAuthService.getUserIds = getUserIds
 PluggableAuthService.getUserNames = getUserNames
-
-#################################
-# Evil role aquisition blocking
-
-# XXX: Is this used anywhere, all the code seems to use the PloneTool method
-def acquireLocalRoles(self, obj, status = 1):
-    """If status is 1, allow acquisition of local roles (regular behaviour).
-
-    If it's 0, prohibit it (it will allow some kind of local role blacklisting).
-    """
-    # Set local role status
-    if not status:
-        obj.__ac_local_roles_block__ = 1
-    else:
-        if getattr(obj, '__ac_local_roles_block__', None):
-            obj.__ac_local_roles_block__ = None
-
-PluggableAuthService._acquireLocalRoles = acquireLocalRoles
-
-#################################
-# give interested parties some apriori way of noticing pas is a user folder impl
-PluggableAuthService.isAUserFolder = 1
-

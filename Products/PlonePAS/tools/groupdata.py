@@ -33,7 +33,7 @@ from Products.PlonePAS.tools.memberdata import MemberData
 
 import logging
 
-logger = logging.getLogger('Plone')
+logger = logging.getLogger('PlonePAS')
 _marker = object()
 
 

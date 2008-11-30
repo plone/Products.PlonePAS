@@ -41,7 +41,7 @@ from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
-logger = logging.getLogger('Plone')
+logger = logging.getLogger('PlonePAS')
 
 def manage_addGroupManager(self, id, title='', RESPONSE=None):
     """

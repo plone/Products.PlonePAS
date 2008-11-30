@@ -1,20 +1,5 @@
-##############################################################################
-#
-# PlonePAS - Adapt PluggableAuthService for use in Plone
-# Copyright (C) 2005 Enfold Systems, Kapil Thangavelu, et al
-#
-# This software is subject to the provisions of the Zope Public License,
-# Version 2.1 (ZPL).  A copy of the ZPL should accompany this
-# distribution.
-# THIS SOFTWARE IS PROVIDED "AS IS" AND ANY AND ALL EXPRESS OR IMPLIED
-# WARRANTIES ARE DISCLAIMED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF TITLE, MERCHANTABILITY, AGAINST INFRINGEMENT, AND FITNESS
-# FOR A PARTICULAR PURPOSE.
-#
-##############################################################################
-"""
-pas alterations and monkies
-"""
+# pas alterations and monkies
+
 from sets import Set
 from Products.CMFCore.utils import getToolByName
 
@@ -150,10 +135,8 @@ PluggableAuthService.userFolderDelGroups = postonly(PluggableAuthService._doDelG
 
 def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
     """
-    Given a group's id, change its roles, domains, iff respective
-    plugins for such exist.
-
-    XXX domains are currently ignored.
+    Given a group's id, change its roles, domains, if respective
+    plugins for such exist. Domains are currently ignored.
 
     See also _doChangeUser
     """
@@ -164,10 +147,8 @@ PluggableAuthService._doChangeGroup = _doChangeGroup
 
 def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
     """
-    Given a group's id, change its roles, groups, iff respective
-    plugins for such exist.
-
-    XXX domains are currently ignored.
+    Given a group's id, change its roles, groups, if respective
+    plugins for such exist. Domains are ignored.
 
     This is not an alias to _doChangeGroup because its params are different (slightly).
     """
@@ -302,14 +283,6 @@ def canListAllUsers(self):
     # Do we have multiple user plugins?
     if len(plugins.listPlugins(IUserEnumerationPlugin)) != len(plugins.listPlugins(IUserIntrospection)):
         return False
-
-    # Does our single user enumerator support the needed API?
-    #for method in [#'countAllUsers',
-    #               'getUsers',
-    #               'getUserNames']:
-    #    if not hasattr(pas, method):
-    #        return False
-
     return True
 PluggableAuthService.canListAllUsers = canListAllUsers
 

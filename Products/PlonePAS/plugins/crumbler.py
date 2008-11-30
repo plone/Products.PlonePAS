@@ -29,6 +29,9 @@ from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 
 from Products.CMFCore.CookieCrumbler import manage_addCC
 
+import logging
+logger = logging.getLogger('PlonePAS')
+
 CC_ID = 'cookie_auth'
 
 def manage_addCookieCrumblingPlugin(self, id, title='',
@@ -73,8 +76,6 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
             self._getCC().modifyRequest(request, request.RESPONSE)
 
         except Exception, e:
-            import logging
-            logger = logging.getLogger('Plone')
             logger.error("PlonePAS error: %s", e, exc_info=1)
 
         return {}
