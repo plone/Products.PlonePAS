@@ -20,8 +20,27 @@ setup(name='Products.PlonePAS',
       namespace_packages=['Products'],
       include_package_data=True,
       zip_safe=False,
+      extras_require=dict(
+        test=[
+            'Products.PloneTestCase',
+        ]
+      ),
       install_requires=[
         'setuptools',
         'plone.memoize',
+        'plone.session',
+        'zope.component',
+        'zope.deprecation',
+        'zope.event',
+        'zope.interface',
+        'Plone',
+        'Products.CMFCore',
+        'Products.CMFDefault',
+        'Products.PluggableAuthService',
+        # 'Acquisition',
+        # 'DateTime',
+        # 'transaction',
+        # 'ZODB3',
+        # 'Zope2',
       ],
 )

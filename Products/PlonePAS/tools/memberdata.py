@@ -1,4 +1,4 @@
-from Globals import InitializeClass
+from App.class_init import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 

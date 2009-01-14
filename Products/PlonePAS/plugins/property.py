@@ -5,7 +5,8 @@ import copy
 
 from ZODB.PersistentMapping import PersistentMapping
 from BTrees.OOBTree import OOBTree
-from Globals import DTMLFile, InitializeClass
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 
 from Products.CMFCore.utils import getToolByName
 

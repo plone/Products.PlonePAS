@@ -8,7 +8,8 @@ roles from their containment structure.
 
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner, aq_parent
-from Globals import DTMLFile, InitializeClass
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 
 from zope.interface import implementedBy
 

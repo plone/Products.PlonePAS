@@ -6,7 +6,8 @@ from zope import event
 
 import PIL
 from DateTime import DateTime
-from Globals import InitializeClass, DTMLFile
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 from OFS.Image import Image
 
 from AccessControl import ClassSecurityInfo

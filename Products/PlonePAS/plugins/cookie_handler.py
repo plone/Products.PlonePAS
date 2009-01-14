@@ -12,7 +12,8 @@ from urllib import quote
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
-from Globals import InitializeClass, DTMLFile
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
 from Products.PluggableAuthService.utils import classImplements

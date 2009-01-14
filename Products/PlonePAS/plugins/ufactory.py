@@ -1,6 +1,7 @@
 from AccessControl import ClassSecurityInfo
 from AccessControl.PermissionRole import _what_not_even_god_should_do
-from Globals import InitializeClass, DTMLFile
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser

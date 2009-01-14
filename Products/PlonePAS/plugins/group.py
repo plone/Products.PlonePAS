@@ -7,8 +7,8 @@ management (ie. rw) capabilities.
 import logging
 from Acquisition import aq_base
 from BTrees.OOBTree import OOBTree, OOSet
-from Globals import DTMLFile
-from Globals import InitializeClass
+from App.special_dtml import DTMLFile
+from App.class_init import InitializeClass
 from AccessControl import ClassSecurityInfo
 
 from zope.interface import implementedBy

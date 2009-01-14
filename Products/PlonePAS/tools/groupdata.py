@@ -9,7 +9,7 @@ from AccessControl import Permissions
 from AccessControl import getSecurityManager
 from AccessControl.requestmethod import postonly
 from BTrees.OOBTree import OOBTree
-from Globals import InitializeClass
+from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from OFS.PropertyManager import PropertyManager
 from ZPublisher.Converters import type_converters

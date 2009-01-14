@@ -3,7 +3,8 @@ ZODB based user manager with introspection and management interfaces.
 """
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
-from Globals import InitializeClass, DTMLFile
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 
 from zope.interface import implementedBy
 

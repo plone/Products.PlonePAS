@@ -4,6 +4,10 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Declare test dependencies in an extra and fixed deprecation warnings
+  for use of Globals.
+  [hannosch]
+
 - Switched the installation progress reporting to the logging framework.
   [hannosch]
 

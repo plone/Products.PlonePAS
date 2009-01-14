@@ -6,7 +6,8 @@ This allows form logins to fall through to parent user folders.
 """
 from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo
-from Globals import InitializeClass, DTMLFile
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 from OFS.Folder import Folder
 
 from Products.PluggableAuthService.utils import classImplements

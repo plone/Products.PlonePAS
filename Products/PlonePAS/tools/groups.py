@@ -7,7 +7,7 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
 from AccessControl.User import nobody
-from Globals import InitializeClass
+from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from ZODB.POSException import ConflictError
 

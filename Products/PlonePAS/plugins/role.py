@@ -6,7 +6,8 @@ to the principal.
 """
 
 from AccessControl import ClassSecurityInfo
-from Globals import DTMLFile, InitializeClass
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
 from Acquisition import aq_parent, aq_inner
 
 from zope.interface import implementedBy
