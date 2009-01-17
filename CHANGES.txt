@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Cleaned up package metadata.
+  [hannosch]
+
 - Declare test dependencies in an extra and fixed deprecation warnings
   for use of Globals.
   [hannosch]

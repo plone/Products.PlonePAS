@@ -5,8 +5,8 @@ version = '4.0'
 setup(name='Products.PlonePAS',
       version=version,
       description="PlonePAS adapts the PluggableAuthService for use by Plone.",
-      long_description="""\
-      """,
+      long_description=open("README.txt").read() + "\n" + \
+                       open("CHANGES.txt").read(),
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
@@ -37,10 +37,10 @@ setup(name='Products.PlonePAS',
         'Products.CMFCore',
         'Products.CMFDefault',
         'Products.PluggableAuthService',
-        # 'Acquisition',
-        # 'DateTime',
+        'Acquisition',
+        'DateTime',
         # 'transaction',
-        # 'ZODB3',
-        # 'Zope2',
+        'ZODB3',
+        'Zope2',
       ],
 )
