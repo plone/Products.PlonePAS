@@ -28,12 +28,12 @@ from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.MembershipTool import MembershipTool as BaseTool
 from Products.CMFPlone.utils import _createObjectByType
-from Products.CMFPlone.utils import scale_image
 
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.utils import cleanId
+from Products.PlonePAS.utils import scale_image
 
 default_portrait = 'defaultUser.gif'
 logger = logging.getLogger('PlonePAS')

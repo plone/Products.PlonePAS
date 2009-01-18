@@ -1,6 +1,6 @@
 from AccessControl.Permissions import add_user_folders
+from Products.CMFCore.utils import ToolInit
 from Products.PluggableAuthService import registerMultiPlugin
-from Products.CMFPlone import utils as plone_utils
 
 import config
 
@@ -44,10 +44,6 @@ from tools.groups import GroupsTool
 from tools.groupdata import GroupDataTool
 
 #################################
-# import Extensions to check for syntax errors
-from Extensions import *
-
-#################################
 # register plugins with pas
 try:
     registerMultiPlugin( user.UserManager.meta_type )
@@ -67,7 +63,7 @@ def initialize(context):
 
     tools = ( GroupsTool, GroupDataTool, MembershipTool, MemberDataTool )
 
-    plone_utils.ToolInit('PlonePAS Tool',
+    ToolInit('PlonePAS Tool',
                          tools=tools,
                          icon='tool.gif',
                          ).initialize(context)

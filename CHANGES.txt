@@ -4,6 +4,11 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Moved the `scale_image` function from CMFPlone.utils into our own utils
+  module, as we are the only user of it. Also made the tests independent of
+  any CMFPlone code.
+  [hannosch]
+
 - Cleaned up package metadata.
   [hannosch]
 

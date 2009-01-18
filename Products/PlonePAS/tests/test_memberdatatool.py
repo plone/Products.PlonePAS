@@ -1,10 +1,10 @@
 from DateTime import DateTime
 from OFS.Image import Image
 
-from Products.CMFPlone.tests import dummy
 from Products.PloneTestCase.ptc import default_user
 
 from Products.PlonePAS.tests import base
+from Products.PlonePAS.tests import dummy
 
 
 class TestMemberDataTool(base.TestCase):

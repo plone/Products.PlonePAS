@@ -12,7 +12,6 @@ from zExceptions import BadRequest
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
-from Products.CMFPlone.tests import dummy
 
 from Products.PloneTestCase.ptc import default_password
 from Products.PloneTestCase.ptc import default_user
@@ -21,6 +20,7 @@ from Products.PloneTestCase.ptc import portal_owner
 
 from Products.PlonePAS.plugins.ufactory import PloneUser
 from Products.PlonePAS.tests import base
+from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 
 
@@ -166,9 +166,9 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         member.setMemberProperties({'fullname': fullname, 'email': email,
                                     'last_login_time': DateTime(last_login_time),})
     def makeRealImage(self):
-        import Products.CMFPlone as plone
-        plone_path = os.path.dirname(plone.__file__)
-        path = os.path.join(plone_path, 'tests', 'images', 'test.jpg')
+        import Products.PlonePAS as ppas
+        pas_path = os.path.dirname(ppas.__file__)
+        path = os.path.join(pas_path, 'tool.gif')
         image = open(path, 'rb')
         image_upload = dummy.FileUpload(dummy.FieldStorage(image))
         return image_upload

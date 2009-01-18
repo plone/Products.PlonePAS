@@ -34,6 +34,7 @@ HTTPResponse.setBody = setBody
 def test_suite():
     suite = unittest.TestSuite()
     DocFileSuite = ZopeTestCase.FunctionalDocFileSuite
+    DocTestSuite = ZopeTestCase.FunctionalDocTestSuite
     tests = (
         ('cookie_auth.txt', base.FunctionalTestCase),
         )
@@ -43,5 +44,5 @@ def test_suite():
                          test_class=klass,
                          package='Products.PlonePAS.tests')
         suite.addTest(t)
+    suite.addTest(DocTestSuite('Products.PlonePAS.utils')),
     return suite
-
