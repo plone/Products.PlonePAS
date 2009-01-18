@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed a dependency on CMFPlone's `_createObjectByType` method.
+  [hannosch]
+
 - Removed magical `homePageText` lookup for initial memberarea content. You
   can use the `notifyMemberAreaCreated` hook for any kind of custom behavior.
   [hannosch]

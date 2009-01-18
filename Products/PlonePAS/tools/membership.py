@@ -27,7 +27,6 @@ from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.MembershipTool import MembershipTool as BaseTool
-from Products.CMFPlone.utils import _createObjectByType
 
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
@@ -281,7 +280,10 @@ class MembershipTool(BaseTool):
                 member_id, safe_member_id))
             return
 
-        _createObjectByType(self.memberarea_type, members, id=safe_member_id)
+        # Create member area without security checks
+        typesTool = getToolByName(members, 'portal_types')
+        fti = typesTool.getTypeInfo(self.memberarea_type)
+        member_folder = fti._constructInstance(members, safe_member_id)
 
         # Get the user object from acl_users
         acl_users = getToolByName(self, "acl_users")
