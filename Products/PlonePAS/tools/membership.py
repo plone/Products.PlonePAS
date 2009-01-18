@@ -238,14 +238,10 @@ class MembershipTool(BaseTool):
     ## sanitize home folders (we may get URL-illegal ids)
 
     security.declarePublic('createMemberarea')
-    def createMemberarea(self, member_id=None, minimal=True):
+    def createMemberarea(self, member_id=None, minimal=None):
         """
         Create a member area for 'member_id' or the authenticated
         user, but don't assume that member_id is url-safe.
-
-        Unfortunately, a pretty close copy of the (very large)
-        original and only a few lines different.  Plone should
-        probably do this.
         """
         if not self.getMemberareaCreationFlag():
             return None
@@ -311,29 +307,6 @@ class MembershipTool(BaseTool):
         fullname = member_object.getProperty('fullname')
         member_folder.setTitle(fullname or member_id)
         member_folder.reindexObject()
-
-        if not minimal:
-            ## add homepage text
-            # get the text from portal_skins automagically
-            homepageText = getattr(self, 'homePageText', None)
-            if homepageText:
-                portal = getToolByName(self, "portal_url").getPortalObject()
-                # call the page template
-                content = homepageText(member=member_object, portal=portal).strip()
-                _createObjectByType('Document', member_folder, id='index_html')
-                hpt = getattr(member_folder, 'index_html')
-                # edit title, text and format
-                hpt.setTitle(fullname or member_id)
-                if hpt.meta_type == 'Document':
-                    hpt.edit(text_format='structured-text', text=content)
-                else:
-                    hpt.update(text=content)
-                hpt.setFormat('structured-text')
-                hpt.reindexObject()
-                # Grant Ownership and Owner role to Member
-                hpt.changeOwnership(user)
-                hpt.__ac_local_roles__ = None
-                hpt.manage_setLocalRoles(member_id, ['Owner'])
 
         ## Hook to allow doing other things after memberarea creation.
         notify_script = getattr(member_folder, 'notifyMemberAreaCreated', None)

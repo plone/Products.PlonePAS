@@ -4,6 +4,10 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed magical `homePageText` lookup for initial memberarea content. You
+  can use the `notifyMemberAreaCreated` hook for any kind of custom behavior.
+  [hannosch]
+
 - Moved the `scale_image` function from CMFPlone.utils into our own utils
   module, as we are the only user of it. Also made the tests independent of
   any CMFPlone code.
