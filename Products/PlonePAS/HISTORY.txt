@@ -2,9 +2,6 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.9 - UNRELEASED
-
-
 PlonePAS 3.8 - February 13, 2009
 
     - Update the role manager's assignRoleToPrincipal method to lazily
