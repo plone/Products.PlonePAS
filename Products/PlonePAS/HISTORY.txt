@@ -4,6 +4,11 @@ Changelog for PlonePAS
 
 PlonePAS 3.8 - UNRELEASED
 
+    - Update the role manager's assignRoleToPrincipal method to lazily
+      update the cached list of portal roles. This fixes problems with
+      adding users with GenericSetup-created roles.
+      [wichert]
+
     - Fixed our OrderedDict to be unpickable with pickle protocol 2. On
       unpickling a __init__ method is not called and an optimization in
       protocol 2 would call __setitem__ without the _list to be initialized.
