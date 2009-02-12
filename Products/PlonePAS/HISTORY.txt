@@ -2,7 +2,10 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.8 - UNRELEASED
+PlonePAS 3.9 - UNRELEASED
+
+
+PlonePAS 3.8 - February 13, 2009
 
     - Update the role manager's assignRoleToPrincipal method to lazily
       update the cached list of portal roles. This fixes problems with
@@ -16,6 +19,7 @@ PlonePAS 3.8 - UNRELEASED
       around that. This change was found in using membrane and
       MemcachedManager.
       [hannosch, tesdal]
+
 
 PlonePAS 3.7 - September 28, 2008
 
