@@ -76,7 +76,8 @@ def setupPlonePAS(context):
     if context.readDataFile('plone-pas.txt') is None:
         return
     site = context.getSite()
-    installPAS(site)
-    addRolesToPlugIn(site)
-    setupGroups(site)
-    setLoginFormInCookieAuth(site)
+    if 'acl_users' not in site:
+        installPAS(site)
+        addRolesToPlugIn(site)
+        setupGroups(site)
+        setLoginFormInCookieAuth(site)
