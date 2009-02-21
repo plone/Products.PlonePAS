@@ -41,11 +41,6 @@ def activatePluginInterfaces(portal, plugin, disable=[]):
     logger.debug(plugin + " activated.")
 
 
-def installProducts(portal):
-    qi = getToolByName(portal, 'portal_quickinstaller')
-    qi.installProduct('PasswordResetTool')
-
-
 def setupRoles(portal):
     rmanager = portal.acl_users.role_manager
     rmanager.addRole('Member', title="Portal Member")
@@ -230,14 +225,6 @@ def setupAuthPlugins(portal, pas, plone_pas,
                                      'credentials_cookie_auth')
 
 
-def configurePlonePAS(portal):
-    """Add the necessary objects to make a usable PAS instance
-    """
-    installProducts(portal)
-    registerPluginTypes(portal.acl_users)
-    setupPlugins(portal)
-
-
 def updateProperties(tool, properties):
     propsWithNoDeps = [prop for prop in properties if prop['type'] not in ('selection', 'multiple selection')]
     propsWithDeps = [prop for prop in properties if prop['type'] in ('selection', 'multiple selection')]
@@ -372,30 +359,3 @@ def challenge_chooser_setup(self):
         assert len(found) == 1, 'Found extra plugins %s' % found
         logger.debug('Found existing Request Type Sniffer Plugin.')
         activatePluginInterfaces(self, found[0])
-
-
-def install(self):
-    portal = getToolByName(self, 'portal_url').getPortalObject()
-
-    uf = getToolByName(self, 'acl_users')
-
-    EXISTING_UF = 'acl_users' in portal.objectIds()
-
-    # Fix possible missing PAS plugins registration.
-    pas_fixup(self)
-
-    # Register PAS Plugin Types
-    registerPluginTypes(uf)
-
-    if not EXISTING_UF:
-        addPAS(portal)
-
-    # Configure Challenge Chooser plugin if available
-    challenge_chooser_setup(self)
-
-    configurePlonePAS(portal)
-
-    # We need to do this, as we cannot inherit users from a non-PAS folder
-    migrate_root_uf(self)
-
-    logger.debug("\nSuccessfully installed PlonePAS.")

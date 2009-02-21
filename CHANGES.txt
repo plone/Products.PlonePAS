@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed parts of the outdated Extensions.Install code.
+  [hannosch]
+
 - Removed a dependency on CMFPlone's `_createObjectByType` method.
   [hannosch]
 
