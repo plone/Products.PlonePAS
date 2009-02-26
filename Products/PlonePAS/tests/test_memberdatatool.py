@@ -43,7 +43,7 @@ class TestMemberDataTool(base.TestCase):
         self.memberdata._setPortrait(Image(id=default_user, file=dummy.File(), title=''), default_user)
         self.memberdata._setPortrait(Image(id=default_user, file=dummy.File(), title=''), 'dummy')
         self.memberdata.pruneMemberDataContents()
-        self.assertEqual(len(self.memberdata.portraits.objectIds()), 1)
+        self.assertEqual(len(self.memberdata.portraits), 1)
 
     def testFulltextMemberSearch(self):
         # Search for a user by id, name, email, ...

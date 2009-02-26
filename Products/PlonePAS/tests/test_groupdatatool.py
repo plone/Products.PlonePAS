@@ -22,7 +22,7 @@ class TestGroupDataTool(base.TestCase):
         self.groups.addGroup('foo')
         # MUST reset _v_ attributes!
         self.groupdata._v_temps = None
-        if 'auto_group' in self.acl_users.objectIds():
+        if 'auto_group' in self.acl_users:
             self.acl_users.manage_delObjects(['auto_group'])
 
     def testWrapGroup(self):
@@ -43,7 +43,7 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         self.groups = self.portal.portal_groups
         self.groupdata = self.portal.portal_groupdata
         self.groups.addGroup('foo')
-        if 'auto_group' in self.acl_users.objectIds():
+        if 'auto_group' in self.acl_users:
             self.acl_users.manage_delObjects(['auto_group'])
         # MUST reset _v_ attributes!
         self.memberdata._v_temps = None

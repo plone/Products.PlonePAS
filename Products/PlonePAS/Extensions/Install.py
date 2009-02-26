@@ -199,14 +199,14 @@ def setupAuthPlugins(portal, pas, plone_pas,
             disable=disable)
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
-    if 'login_form' in credentials_cookie_auth.objectIds():
+    if 'login_form' in credentials_cookie_auth:
         credentials_cookie_auth.manage_delObjects(ids=['login_form'])
         logger.debug("Removed default login_form from credentials cookie auth.")
     credentials_cookie_auth.cookie_name = cookie_name
     credentials_cookie_auth.login_path = login_path
 
     # remove cookie crumbler(s)
-    if 'cookie_authentication' in portal.objectIds():
+    if 'cookie_authentication' in portal:
         portal.manage_delObjects(['cookie_authentication'])
     logger.debug("Removed old Cookie Crumbler")
 

@@ -142,15 +142,15 @@ class MemberAreaTest(base.TestCase):
         self.portal.acl_users._doAddUser('foo', 'pw', ['Member'], [])
         self.portal.acl_users._doAddUser('bar', 'pw', ['Member'], [])
 
-        self.failIf('foo' in self.portal.Members.objectIds())
-        self.failIf('bar' in self.portal.Members.objectIds())
+        self.failIf('foo' in self.portal.Members)
+        self.failIf('bar' in self.portal.Members)
 
         self.mt.createMemberarea('foo')
-        self.failUnless('foo' in self.portal.Members.objectIds())
+        self.failUnless('foo' in self.portal.Members)
 
         self.mt.memberareaCreationFlag = 0
         self.mt.createMemberArea('bar')
-        self.failIf('bar' in self.portal.Members.objectIds())
+        self.failIf('bar' in self.portal.Members)
 
 
 class TestMembershipTool(base.TestCase, WarningInterceptor):
@@ -588,7 +588,7 @@ class TestMemberareaSetup(base.TestCase):
     def testHomePageNotExists(self):
         if self.membership.memberareaCreationFlag == True:
             # Should not have an index_html document anymore
-            self.failIf('index_html' in self.home.objectIds())
+            self.failIf('index_html' in self.home)
 
 
 class TestSearchForMembers(base.TestCase, WarningInterceptor):

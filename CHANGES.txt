@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Changed objectIds and objectValues calls to use the IContainer API.
+  [hannosch]
+
 - Removed parts of the outdated Extensions.Install code.
   [hannosch]
 

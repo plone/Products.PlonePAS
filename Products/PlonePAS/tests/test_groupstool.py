@@ -114,7 +114,7 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         self.groups = self.portal.portal_groups
         self._trap_warning_output()
 
-        if 'auto_group' in self.acl_users.objectIds():
+        if 'auto_group' in self.acl_users:
             self.acl_users.manage_delObjects(['auto_group'])
 
         # Nuke Administators and Reviewers groups added in 2.1a2 migrations

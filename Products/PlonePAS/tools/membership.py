@@ -675,7 +675,7 @@ class MembershipTool(BaseTool):
         import transaction
         TXN_THRESHOLD = 50
         counter = 1
-        for member_id in tuple(portraits.objectIds()):
+        for member_id in tuple(portraits.keys()):
             portrait = portraits[member_id]
             portrait_data = str(portrait.data)
             if portrait_data == '':
