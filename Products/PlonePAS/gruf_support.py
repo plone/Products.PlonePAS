@@ -1,7 +1,6 @@
 # gruf specific hacks to pas, to make it play well in gruf
 
 import logging
-from zope.deprecation import deprecate
 
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
@@ -54,7 +53,6 @@ PluggableAuthService.authenticate__roles__ = ()
 
 #################################
 # compat code galore
-@deprecate("userSetGroups is deprecated. Use the PAS methods instead")
 def userSetGroups(self, id, groupnames):
     plugins = self.plugins
     gtool = getToolByName(self, "portal_groups")
@@ -94,7 +92,6 @@ PluggableAuthService.userSetGroups = userSetGroups
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
 
-@deprecate("getUserIds is deprecated. Use the PAS methods instead")
 def getUserIds(self):
     plugins = self.plugins
 
@@ -115,7 +112,6 @@ def getUserIds(self):
     return results
 
 
-@deprecate("getUserNames is deprecated. Use the PAS methods instead")
 def getUserNames(self):
     plugins = self.plugins
 
