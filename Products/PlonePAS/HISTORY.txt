@@ -4,6 +4,12 @@ Changelog for PlonePAS
 
 PlonePAS 3.2.2 - unreleased
 
+    - Fix the cookie plugin's login handler to not trust the username
+      from the request. Instead we use the login name of the currently
+      authenticated user. This fixes CVE-2009-0662 (see
+      http://plone.org/products/plone/security/advisories/cve-2009-0662
+      for more information).
+      [wichert]
 
 PlonePAS 3.2.1 - October 23, 2008
 
