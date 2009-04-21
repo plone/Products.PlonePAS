@@ -2,8 +2,14 @@ Changelog for PlonePAS
 
     (name of developer listed in brackets)
 
-PlonePAS 3.9 - UNRELEASED
+PlonePAS 3.9 - April 21, 2009
 
+    - Fix the cookie plugin's login handler to not trust the username
+      from the request. Instead we use the login name of the currently
+      authenticated user. This fixes CVE-2009-0662 (see
+      http://plone.org/products/plone/security/advisories/cve-2009-0662
+      for more information).
+      [wichert]
 
 PlonePAS 3.8 - February 13, 2009
 

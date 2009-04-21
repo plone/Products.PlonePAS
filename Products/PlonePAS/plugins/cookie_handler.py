@@ -75,10 +75,10 @@ class ExtendedCookieAuthHelper(BasePlugin):
         request = self.REQUEST
         response = request['RESPONSE']
 
-        login = request.get('__ac_name', '')
         password = request.get('__ac_password', '')
 
         user = getSecurityManager().getUser()
+        login = user.getUserName()
         user_pas = aq_parent(user)
 
         if IPluggableAuthService.providedBy(user_pas):
