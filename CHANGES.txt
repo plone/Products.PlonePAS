@@ -4,6 +4,10 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- PlonePAS.gruf_support.authenticate method was not breaking out of 
+  the loop upon successful authenticateCredentials
+  [runyaga]
+
 - Changed objectIds and objectValues calls to use the IContainer API.
   [hannosch]
 
