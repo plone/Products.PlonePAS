@@ -56,12 +56,9 @@ def authenticate(self, name, password, request):
     for authenticator_id, auth in authenticators:
         try:
             uid_and_name = auth.authenticateCredentials(credentials)
-
-            if uid_and_name is None:
-                continue
-
-            user_id, name = uid_and_name
-
+            if uid_and_name is not None:
+                user_id, name = uid_and_name
+                break
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             logger.info('PluggableAuthService: AuthenticationPlugin %s error',
                     authenticator_id, exc_info=1)
