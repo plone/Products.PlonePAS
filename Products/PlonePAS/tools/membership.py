@@ -26,7 +26,7 @@ from Products.CMFCore.permissions import SetOwnPassword
 from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.MembershipTool import MembershipTool as BaseTool
+from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
@@ -40,8 +40,6 @@ logger = logging.getLogger('PlonePAS')
 
 class MembershipTool(BaseTool):
     """PAS-based customization of MembershipTool.
-
-    Uses CMFPlone's as base.
     """
 
     meta_type = "PlonePAS Membership Tool"
@@ -50,6 +48,7 @@ class MembershipTool(BaseTool):
     portrait_id = 'MyPortrait'
     default_portrait = 'defaultUser.gif'
     memberarea_type = 'Folder'
+    membersfolder_id = 'Members'
     security = ClassSecurityInfo()
 
     user_search_keywords = ('login', 'fullname', 'email', 'exact_match',
@@ -94,6 +93,20 @@ class MembershipTool(BaseTool):
         # members to have objects instead of folders as home "directory".
         self.memberarea_type = str(type_name).strip()
 
+    security.declareProtected(ManagePortal, 'setMembersFolderById')
+    def setMembersFolderById(self, id=''):
+        """ Set the members folder object by its id.
+        """
+        self.membersfolder_id = id.strip()
+
+    security.declarePublic('getMembersFolder')
+    def getMembersFolder(self):
+        """ Get the members folder object.
+        """
+        parent = aq_parent( aq_inner(self) )
+        members = getattr(parent, self.membersfolder_id, None)
+        return members
+
     security.declarePrivate('addMember')
     def addMember(self, id, password, roles, domains, properties=None):
         """Adds a new member to the user folder.
@@ -112,7 +125,7 @@ class MembershipTool(BaseTool):
 
     security.declarePublic('searchForMembers')
     @deprecate("portal_membership.searchForMembers is deprecated and will "
-               "be removed in Plone 3.5. Use PAS searchUsers instead")
+               "be removed in Plone 4.0. Use PAS searchUsers instead")
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
@@ -384,6 +397,16 @@ class MembershipTool(BaseTool):
             except (AttributeError, KeyError, TypeError):
                 pass
         return None
+
+
+    def getHomeUrl(self, id=None, verifyPermission=0):
+        """ Return the URL to a member's home folder, or None.
+        """
+        home = self.getHomeFolder(id, verifyPermission)
+        if home is not None:
+            return home.absolute_url()
+        else:
+            return None
 
 
     security.declarePublic('getPersonalFolder')

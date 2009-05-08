@@ -272,7 +272,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         groups = self.groups
         groups.addGroup(group2, None, [], [])
         group = groups.getGroupById(group2)
-        self.loginAsPortalOwner() # GRUF 3.52
+        self.loginAsPortalOwner()
         group.addMember(default_user)
         self.login(default_user) # Back to normal
         ugroups = self.portal.acl_users.getUserById(default_user).getGroups()

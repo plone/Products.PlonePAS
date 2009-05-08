@@ -4,7 +4,11 @@ Changelog
 4.0 - Unreleased
 ----------------
 
-- PlonePAS.gruf_support.authenticate method was not breaking out of 
+- Removed the CMFDefault dependency of the membership tool. We only need the
+  CMFCore functionality.
+  [hannosch]
+
+- PlonePAS.gruf_support.authenticate method was not breaking out of
   the loop upon successful authenticateCredentials
   [runyaga]
 
