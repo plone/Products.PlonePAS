@@ -12,6 +12,7 @@ from base64 import encodestring
 from urllib import quote
 from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo
+from AccessControl.SecurityManagement import getSecurityManager
 from Globals import InitializeClass, DTMLFile
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
@@ -75,8 +76,10 @@ class ExtendedCookieAuthHelper(BasePlugin):
         request = self.REQUEST
         response = request['RESPONSE']
 
-        login = request.get('__ac_name', '')
         password = request.get('__ac_password', '')
+
+        user = getSecurityManager().getUser()
+        login = user.getUserName()
 
         pas_instance = self._getPAS()
 
