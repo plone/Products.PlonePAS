@@ -11,7 +11,6 @@ from zope.interface import implementedBy
 from Products.PlonePAS.interfaces.plugins import IUserManagement, IUserIntrospection
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
 
-from Products.PluggableAuthService.utils import createViewName
 from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
 
@@ -56,10 +55,6 @@ class UserManager(BasePlugin):
         self._user_passwords[ user_id ] = password
         self._login_to_userid[ login_name ] = user_id
         self._userid_to_login[ user_id ] = login_name
-
-        # enumerateUsers return value has changed
-        view_name = createViewName('enumerateUsers')
-        self.ZCacheable_invalidate(view_name=view_name)
 
     ## User Management interface
 

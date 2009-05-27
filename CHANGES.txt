@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed half-done ZCacheable caching for users and groups.
+  [hannosch]
+
 - Removed the CMFDefault dependency of the membership tool. We only need the
   CMFCore functionality.
   [hannosch]

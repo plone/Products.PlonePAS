@@ -5,7 +5,6 @@ management (ie. rw) capabilities.
 """
 
 import logging
-from Acquisition import aq_base
 from BTrees.OOBTree import OOBTree, OOSet
 from App.special_dtml import DTMLFile
 from App.class_init import InitializeClass
@@ -156,46 +155,32 @@ class GroupManager(ZODBGroupManager):
         This method based on PluggableAuthService._findGroup
         """
 
-        # See if the group can be retrieved from the cache
         view_name = '_findGroup-%s' % group_id
         keywords = { 'group_id' : group_id
                    , 'title' : title
                    }
-        group = self.ZCacheable_get(view_name=view_name
-                                  , keywords=keywords
-                                  , default=None
-                                 )
 
-        if group is None:
+        group = self._createGroup(plugins, group_id, title)
 
-            group = self._createGroup(plugins, group_id, title)
+        propfinders = plugins.listPlugins(IPropertiesPlugin)
+        for propfinder_id, propfinder in propfinders:
 
-            propfinders = plugins.listPlugins(IPropertiesPlugin)
-            for propfinder_id, propfinder in propfinders:
+            data = propfinder.getPropertiesForUser(group, request)
+            if data:
+                group.addPropertysheet(propfinder_id, data)
 
-                data = propfinder.getPropertiesForUser(group, request)
-                if data:
-                    group.addPropertysheet(propfinder_id, data)
+        groups = self._getPAS()._getGroupsForPrincipal(group, request
+                                            , plugins=plugins)
+        group._addGroups(groups)
 
-            groups = self._getPAS()._getGroupsForPrincipal(group, request
-                                                , plugins=plugins)
-            group._addGroups(groups)
+        rolemakers = plugins.listPlugins(IRolesPlugin)
 
-            rolemakers = plugins.listPlugins(IRolesPlugin)
+        for rolemaker_id, rolemaker in rolemakers:
+            roles = rolemaker.getRolesForPrincipal(group, request)
+            if roles:
+                group._addRoles(roles)
 
-            for rolemaker_id, rolemaker in rolemakers:
-                roles = rolemaker.getRolesForPrincipal(group, request)
-                if roles:
-                    group._addRoles(roles)
-
-            group._addRoles(['Authenticated'])
-
-            # Cache the group if caching is enabled
-            base_group = aq_base(group)
-            if getattr(base_group, '_p_jar', None) is None:
-                self.ZCacheable_set(base_group
-                                   , view_name=view_name
-                                   , keywords=keywords)
+        group._addRoles(['Authenticated'])
 
         return group.__of__(self)
 
@@ -216,13 +201,6 @@ class GroupManager(ZODBGroupManager):
 
         if criteria:
             view_name = createViewName('_verifyGroup', group_id)
-            cached_info = self.ZCacheable_get(view_name=view_name
-                                             , keywords=criteria
-                                             , default=None)
-
-            if cached_info is not None:
-                return cached_info
-
             enumerators = plugins.listPlugins(IGroupEnumerationPlugin)
 
             for enumerator_id, enumerator in enumerators:
@@ -230,13 +208,7 @@ class GroupManager(ZODBGroupManager):
                     info = enumerator.enumerateGroups(**criteria)
 
                     if info:
-                        id = info[0]['id']
-                        # Put the computed value into the cache
-                        self.ZCacheable_set(id
-                                           , view_name=view_name
-                                           , keywords=criteria
-                                           )
-                        return id
+                        return info[0]['id']
 
                 except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                     logger.info(

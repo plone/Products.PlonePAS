@@ -23,9 +23,6 @@ Robustness and productization
  - LDAPMultiPlugin doesn't provide getGroupMembers; only matters
    when Group plugins of LDAPMulti are on. they're off by default.
 
- - Should call ZCacheable_invalidate on methods that modify users and
-   groups. PAS doesn't call this either.
-
  - searchGroups is only on id. We must at least do this. We could
    add another call for searchGroups for 'name' as well so that we
    search titles on those GroupEnumerators that support this.
