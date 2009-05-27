@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Removed deprecation warnings for various methods. These never happened.
+  [hannosch]
+
 - Removed half-done ZCacheable caching for users and groups.
   [hannosch]
 

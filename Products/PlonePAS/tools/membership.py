@@ -1,7 +1,6 @@
 import logging
 from cStringIO import StringIO
 
-from zope.deprecation import deprecate
 from zope import event
 
 import PIL
@@ -124,8 +123,6 @@ class MembershipTool(BaseTool):
             member.setMemberProperties(properties)
 
     security.declarePublic('searchForMembers')
-    @deprecate("portal_membership.searchForMembers is deprecated and will "
-               "be removed in Plone 4.0. Use PAS searchUsers instead")
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
