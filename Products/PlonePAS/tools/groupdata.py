@@ -229,10 +229,11 @@ class GroupData(BaseGroupData):
         for u_name in self.getGroup().getMemberIds():
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
-                logger.debug("Group has a non-existing user %s" % u_name)
-                continue
-            if usr.isGroup():
-                ret.append(gd.wrapGroup(usr))
+                usr = self._getGRUF().getGroupById(u_name)
+                if not usr:
+                    logger.debug("Group has a non-existing principal %s" % u_name)
+                    continue
+                ret.append(usr)
             else:
                 ret.append(md.wrapUser(usr))
         return ret
