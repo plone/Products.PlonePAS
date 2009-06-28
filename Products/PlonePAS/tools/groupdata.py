@@ -167,11 +167,16 @@ class GroupData(SimpleItem):
         ret = []
         for u_name in gtool.getGroupMembers(self.getId()):
             usr = self._getGRUF().getUserById(u_name)
+            # getUserById from Products.PluggableAuthService.PluggableAuthService
+            # The returned object is not wrapped, we wrapped it below
             if not usr:
-                logger.debug("Group has a non-existing user %s" % u_name)
-                continue
-            elif usr.isGroup():
-                ret.append(gd.wrapGroup(usr))
+                usr = self._getGRUF().getGroupById(u_name)
+                # getGroupById from Products.PlonePAS.pas
+                # The returned object is already wrapped
+                if not usr:
+                    logger.debug("Group has a non-existing principal %s" % u_name)
+                    continue
+                ret.append(usr)
             else:
                 ret.append(md.wrapUser(usr))
         return ret
@@ -188,10 +193,11 @@ class GroupData(SimpleItem):
         for u_name in self.getGroup().getMemberIds():
             usr = self._getGRUF().getUserById(u_name)
             if not usr:
-                logger.debug("Group has a non-existing user %s" % u_name)
-                continue
-            if usr.isGroup():
-                ret.append(gd.wrapGroup(usr))
+                usr = self._getGRUF().getGroupById(u_name)
+                if not usr:
+                    logger.debug("Group has a non-existing principal %s" % u_name)
+                    continue
+                ret.append(usr)
             else:
                 ret.append(md.wrapUser(usr))
         return ret
