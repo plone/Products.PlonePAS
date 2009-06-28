@@ -6,6 +6,7 @@ PlonePAS 3.10 - svn unreleased
 
     - Nested groups are now visible in prefs_group_members. This closes
       http://dev.plone.org/plone/ticket/8557
+      [vincentfretin]
       
     - Add sort and merge PASSearchView's interface to prevent code 
       dublication 
