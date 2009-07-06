@@ -184,6 +184,7 @@ class PropertiesTest(base.TestCase):
  
 
 class PropertySearchTest(base.TestCase):
+
     def afterSetUp(self):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
