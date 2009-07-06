@@ -68,3 +68,9 @@ class IPASSearchView(Interface):
         which are not search criteria. It will also remove any fields
         which have an empty string value.
         """
+
+    def merge(results, key):
+        """merge two search results based on key as the unique criterion"""
+
+    def sort(results, key):
+        """sort results on a key"""
