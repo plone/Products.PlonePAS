@@ -65,6 +65,19 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         if item is self:
             self.updateRolesList()
 
+
+    security.declareProtected( ManageUsers, 'assignRoleToPrincipal' )
+    def assignRoleToPrincipal( self, role_id, principal_id, REQUEST=None ):
+        try:
+            return ZODBRoleManager.assignRoleToPrincipal( self, role_id,
+                    principal_id, REQUEST)
+        except KeyError:
+            # Lazily update our roles list and try again
+            self.updateRolesList()
+            return ZODBRoleManager.assignRoleToPrincipal( self, role_id,
+                    principal_id, REQUEST)
+
+
     security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
     def assignRolesToPrincipal( self, roles, principal_id, REQUEST=None ):
         """ Assign a specific set of roles, and only those roles, to a principal.
