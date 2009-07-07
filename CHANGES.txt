@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0 - Unreleased
+5.0 - Unreleased
 ----------------
 
 - Removed deprecation warnings for various methods. These never happened.
@@ -89,6 +89,10 @@ Changelog
 - Removed 'listed' member property support from one of the many search
   functions following Plone.
   [hannosch]
+
+
+4.0 - unreleased
+----------------
 
 - Copied setLoginFormInCookieAuth from CMFPlone migrations.
   [hannosch]
