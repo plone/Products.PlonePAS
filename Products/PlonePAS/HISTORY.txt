@@ -4,6 +4,12 @@ Changelog for PlonePAS
 
 PlonePAS 3.10 - svn unreleased
 
+    - Performance fix for searching in the mutable properties plugin:
+      when only searching on user id do not walk over all properties,
+      but only test if the user id is known. This fixes
+      http://dev.plone.org/old/plone/ticket/9361
+      [toutpt]
+
     - Nested groups are now visible in prefs_group_members. This closes
       http://dev.plone.org/plone/ticket/8557
       [vincentfretin]
@@ -11,6 +17,7 @@ PlonePAS 3.10 - svn unreleased
     - Add sort and merge PASSearchView's interface to prevent code 
       dublication 
       [csenger]
+
 
 PlonePAS 3.9 - April 21, 2009
 
@@ -20,6 +27,7 @@ PlonePAS 3.9 - April 21, 2009
       http://plone.org/products/plone/security/advisories/cve-2009-0662
       for more information).
       [wichert]
+
 
 PlonePAS 3.8 - February 13, 2009
 
