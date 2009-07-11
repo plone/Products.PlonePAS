@@ -101,8 +101,15 @@ Changelog
   (only a test in this case)
   [elro]
 
+
 3.10 - unreleased
 -----------------
+
+- Performance fix for searching in the mutable properties plugin:
+  when only searching on user id do not walk over all properties,
+  but only test if the user id is known. This fixes
+  http://dev.plone.org/old/plone/ticket/9361
+  [toutpt]
 
 - Nested groups are now visible in prefs_group_members. This closes
   http://dev.plone.org/plone/ticket/8557
@@ -110,6 +117,7 @@ Changelog
 
 - Add sort and merge PASSearchView's interface to prevent code duplication.
   [csenger]
+
 
 3.9 - 2009-04-21
 ----------------
