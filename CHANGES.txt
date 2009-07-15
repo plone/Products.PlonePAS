@@ -4,6 +4,11 @@ Changelog
 5.0 - Unreleased
 ----------------
 
+- Added a view of the Unauthorized exception which re-raises that exception
+  in order to make sure that it triggers PAS' challenge plugin rather than
+  rendering the standard_error_message.
+  [davisagli]
+
 - Removed deprecation warnings for various methods. These never happened.
   [hannosch]
 

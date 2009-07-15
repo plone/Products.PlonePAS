@@ -23,4 +23,17 @@
       allowed_interface="Products.PlonePAS.interfaces.browser.IPASSearchView"
       />
 
+  <!-- <browser:page
+      for="AccessControl.unauthorized.Unauthorized"
+      name="index.html"
+      class=".unauthorized.UnauthorizedView"
+      permission="zope.Public"
+      /> -->
+  <browser:page
+      for="zExceptions.Unauthorized"
+      name="index.html"
+      class=".unauthorized.UnauthorizedView"
+      permission="zope.Public"
+      />
+
 </configure>
