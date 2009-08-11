@@ -69,10 +69,10 @@ class MembershipTool(BaseTool):
     security.declareProtected(View, 'getPortalRoles')
 
     security.declareProtected(ManagePortal, 'manage_mapRoles')
-    manage_mapRoles = DTMLFile('www/membershipRolemapping', globals())
+    manage_mapRoles = DTMLFile('../zmi/membershipRolemapping', globals())
 
     security.declareProtected(ManagePortal, 'manage_portrait_fix')
-    manage_portrait_fix = DTMLFile('www/portrait_fix', globals())
+    manage_portrait_fix = DTMLFile('../zmi/portrait_fix', globals())
 
     security.declareProtected(ManagePortal, 'manage_setMemberAreaType')
     def manage_setMemberAreaType(self, type_name, REQUEST=None):
