@@ -188,6 +188,7 @@ class PropertySearchTest(base.TestCase):
     def afterSetUp(self):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
+        self.gt = getToolByName(self.portal, 'portal_groups')
 
         # Create a new Member
         self.mt.addMember('member1', 'pw', ['Member'], [],
@@ -201,7 +202,12 @@ class PropertySearchTest(base.TestCase):
                       'fullname': 'User #2'})
         member = self.mt.getMemberById('member2')
         self.failIf(member is None)
-
+        
+        # Add a Group to make sure searchUsers isn't returning them in results.
+        self.gt.addGroup('group1')
+        group = self.gt.getGroupById('group1')
+        self.failIf(group is None)
+        
         self.pas=getToolByName(self.portal, "acl_users")
         for plugin in self.pas.plugins.getAllPlugins('IUserEnumerationPlugin')['active']:
             if plugin!='mutable_properties':
@@ -244,7 +250,12 @@ class PropertySearchTest(base.TestCase):
         results=[info['userid'] for info in results]
         self.assertEqual(results, ['member1', 'member2'])
 
-
+    def testGroupsNotReturnedByEnumerateUsers(self):
+        """Check to make sure that groups aren't returned by a enumerateUsers call.
+           See http://dev.plone.org/plone/ticket/9435"""
+        results=self.pas.searchUsers(id="group1")
+        self.assertEqual(results,[])
+        
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(PropertiesTest))
