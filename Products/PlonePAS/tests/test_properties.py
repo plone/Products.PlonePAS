@@ -254,7 +254,7 @@ class PropertySearchTest(base.TestCase):
         """Check to make sure that groups aren't returned by a enumerateUsers call.
            See http://dev.plone.org/plone/ticket/9435"""
         results=self.pas.searchUsers(id="group1")
-        self.assertEqual(results,[])
+        self.assertEqual(results,())
         
 def test_suite():
     suite = unittest.TestSuite()

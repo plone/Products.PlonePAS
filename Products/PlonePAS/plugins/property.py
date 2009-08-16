@@ -242,7 +242,10 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         if not kw and id:
             data = self._storage.get(id, None)
-            if data is None:
+            
+            # Check for the nonexistance of user_id, which would signal that
+            # this record is actually a group.
+            if data is None or not hasattr(data, 'user_id'):
                 user_info = []
             else:
                 user_info=[ { 'id' : self.prefix + id,
