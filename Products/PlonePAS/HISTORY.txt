@@ -4,307 +4,307 @@ Changelog
 3.11 - unreleased
 -----------------
 
-    - Nothing changed yet.
+- Nothing changed yet.
 
 
 3.10 - September 6, 2009
 ------------------------
 
-    - Performance fix for searching in the mutable properties plugin:
-      when only searching on user id do not walk over all properties,
-      but only test if the user id is known. This fixes
-      http://dev.plone.org/old/plone/ticket/9361
-      [toutpt]
+- Performance fix for searching in the mutable properties plugin:
+  when only searching on user id do not walk over all properties,
+  but only test if the user id is known. This fixes
+  http://dev.plone.org/old/plone/ticket/9361
+  [toutpt]
 
-    - Nested groups are now visible in prefs_group_members. This closes
-      http://dev.plone.org/plone/ticket/8557
-      [vincentfretin]
-      
-    - Add sort and merge PASSearchView's interface to prevent code 
-      dublication 
-      [csenger]
+- Nested groups are now visible in prefs_group_members. This closes
+  http://dev.plone.org/plone/ticket/8557
+  [vincentfretin]
+  
+- Add sort and merge PASSearchView's interface to prevent code 
+  dublication 
+  [csenger]
 
 
 3.9 - April 21, 2009
 --------------------
 
-    - Fix the cookie plugin's login handler to not trust the username
-      from the request. Instead we use the login name of the currently
-      authenticated user. This fixes CVE-2009-0662 (see
-      http://plone.org/products/plone/security/advisories/cve-2009-0662
-      for more information).
-      [wichert]
+- Fix the cookie plugin's login handler to not trust the username
+  from the request. Instead we use the login name of the currently
+  authenticated user. This fixes CVE-2009-0662 (see
+  http://plone.org/products/plone/security/advisories/cve-2009-0662
+  for more information).
+  [wichert]
 
 
 3.8 - February 13, 2009
 -----------------------
 
-    - Update the role manager's assignRoleToPrincipal method to lazily
-      update the cached list of portal roles. This fixes problems with
-      adding users with GenericSetup-created roles.
-      [wichert]
+- Update the role manager's assignRoleToPrincipal method to lazily
+  update the cached list of portal roles. This fixes problems with
+  adding users with GenericSetup-created roles.
+  [wichert]
 
-    - Fixed our OrderedDict to be unpickable with pickle protocol 2. On
-      unpickling a __init__ method is not called and an optimization in
-      protocol 2 would call __setitem__ without the _list to be initialized.
-      Even using a __getstate__ / __setstate__ combination wouldn't work
-      around that. This change was found in using membrane and
-      MemcachedManager.
-      [hannosch, tesdal]
+- Fixed our OrderedDict to be unpickable with pickle protocol 2. On
+  unpickling a __init__ method is not called and an optimization in
+  protocol 2 would call __setitem__ without the _list to be initialized.
+  Even using a __getstate__ / __setstate__ combination wouldn't work
+  around that. This change was found in using membrane and
+  MemcachedManager.
+  [hannosch, tesdal]
 
 
 3.7 - September 28, 2008
 ------------------------
 
-    - Removed deprecation zcml statements for PluggableAuthService components:
-      these are now in PluggableAuthService itself.
-      [wichert]
+- Removed deprecation zcml statements for PluggableAuthService components:
+  these are now in PluggableAuthService itself.
+  [wichert]
 
-    - Adjusted deprecation warnings to point to Plone 4.0 instead of Plone 3.5
-      since we changed the version numbering again.
-      [hannosch]
+- Adjusted deprecation warnings to point to Plone 4.0 instead of Plone 3.5
+  since we changed the version numbering again.
+  [hannosch]
 
 
 3.6 - June 25, 2008
 -------------------
 
-    - Modify PloneGroup.getMemberIds to use all IGroupIntrospection plugins
-      to get the group members. This makes it possible to list members in
-      an LDAP group.
-      [wichert]
+- Modify PloneGroup.getMemberIds to use all IGroupIntrospection plugins
+  to get the group members. This makes it possible to list members in
+  an LDAP group.
+  [wichert]
 
 
 3.5 - June 25, 2008
 -------------------
 
-    - Make PASSearchView.merge actually merge search results. Its previous
-      behaviour was quite nasty: it preferred search results from the
-      enumeration plugin with the lowest priority!
-      [wichert]
+- Make PASSearchView.merge actually merge search results. Its previous
+  behaviour was quite nasty: it preferred search results from the
+  enumeration plugin with the lowest priority!
+  [wichert]
 
 
 3.4 - March 26, 2008
 --------------------
 
-    - Ignore but log users without passwords during migration from pre-PAS, as
-      these cannot be added to any standard user source.
-      [hannosch]
+- Ignore but log users without passwords during migration from pre-PAS, as
+  these cannot be added to any standard user source.
+  [hannosch]
 
-    - Fix listRoleInfo on the role plugin to also lazily update the list
-      of portal roles.
-      [wichert]
+- Fix listRoleInfo on the role plugin to also lazily update the list
+  of portal roles.
+  [wichert]
 
 
 3.3 - March 7, 2008
 -------------------
 
-    - Add metadata.xml to the GenericSetup profile.
-      [wichert]
+- Add metadata.xml to the GenericSetup profile.
+  [wichert]
 
-    - Move global role lookup out of the local role plugin. Part of the
-      PLIP 127 merge for Plone 3.1.
-      [alecm]
+- Move global role lookup out of the local role plugin. Part of the
+  PLIP 127 merge for Plone 3.1.
+  [alecm]
 
 
 3.2 - Febuary 15, 2008
 ----------------------
 
-    - Fix schema handling for ZODBMutablePropertyProvider initialisation.
-      [maurits]
+- Fix schema handling for ZODBMutablePropertyProvider initialisation.
+  [maurits]
 
-    - Remove some exception swalling from the installation logic so errors
-      are not hidden.
-      [hannosch]
+- Remove some exception swalling from the installation logic so errors
+  are not hidden.
+  [hannosch]
 
-    - Correct handling an empty roles list when modifying groups.
-      This fixes http://dev.plone.org/plone/ticket/6994
-      [rsantos]
+- Correct handling an empty roles list when modifying groups.
+  This fixes http://dev.plone.org/plone/ticket/6994
+  [rsantos]
 
 
 3.1 - October 8, 2007
 ---------------------
 
-    - Improve handing of sorting for searches.
-      [csenger]
+- Improve handing of sorting for searches.
+  [csenger]
 
-    - Updating the roles for a group did not invalidate the _findGroup cache.
-      [wichert]
+- Updating the roles for a group did not invalidate the _findGroup cache.
+  [wichert]
 
-    - Fixed some tool icons to point to existing icons.
-      [hannosch]
+- Fixed some tool icons to point to existing icons.
+  [hannosch]
 
 
 3.0 - August 16, 2007
 ---------------------
 
-   - Fix check for authenticateCredentials return value
-     [rossp]
+- Fix check for authenticateCredentials return value
+ [rossp]
 
 
 3.0rc2 - July 27, 2007
 ----------------------
 
-    - Fake a getPhysicalPath on our search view so ZCacheing works properly
-      everywhere.
-      [wichert]
+- Fake a getPhysicalPath on our search view so ZCacheing works properly
+  everywhere.
+  [wichert]
 
-    - Add event classes for logged-in and logged-out events.
-      [wichert]
+- Add event classes for logged-in and logged-out events.
+  [wichert]
 
 
 3.0rc1 - July 8, 2007
 ---------------------
 
-    - Correct logic in MemberData capability methods: any plugin is
-      allowed to (re)set a password, delete the user or add roles. 
-      [wichert]
+- Correct logic in MemberData capability methods: any plugin is
+  allowed to (re)set a password, delete the user or add roles. 
+  [wichert]
 
-    - Use the proper API to get the containing PAS in the group plugin
-      [wichert]
+- Use the proper API to get the containing PAS in the group plugin
+  [wichert]
 
-    - Fix setting user properties on the user object.
-      [wichert]
+- Fix setting user properties on the user object.
+  [wichert]
 
 
 3.0b7 - May 5, 2007
 -------------------
 
-    - Removed the five:registerPackage statement again. It causes problems in a
-      ZEO environment.
-      [hannosch]
+- Removed the five:registerPackage statement again. It causes problems in a
+  ZEO environment.
+  [hannosch]
 
-    - Removed our version of the Plone tool from ToolInit. It won't get an icon
-      anymore and you cannot add it, but existing instances still work. We
-      migrate all instances back to the regular tool anyways.
-      [hannosch]
+- Removed our version of the Plone tool from ToolInit. It won't get an icon
+  anymore and you cannot add it, but existing instances still work. We
+  migrate all instances back to the regular tool anyways.
+  [hannosch]
 
 
 3.0b6 - May 5, 2007
 -------------------
 
-    - Fixed two migration related test failures.
-      [hannosch]
+- Fixed two migration related test failures.
+  [hannosch]
 
-    - Spring cleaning, removed some cruft, pyflaked and corrected some more
-      undefined names.
-      [hannosch]
+- Spring cleaning, removed some cruft, pyflaked and corrected some more
+  undefined names.
+  [hannosch]
 
-    - New package layout, following standard Python package conventions.
-      [hannosch]
+- New package layout, following standard Python package conventions.
+  [hannosch]
 
-    - Fixed tool names in ToolInit, so the permission has a proper name. This
-      closes http://dev.plone.org/plone/ticket/6525.
-      [hannosch]
+- Fixed tool names in ToolInit, so the permission has a proper name. This
+  closes http://dev.plone.org/plone/ticket/6525.
+  [hannosch]
 
 
 3.0-beta5 - May 2, 2007
 -----------------------
 
-    - Modify the roles plugin to lazily update its roles list from the portal.
-      [wichert]
+- Modify the roles plugin to lazily update its roles list from the portal.
+  [wichert]
 
-    - Filter duplicate search results.
-      [laz, wichert]
+- Filter duplicate search results.
+  [laz, wichert]
 
-    - Add a sort_by option to the search methods to allow sorting of results
-      by a property. 
-      [laz, wichert]
+- Add a sort_by option to the search methods to allow sorting of results
+  by a property. 
+  [laz, wichert]
 
-    - Modify login method for the cookie plugin to perform the credential
-      update in the PAS of the user instead of the PAS of the plugin. This
-      helps in making sure that users will only authenticate against their
-      own user folder, so we get all their roles, properties, etc. correctly.
-      [wichert]
+- Modify login method for the cookie plugin to perform the credential
+  update in the PAS of the user instead of the PAS of the plugin. This
+  helps in making sure that users will only authenticate against their
+  own user folder, so we get all their roles, properties, etc. correctly.
+  [wichert]
 
-    - Update installation logic to use plone.session for cookies
-      [wichert]
+- Update installation logic to use plone.session for cookies
+  [wichert]
 
-    - Add pas_info and pas_search browser views.
-      [wichert]
+- Add pas_info and pas_search browser views.
+  [wichert]
 
-    - Deprecate the PlonePAS PloneTool; its changes have been merged in the
-      standard Plone version.
-      [wichert]
+- Deprecate the PlonePAS PloneTool; its changes have been merged in the
+  standard Plone version.
+  [wichert]
 
-    - Use getUtility to get the portal object.
-      [wichert]
+- Use getUtility to get the portal object.
+  [wichert]
 
-    - Deprecate user and group searching through CMF member and group tools
-      in favour of PAS enumeration.
-      [wichert]
+- Deprecate user and group searching through CMF member and group tools
+  in favour of PAS enumeration.
+  [wichert]
 
-    - Refactor user searching in the membership tool to use standard PAS
-      searches.
-      [wichert]
+- Refactor user searching in the membership tool to use standard PAS
+  searches.
+  [wichert]
 
-    - Add user enumeration capabilities to the mutable properties plugin.
-      [wichert]
+- Add user enumeration capabilities to the mutable properties plugin.
+  [wichert]
 
-    - Add a new automatic group plugin which puts all users in a virtual
-      group. This is useful for permissions handling: since it is not
-      possible to add roles to users with the Authenticated role a
-      virtual group can be used instead.
-      [wichert]
+- Add a new automatic group plugin which puts all users in a virtual
+  group. This is useful for permissions handling: since it is not
+  possible to add roles to users with the Authenticated role a
+  virtual group can be used instead.
+  [wichert]
 
-    - Added support to import PloneUserFactory and added stub 
-      for ZODBMutableProperties. Attention: Latter needs a real
-      export and import! At the moment it do not export the 
-      propertysheets. This is a TODO. At least with this two 
-      additions PlonePAS import runs. Additional I needed to
-      hack PluginRegistry and and PluggableAuthService slightly.      
-      [jensens]
-      
-    - Added HISTORY.txt and updated version information.
-      [hannosch]
+- Added support to import PloneUserFactory and added stub 
+  for ZODBMutableProperties. Attention: Latter needs a real
+  export and import! At the moment it do not export the 
+  propertysheets. This is a TODO. At least with this two 
+  additions PlonePAS import runs. Additional I needed to
+  hack PluginRegistry and and PluggableAuthService slightly.      
+  [jensens]
+  
+- Added HISTORY.txt and updated version information.
+  [hannosch]
 
 
 2.4 - April 15, 2007
 --------------------
 
-    - Optomise the local roles plugin for the common case where
-      local_roles is empty
-      [dreamcatcher]
+- Optomise the local roles plugin for the common case where
+  local_roles is empty
+  [dreamcatcher]
 
-    - the plone user was assuming a one to one mapping between property plugin
-      and user property sheet, and stripping away additional ones as part of
-      the retrieval of ordered sheets, instead, it now stores all
-      propertysheets in an ordered dictionary, so this assumption is not needed
-      [k_vertigo]
+- the plone user was assuming a one to one mapping between property plugin
+  and user property sheet, and stripping away additional ones as part of
+  the retrieval of ordered sheets, instead, it now stores all
+  propertysheets in an ordered dictionary, so this assumption is not needed
+  [k_vertigo]
 
-    - More postonly security changes
-      [alecm, ramon]
+- More postonly security changes
+  [alecm, ramon]
 
 
 2.3 - May 30, 2007
 ------------------
 
-    - Use a local postonly decorator so PlonePAS can be used with Plone 
-      2.5, 2.5.1 and 2.5.2.
-      [wichert]
+- Use a local postonly decorator so PlonePAS can be used with Plone 
+  2.5, 2.5.1 and 2.5.2.
+  [wichert]
 
-    - Protect the tools with postonly security modifiers.
-      [mj]
+- Protect the tools with postonly security modifiers.
+  [mj]
 
-    - Update GRUF compatibility functions to use the same security checks
-      as GRUF itself uses.
-      [mj]
+- Update GRUF compatibility functions to use the same security checks
+  as GRUF itself uses.
+  [mj]
 
-    - Fix migration to handle properties of selection or multiple selection
-      types.
-      [reinout]
+- Fix migration to handle properties of selection or multiple selection
+  types.
+  [reinout]
 
-    - Correct creation of groups wich default group managers.
-      [dreamcatcher]
+- Correct creation of groups wich default group managers.
+  [dreamcatcher]
 
-    - Fix migration from GRUF sites: also include the member properties in the
-      migration.
-      [tesdal]
+- Fix migration from GRUF sites: also include the member properties in the
+  migration.
+  [tesdal]
 
-    - Correct the test for creation of groups with the same id as users: search
-      for the exact id, not substrings.
-      [tesdal]
-      
-    - Fix bad form action which made it impossible to add a plone user factory
-      plugin through the ZMI. Backported from trunk.
-      [wichert]
+- Correct the test for creation of groups with the same id as users: search
+  for the exact id, not substrings.
+  [tesdal]
+  
+- Fix bad form action which made it impossible to add a plone user factory
+  plugin through the ZMI. Backported from trunk.
+  [wichert]
 
