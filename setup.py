@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '3.10'
+version = '3.11dev'
 
 setup(name='Products.PlonePAS',
       version=version,
