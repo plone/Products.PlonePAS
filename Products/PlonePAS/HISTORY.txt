@@ -7,8 +7,8 @@ Changelog
 - Nothing changed yet.
 
 
-3.10 - September 6, 2009
-------------------------
+3.10 - 2009-09-06
+-----------------
 
 - Performance fix for searching in the mutable properties plugin:
   when only searching on user id do not walk over all properties,
@@ -20,13 +20,12 @@ Changelog
   http://dev.plone.org/plone/ticket/8557
   [vincentfretin]
   
-- Add sort and merge PASSearchView's interface to prevent code 
-  dublication 
+- Add sort and merge PASSearchView's interface to prevent code duplication.
   [csenger]
 
 
-3.9 - April 21, 2009
---------------------
+3.9 - 2009-04-21
+----------------
 
 - Fix the cookie plugin's login handler to not trust the username
   from the request. Instead we use the login name of the currently
@@ -36,8 +35,8 @@ Changelog
   [wichert]
 
 
-3.8 - February 13, 2009
------------------------
+3.8 - 2009-02-13
+----------------
 
 - Update the role manager's assignRoleToPrincipal method to lazily
   update the cached list of portal roles. This fixes problems with
@@ -53,8 +52,8 @@ Changelog
   [hannosch, tesdal]
 
 
-3.7 - September 28, 2008
-------------------------
+3.7 - 2008-09-28
+----------------
 
 - Removed deprecation zcml statements for PluggableAuthService components:
   these are now in PluggableAuthService itself.
@@ -65,8 +64,8 @@ Changelog
   [hannosch]
 
 
-3.6 - June 25, 2008
--------------------
+3.6 - 2008-06-25
+----------------
 
 - Modify PloneGroup.getMemberIds to use all IGroupIntrospection plugins
   to get the group members. This makes it possible to list members in
@@ -74,8 +73,8 @@ Changelog
   [wichert]
 
 
-3.5 - June 25, 2008
--------------------
+3.5 - 2008-06-25
+----------------
 
 - Make PASSearchView.merge actually merge search results. Its previous
   behaviour was quite nasty: it preferred search results from the
@@ -83,8 +82,11 @@ Changelog
   [wichert]
 
 
-3.4 - March 26, 2008
---------------------
+3.4 - 2008-03-26
+----------------
+
+- Added BBB code for changed setLoginFormInCookieAuth upgrade method.
+  [hannosch]
 
 - Ignore but log users without passwords during migration from pre-PAS, as
   these cannot be added to any standard user source.
@@ -94,25 +96,24 @@ Changelog
   of portal roles.
   [wichert]
 
+3.3 - 2007-03-07
+----------------
 
-3.3 - March 7, 2008
--------------------
-
-- Add metadata.xml to the GenericSetup profile.
-  [wichert]
+- Added metadata.xml file to the profile.
+  [hannosch]
 
 - Move global role lookup out of the local role plugin. Part of the
   PLIP 127 merge for Plone 3.1.
   [alecm]
 
 
-3.2 - Febuary 15, 2008
-----------------------
+3.2 - 2008-02-15
+----------------
 
-- Fix schema handling for ZODBMutablePropertyProvider initialisation.
+- Fix schema handling for ZODBMutablePropertyProvider initialization.
   [maurits]
 
-- Remove some exception swalling from the installation logic so errors
+- Remove some exception swallowing from the installation logic so errors
   are not hidden.
   [hannosch]
 
@@ -121,8 +122,8 @@ Changelog
   [rsantos]
 
 
-3.1 - October 8, 2007
----------------------
+3.1 - 2007-10-08
+----------------
 
 - Improve handing of sorting for searches.
   [csenger]
@@ -134,15 +135,15 @@ Changelog
   [hannosch]
 
 
-3.0 - August 16, 2007
----------------------
+3.0 - 2007-08-16
+----------------
 
 - Fix check for authenticateCredentials return value
  [rossp]
 
 
-3.0rc2 - July 27, 2007
-----------------------
+3.0rc2 - 2007-07-27
+-------------------
 
 - Fake a getPhysicalPath on our search view so ZCacheing works properly
   everywhere.
@@ -152,8 +153,8 @@ Changelog
   [wichert]
 
 
-3.0rc1 - July 8, 2007
----------------------
+3.0rc1 - 2007-07-08
+-------------------
 
 - Correct logic in MemberData capability methods: any plugin is
   allowed to (re)set a password, delete the user or add roles. 
@@ -166,8 +167,8 @@ Changelog
   [wichert]
 
 
-3.0b7 - May 5, 2007
--------------------
+3.0b7 - 2007-05-05
+------------------
 
 - Removed the five:registerPackage statement again. It causes problems in a
   ZEO environment.
@@ -179,8 +180,8 @@ Changelog
   [hannosch]
 
 
-3.0b6 - May 5, 2007
--------------------
+3.0b6 - 2007-05-05
+------------------
 
 - Fixed two migration related test failures.
   [hannosch]
@@ -197,8 +198,8 @@ Changelog
   [hannosch]
 
 
-3.0-beta5 - May 2, 2007
------------------------
+3.0-beta5 - 2007-05-02
+----------------------
 
 - Modify the roles plugin to lazily update its roles list from the portal.
   [wichert]
@@ -258,8 +259,8 @@ Changelog
   [hannosch]
 
 
-2.4 - April 15, 2007
---------------------
+2.4 - 2007-04-15
+----------------
 
 - Optomise the local roles plugin for the common case where
   local_roles is empty
@@ -275,8 +276,8 @@ Changelog
   [alecm, ramon]
 
 
-2.3 - May 30, 2007
-------------------
+2.3 - 2007-05-30
+----------------
 
 - Use a local postonly decorator so PlonePAS can be used with Plone 
   2.5, 2.5.1 and 2.5.2.
@@ -307,4 +308,3 @@ Changelog
 - Fix bad form action which made it impossible to add a plone user factory
   plugin through the ZMI. Backported from trunk.
   [wichert]
-
