@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0 - Unreleased
+4.0 - unreleased
 ----------------
 
 - Moved a couple DTML files here from CMFPlone that got left out of the earlier
@@ -99,10 +99,6 @@ Changelog
   functions following Plone.
   [hannosch]
 
-
-4.0 - unreleased
-----------------
-
 - Copied setLoginFormInCookieAuth from CMFPlone migrations.
   [hannosch]
 
@@ -111,7 +107,7 @@ Changelog
   [elro]
 
 
-3.10 - unreleased
+3.10 - 2009-09-06
 -----------------
 
 - Performance fix for searching in the mutable properties plugin:
@@ -138,6 +134,7 @@ Changelog
   for more information).
   [wichert]
 
+
 3.8 - 2009-02-13
 ----------------
 
@@ -154,6 +151,7 @@ Changelog
   MemcachedManager.
   [hannosch, tesdal]
 
+
 3.7 - 2008-09-28
 ----------------
 
@@ -165,6 +163,7 @@ Changelog
   since we changed the version numbering again.
   [hannosch]
 
+
 3.6 - 2008-06-25
 ----------------
 
@@ -173,6 +172,7 @@ Changelog
   an LDAP group.
   [wichert]
 
+
 3.5 - 2008-06-25
 ----------------
 
@@ -180,6 +180,7 @@ Changelog
   behaviour was quite nasty: it preferred search results from the
   enumeration plugin with the lowest priority!
   [wichert]
+
 
 3.4 - 2008-03-26
 ----------------
@@ -205,6 +206,7 @@ Changelog
   PLIP 127 merge for Plone 3.1.
   [alecm]
 
+
 3.2 - 2008-02-15
 ----------------
 
@@ -219,6 +221,7 @@ Changelog
   This fixes http://dev.plone.org/plone/ticket/6994
   [rsantos]
 
+
 3.1 - 2007-10-08
 ----------------
 
@@ -231,11 +234,13 @@ Changelog
 - Fixed some tool icons to point to existing icons.
   [hannosch]
 
+
 3.0 - 2007-08-16
 ----------------
 
 - Fix check for authenticateCredentials return value
   [rossp]
+
 
 3.0rc2 - 2007-07-27
 -------------------
@@ -246,6 +251,7 @@ Changelog
 
 - Add event classes for logged-in and logged-out events.
   [wichert]
+
 
 3.0rc1 - 2007-07-08
 -------------------
