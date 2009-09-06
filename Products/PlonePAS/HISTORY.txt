@@ -1,8 +1,8 @@
-Changelog for PlonePAS
+Changelog
+=========
 
-    (name of developer listed in brackets)
-
-PlonePAS 3.10 - svn unreleased
+3.10 - September 6, 2009
+------------------------
 
     - Performance fix for searching in the mutable properties plugin:
       when only searching on user id do not walk over all properties,
@@ -19,7 +19,8 @@ PlonePAS 3.10 - svn unreleased
       [csenger]
 
 
-PlonePAS 3.9 - April 21, 2009
+3.9 - April 21, 2009
+--------------------
 
     - Fix the cookie plugin's login handler to not trust the username
       from the request. Instead we use the login name of the currently
@@ -29,7 +30,8 @@ PlonePAS 3.9 - April 21, 2009
       [wichert]
 
 
-PlonePAS 3.8 - February 13, 2009
+3.8 - February 13, 2009
+-----------------------
 
     - Update the role manager's assignRoleToPrincipal method to lazily
       update the cached list of portal roles. This fixes problems with
@@ -45,7 +47,8 @@ PlonePAS 3.8 - February 13, 2009
       [hannosch, tesdal]
 
 
-PlonePAS 3.7 - September 28, 2008
+3.7 - September 28, 2008
+------------------------
 
     - Removed deprecation zcml statements for PluggableAuthService components:
       these are now in PluggableAuthService itself.
@@ -55,14 +58,18 @@ PlonePAS 3.7 - September 28, 2008
       since we changed the version numbering again.
       [hannosch]
 
-PlonePAS 3.6 - June 25, 2008
+
+3.6 - June 25, 2008
+-------------------
 
     - Modify PloneGroup.getMemberIds to use all IGroupIntrospection plugins
       to get the group members. This makes it possible to list members in
       an LDAP group.
       [wichert]
 
-PlonePAS 3.5 - June 25, 2008
+
+3.5 - June 25, 2008
+-------------------
 
     - Make PASSearchView.merge actually merge search results. Its previous
       behaviour was quite nasty: it preferred search results from the
@@ -70,7 +77,8 @@ PlonePAS 3.5 - June 25, 2008
       [wichert]
 
 
-PlonePAS 3.4 - March 26, 2008
+3.4 - March 26, 2008
+--------------------
 
     - Ignore but log users without passwords during migration from pre-PAS, as
       these cannot be added to any standard user source.
@@ -81,7 +89,8 @@ PlonePAS 3.4 - March 26, 2008
       [wichert]
 
 
-PlonePAS 3.3 - March 7, 2008
+3.3 - March 7, 2008
+-------------------
 
     - Add metadata.xml to the GenericSetup profile.
       [wichert]
@@ -90,9 +99,11 @@ PlonePAS 3.3 - March 7, 2008
       PLIP 127 merge for Plone 3.1.
       [alecm]
 
-PlonePAS 3.2 - Febuary 15, 2008
 
-    _ Fix schema handling for ZODBMutablePropertyProvider initialisation.
+3.2 - Febuary 15, 2008
+----------------------
+
+    - Fix schema handling for ZODBMutablePropertyProvider initialisation.
       [maurits]
 
     - Remove some exception swalling from the installation logic so errors
@@ -103,7 +114,9 @@ PlonePAS 3.2 - Febuary 15, 2008
       This fixes http://dev.plone.org/plone/ticket/6994
       [rsantos]
 
-PlonePAS 3.1 - October 8, 2007
+
+3.1 - October 8, 2007
+---------------------
 
     - Improve handing of sorting for searches.
       [csenger]
@@ -114,12 +127,16 @@ PlonePAS 3.1 - October 8, 2007
     - Fixed some tool icons to point to existing icons.
       [hannosch]
 
-PlonePAS 3.0 - August 16, 2007
+
+3.0 - August 16, 2007
+---------------------
 
    - Fix check for authenticateCredentials return value
      [rossp]
 
-PlonePAS 3.0rc2 - July 27, 2007
+
+3.0rc2 - July 27, 2007
+----------------------
 
     - Fake a getPhysicalPath on our search view so ZCacheing works properly
       everywhere.
@@ -128,7 +145,9 @@ PlonePAS 3.0rc2 - July 27, 2007
     - Add event classes for logged-in and logged-out events.
       [wichert]
 
-PlonePAS 3.0rc1 - July 8, 2007
+
+3.0rc1 - July 8, 2007
+---------------------
 
     - Correct logic in MemberData capability methods: any plugin is
       allowed to (re)set a password, delete the user or add roles. 
@@ -141,7 +160,8 @@ PlonePAS 3.0rc1 - July 8, 2007
       [wichert]
 
 
-PlonePAS 3.0b7 - May 5, 2007
+3.0b7 - May 5, 2007
+-------------------
 
     - Removed the five:registerPackage statement again. It causes problems in a
       ZEO environment.
@@ -152,7 +172,9 @@ PlonePAS 3.0b7 - May 5, 2007
       migrate all instances back to the regular tool anyways.
       [hannosch]
 
-PlonePAS 3.0b6 - May 5, 2007
+
+3.0b6 - May 5, 2007
+-------------------
 
     - Fixed two migration related test failures.
       [hannosch]
@@ -168,7 +190,9 @@ PlonePAS 3.0b6 - May 5, 2007
       closes http://dev.plone.org/plone/ticket/6525.
       [hannosch]
 
-PlonePAS 3.0-beta5 - May 2, 2007
+
+3.0-beta5 - May 2, 2007
+-----------------------
 
     - Modify the roles plugin to lazily update its roles list from the portal.
       [wichert]
@@ -228,7 +252,8 @@ PlonePAS 3.0-beta5 - May 2, 2007
       [hannosch]
 
 
-PlonePAS 2.4 - April 15, 2007
+2.4 - April 15, 2007
+--------------------
 
     - Optomise the local roles plugin for the common case where
       local_roles is empty
@@ -244,7 +269,8 @@ PlonePAS 2.4 - April 15, 2007
       [alecm, ramon]
 
 
-PlonePAS 2.3 - May 30, 2007
+2.3 - May 30, 2007
+------------------
 
     - Use a local postonly decorator so PlonePAS can be used with Plone 
       2.5, 2.5.1 and 2.5.2.
