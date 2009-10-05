@@ -144,7 +144,7 @@ Changelog
 ----------------
 
 - Fix check for authenticateCredentials return value
- [rossp]
+  [rossp]
 
 
 3.0rc2 - 2007-07-27
