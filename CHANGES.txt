@@ -4,6 +4,14 @@ Changelog
 4.0 - unreleased
 ----------------
 
+- Removed patch on ZODBUserManager.enumerateUsers which was introduced 
+  historical because of a former missing release of PluggableAuthService 1.5. 
+  This now superfluos patch also reduced the functionality of the patched method  
+  and introduced different behavior compared to i.e in a similar method on 
+  LDAPMultiPlugins. For details on the former patch see: 
+  https://dev.plone.org/collective/changeset/41512/PlonePAS/trunk/pas.py
+  [jensens]  
+  
 - Moved a couple DTML files here from CMFPlone that got left out of the earlier
   refactoring.
   [davisagli]

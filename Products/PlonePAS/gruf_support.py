@@ -14,6 +14,12 @@ from Products.CMFCore.utils import getToolByName
 logger = logging.getLogger('PlonePAS')
 
 def authenticate(self, name, password, request):
+    """See AccessControl.User.BasicUserFolder.authenticate
+    
+    Products.PluggableAuthService.PluggableAuthService does not provide this 
+    method, BasicUserFolder documents it as "Private UserFolder object 
+    interface". GRUF does provide the method, so not marked as private.
+    """
 
     plugins = self.plugins
 

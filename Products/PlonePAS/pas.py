@@ -40,7 +40,7 @@ PluggableAuthService._doAddUser = _doAddUser
 def _doDelUsers(self, names, REQUEST=None):
     """
     Delete users given by a list of user ids.
-    Has no return value, like the original.
+    Has no return value, like the original (GRUF).
     """
     for name in names:
         self._doDelUser(name)
@@ -73,7 +73,7 @@ PluggableAuthService.userFolderDelUsers = postonly(PluggableAuthService._doDelUs
 def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
                   REQUEST=None, **kw):
     """
-    Given a principal id, change its password, roles, domains, iff
+    Given a principal id, change its password, roles, domains, if
     respective plugins for such exist.
 
     XXX domains are currently ignored.
@@ -389,14 +389,3 @@ def _getAllLocalRoles(self, context):
 
     return roles
 PluggableAuthService._getAllLocalRoles = _getAllLocalRoles
-
-from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager
-def noKeywordEnumerateusers(self, id=None, login=None, exact_match=False,
-        sort_by=None, max_results=None, **kw):
-    if kw:
-        return ()
-    return self._oldEnumerateUsers(id, login, exact_match, sort_by,
-            max_results, **kw)
-
-ZODBUserManager._oldEnumerateUsers = ZODBUserManager.enumerateUsers
-ZODBUserManager.enumerateUsers = noKeywordEnumerateusers
