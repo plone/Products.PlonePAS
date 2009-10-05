@@ -252,33 +252,20 @@ class ZODBMutablePropertyProvider(BasePlugin):
         """
         plugin_id = self.getId()
 
+        if not kw:
+            return ()
+
         criteria=copy.copy(kw)
-        if id is not None:
-            criteria["id"]=id
-        if login is not None:
-            criteria["login"]=login
 
-        if not kw and id:
-            data = self._storage.get(id, None)
-            if data is None:
-                user_info = []
-            else:
-                user_info=[ { 'id' : self.prefix + id,
-                         'login' : id,
-                         'title' : data.get('fullname', id),
-                         'description' : data.get('fullname', id),
-                         'email' : data.get('email', ''),
-                         'pluginid' : plugin_id } ]
-        else:
-            users=[ (user,data) for (user,data) in self._storage.items()
-                        if self.testMemberData(data, criteria, exact_match)]
+        users=[ (user,data) for (user,data) in self._storage.items()
+                    if self.testMemberData(data, criteria, exact_match)]
 
-            user_info=[ { 'id' : self.prefix + user_id,
-                         'login' : user_id,
-                         'title' : data.get('fullname', user_id),
-                         'description' : data.get('fullname', user_id),
-                         'email' : data.get('email', ''),
-                         'pluginid' : plugin_id } for (user_id, data) in users ]
+        user_info=[ { 'id' : self.prefix + user_id,
+                     'login' : user_id,
+                     'title' : data.get('fullname', user_id),
+                     'description' : data.get('fullname', user_id),
+                     'email' : data.get('email', ''),
+                     'pluginid' : plugin_id } for (user_id, data) in users ]
 
         return tuple(user_info)
 

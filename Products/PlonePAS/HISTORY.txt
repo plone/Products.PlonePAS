@@ -4,7 +4,12 @@ Changelog
 3.11 - unreleased
 -----------------
 
-- Nothing changed yet.
+- Revert performance fix introduced in 3.10 for the mutable properties plugin.
+  enumerateUsers shouldn't return results if id or login is not None like in
+  3.9 (data dict doesn't contain id or login key, so testMemberData returns
+  always False). The search should be performed only if kw parameter is not
+  empty. This is the new optimization fix.
+  [vincentfretin]
 
 
 3.10 - 2009-09-06
@@ -13,7 +18,7 @@ Changelog
 - Performance fix for searching in the mutable properties plugin:
   when only searching on user id do not walk over all properties,
   but only test if the user id is known. This fixes
-  http://dev.plone.org/old/plone/ticket/9361
+  http://dev.plone.org/plone/ticket/9361
   [toutpt]
 
 - Nested groups are now visible in prefs_group_members. This closes
