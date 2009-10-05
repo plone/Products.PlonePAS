@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.11 - unreleased
+3.11 - 2009-10-05
 -----------------
 
 - Revert performance fix introduced in 3.10 for the mutable properties plugin.
