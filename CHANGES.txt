@@ -4,6 +4,10 @@ Changelog
 4.0 - unreleased
 ----------------
 
+- Changed the default value of `memberareaCreationFlag` for the membership
+  tool to False, as it was done during Plone site creation so far.
+  [hannosch]
+
 - Removed patch on ZODBUserManager.enumerateUsers which was introduced 
   historical because of a former missing release of PluggableAuthService 1.5. 
   This now superfluos patch also reduced the functionality of the patched method  

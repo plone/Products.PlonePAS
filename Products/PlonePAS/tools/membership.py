@@ -48,6 +48,7 @@ class MembershipTool(BaseTool):
     default_portrait = 'defaultUser.gif'
     memberarea_type = 'Folder'
     membersfolder_id = 'Members'
+    memberareaCreationFlag = False
     security = ClassSecurityInfo()
 
     user_search_keywords = ('login', 'fullname', 'email', 'exact_match',
