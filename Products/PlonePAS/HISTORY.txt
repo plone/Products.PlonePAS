@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.12 - unreleased
+3.12 - 2009-10-16
 -----------------
 
 - Fixed the performance fix again. enumerateUsers from mutable_properties
