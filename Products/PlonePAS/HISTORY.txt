@@ -4,7 +4,10 @@ Changelog
 3.12 - unreleased
 -----------------
 
-- Nothing changed yet.
+- Fixed the performance fix again. enumerateUsers from mutable_properties
+  plugin should return all the users if kw is empty. And it returns empty
+  tuple if login or id parameter is used.
+  [vincentfretin]
 
 
 3.11 - 2009-10-05
