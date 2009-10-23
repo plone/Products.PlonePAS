@@ -4,7 +4,9 @@ Changelog
 3.13 - unreleased
 -----------------
 
-- Nothing changed yet.
+- Removed deprecation warnings that have been removed from PlonePAS trunk;
+  no point in giving dire warnings about removals that will never happen.
+  [mj]
 
 
 3.12 - 2009-10-16
