@@ -4,6 +4,10 @@ Changelog
 4.0 - unreleased
 ----------------
 
+- Added new ``pas_member`` view, which provides easy access to the membership
+  tools getMemberInfo method but caches the result on the request.
+  [hannosch]
+
 - Changed the default value of `memberareaCreationFlag` for the membership
   tool to False, as it was done during Plone site creation so far.
   [hannosch]

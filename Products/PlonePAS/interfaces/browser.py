@@ -15,6 +15,14 @@ class IPASInfoView(Interface):
         """
 
 
+class IPASMemberView(Interface):
+
+    def info(self, userid=None):
+        """Return 'harmless' member info of any user, such as full name,
+        location, etc.
+        """
+
+
 class IPASSearchView(Interface):
 
     def searchUsers(sort_by=None, any_field=None, **criteria):
