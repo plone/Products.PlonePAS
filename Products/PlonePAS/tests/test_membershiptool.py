@@ -22,6 +22,7 @@ from Products.PlonePAS.plugins.ufactory import PloneUser
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
+from Products.PlonePAS.browser.member import PASMemberView
 
 
 class MembershipToolTest(base.TestCase):
@@ -705,6 +706,47 @@ class TestMethodProtection(base.TestCase):
              "    self.membership.restrictedTraverse('%s')" % (method, method)
 
 
+class TestMemberInfoView(base.TestCase):
+
+    def afterSetUp(self):
+        self.membership = self.portal.portal_membership
+        self.view = PASMemberView(self.portal, self.portal.REQUEST)
+
+    def testMemberInfoViewForAuthenticated(self):
+        member = self.membership.getAuthenticatedMember()
+        member.setMemberProperties({'fullname': 'Test user'})
+        info = self.view.info()
+        self.assertEqual(info['username'], 'test_user_1_')
+        self.assertEqual(info['fullname'], 'Test user')
+        self.assertEqual(info['name_or_id'], 'Test user')
+
+    def testGetMemberInfoViewForMember(self):
+        self.membership.addMember('user2', 'secret', ['Member'], [],
+                                  properties={'fullname': 'Second user'})
+        info = self.view.info('user2')
+        self.assertEqual(info['username'], 'user2')
+        self.assertEqual(info['fullname'], 'Second user')
+        self.assertEqual(info['name_or_id'], 'Second user')
+
+    def testGetMemberInfoViewForNonMember(self):
+        # When content is owned by a user who has meanwhile been
+        # removed, we do not want to throw an exception when asking
+        # for his member info.
+        self.failIf(self.membership.getMemberById('charon'))
+        info = self.view.info('charon')
+        self.assertEqual(info['username'], 'charon')
+        self.assertEqual(info['fullname'], '')
+        self.assertEqual(info['name_or_id'], 'charon')
+
+    def testGetMemberInfoViewForAnonymous(self):
+        self.logout()
+        self.failUnless(self.membership.isAnonymousUser())
+        info = self.view.info()
+        self.assertEqual(info['username'], 'Anonymous User')
+        self.assertEqual(info['fullname'], None)
+        self.assertEqual(info['name_or_id'], 'Anonymous User')
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(MembershipToolTest))
@@ -715,5 +757,5 @@ def test_suite():
     suite.addTest(unittest.makeSuite(TestSearchForMembers))
     suite.addTest(unittest.makeSuite(TestDefaultUserAndPasswordNotChanged))
     suite.addTest(unittest.makeSuite(TestMethodProtection))
+    suite.addTest(unittest.makeSuite(TestMemberInfoView))
     return suite
-

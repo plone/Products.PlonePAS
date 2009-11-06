@@ -4,6 +4,11 @@ Changelog
 4.0 - unreleased
 ----------------
 
+- Simplified ``pas_member`` view.  Also return info when no member
+  with the requested id exists, so this can be safely used also to get
+  "member info" for deleted members.
+  [maurits]
+
 - Added new ``pas_member`` view, which provides easy access to the membership
   tools getMemberInfo method but caches the result on the request.
   [hannosch]
@@ -14,11 +19,12 @@ Changelog
 
 - Removed patch on ZODBUserManager.enumerateUsers which was introduced 
   historical because of a former missing release of PluggableAuthService 1.5. 
-  This now superfluos patch also reduced the functionality of the patched method  
-  and introduced different behavior compared to i.e in a similar method on 
-  LDAPMultiPlugins. For details on the former patch see: 
+  This now superfluous patch also reduced the functionality of the
+  patched method and introduced different behavior compared to i.e in
+  a similar method on LDAPMultiPlugins. For details on the former
+  patch see:
   https://dev.plone.org/collective/changeset/41512/PlonePAS/trunk/pas.py
-  [jensens]  
+  [jensens]
   
 - Moved a couple DTML files here from CMFPlone that got left out of the earlier
   refactoring.
