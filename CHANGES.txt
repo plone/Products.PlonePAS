@@ -1,8 +1,8 @@
 Changelog
 =========
 
-4.0 - unreleased
-----------------
+4.0a1 - 2009-11-14
+------------------
 
 - Simplified ``pas_member`` view.  Also return info when no member
   with the requested id exists, so this can be safely used also to get
