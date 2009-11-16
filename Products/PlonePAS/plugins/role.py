@@ -121,7 +121,14 @@ class GroupAwareRoleManager( ZODBRoleManager ):
     ## implement IAssignRoleCapability
 
     def allowRoleAssign(self, user_id, role_id):
-        """True iff this plugin will allow assigning a certain user a certain role."""
+        """True iff this plugin will allow assigning a certain user a
+        certain role.
+
+        Note that at least currently this only checks if the role_id
+        exists.  If it exists, this method returns True.  Nothing is
+        done with the user_id parameter.  This might be wrong.  See
+        http://dev.plone.org/plone/ticket/7762
+        """
         present = self.getRoleInfo(role_id)
         if present: return 1   # if we have a role, we can assign it
                                # slightly naive, but should be okay.
