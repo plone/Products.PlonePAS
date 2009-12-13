@@ -4,6 +4,10 @@ Changelog
 4.0b1 - Unreleased
 ------------------
 
+- Added backwards compatibility alias for PloneTool to support upgrades from
+  Plone 2.5 to work.
+  [hannosch]
+
 - Added 'has_email' to the info returned by getMemberInfo.
   Refs http://dev.plone.org/plone/ticket/8707
   [maurits]
