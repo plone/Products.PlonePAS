@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0b1 - Unreleased
+4.0a2 - 2009-12-16
 ------------------
 
 - Added backwards compatibility alias for PloneTool to support upgrades from
@@ -11,7 +11,6 @@ Changelog
 - Added 'has_email' to the info returned by getMemberInfo.
   Refs http://dev.plone.org/plone/ticket/8707
   [maurits]
-
 
 4.0a1 - 2009-11-14
 ------------------
