@@ -4,6 +4,8 @@ Changelog
 4.0a3 - Unreleased
 ------------------
 
+- Fixed package dependencies declaration.
+  [hannosch]
 
 4.0a2 - 2009-12-16
 ------------------
