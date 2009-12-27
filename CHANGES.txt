@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0a3 - Unreleased
+4.0b1 - 2009-12-27
 ------------------
 
 - Fixed package dependencies declaration.
