@@ -4,6 +4,9 @@ Changelog
 4.0b2 - unreleased
 ------------------
 
+- Don't specify PIL as a direct dependencies. It is not installed as an egg on
+  all platforms.
+  [hannosch]
 
 4.0b1 - 2009-12-27
 ------------------
