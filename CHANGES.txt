@@ -4,6 +4,8 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- Fix an incorrect setdefault syntax.
+  [esteele]
 
 4.0b2 - 2010-01-02
 ------------------

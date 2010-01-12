@@ -77,8 +77,8 @@ class GroupManager(ZODBGroupManager):
     # overrides for api matching/massage
 
     def updateGroup(self, group_id, **kw):
-        kw['title'].setdefault('')
-        kw['description'].setdefault('')
+        kw.setdefault('title','')
+        kw.setdefault('description','')
         ZODBGroupManager.updateGroup(self, group_id, **kw)
         return True
 
