@@ -4,6 +4,11 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- GroupsTool.editGroup() now stores title and description in PAS
+  propertysheets in addition to Plone-specific tools. This helps us not pave
+  over group titles with IDs.
+  [erikrose]
+
 - Query the correct keyword variable for the group's description.
   [esteele]
 

@@ -73,7 +73,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             raise NotSupported, 'No plugins allow for group management'
         for mid, manager in managers:
             success = manager.addGroup(id, title=kw.get('title', id),
-                                       description=kw.get('description', None))
+                                       description=kw.get('description', ''))
             if success:
                 self.setRolesForGroup(id, roles)
                 for g in groups:
@@ -94,12 +94,22 @@ class GroupsTool(UniqueObject, SimpleItem):
         Passwords for groups seem to be irrelevant.
         PlonePAS doesn't deal with domains either.
 
-        If user is not present, returns without exception.
+        If group is not present, returns without exception.
         """
         g = self.getGroupById(id)
         if not g:
             raise KeyError, 'Trying to edit a non-existing group: %s' % id
 
+        # Update title/description properties of original group
+        gTools = self._getGroupTools()
+        if not gTools:
+            raise NotSupported, 'No plugins allow for both group management and introspection'
+        for tid, tool in gTools:
+            if id in tool.getGroupIds():
+                tool.updateGroup(id, title=kw.get('title'),
+                                     description=kw.get('description'))
+                break
+                
         if roles is not None:
             self.setRolesForGroup(id, roles)
         g.setGroupProperties(kw)
@@ -322,6 +332,13 @@ class GroupsTool(UniqueObject, SimpleItem):
             igroup.IGroupIntrospection
             )
 
+    security.declarePrivate('_getGroupTools')
+    def _getGroupTools(self):
+        managers = self._getPlugins().listPlugins(
+            igroup.IGroupManagement
+            )
+        return [(id, manager) for (id, manager) in managers if igroup.IGroupIntrospection.providedBy(manager)]
+
     ##
     # BBB
     ##
@@ -372,7 +389,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     security.declareProtected(SetGroupOwnership, 'setGroupOwnership')
     @postonly
     def setGroupOwnership(self, group, object, REQUEST=None):
-        """Make the object 'object' owned by group 'group' (a portal_groupdata-ish object).
+        """Make the object  'object' owned by group 'group' (a portal_groupdata-ish object).
 
         For GRUF this is easy. Others may have to re-implement."""
         user = group.getGroup()
