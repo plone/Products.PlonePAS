@@ -13,6 +13,7 @@ Changelog
   [esteele]
 
 - Fix an incorrect setdefault syntax.
+  Closes http://dev.plone.org/plone/ticket/7345
   [esteele]
 
 4.0b2 - 2010-01-02
