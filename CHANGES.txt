@@ -4,6 +4,9 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- Query the correct keyword variable for the group's description.
+  [esteele]
+
 - Fix an incorrect setdefault syntax.
   [esteele]
 

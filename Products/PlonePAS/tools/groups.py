@@ -73,7 +73,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             raise NotSupported, 'No plugins allow for group management'
         for mid, manager in managers:
             success = manager.addGroup(id, title=kw.get('title', id),
-                                       description=kw.get('title', None))
+                                       description=kw.get('description', None))
             if success:
                 self.setRolesForGroup(id, roles)
                 for g in groups:
