@@ -4,6 +4,11 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- Apply deiter's patch from http://dev.plone.org/plone/ticket/9460 to prevent 
+  GroupManager's 'getGroupById' from returning groups managed by other group 
+  managers. 
+  [esteele]
+
 - GroupsTool.editGroup() now stores title and description in PAS
   propertysheets in addition to Plone-specific tools. This helps us not pave
   over group titles with IDs.

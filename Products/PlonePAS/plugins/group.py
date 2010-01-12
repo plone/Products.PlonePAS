@@ -85,11 +85,8 @@ class GroupManager(ZODBGroupManager):
 
     def getGroupById(self, group_id, default=None):
         plugins = self._getPAS()._getOb('plugins')
-
-        group_id = self._verifyGroup(plugins, group_id=group_id)
         title = None
-
-        if not group_id:
+        if group_id not in self.getGroupIds():
             return default
 
         return self._findGroup(plugins, group_id, title)
