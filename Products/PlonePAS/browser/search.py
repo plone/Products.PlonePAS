@@ -57,10 +57,12 @@ class PASSearchView(BrowserView):
         return self.searchUsers(sort_by=sort_by, **criteria)
 
 
-    def searchGroups(self, **criteria):
+    def searchGroups(self, sort_by=None, **criteria):
         self.pas=getToolByName(self.context, "acl_users")
-        return self.pas.searchGroups(**criteria)
-
+        results=self.merge(self.pas.searchGroups(**criteria),"groupid")
+        if sort_by is not None:
+            results=self.sort(results, sort_by)
+        return results
 
     def searchGroupsByRequest(self, request):
         criteria=self.extractCriteriaFromRequest(request)

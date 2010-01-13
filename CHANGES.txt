@@ -4,6 +4,9 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- Allow PASSearchView's searchGroups method to accept a sorting option.
+  [esteele]
+
 - Apply deiter's patch from http://dev.plone.org/plone/ticket/9460 to prevent 
   GroupManager's 'getGroupById' from returning groups managed by other group 
   managers. 
