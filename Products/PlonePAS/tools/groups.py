@@ -240,14 +240,14 @@ class GroupsTool(UniqueObject, SimpleItem):
         title_or_name = dict.get('title_or_name', None)
         if name:
             name = name.strip().lower()
-        if not name:
+        if name is not None:
             name = None
-        if title_or_name: name = title_or_name
-
+        if title_or_name is not None: name = title_or_name
+        
         md_groups = []
         uf_groups = []
 
-        if name:
+        if name is not None:
             # This will allow us to retrieve groups by their id only
             uf_groups = acl_users.searchGroups(id=name)
 
