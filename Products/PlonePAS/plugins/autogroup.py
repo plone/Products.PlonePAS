@@ -45,7 +45,7 @@ class VirtualGroup(Acquisition.Implicit):
     def getRoles(self):
         return []
 
-    def allowed(self, object, obect_roles=None):
+    def allowed(self, object, object_roles=None):
         return 0
 
     def getDomains(self):
