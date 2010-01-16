@@ -8,12 +8,12 @@ also a property schema type registry which is extensible.
 from types import StringTypes, IntType
 from types import LongType, FloatType, InstanceType
 
-from DateTime.DateTime import DateTime
-
 from zope.component import getUtility
+from zope.interface import implements
+
+from DateTime.DateTime import DateTime
 from Products.CMFCore.interfaces import ISiteRoot
 
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -59,8 +59,7 @@ validateValue = PropertySchema.validate
 
 class MutablePropertySheet(UserPropertySheet):
 
-##    def __init__(self, id, **kw):
-##        UserPropertySheet.__init__(self, id, **kw)
+    implements(IMutablePropertySheet)
 
     def validateProperty(self, id, value):
         if not self._properties.has_key(id):
@@ -104,10 +103,7 @@ class MutablePropertySheet(UserPropertySheet):
         portal = getUtility(ISiteRoot)
         return portal.acl_users._getOb(self._id)
 
-classImplements(MutablePropertySheet,
-                IMutablePropertySheet)
 
-class SchemaMutablePropertySheet(MutablePropertySheet): pass
+class SchemaMutablePropertySheet(MutablePropertySheet):
+    pass
 
-classImplements(SchemaMutablePropertySheet,
-                IMutablePropertySheet)

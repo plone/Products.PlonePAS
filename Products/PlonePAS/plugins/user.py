@@ -6,13 +6,15 @@ from AccessControl import ClassSecurityInfo, AuthEncoding
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 
-from zope.interface import implementedBy
+from zope.interface import implements
 
-from Products.PlonePAS.interfaces.plugins import IUserManagement, IUserIntrospection
-from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
+from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 
-from Products.PluggableAuthService.utils import classImplements
-from Products.PluggableAuthService.plugins.ZODBUserManager import ZODBUserManager as BasePlugin
+from Products.PluggableAuthService.plugins.ZODBUserManager import \
+    ZODBUserManager as BasePlugin
 
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
                                           globals())
@@ -36,6 +38,8 @@ class UserManager(BasePlugin):
 
     meta_type = 'User Manager'
     security = ClassSecurityInfo()
+    implements(IUserManagement, IUserIntrospection, IDeleteCapability,
+               IPasswordSetCapability)
 
     def addUser(self, user_id, login_name, password):
         """Original ZODBUserManager.addUser, modified to check if
@@ -111,9 +115,5 @@ class UserManager(BasePlugin):
         uf = self.acl_users
         return [uf.getUserById(x) for x in self.getUserIds()]
 
-classImplements(UserManager,
-                IUserManagement, IUserIntrospection,
-                IDeleteCapability, IPasswordSetCapability,
-                *implementedBy(BasePlugin))
 
 InitializeClass(UserManager)

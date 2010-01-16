@@ -1,9 +1,10 @@
+from zope.interface import implements
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
@@ -37,6 +38,7 @@ class PloneUserFactory(BasePlugin):
 
     security = ClassSecurityInfo()
     meta_type = 'Plone User Factory'
+    implements(IUserFactoryPlugin)
 
     def __init__(self, id, title=''):
         self.id = id
@@ -46,8 +48,6 @@ class PloneUserFactory(BasePlugin):
     def createUser(self, user_id, name):
         return PloneUser(user_id, name)
 
-classImplements(PloneUserFactory,
-                IUserFactoryPlugin)
 
 InitializeClass(PloneUserFactory)
 

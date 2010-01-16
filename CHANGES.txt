@@ -3,7 +3,12 @@ Changelog
 
 4.0b3 - unreleased
 ------------------
-- Fix a misnamed kwarg in autogroup plugin. 
+
+- Avoid the use of the classImplements helper from PAS. It dealt with the now
+  gone Zope2 Interface variants and is no longer needed.
+  [hannosch]
+
+- Fix a misnamed kwarg in autogroup plugin.
   [cah190]
 
 - Allow the groups tool's searchForGroups to handle an empty search string as

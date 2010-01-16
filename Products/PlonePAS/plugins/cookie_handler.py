@@ -6,9 +6,12 @@ provide similar functionality as CookieCrumbler does... by giving
 the portal the ability to provide a setAuthCookie method.
 """
 
-from AccessControl.SecurityManagement import getSecurityManager
 from base64 import encodestring
 from urllib import quote
+
+from zope.interface import implements
+
+from AccessControl.SecurityManagement import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from AccessControl.SecurityInfo import ClassSecurityInfo
@@ -16,7 +19,6 @@ from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.authservice \
         import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import \
@@ -48,6 +50,9 @@ class ExtendedCookieAuthHelper(BasePlugin):
 
     meta_type = 'Extended Cookie Auth Helper'
     security = ClassSecurityInfo()
+
+    implements(ILoginPasswordHostExtractionPlugin, IChallengePlugin,
+               ICredentialsUpdatePlugin, ICredentialsResetPlugin)
 
     security.declarePrivate('updateCredentials')
     def updateCredentials(self, request, response, login, new_password):
@@ -92,12 +97,5 @@ class ExtendedCookieAuthHelper(BasePlugin):
             if pas_instance is not None:
                 pas_instance.updateCredentials(request, response, login, password)
 
-
-classImplements(ExtendedCookieAuthHelper,
-                ILoginPasswordHostExtractionPlugin,
-                IChallengePlugin,
-                ICredentialsUpdatePlugin,
-                ICredentialsResetPlugin,
-               )
 
 InitializeClass(ExtendedCookieAuthHelper)

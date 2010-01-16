@@ -1,9 +1,10 @@
-from App.class_init import InitializeClass
+from zope.interface import implements
+
 import Acquisition
+from App.class_init import InitializeClass
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from Products.PluggableAuthService.utils import classImplements
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 
@@ -55,10 +56,10 @@ class VirtualGroup(Acquisition.Implicit):
         return True
 
 
-
-
 class AutoGroup(BasePlugin):
     meta_type = "Automatic Group Plugin"
+
+    implements(IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection)
 
     _properties = (
             { 'id'      : 'title',
@@ -131,6 +132,5 @@ class AutoGroup(BasePlugin):
     def getGroupMembers(self, group_id):
         return ()
 
-classImplements(AutoGroup, IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection)
 InitializeClass(AutoGroup)
 

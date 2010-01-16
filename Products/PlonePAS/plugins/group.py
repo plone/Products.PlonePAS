@@ -10,7 +10,7 @@ from App.special_dtml import DTMLFile
 from App.class_init import InitializeClass
 from AccessControl import ClassSecurityInfo
 
-from zope.interface import implementedBy
+from zope.interface import implements
 
 from Products.PluggableAuthService.PluggableAuthService import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
@@ -18,7 +18,6 @@ from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPl
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
-from Products.PluggableAuthService.utils import classImplements
 
 from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
@@ -45,6 +44,9 @@ class GroupManager(ZODBGroupManager):
 
     meta_type = "Group Manager"
     security = ClassSecurityInfo()
+
+    implements(IGroupManagement, IGroupIntrospection, IGroupCapability,
+               IDeleteCapability)
 
     def __init__(self, *args, **kw):
         ZODBGroupManager.__init__(self, *args, **kw)
@@ -212,9 +214,6 @@ class GroupManager(ZODBGroupManager):
 
         return 0
 
-classImplements(GroupManager,
-                IGroupManagement, IGroupIntrospection, IGroupCapability,
-                IDeleteCapability, *implementedBy(ZODBGroupManager))
 
 InitializeClass(GroupManager)
 

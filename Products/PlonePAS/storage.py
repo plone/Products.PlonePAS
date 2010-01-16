@@ -5,14 +5,16 @@ main use.. cmfmember integration w/ properties providers
 
 """
 
+from zope.interface import implements
+
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import IStorage
-from Products.PluggableAuthService.utils import classImplements
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
 class PASStorage(object):
 
     security = ClassSecurityInfo()
+    implements(IStorage)
 
     def get(self, name, instance, **kwargs):
         user = instance.getUser()
@@ -31,6 +33,3 @@ class PASStorage(object):
                     sheet.setProperty( name, value )
                 else:
                     raise RuntimeError("mutable property provider shadowed by read only provider")
-
-classImplements(PASStorage,
-                IStorage)

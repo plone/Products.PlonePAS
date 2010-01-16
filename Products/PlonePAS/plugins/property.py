@@ -3,14 +3,14 @@ Mutable Property Provider
 """
 import copy
 
-from ZODB.PersistentMapping import PersistentMapping
-from BTrees.OOBTree import OOBTree
+from zope.interface import implements
+
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-
+from BTrees.OOBTree import OOBTree
+from ZODB.PersistentMapping import PersistentMapping
 from Products.CMFCore.utils import getToolByName
 
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
@@ -45,6 +45,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
     """
 
     meta_type = 'ZODB Mutable Property Provider'
+
+    implements(IPropertiesPlugin, IUserEnumerationPlugin,
+               IMutablePropertiesPlugin)
 
     def __init__(self, id, title='', schema=None, **kw):
         """Create in-ZODB mutable property provider.
@@ -255,11 +258,8 @@ class ZODBMutablePropertyProvider(BasePlugin):
         return tuple(user_info)
 
 
-classImplements(ZODBMutablePropertyProvider,
-                IPropertiesPlugin,
-                IUserEnumerationPlugin,
-                IMutablePropertiesPlugin)
-
 InitializeClass(ZODBMutablePropertyProvider)
 
-class PersistentProperties(PersistentMapping): pass
+
+class PersistentProperties(PersistentMapping):
+    pass

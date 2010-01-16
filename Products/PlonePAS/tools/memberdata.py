@@ -2,7 +2,7 @@ from App.class_init import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 
-from zope.interface import implementedBy
+from zope.interface import implements
 
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.permissions import ManagePortal
@@ -10,7 +10,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
 
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin, IRoleAssignerPlugin
 
@@ -66,7 +65,6 @@ class MemberDataTool(BaseTool):
 
         for tuple in portraits.items():
             member_id = tuple[0]
-            member_obj  = tuple[1]
             if member_id not in user_list:
                 self.portraits._delObject(member_id)
 
@@ -76,12 +74,10 @@ class MemberDataTool(BaseTool):
         Delete ALL MemberData information. This is required for us as we change the
         MemberData class.
         '''
-        membertool= getToolByName(self, 'portal_membership')
-        members   = self._members
+        members = self._members
 
         for tuple in members.items():
             member_name = tuple[0]
-            member_obj  = tuple[1]
             del members[member_name]
 
         return "Done."
@@ -91,8 +87,7 @@ class MemberDataTool(BaseTool):
         """Update former MemberData objects to new MemberData objects
         """
         count = 0
-        membertool= getToolByName(self, 'portal_membership')
-        members   = self._members
+        members = self._members
         properties = self.propertyIds()
 
         # Scan members for old MemberData
@@ -225,6 +220,7 @@ InitializeClass(MemberDataTool)
 class MemberData(BaseMemberData):
 
     security = ClassSecurityInfo()
+    implements(IManageCapabilities)
 
     ## setProperties uses setMemberProperties. no need to override.
 
@@ -414,8 +410,5 @@ class MemberData(BaseMemberData):
     def _getPlugins(self):
         return self.acl_users.plugins
 
-classImplements(MemberData,
-                implementedBy(BaseMemberData),
-                IManageCapabilities)
 
 InitializeClass(MemberData)

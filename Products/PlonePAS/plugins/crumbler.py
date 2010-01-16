@@ -4,13 +4,14 @@ Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
 
 """
+from zope.interface import implements
+
 from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from OFS.Folder import Folder
 
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 
@@ -39,6 +40,7 @@ def manage_addCookieCrumblingPlugin(self, id, title='',
 
 manage_addCookieCrumblingPluginForm = DTMLFile("../zmi/CookieCrumblingPluginForm", globals())
 
+
 class CookieCrumblingPlugin(Folder, BasePlugin):
     """Multi-plugin for injecting HTTP Basic Authentication
     credentials from form credentials.
@@ -46,6 +48,8 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
     meta_type = 'Cookie Crumbling Plugin'
 
     security = ClassSecurityInfo()
+
+    implements(IExtractionPlugin)
 
     def __init__(self, id, title=None):
         self._setId(id)
@@ -66,8 +70,5 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
             logger.error("PlonePAS error: %s", e, exc_info=1)
 
         return {}
-
-classImplements(CookieCrumblingPlugin,
-                IExtractionPlugin)
 
 InitializeClass(CookieCrumblingPlugin)

@@ -6,13 +6,13 @@ to the principal.
 """
 
 from AccessControl import ClassSecurityInfo
+from AccessControl.requestmethod import postonly
+from Acquisition import aq_parent, aq_inner
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from Acquisition import aq_parent, aq_inner
 
-from zope.interface import implementedBy
+from zope.interface import implements
 
-from Products.PluggableAuthService.utils import classImplements
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
 
@@ -21,7 +21,6 @@ from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
 
 from Products.PluggableAuthService.permissions import ManageUsers
 
-from AccessControl.requestmethod import postonly
 
 def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
     """
@@ -40,8 +39,8 @@ manage_addGroupAwareRoleManagerForm = DTMLFile(
 class GroupAwareRoleManager( ZODBRoleManager ):
 
     meta_type = "Group Aware Role Manager"
-
     security = ClassSecurityInfo()
+    implements(IAssignRoleCapability)
 
     def updateRolesList(self):
         role_holder = aq_parent( aq_inner( self._getPAS() ) )
@@ -52,7 +51,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
                     self.addRole( role )
                 except KeyError:
                     pass
-
 
     # don't blow up if manager already exists; mostly for ZopeVersionControl
     def manage_afterAdd( self, item, container ):
@@ -147,8 +145,5 @@ class GroupAwareRoleManager( ZODBRoleManager ):
             self.updateRolesList()
         return ZODBRoleManager.getRoleInfo(self, role_id)
 
-
-classImplements(GroupAwareRoleManager,
-                IAssignRoleCapability, *implementedBy(ZODBRoleManager))
 
 InitializeClass( GroupAwareRoleManager )
