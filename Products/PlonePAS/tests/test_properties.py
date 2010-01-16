@@ -204,7 +204,7 @@ class PropertySearchTest(base.TestCase):
         self.failIf(member is None)
         
         # Add a Group to make sure searchUsers isn't returning them in results.
-        self.gt.addGroup('group1')
+        self.gt.addGroup('group1', title="Group 1")
         group = self.gt.getGroupById('group1')
         self.failIf(group is None)
         
@@ -253,8 +253,9 @@ class PropertySearchTest(base.TestCase):
     def testGroupsNotReturnedByEnumerateUsers(self):
         """Check to make sure that groups aren't returned by a enumerateUsers call.
            See http://dev.plone.org/plone/ticket/9435"""
-        results=self.pas.searchUsers(id="group1")
-        self.assertEqual(results,())
+        results=self.pas.searchUsers()
+        resultIds = [a['id'] for a in results]
+        self.failIf('group1' in resultIds)
         
 def test_suite():
     suite = unittest.TestSuite()
