@@ -108,9 +108,7 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         # '__ignore_direct_roles__' = True should be pushed in the request.
         if not self.REQUEST.get('__ignore_direct_roles__', False):
             principal_ids.append(principal.getId())
-        # not all user objects are propertied users with groups support.
-        # theres no interface for now - so use an ugly hasattr
-        #
+        
         # Some services may need the real roles of an user but **not**
         # the ones he got through his groups. In this case, the
         # '__ignore_group_roles__'= True should be previously pushed
