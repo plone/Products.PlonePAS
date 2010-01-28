@@ -14,7 +14,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
-from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IGroupsPlugin
 from Products.PluggableAuthService.PluggableAuthService import \
                                     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 
@@ -24,6 +24,7 @@ from Products.PlonePAS.permissions import ManageGroups
 from Products.PlonePAS.permissions import DeleteGroups
 from Products.PlonePAS.permissions import ViewGroups
 from Products.PlonePAS.permissions import SetGroupOwnership
+from Products.PlonePAS.utils import getGroupsForPrincipal
 
 
 logger = logging.getLogger('PluggableAuthService')
@@ -104,6 +105,7 @@ class GroupsTool(UniqueObject, SimpleItem):
         gTools = self._getGroupTools()
         if not gTools:
             raise NotSupported, 'No plugins allow for both group management and introspection'
+        
         for tid, tool in gTools:
             if id in tool.getGroupIds():
                 tool.updateGroup(id, title=kw.get('title'),
@@ -112,6 +114,7 @@ class GroupsTool(UniqueObject, SimpleItem):
                 
         if roles is not None:
             self.setRolesForGroup(id, roles)
+
         g.setGroupProperties(kw)
         if groups:
             # remove absent groups
@@ -294,23 +297,15 @@ class GroupsTool(UniqueObject, SimpleItem):
 
     security.declareProtected(ViewGroups, 'getGroupMembers')
     def getGroupMembers(self, group_id):
-        members = []
+        members = set()
         introspectors = self._getGroupIntrospectors()
         for iid, introspector in introspectors:
-            members = introspector.getGroupMembers(group_id)
-            if members:
-                break
-        return members
-
+            members.update(introspector.getGroupMembers(group_id))
+        return list(members)
 
     security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
     def getGroupsForPrincipal(self, principal):
-        introspectors = self._getGroupIntrospectors()
-        for iid, introspector in introspectors:
-            groups = introspector.getGroupsForPrincipal(principal)
-            if groups:
-                break
-        return groups
+        return getGroupsForPrincipal(principal, self._getPlugins())
 
     ##
     # plugin getters

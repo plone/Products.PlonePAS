@@ -2,6 +2,7 @@ from zope.interface import implements
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces.browser import IPASSearchView
+from itertools import chain
 
 
 class PASSearchView(BrowserView):

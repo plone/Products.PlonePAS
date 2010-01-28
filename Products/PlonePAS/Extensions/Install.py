@@ -8,6 +8,8 @@ from Products.PluggableAuthService.interfaces.plugins \
      import IChallengePlugin
 from Products.PluggableAuthService.Extensions.upgrade \
      import replace_acl_users
+from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin \
+     import IRecursiveGroupsPlugin, addRecursiveGroupsPlugin
 
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement
@@ -110,7 +112,6 @@ def registerPluginTypes(pas):
 
     registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
 
-
 def setupPlugins(portal):
     uf = portal.acl_users
     logger.debug("\nPlugin setup")
@@ -138,6 +139,12 @@ def setupPlugins(portal):
         logger.debug("Added Group Aware Role Manager.")
         activatePluginInterfaces(portal, 'local_roles')
 
+    found = uf.objectIds(['Recursive Groups Plugin'])
+    if not found:
+        addRecursiveGroupsPlugin(plone_pas, 'recursive_groups', "Recursive Groups Plugin")
+        logger.debug("Added Recursive Groups plugin.")
+        activatePluginInterfaces(portal, "recursive_groups")
+
     found = uf.objectIds(['Group Manager'])
     if not found:
         plone_pas.manage_addGroupManager('source_groups')
@@ -158,8 +165,8 @@ def setupPlugins(portal):
 
     found = uf.objectIds(['Automatic Group Plugin'])
     if not found:
-        plone_pas.manage_addAutoGroup('auto_group', "Automatic Group Provider",
-                "AuthenticatedUsers", "Authenticated Users (Virtual Group)")
+        plone_pas.manage_addAutoGroup('auto_group', "Authenticated Users (Virtual Group)",
+                "AuthenticatedUsers", "Automatic Group Provider")
         logger.debug("Added Automatic Group.")
         activatePluginInterfaces(portal, "auto_group")
 

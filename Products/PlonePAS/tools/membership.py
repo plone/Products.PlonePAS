@@ -137,9 +137,6 @@ class MembershipTool(BaseTool):
 
         This is an 'AND' request.
 
-        When it takes 'name' as keyword (or in REQUEST) it  searches on
-        Full name and id.
-
         Simple name searches are "fast".
         """
         logger.debug('searchForMembers: started.')

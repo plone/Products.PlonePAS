@@ -48,9 +48,9 @@ def setupGroups(site):
     uf = getToolByName(site, 'acl_users')
     gtool = getToolByName(site, 'portal_groups')
     if not uf.searchGroups(id='Administrators'):
-        gtool.addGroup('Administrators', roles=['Manager'])
+        gtool.addGroup('Administrators', title='Administrators', roles=['Manager'])
     if not uf.searchGroups(id='Reviewers'):
-        gtool.addGroup('Reviewers', roles=['Reviewer'])
+        gtool.addGroup('Reviewers', title='Reviewers', roles=['Reviewer'])
 
 
 def installPAS(portal):

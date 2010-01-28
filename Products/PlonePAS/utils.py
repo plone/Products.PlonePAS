@@ -7,6 +7,7 @@ from PIL import Image
 from Products.CMFCore.utils import getToolByName
 
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 
 def unique(iterable):
     d = {}
@@ -166,3 +167,10 @@ def scale_image(image_file, max_size=None, default_format=None):
     new_file.seek(0)
     # Return the file data and the new mimetype
     return new_file, mimetype
+    
+    
+def getGroupsForPrincipal(principal, plugins):
+    groups = set()
+    for iid, plugin in plugins.listPlugins(IGroupsPlugin):
+        groups.update(plugin.getGroupsForPrincipal(principal))
+    return list(groups)

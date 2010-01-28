@@ -4,6 +4,52 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- Revert changes made to ZODBMutablePropertyProvider's enumerateUsers method
+  which prevented lookup of users by id. Some refactoring.
+  Refs http://dev.plone.org/plone/ticket/9361
+  [erikrose, esteele]
+
+- GroupAwareRoleManager now properly computes the roles of deeply-nested
+  principals.
+  [erikrose, esteele]
+
+- Factor up getGroupsForPrincipal call. 
+  [erikrose, esteele]
+
+- AutoGroup now implements IPropertiesPlugin to return group title and description.
+  [erikrose, esteele]
+
+- GroupsTool's getGroupsForPrincipal and getGroupMembers now return a list
+  made up of groups/members from all responding plugins instead of just the
+  first responder.
+  [erikrose, esteele]
+
+- Remove GroupData's _gruf_getProperty method, move remaining functionality
+  into getProperty. getProperty now searches for properties in the following
+  places: property sheets directly on the group object, PAS
+  IPropertyProviders, portal_groupdata properties, and attributes on its
+  GroupData entry. It returns the first piece of data found.
+  Closes http://dev.plone.org/plone/ticket/9828
+  [erikrose, esteele]
+  
+- Added __ignore_direct_roles__ request flag to getRolesForPrincipal() to
+  permit retrieval of only group-provided (inherited) roles.
+  [cah190]
+
+- getGroupsForPrincipal is a method of PAS' IGroupsPlugin, adjust the groups
+  tool's plugin lookup accordingly.
+  [esteele]
+  
+- Rework the group detection of the ZODBMutablePropertyProvider so that
+  enumerateUsers only returns users.
+  [esteele]
+
+- Add a recursive groups plugin by default.
+  [esteele]
+
+- Set proper titles for default groups.
+  [esteele]
+
 - Avoid the use of the classImplements helper from PAS. It dealt with the now
   gone Zope2 Interface variants and is no longer needed.
   [hannosch]

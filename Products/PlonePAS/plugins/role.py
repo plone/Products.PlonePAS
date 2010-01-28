@@ -16,11 +16,11 @@ from zope.interface import implements
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
 
-from Products.PlonePAS.utils import unique
+from Products.PlonePAS.utils import unique, getGroupsForPrincipal
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 from Products.PluggableAuthService.permissions import ManageUsers
-
 
 def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
     """
@@ -102,7 +102,12 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         """ See IRolesPlugin.
         """
         roles = []
-        principal_ids = [principal.getId()]
+        principal_ids = []
+        # Some services need to determine the roles obtained from groups
+        # while excluding the directly assigned roles.  In this case
+        # '__ignore_direct_roles__' = True should be pushed in the request.
+        if not self.REQUEST.get('__ignore_direct_roles__', False):
+            principal_ids.append(principal.getId())
         # not all user objects are propertied users with groups support.
         # theres no interface for now - so use an ugly hasattr
         #
@@ -110,8 +115,9 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         # the ones he got through his groups. In this case, the
         # '__ignore_group_roles__'= True should be previously pushed
         # in the request.
-        if not self.REQUEST.get('__ignore_group_roles__', False) and hasattr(principal, 'getGroups'):
-            principal_ids.extend( principal.getGroups() )
+        plugins = self._getPAS()['plugins']
+        if not self.REQUEST.get('__ignore_group_roles__', False):
+            principal_ids.extend(getGroupsForPrincipal(principal, plugins))
         for pid in principal_ids:
             roles.extend( self._principal_roles.get( pid, () ) )
         return tuple( unique( roles ) )

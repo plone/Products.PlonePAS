@@ -59,6 +59,13 @@ class GroupAwareRoleManagerTests(ZODBRoleManagerTests):
         garm.REQUEST.set('__ignore_group_roles__', True)
         got = garm.getRolesForPrincipal(johndoe)
         self.failUnlessEqual(got, ('foo_role',))
+
+        # Confirm we can get only the inherited roles
+        garm.REQUEST.set('__ignore_group_roles__', False)
+        garm.REQUEST.set('__ignore_direct_roles__', True)
+        got = garm.getRolesForPrincipal(johndoe)
+        self.failUnlessEqual(got, ('bar_role',))
+
         return
 
 

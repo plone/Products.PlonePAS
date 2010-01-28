@@ -165,7 +165,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         isGroup = getattr(user, 'isGroup', lambda: None)()
 
         properties = dict(propertysheet.propertyItems())
-
+                
         for name, property_type in self._getSchema(isGroup) or ():
             if (name in properties and not
                 validateValue(property_type, properties[name])):
@@ -180,6 +180,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         userid = user.getId()
         userprops = self._storage.get(userid)
+        properties.update({'isGroup':isGroup})
         if userprops is not None:
             userprops.update(properties)
             self._storage[userid] = self._storage[userid]   # notify persistence machinery of change
@@ -225,7 +226,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         return True
 
-
     def enumerateUsers( self
                       , id=None
                       , login=None
@@ -236,17 +236,17 @@ class ZODBMutablePropertyProvider(BasePlugin):
         """ See IUserEnumerationPlugin.
         """
         plugin_id = self.getId()
-
-        # This plugin can't search for a user by id or login, because there is
-        # no such keys in the storage (data dict in the comprehensive list)
-        # If kw is empty or not, we continue the search.
-        if id or login:
-            return ()
-
         criteria=copy.copy(kw)
-
-        users=[ (user,data) for (user,data) in self._storage.items()
-                    if self.testMemberData(data, criteria, exact_match)]
+        if id is not None:
+            criteria["id"]=id
+        if login is not None:
+            criteria["login"]=login
+        user_info = []
+        if not kw and id:
+            users = self._storage.get(id, None)
+        else:
+            users=[ (user,data) for (user,data) in self._storage.items()
+                        if self.testMemberData(data, criteria, exact_match) and not data.get('isGroup', False)]
 
         user_info=[ { 'id' : self.prefix + user_id,
                      'login' : user_id,

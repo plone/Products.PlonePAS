@@ -354,60 +354,38 @@ class GroupData(SimpleItem):
         return ret
 
     security.declarePublic('getProperty')
-    def getProperty(self, id, default=_marker):
+    def getProperty(self, id, default=None):
         """PAS-specific method to fetch a group's properties. Looks
         through the ordered property sheets.
         """
-        sheets = None
-        if not IPluggableAuthService.providedBy(self.acl_users):
-            return self._gruf_getProperty(id)
-        else:
-            # It's a PAS! Whee!
-            group = self.getGroup()
-            sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
-            # we won't always have PlonePAS groups, due to acquisition,
-            # nor are guaranteed property sheets
-            if not sheets:
-                return self._gruf_getProperty(id)
+        group = self.getGroup()
+        sheets = getattr(group, 'getOrderedPropertySheets', lambda: [])()
 
         # If we made this far, we found a PAS and some property sheets.
         for sheet in sheets:
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
                 return sheet.getProperty(id)
+        # we won't always have PlonePAS groups, due to acquisition,
+        # nor are guaranteed property sheets
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
-        return self._gruf_getProperty(id, default)
 
-    def _gruf_getProperty(self, id, default=_marker):
-        """ Returns the value of the property specified by 'id' """
         tool = self.getTool()
         base = aq_base( self )
 
-        # First, check the wrapper (w/o acquisition).
-        value = getattr( base, id, _marker )
-        if value is not _marker:
-            return value
-
-        # Then, check the tool and the user object for a value.
-        tool_value = tool.getProperty( id, _marker )
+        # Then, check the user object, the tool, and attrs of myself for a
+        # value:
         user_value = getattr( aq_base(self.getGroup()), id, _marker )
-
-        # If the tool doesn't have the property, use user_value or default
-        if tool_value is _marker:
-            if user_value is not _marker:
-                return user_value
-            elif default is not _marker:
-                return default
-            else:
-                raise ValueError, 'The property %s does not exist' % id
-
-        # If the tool has an empty property and we have a user_value, use it
-        if not tool_value and user_value is not _marker:
-            return user_value
-
-        # Otherwise return the tool value
-        return tool_value
+        tool_value = tool.getProperty( id, _marker )
+        value = getattr( base, id, _marker )
+        
+        # Take the first of the above that is filled out:
+        for v in [user_value, tool_value, value]:
+            if v is not _marker:
+                return v
+        
+        return default
 
     def __str__(self):
         return self.getGroupId()

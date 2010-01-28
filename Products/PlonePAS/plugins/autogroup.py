@@ -4,7 +4,7 @@ import Acquisition
 from App.class_init import InitializeClass
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IPropertiesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 
@@ -24,10 +24,11 @@ def manage_addAutoGroup(self, id, title='', group='', description='', RESPONSE=N
 
 
 class VirtualGroup(Acquisition.Implicit):
-    def __init__(self, id, description):
+    def __init__(self, id, title='', description=''):
         self.id = id
-        self.title = description
-
+        self.title = title
+        self.description = description
+        
     def getId(self):
         return self.id
 
@@ -59,7 +60,7 @@ class VirtualGroup(Acquisition.Implicit):
 class AutoGroup(BasePlugin):
     meta_type = "Automatic Group Plugin"
 
-    implements(IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection)
+    implements(IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection, IPropertiesPlugin)
 
     _properties = (
             { 'id'      : 'title',
@@ -103,7 +104,7 @@ class AutoGroup(BasePlugin):
 
         return [ { 'id' : self.group,
                    'groupid' : self.group,
-                   'title' : self.description,
+                   'title' : self.title,
                    'pluginid' : self.getId(),
                } ]
 
@@ -118,7 +119,7 @@ class AutoGroup(BasePlugin):
         if group_id != self.group:
             return None
 
-        return VirtualGroup(self.group, self.description)
+        return VirtualGroup(self.group, title=self.title, description=self.description)
 
 
     def getGroups(self):
@@ -131,6 +132,15 @@ class AutoGroup(BasePlugin):
 
     def getGroupMembers(self, group_id):
         return ()
+
+    # IPropertiesPlugin:
+    def getPropertiesForUser(self, user, request=None):
+        if user == self.group:
+            return {'title': self.title,
+                    'description': self.description}
+        else:
+            return {}
+
 
 InitializeClass(AutoGroup)
 
