@@ -143,7 +143,6 @@ def setupPlugins(portal):
     if not found:
         addRecursiveGroupsPlugin(plone_pas, 'recursive_groups', "Recursive Groups Plugin")
         logger.debug("Added Recursive Groups plugin.")
-        activatePluginInterfaces(portal, "recursive_groups")
 
     found = uf.objectIds(['Group Manager'])
     if not found:

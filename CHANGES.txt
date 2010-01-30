@@ -49,7 +49,7 @@ Changelog
   enumerateUsers only returns users.
   [esteele]
 
-- Add a recursive groups plugin by default.
+- Add, but don't activate, a recursive groups plugin on installation.
   [esteele]
 
 - Set proper titles for default groups.
