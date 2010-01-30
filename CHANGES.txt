@@ -4,6 +4,11 @@ Changelog
 4.0b3 - unreleased
 ------------------
 
+- Role plugin's tests no longer subclass (and run all of) ZODBRoleManagerTests
+  as they cannot properly handle the plugin's expectation of finding a
+  PluginRegistry with IGroupsPlugin
+  [erikrose, esteele]
+  
 - Revert changes made to ZODBMutablePropertyProvider's enumerateUsers method
   which prevented lookup of users by id. Some refactoring.
   Refs http://dev.plone.org/plone/ticket/9361

@@ -4,17 +4,25 @@
 
 import unittest
 
-from Products.PluggableAuthService.plugins.tests.test_ZODBRoleManager import ZODBRoleManagerTests
+from Acquisition import Implicit
+from Products.PluginRegistry.PluginRegistry import PluginRegistry
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.plugins.tests.helpers import (
     FauxPAS, DummyUser, makeRequestAndResponse)
+from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PlonePAS.tests import base
+from zope.interface import implements
 
 
-class GroupAwareRoleManagerTests(ZODBRoleManagerTests):
+class FauxGroupsPlugin(BasePlugin):
+    implements(IGroupsPlugin)
+    
+    def getGroupsForPrincipal(self, principal, request=None):
+        return principal._groups
+
+class GroupAwareRoleManagerTests(base.TestCase):
     """Roles manager that takes care of goup of principal"""
-
-    # As we inherit from ZODBRoleManagerTests, all tests from this
-    # class will be performed for GroupAwareRoleManager such we can see
-    # potential regressions
 
     def _getTargetClass(self):
 
@@ -37,6 +45,12 @@ class GroupAwareRoleManagerTests(ZODBRoleManagerTests):
         in the request.
         """
         root = FauxPAS()
+        
+        # Add a minimal PluginRegistry with a mock IGroupsPlugin, because the roles plugin depends on it:
+        root._setObject('plugins', PluginRegistry(_PLUGIN_TYPE_INFO))
+        root._setObject('groups', FauxGroupsPlugin())
+        root['plugins'].activatePlugin(IGroupsPlugin, 'groups')
+        
         garm = self._makeOne('garm').__of__(root)
 
         # 2 roles
