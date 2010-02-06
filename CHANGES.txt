@@ -4,6 +4,9 @@ Changelog
 4.0b3 - Unreleased
 ------------------
 
+- Cache getGroupsForPrincipal per principal id per request (when available).
+  [esteele]
+
 4.0b3 - 2010-01-31
 ------------------
 

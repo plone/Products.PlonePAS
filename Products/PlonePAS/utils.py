@@ -4,10 +4,12 @@ from urllib import unquote as url_unquote
 
 from PIL import Image
 
+from plone.memoize.volatile import cache, DontCache
 from Products.CMFCore.utils import getToolByName
-
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from zope.annotation.interfaces import IAnnotations
+
 
 def unique(iterable):
     d = {}
@@ -167,9 +169,20 @@ def scale_image(image_file, max_size=None, default_format=None):
     new_file.seek(0)
     # Return the file data and the new mimetype
     return new_file, mimetype
-    
-    
-def getGroupsForPrincipal(principal, plugins):
+
+def create_cache_key(method, principal, plugins, request=None):
+    wrapped = IAnnotations(request, None)
+    if wrapped is None:
+        print "miss"
+        raise DontCache
+    return (principal.getId(), )
+
+def store_on_request(method, principal, plugins, request=None):
+    """ helper for caching local roles on the request """
+    return IAnnotations(request, None)
+
+@cache(get_key=create_cache_key, get_cache=store_on_request)
+def getGroupsForPrincipal(principal, plugins, request=None):
     groups = set()
     for iid, plugin in plugins.listPlugins(IGroupsPlugin):
         groups.update(plugin.getGroupsForPrincipal(principal))
