@@ -173,7 +173,6 @@ def scale_image(image_file, max_size=None, default_format=None):
 def create_cache_key(method, principal, plugins, request=None):
     wrapped = IAnnotations(request, None)
     if wrapped is None:
-        print "miss"
         raise DontCache
     return (principal.getId(), )
 
