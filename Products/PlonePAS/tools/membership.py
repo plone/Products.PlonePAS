@@ -3,7 +3,10 @@ from cStringIO import StringIO
 
 from zope import event
 
-import PIL
+try:
+    import Image # PIL 1.1.7
+except ImportError:
+    from PIL import Image
 from DateTime import DateTime
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
@@ -700,7 +703,7 @@ class MembershipTool(BaseTool):
             if portrait_data == '':
                 continue
             try:
-                img = PIL.Image.open(StringIO(portrait_data))
+                img = Image.open(StringIO(portrait_data))
             except ConflictError:
                 pass
             except:

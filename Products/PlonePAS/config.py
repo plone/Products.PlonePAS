@@ -9,7 +9,10 @@ DEFAULT_PROTO_MAPPING = {'WebDAV': DEFAULT_CHALLENGE_PROTOCOL,
                          'XML-RPC': DEFAULT_CHALLENGE_PROTOCOL}
 
 # Settings for member image resize quality
-from PIL import Image
+try:
+    import Image # PIL 1.1.7
+except ImportError:
+    from PIL import Image
 
 PIL_SCALING_ALGO = Image.ANTIALIAS
 PIL_QUALITY = 88

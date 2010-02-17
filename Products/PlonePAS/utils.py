@@ -2,7 +2,10 @@ from cStringIO import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
-from PIL import Image
+try:
+    import Image # PIL 1.1.7
+except ImportError:
+    from PIL import Image
 
 from plone.memoize.volatile import cache, DontCache
 from Products.CMFCore.utils import getToolByName
