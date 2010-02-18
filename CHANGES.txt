@@ -1,8 +1,11 @@
 Changelog
 =========
 
-4.0b3 - Unreleased
+4.0b4 - 2010-02-18
 ------------------
+
+- Properly import from PIL 1.1.7
+  [tom_gross]
 
 - Cache getGroupsForPrincipal per principal id per request (when available).
   [esteele]
