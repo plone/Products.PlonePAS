@@ -4,9 +4,9 @@ from cStringIO import StringIO
 from zope import event
 
 try:
-    import Image # PIL 1.1.7
+    import Image as PILImage # PIL 1.1.7
 except ImportError:
-    from PIL import Image
+    from PIL import Image as PILImage
 from DateTime import DateTime
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
@@ -703,7 +703,7 @@ class MembershipTool(BaseTool):
             if portrait_data == '':
                 continue
             try:
-                img = Image.open(StringIO(portrait_data))
+                img = PILImage.open(StringIO(portrait_data))
             except ConflictError:
                 pass
             except:
