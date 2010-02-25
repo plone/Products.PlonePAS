@@ -16,10 +16,8 @@ from zope.interface import implements
 from Products.PluggableAuthService.plugins.ZODBRoleManager \
      import ZODBRoleManager
 
-from Products.PlonePAS.utils import unique, getGroupsForPrincipal
+from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
-from Products.PlonePAS.interfaces.group import IGroupIntrospection
-
 from Products.PluggableAuthService.permissions import ManageUsers
 
 def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
@@ -34,7 +32,6 @@ def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
 
 manage_addGroupAwareRoleManagerForm = DTMLFile(
     '../zmi/GroupAwareRoleManagerForm', globals())
-
 
 class GroupAwareRoleManager( ZODBRoleManager ):
 
@@ -98,16 +95,16 @@ class GroupAwareRoleManager( ZODBRoleManager ):
     assignRolesToPrincipal = postonly(assignRolesToPrincipal)
 
     security.declarePrivate( 'getRolesForPrincipal' )
-    def getRolesForPrincipal( self, principal, request=None ):
+    def getRolesForPrincipal(self, principal, request=None):
         """ See IRolesPlugin.
         """
-        roles = []
-        principal_ids = []
+        roles = set([])
+        principal_ids = set([])
         # Some services need to determine the roles obtained from groups
         # while excluding the directly assigned roles.  In this case
         # '__ignore_direct_roles__' = True should be pushed in the request.
         if not self.REQUEST.get('__ignore_direct_roles__', False):
-            principal_ids.append(principal.getId())
+            principal_ids.add(principal.getId())
         
         # Some services may need the real roles of an user but **not**
         # the ones he got through his groups. In this case, the
@@ -115,10 +112,10 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         # in the request.
         plugins = self._getPAS()['plugins']
         if not self.REQUEST.get('__ignore_group_roles__', False):
-            principal_ids.extend(getGroupsForPrincipal(principal, plugins))
+            principal_ids.update(getGroupsForPrincipal(principal, plugins))
         for pid in principal_ids:
-            roles.extend( self._principal_roles.get( pid, () ) )
-        return tuple( unique( roles ) )
+            roles.update(self._principal_roles.get(pid, ()))
+        return tuple(roles)
 
     ## implement IAssignRoleCapability
 

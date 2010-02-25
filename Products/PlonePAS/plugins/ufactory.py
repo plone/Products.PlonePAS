@@ -14,7 +14,7 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-from Products.PlonePAS.utils import unique, getCharset
+from Products.PlonePAS.utils import getCharset
 from Products.PlonePAS.odict import OrderedDict
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
@@ -142,11 +142,11 @@ class PloneUser(PropertiedUser):
 
     def getRolesInContext(self, object):
         lrmanagers = self._getLocalRolesPlugins()
-        roles = []
+        roles = set([])
         for lrid, lrmanager in lrmanagers:
-            roles.extend(lrmanager.getRolesInContext(self, object))
-        roles.extend(self.getRoles())
-        return unique(roles)
+            roles.update(lrmanager.getRolesInContext(self, object))
+        roles.update(self.getRoles())
+        return list(roles)
 
     def allowed(self, object, object_roles = None):
         if object_roles is _what_not_even_god_should_do:
