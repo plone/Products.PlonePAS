@@ -139,11 +139,6 @@ def setupPlugins(portal):
         logger.debug("Added Group Aware Role Manager.")
         activatePluginInterfaces(portal, 'local_roles')
 
-    found = uf.objectIds(['Recursive Groups Plugin'])
-    if not found:
-        addRecursiveGroupsPlugin(plone_pas, 'recursive_groups', "Recursive Groups Plugin")
-        logger.debug("Added Recursive Groups plugin.")
-
     found = uf.objectIds(['Group Manager'])
     if not found:
         plone_pas.manage_addGroupManager('source_groups')
@@ -174,6 +169,12 @@ def setupPlugins(portal):
         manage_addSessionPlugin(plone_pas, 'session')
         logger.debug("Added Plone Session Plugin.")
         activatePluginInterfaces(portal, "session")
+
+    found = uf.objectIds(['Recursive Groups Plugin'])
+    if not found:
+        addRecursiveGroupsPlugin(plone_pas, 'recursive_groups', "Recursive Groups Plugin")
+        activatePluginInterfaces(portal, 'recursive_groups')
+        logger.debug("Added Recursive Groups plugin.")
 
 
 def setupAuthPlugins(portal, pas, plone_pas,

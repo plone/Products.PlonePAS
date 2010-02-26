@@ -3,11 +3,15 @@ Changelog
 
 4.0b5 - Unreleased
 ------------------
+- Install recursive_groups in new sites by default. Make it the last
+  IGroupsPlugin installed.
+  [esteele]
 
-- Remove caching of utils.py's getGroupsForPrincipal method as it was nastily overzealous.
+- Remove caching of utils.py's getGroupsForPrincipal method as it was nastily
+  overzealous. 
   [esteele, cah190]
-  
-- Use sets instead of util.py's 'unique' method.
+
+- Use sets instead of util.py's 'unique' method. 
   [esteele]
 
 4.0b4 - 2010-02-18
