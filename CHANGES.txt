@@ -1,8 +1,9 @@
 Changelog
 =========
 
-4.0b5 - Unreleased
+4.0b5 - 2010-03-03
 ------------------
+
 - Install recursive_groups in new sites by default. Make it the last
   IGroupsPlugin installed.
   [esteele]
