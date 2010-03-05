@@ -4,6 +4,8 @@ Changelog
 4.0b6 - Unreleased
 ------------------
 
+- Revert incorrect PIL import change.
+  [hannosch]
 
 4.0b5 - 2010-03-03
 ------------------

@@ -1,12 +1,10 @@
 import logging
 from cStringIO import StringIO
 
+import transaction
 from zope import event
 
-try:
-    import Image as PILImage # PIL 1.1.7
-except ImportError:
-    from PIL import Image as PILImage
+import PIL
 from DateTime import DateTime
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
@@ -694,7 +692,6 @@ class MembershipTool(BaseTool):
         if portraits is None:
             return []
         bad_member_ids = []
-        import transaction
         TXN_THRESHOLD = 50
         counter = 1
         for member_id in tuple(portraits.keys()):
@@ -703,7 +700,7 @@ class MembershipTool(BaseTool):
             if portrait_data == '':
                 continue
             try:
-                img = PILImage.open(StringIO(portrait_data))
+                img = PIL.Image.open(StringIO(portrait_data))
             except ConflictError:
                 pass
             except:

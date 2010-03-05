@@ -2,10 +2,7 @@ from cStringIO import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
-try:
-    import Image # PIL 1.1.7
-except ImportError:
-    from PIL import Image
+from PIL import Image
 
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
