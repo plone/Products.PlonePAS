@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0b6 - Unreleased
+4.0b6 - 2010-03-05
 ------------------
 
 - Revert incorrect PIL import change.
