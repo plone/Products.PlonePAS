@@ -86,6 +86,16 @@ class MembershipTool(BaseTool):
                     + '/manage_mapRoles'
                     + '?manage_tabs_message=Member+area+type+changed.')
 
+    security.declareProtected(ManagePortal, 'manage_setMembersFolderById')
+    def manage_setMembersFolderById(self, id, REQUEST=None):
+        """ ZMI method to set the members folder object by its id.
+        """
+        self.setMembersFolderById(id)
+        if REQUEST is not None:
+            REQUEST['RESPONSE'].redirect(self.absolute_url()
+                    + '/manage_mapRoles'
+                    + '?manage_tabs_message=Members+folder+id+changed.')
+
     security.declareProtected(ManagePortal, 'setMemberAreaType')
     def setMemberAreaType(self, type_name):
         """ Sets the portal type to use for new home folders.
