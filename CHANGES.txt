@@ -1,9 +1,12 @@
 Changelog
 =========
 
-4.0b7 - unreleased
+4.0b7 - 2010-04-07
 ------------------
 
+- Added manage_setMembersFolderById method for ZMI.
+  Fixes http://dev.plone.org/plone/ticket/10400
+  [daftdog]
 
 4.0b6 - 2010-03-05
 ------------------
