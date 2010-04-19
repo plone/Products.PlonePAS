@@ -452,7 +452,7 @@ class MembershipTool(BaseTool):
                 portrait = None
         if portrait is None:
             portal = getToolByName(self, 'portal_url').getPortalObject()
-            portrait = getattr(portal, default_portrait)
+            portrait = getattr(portal, default_portrait, None)
 
         return portrait
 
