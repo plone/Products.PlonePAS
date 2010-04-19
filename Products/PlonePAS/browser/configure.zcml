@@ -31,11 +31,4 @@
       allowed_interface="Products.PlonePAS.interfaces.browser.IPASSearchView"
       />
 
-  <browser:page
-      for="zExceptions.Unauthorized"
-      name="index.html"
-      class=".unauthorized.UnauthorizedView"
-      permission="zope.Public"
-      />
-
 </configure>

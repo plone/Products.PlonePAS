@@ -4,6 +4,10 @@ Changelog
 4.0b8 - Unreleased
 ------------------
 
+- Removed special unauthorized view workaround, after the underlying issue
+  has been fixed in Zope2.
+  [davisagli, hannosch]
+
 4.0b7 - 2010-04-07
 ------------------
 

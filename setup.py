@@ -42,6 +42,6 @@ setup(name='Products.PlonePAS',
         'Acquisition',
         'DateTime',
         'ZODB3',
-        'Zope2',
+        'Zope2 > 2.12.4',
       ],
 )
