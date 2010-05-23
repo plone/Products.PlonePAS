@@ -4,6 +4,9 @@ Changelog
 4.0b9 - Unreleased
 ------------------
 
+- Fixed a test to no longer use removed Large Plone Folder type.
+  [davisagli]
+
 4.0b8 - 2010-05-01
 ------------------
 
