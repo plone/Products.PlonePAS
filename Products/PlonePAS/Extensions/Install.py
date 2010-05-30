@@ -209,7 +209,8 @@ def setupPlugins(portal, out):
 
     found = uf.objectIds(['Plone Session Plugin'])
     if not found:
-        manage_addSessionPlugin(plone_pas, 'session')
+        path = "/%s"%portal.id
+        manage_addSessionPlugin(plone_pas, 'session', path=path)
         print >> out, "Added Plone Session Plugin."
         activatePluginInterfaces(portal, "session", out)
 
