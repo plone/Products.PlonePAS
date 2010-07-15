@@ -4,6 +4,10 @@ Changelog
 4.0b10 - Unreleased
 -------------------
 
+- PluggableAuthService expects a list of group ids from getGroups, don't pass a
+  list of wrapped groups instead.
+  [cah190, esteele]
+
 - Added a custom `IMembershipTool` interface to PlonePAS extending the base one
   from CMFCore. It adds the `getMemberInfo` method to the mix. This closes
   http://dev.plone.org/plone/ticket/10240.
