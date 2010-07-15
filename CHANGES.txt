@@ -4,6 +4,11 @@ Changelog
 4.0b10 - Unreleased
 -------------------
 
+- Added a custom `IMembershipTool` interface to PlonePAS extending the base one
+  from CMFCore. It adds the `getMemberInfo` method to the mix. This closes
+  http://dev.plone.org/plone/ticket/10240.
+  [hannosch]
+
 4.0b9 - 2010-06-03
 ------------------
 

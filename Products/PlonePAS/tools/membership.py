@@ -3,6 +3,7 @@ from cStringIO import StringIO
 
 import transaction
 from zope import event
+from zope.interface import implements
 
 import PIL
 from DateTime import DateTime
@@ -31,6 +32,7 @@ from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
+from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
 
@@ -41,6 +43,8 @@ logger = logging.getLogger('PlonePAS')
 class MembershipTool(BaseTool):
     """PAS-based customization of MembershipTool.
     """
+
+    implements(membership.IMembershipTool)
 
     meta_type = "PlonePAS Membership Tool"
     toolicon = 'tool.gif'

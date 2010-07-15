@@ -18,11 +18,13 @@ from Products.PloneTestCase.ptc import default_user
 from Products.PloneTestCase.ptc import portal_name
 from Products.PloneTestCase.ptc import portal_owner
 
+from Products.PlonePAS.interfaces.membership import IMembershipTool
+from Products.PlonePAS.browser.member import PASMemberView
 from Products.PlonePAS.plugins.ufactory import PloneUser
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
-from Products.PlonePAS.browser.member import PASMemberView
+from Products.PlonePAS.tools.membership import MembershipTool
 
 
 class MembershipToolTest(base.TestCase):
@@ -160,6 +162,10 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.membership = self.portal.portal_membership
         self.groups = self.portal.portal_groups
         self._trap_warning_output()
+
+    def test_interface(self):
+        from zope.interface.verify import verifyClass
+        verifyClass(IMembershipTool, MembershipTool)
 
     def addMember(self, username, fullname, email, roles, last_login_time):
         self.membership.addMember(username, 'secret', roles, [])
