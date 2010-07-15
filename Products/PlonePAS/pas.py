@@ -161,7 +161,7 @@ PluggableAuthService.userFolderEditGroup = postonly(PluggableAuthService._doChan
 security.declareProtected(ManageUsers, 'getGroups')
 def getGroups(self):
     gtool = getToolByName(self, 'portal_groups')
-    return gtool.getGroupIds()
+    return gtool.listGroups()
 PluggableAuthService.getGroups = getGroups
 
 security.declareProtected(ManageUsers, 'getGroupNames')
