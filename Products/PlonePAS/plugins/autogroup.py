@@ -2,11 +2,11 @@ from zope.interface import implements
 
 import Acquisition
 from App.class_init import InitializeClass
+from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IPropertiesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
-
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
@@ -23,8 +23,9 @@ def manage_addAutoGroup(self, id, title='', group='', description='', RESPONSE=N
                 self.absolute_url())
 
 
-class VirtualGroup(Acquisition.Implicit):
+class VirtualGroup(PropertiedUser):
     def __init__(self, id, title='', description=''):
+        super(VirtualGroup, self).__init__(id)
         self.id = id
         self.title = title
         self.description = description
@@ -111,6 +112,9 @@ class AutoGroup(BasePlugin):
 
     # IGroupsPlugin implementation
     def getGroupsForPrincipal(self, principal, request=None):
+        if principal.getUserName() == self.group:
+            return ()
+
         return (self.group,)
 
 
