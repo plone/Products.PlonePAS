@@ -4,9 +4,13 @@ Changelog
 4.0b10 - Unreleased
 -------------------
 
+- Fixed problems with missing user cache invalidation. This closes
+  http://dev.plone.org/plone/ticket/10715.
+  [fafhrd, hannosch]
+
 - Make VirtualGroup inherit from PropertiedUser so it gets wrapped correctly.
   Have getGroupsForPrincipal not return the AutoGroup as a member of itself.
-  Closes http://dev.plone.org/plone/ticket/10568
+  Closes http://dev.plone.org/plone/ticket/10568.
   [cah190]
 
 - PluggableAuthService expects a list of group ids from getGroups, don't pass a

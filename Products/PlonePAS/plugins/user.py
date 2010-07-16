@@ -2,11 +2,12 @@
 ZODB based user manager with introspection and management interfaces.
 """
 
+from zope.interface import implements
+
 from AccessControl import ClassSecurityInfo, AuthEncoding
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-
-from zope.interface import implements
+from Products.PluggableAuthService.utils import createViewName
 
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
@@ -59,6 +60,10 @@ class UserManager(BasePlugin):
         self._user_passwords[ user_id ] = password
         self._login_to_userid[ login_name ] = user_id
         self._userid_to_login[ user_id ] = login_name
+
+        # enumerateUsers return value has changed
+        view_name = createViewName('enumerateUsers')
+        self.ZCacheable_invalidate(view_name=view_name)
 
     ## User Management interface
 
