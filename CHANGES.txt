@@ -1,8 +1,8 @@
 Changelog
 =========
 
-4.0b10 - Unreleased
--------------------
+4.0 - Unreleased
+----------------
 
 - Fixed problems with missing user cache invalidation. This closes
   http://dev.plone.org/plone/ticket/10715.
