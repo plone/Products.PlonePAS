@@ -4,6 +4,9 @@ Changelog
 4.0 - Unreleased
 ----------------
 
+- Avoid a deprecation warning for the credentialsChanged method.
+  [hannosch]
+
 - Fixed problems with missing user cache invalidation. This closes
   http://dev.plone.org/plone/ticket/10715.
   [fafhrd, hannosch]

@@ -15,6 +15,7 @@ from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.requestmethod import postonly
+from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
 from zExceptions import BadRequest
@@ -564,6 +565,8 @@ class MembershipTool(BaseTool):
                 user.changePassword(password)
             else:
                 acl_users._doChangeUser(member.getUserId(), password, member.getRoles(), domains)
+            if REQUEST is None:
+                REQUEST = aq_get(self, 'REQUEST', None)
             self.credentialsChanged(password, REQUEST=REQUEST)
         else:
             raise BadRequest, 'Not logged in.'
