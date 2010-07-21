@@ -4,6 +4,8 @@ Changelog
 4.0.1 - unreleased
 ------------------
 
+- Stop looking to GRUF to check if group properties can be edited.
+  [esteele]
 
 4.0 - 2010-07-18
 ----------------

@@ -295,7 +295,7 @@ class GroupData(SimpleItem):
         else:
             # It's a PAS! Whee!
             group = self.getGroup()
-            sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
+            sheets = getattr(group, 'getOrderedPropertySheets', lambda: [])()
 
             # We won't always have PlonePAS groups, due to acquisition,
             # nor are guaranteed property sheets
@@ -496,10 +496,7 @@ class GroupData(SimpleItem):
         else:
             # it's PAS
             group = self.getGroup()
-            sheets = getattr(group, 'getOrderedPropertySheets', lambda: None)()
-            if not sheets:
-                return self._groupdataHasProperty(prop_name)
-
+            sheets = getattr(group, 'getOrderedPropertySheets', lambda: [])()
             for sheet in sheets:
                 if not sheet.hasProperty(prop_name):
                     continue
