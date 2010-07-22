@@ -162,7 +162,6 @@ class GroupData(SimpleItem):
         This doesn't include TRANSITIVE groups/users.
         """
         md = self.portal_memberdata
-        gd = self.portal_groupdata
         gtool = self.portal_groups
         ret = []
         for u_name in gtool.getGroupMembers(self.getId()):
@@ -188,7 +187,6 @@ class GroupData(SimpleItem):
         This will include transitive groups / users
         """
         md = self.portal_memberdata
-        gd = self.portal_groupdata
         ret = []
         for u_name in self.getGroup().getMemberIds():
             usr = self._getGRUF().getUserById(u_name)

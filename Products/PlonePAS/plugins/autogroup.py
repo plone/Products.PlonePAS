@@ -1,6 +1,5 @@
 from zope.interface import implements
 
-import Acquisition
 from App.class_init import InitializeClass
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin

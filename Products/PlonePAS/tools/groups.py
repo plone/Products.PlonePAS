@@ -14,7 +14,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
 
-from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin, IGroupsPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.PluggableAuthService import \
                                     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 
@@ -233,7 +233,6 @@ class GroupsTool(UniqueObject, SimpleItem):
         Simple name searches are "fast".
         """
         acl_users = self.acl_users
-        groups_tool = self.portal_groups
         if REQUEST:
             dict = REQUEST
         else:

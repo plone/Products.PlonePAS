@@ -51,7 +51,8 @@ def setupGroups(site):
         gtool.addGroup('Administrators', title='Administrators', roles=['Manager'])
     if not uf.searchGroups(id='Reviewers'):
         gtool.addGroup('Reviewers', title='Reviewers', roles=['Reviewer'])
-
+    # if not uf.searchGroups(id='AuthenticatedUsers'):
+    #     gtool.addGroup('Authenticated Users', title='Authenticated Users (Virtual Group)')
 
 def installPAS(portal):
     # Add user folder

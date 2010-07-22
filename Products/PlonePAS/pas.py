@@ -261,7 +261,6 @@ def getUsers(self):
     """
     # We should have a method that's cheap about returning number of users.
     retval = []
-    plugins = self._getOb('plugins')
     try:
         introspectors = self.plugins.listPlugins(IUserIntrospection)
     except KeyError:

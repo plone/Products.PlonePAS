@@ -4,6 +4,9 @@ Changelog
 4.0.1 - unreleased
 ------------------
 
+- Clean up some unused imports and variable assigments. 
+  [esteele]
+
 - Stop looking to GRUF to check if group properties can be edited.
   [esteele]
 
