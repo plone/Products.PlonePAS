@@ -252,6 +252,8 @@ class MemberData(BaseMemberData):
         # property routing?
         modified = False
         for k, v in mapping.items():
+            if v == None:
+                continue
             for sheet in sheets:
                 if not sheet.hasProperty(k):
                     continue
