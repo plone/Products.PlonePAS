@@ -688,13 +688,14 @@ class MembershipTool(BaseTool):
             The return value indicates if this is the first logged
             login time.
         """
-        res=False
+        res = False
         if not self.isAnonymousUser():
             member = self.getAuthenticatedMember()
-            login_time = member.getProperty('login_time', '2000/01/01')
-            if str(login_time) == '2000/01/01':
-                res=True
-                login_time = self.ZopeTime()
+            default = DateTime('2000/01/01')
+            login_time = member.getProperty('login_time', default)
+            if login_time == default:
+                res = True
+                login_time = DateTime()
             member.setProperties(login_time=self.ZopeTime(),
                                  last_login_time=login_time)
         return res

@@ -4,6 +4,9 @@ Changelog
 4.0.2 - Unreleased
 ------------------
 
+- Made last_login_time logic compatible with DateTime 2.12.5.
+  [hannosch]
+
 4.0.1 - 2010-07-31
 ------------------
 
