@@ -4,6 +4,10 @@ Changelog
 4.0.3 - unreleased
 ------------------
 
+- Use safe_unicode to correctly find users with 
+  non-ascii properties, regardless of the sys.defaultencoding.
+  This fixes http://dev.plone.org/plone/ticket/10898
+  [mr_savage]
 
 4.0.2 - 2010-08-08
 ------------------
