@@ -17,6 +17,7 @@ from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlu
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
+from Products.PlonePAS.utils import safe_unicode
 
 
 def manage_addZODBMutablePropertyProvider(self, id, title='',
@@ -207,9 +208,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 return False
 
             if isStringType(testvalue):
-                testvalue=testvalue.lower()
+                testvalue=safe_unicode(testvalue.lower())
             if isStringType(value):
-                value=value.lower()
+                value=safe_unicode(value.lower())
                 
             if exact_match:
                 if value!=testvalue:
