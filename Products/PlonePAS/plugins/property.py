@@ -10,7 +10,6 @@ from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOBTree
 from ZODB.PersistentMapping import PersistentMapping
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import safe_unicode
 
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
@@ -208,9 +207,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 return False
 
             if isStringType(testvalue):
-                testvalue=safe_unicode(testvalue.lower())
+                testvalue=testvalue.lower()
             if isStringType(value):
-                value=safe_unicode(value.lower())
+                value=value.lower()
                 
             if exact_match:
                 if value!=testvalue:
