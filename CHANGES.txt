@@ -4,6 +4,10 @@ Changelog
 4.0.3 - unreleased
 ------------------
 
+- Check we have a REQUEST attribute before accessing it in
+  getRolesForPrincipal.
+  [vincentfretin]
+
 - Use safe_unicode to correctly find users with
   non-ascii properties, regardless of the sys.defaultencoding.
   This fixes http://dev.plone.org/plone/ticket/10898

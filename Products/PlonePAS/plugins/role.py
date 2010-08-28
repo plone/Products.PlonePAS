@@ -103,7 +103,9 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         # Some services need to determine the roles obtained from groups
         # while excluding the directly assigned roles.  In this case
         # '__ignore_direct_roles__' = True should be pushed in the request.
-        if not self.REQUEST.get('__ignore_direct_roles__', False):
+        request = getattr(self, 'REQUEST', None)
+        if request is None or \
+            not request.get('__ignore_direct_roles__', False):
             principal_ids.add(principal.getId())
         
         # Some services may need the real roles of an user but **not**
@@ -111,7 +113,8 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         # '__ignore_group_roles__'= True should be previously pushed
         # in the request.
         plugins = self._getPAS()['plugins']
-        if not self.REQUEST.get('__ignore_group_roles__', False):
+        if request is None or \
+            not request.get('__ignore_group_roles__', False):
             principal_ids.update(getGroupsForPrincipal(principal, plugins))
         for pid in principal_ids:
             roles.update(self._principal_roles.get(pid, ()))
