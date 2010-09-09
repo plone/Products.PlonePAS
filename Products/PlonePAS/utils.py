@@ -167,13 +167,14 @@ def scale_image(image_file, max_size=None, default_format=None):
     # Return the file data and the new mimetype
     return new_file, mimetype
 
+
 def getGroupsForPrincipal(principal, plugins):
     groups = set()
     for iid, plugin in plugins.listPlugins(IGroupsPlugin):
         groups.update(plugin.getGroupsForPrincipal(principal))
     return list(groups)
 
-# duplicated from Products.CMFPlone to avoid circular dependency
+
 def safe_unicode(value, encoding='utf-8'):
     """Converts a value to unicode, even it is already a unicode string.
     """
@@ -182,6 +183,6 @@ def safe_unicode(value, encoding='utf-8'):
     elif isinstance(value, basestring):
         try:
             value = unicode(value, encoding)
-        except (UnicodeDecodeError):
+        except UnicodeDecodeError:
             value = value.decode('utf-8', 'replace')
     return value
