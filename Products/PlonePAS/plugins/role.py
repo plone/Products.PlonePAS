@@ -7,7 +7,7 @@ to the principal.
 
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
-from Acquisition import aq_parent, aq_inner
+from Acquisition import aq_parent, aq_inner, aq_get
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 
@@ -90,7 +90,6 @@ class GroupAwareRoleManager( ZODBRoleManager ):
                     self.updateRolesList()
                     role_info = self._roles[ role_id ] # raise KeyError if unknown!
 
-
         self._principal_roles[ principal_id ] = tuple(roles)
     assignRolesToPrincipal = postonly(assignRolesToPrincipal)
 
@@ -103,11 +102,11 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         # Some services need to determine the roles obtained from groups
         # while excluding the directly assigned roles.  In this case
         # '__ignore_direct_roles__' = True should be pushed in the request.
-        request = getattr(self, 'REQUEST', None)
+        request = aq_get(self, 'REQUEST', None)
         if request is None or \
             not request.get('__ignore_direct_roles__', False):
             principal_ids.add(principal.getId())
-        
+
         # Some services may need the real roles of an user but **not**
         # the ones he got through his groups. In this case, the
         # '__ignore_group_roles__'= True should be previously pushed
