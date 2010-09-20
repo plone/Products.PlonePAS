@@ -4,6 +4,9 @@ Changelog
 4.0.4 - unreleased
 ------------------
 
+- Fix interface error: doChangeUser takes a user id as parameter,
+  not a login name.
+  [wichert]
 
 4.0.3 - 2010-09-09
 ------------------

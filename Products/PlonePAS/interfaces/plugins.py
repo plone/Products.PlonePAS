@@ -65,7 +65,7 @@ class IUserManagement(plugins.IUserAdderPlugin):
     Manage users
     """
 
-    def doChangeUser(login, password, **kw):
+    def doChangeUser(user_id, password, **kw):
         """
         Change a user's password (differs from role) roles are set in
         the pas engine api for the same but are set via a role
