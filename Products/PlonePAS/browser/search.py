@@ -1,6 +1,7 @@
 from zope.interface import implements
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import normalizeString
 from Products.PlonePAS.interfaces.browser import IPASSearchView
 
 
@@ -39,7 +40,7 @@ class PASSearchView(BrowserView):
 
     def sort(self, results, key):
         def key_func(a):
-            return a.get(key, "").lower()
+            return normalizeString(a.get(key, "").lower())
         results.sort(key=key_func)
         return results
 

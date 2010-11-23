@@ -4,6 +4,12 @@ Changelog
 4.0.4 - unreleased
 ------------------
 
+- Fix critical error on groupprefs page
+  when some groups have a non-ascii character in their title.
+  Sort groups on their title normalized.
+  This fixes http://dev.plone.org/plone/ticket/11301
+  [thomasdesvenain]
+
 - Fix interface error: doChangeUser takes a user id as parameter,
   not a login name.
   [wichert]
@@ -29,7 +35,7 @@ Changelog
 4.0.1 - 2010-07-31
 ------------------
 
-- Clean up some unused imports and variable assigments. 
+- Clean up some unused imports and variable assigments.
   [esteele]
 
 - Stop looking to GRUF to check if group properties can be edited.
@@ -115,7 +121,7 @@ Changelog
   as they cannot properly handle the plugin's expectation of finding a
   PluginRegistry with IGroupsPlugin
   [erikrose, esteele]
-  
+
 - Revert changes made to ZODBMutablePropertyProvider's enumerateUsers method
   which prevented lookup of users by id. Some refactoring.
   Refs http://dev.plone.org/plone/ticket/9361
@@ -125,7 +131,7 @@ Changelog
   principals.
   [erikrose, esteele]
 
-- Factor up getGroupsForPrincipal call. 
+- Factor up getGroupsForPrincipal call.
   [erikrose, esteele]
 
 - AutoGroup now implements IPropertiesPlugin to return group title and description.
@@ -143,7 +149,7 @@ Changelog
   GroupData entry. It returns the first piece of data found.
   Closes http://dev.plone.org/plone/ticket/9828
   [erikrose, esteele]
-  
+
 - Added __ignore_direct_roles__ request flag to getRolesForPrincipal() to
   permit retrieval of only group-provided (inherited) roles.
   [cah190]
@@ -151,7 +157,7 @@ Changelog
 - getGroupsForPrincipal is a method of PAS' IGroupsPlugin, adjust the groups
   tool's plugin lookup accordingly.
   [esteele]
-  
+
 - Rework the group detection of the ZODBMutablePropertyProvider so that
   enumerateUsers only returns users.
   [esteele]
@@ -170,15 +176,15 @@ Changelog
   [cah190]
 
 - Allow the groups tool's searchForGroups to handle an empty search string as
-  'find all'. 
+  'find all'.
   [esteele, cah190]
 
 - Allow PASSearchView's searchGroups method to accept a sorting option.
   [esteele]
 
-- Apply deiter's patch from http://dev.plone.org/plone/ticket/9460 to prevent 
-  GroupManager's 'getGroupById' from returning groups managed by other group 
-  managers. 
+- Apply deiter's patch from http://dev.plone.org/plone/ticket/9460 to prevent
+  GroupManager's 'getGroupById' from returning groups managed by other group
+  managers.
   [esteele]
 
 - GroupsTool.editGroup() now stores title and description in PAS
@@ -233,15 +239,15 @@ Changelog
   tool to False, as it was done during Plone site creation so far.
   [hannosch]
 
-- Removed patch on ZODBUserManager.enumerateUsers which was introduced 
-  historical because of a former missing release of PluggableAuthService 1.5. 
+- Removed patch on ZODBUserManager.enumerateUsers which was introduced
+  historical because of a former missing release of PluggableAuthService 1.5.
   This now superfluous patch also reduced the functionality of the
   patched method and introduced different behavior compared to i.e in
   a similar method on LDAPMultiPlugins. For details on the former
   patch see:
   https://dev.plone.org/collective/changeset/41512/PlonePAS/trunk/pas.py
   [jensens]
-  
+
 - Moved a couple DTML files here from CMFPlone that got left out of the earlier
   refactoring.
   [davisagli]
@@ -515,7 +521,7 @@ Changelog
 -------------------
 
 - Correct logic in MemberData capability methods: any plugin is
-  allowed to (re)set a password, delete the user or add roles. 
+  allowed to (re)set a password, delete the user or add roles.
   [wichert]
 
 - Use the proper API to get the containing PAS in the group plugin
@@ -566,7 +572,7 @@ Changelog
   [laz, wichert]
 
 - Add a sort_by option to the search methods to allow sorting of results
-  by a property. 
+  by a property.
   [laz, wichert]
 
 - Modify login method for the cookie plugin to perform the credential
@@ -605,14 +611,14 @@ Changelog
   virtual group can be used instead.
   [wichert]
 
-- Added support to import PloneUserFactory and added stub 
+- Added support to import PloneUserFactory and added stub
   for ZODBMutableProperties. Attention: Latter needs a real
-  export and import! At the moment it do not export the 
-  propertysheets. This is a TODO. At least with this two 
+  export and import! At the moment it do not export the
+  propertysheets. This is a TODO. At least with this two
   additions PlonePAS import runs. Additional I needed to
-  hack PluginRegistry and and PluggableAuthService slightly.      
+  hack PluginRegistry and and PluggableAuthService slightly.
   [jensens]
-  
+
 - Added HISTORY.txt and updated version information.
   [hannosch]
 
@@ -637,7 +643,7 @@ Changelog
 2.3 - 2007-05-30
 ----------------
 
-- Use a local postonly decorator so PlonePAS can be used with Plone 
+- Use a local postonly decorator so PlonePAS can be used with Plone
   2.5, 2.5.1 and 2.5.2.
   [wichert]
 
@@ -662,7 +668,7 @@ Changelog
 - Correct the test for creation of groups with the same id as users: search
   for the exact id, not substrings.
   [tesdal]
-  
+
 - Fix bad form action which made it impossible to add a plone user factory
   plugin through the ZMI. Backported from trunk.
   [wichert]
