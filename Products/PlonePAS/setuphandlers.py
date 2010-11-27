@@ -1,3 +1,5 @@
+import pkg_resources
+
 from Products.CMFCore.utils import getToolByName
 
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
@@ -49,6 +51,17 @@ def setupGroups(site):
     gtool = getToolByName(site, 'portal_groups')
     if not uf.searchGroups(id='Administrators'):
         gtool.addGroup('Administrators', title='Administrators', roles=['Manager'])
+    
+    # Add Site Administrators group on Plone 4.1+ only.
+    try:
+        pkg_resources.get_distribution('Plone>=4.1a1')
+    except pkg_resources.VersionConflict:
+        pass
+    else:
+        if not uf.searchGroups(id='Site Administrators'):
+            gtool.addGroup('Site Administrators', title='Site Administrators',
+                           roles=['Site Administrator'])
+
     if not uf.searchGroups(id='Reviewers'):
         gtool.addGroup('Reviewers', title='Reviewers', roles=['Reviewer'])
     # if not uf.searchGroups(id='AuthenticatedUsers'):

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+4.0.5 - unreleased
+------------------
+
+- In Plone 4.1+, create a Site Administrators group with the new Site
+  Administrator role.
+  [davisagli]
+
 4.0.4 - unreleased
 ------------------
 
