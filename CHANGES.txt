@@ -1,15 +1,12 @@
 Changelog
 =========
 
-4.0.5 - unreleased
+4.0.4 - unreleased
 ------------------
 
 - In Plone 4.1+, create a Site Administrators group with the new Site
   Administrator role.
   [davisagli]
-
-4.0.4 - unreleased
-------------------
 
 - Fix critical error on groupprefs page
   when some groups have a non-ascii character in their title.
