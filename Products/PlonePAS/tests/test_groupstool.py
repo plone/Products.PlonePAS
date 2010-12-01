@@ -73,6 +73,11 @@ class GroupsToolTest(base.TestCase):
         self.gt.editGroup(self.group_id, roles=[])
         self.failUnless(group.has_role('Authenticated'))
 
+        # test edition of group groups
+        self.gt.editGroup(self.group_id, groups=['Reviewers'],
+            **properties)
+        group = self.gt.getGroupById(self.group_id)
+        self.failUnless('Reviewers' in group.getGroups())
 
 class TestMethodProtection(base.TestCase):
     # GroupData has wrong security declarations
