@@ -51,7 +51,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
     security.declareProtected(AddGroups, 'addGroup')
     @postonly
-    def addGroup(self, id, roles = [], groups = [], properties=None, 
+    def addGroup(self, id, roles = [], groups = [], properties=None,
                  REQUEST=None, *args, **kw):
         """Create a group, with the supplied id, roles, and domains.
 
@@ -105,13 +105,13 @@ class GroupsTool(UniqueObject, SimpleItem):
         gTools = self._getGroupTools()
         if not gTools:
             raise NotSupported, 'No plugins allow for both group management and introspection'
-        
+
         for tid, tool in gTools:
             if id in tool.getGroupIds():
                 tool.updateGroup(id, title=kw.get('title'),
                                      description=kw.get('description'))
                 break
-                
+
         if roles is not None:
             self.setRolesForGroup(id, roles)
 
@@ -122,7 +122,8 @@ class GroupsTool(UniqueObject, SimpleItem):
             p_groups = set(self.getGroupsForPrincipal(g))
             rmgroups = p_groups - groupset
             for gid in rmgroups:
-                self.removePrincipalFromGroup(g, gid)
+                if gid != 'AuthenticatedUsers':
+                    self.removePrincipalFromGroup(g, gid)
 
             # add groups
             try:
@@ -245,7 +246,7 @@ class GroupsTool(UniqueObject, SimpleItem):
         if name is not None:
             name = None
         if title_or_name is not None: name = title_or_name
-        
+
         md_groups = []
         uf_groups = []
 

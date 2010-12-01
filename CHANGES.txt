@@ -4,6 +4,10 @@ Changelog
 4.0.4 - unreleased
 ------------------
 
+- When calling editGroup method, avoid error
+  while trying to remove dynamic 'AuthenticatedUsers' group.
+  [thomasdesvenain]
+
 - In Plone 4.1+, create a Site Administrators group with the new Site
   Administrator role.
   [davisagli]
