@@ -244,7 +244,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
             criteria["login"]=login
         user_info = []
         if not kw and id:
-            users = self._storage.get(id, None)
+            users = self._storage.get(id, [])
         else:
             users=[ (user,data) for (user,data) in self._storage.items()
                         if self.testMemberData(data, criteria, exact_match) and not data.get('isGroup', False)]
