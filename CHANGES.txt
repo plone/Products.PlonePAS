@@ -4,6 +4,19 @@ Changelog
 4.0.4 - unreleased
 ------------------
 
+- The code to search by id in mutable_properties.enumerateUsers didn't work at
+  all, an exception was always raised and it was actually a good thing.
+  We tried to implement it in 3.10 and we had strange listing in Plone UI. Then
+  we reverted it in the next version so the behavior was backward compatible
+  with previous versions.
+  If we allow search by id, we can potentially break other part of the code. For
+  example acl_users/portal_role_manager/manage_roles will break because
+  Products.PluggableAuthService.plugins.ZODBRoleManager.listAssignedPrincipals
+  raises MultiplePrincipalError, and maybe it will break somewhere else.
+  Versions 4.0.4 and 3.13 use now the same algorithm.
+  References http://dev.plone.org/plone/ticket/9361
+  [vincenfretin]
+
 - When calling editGroup method, avoid error
   while trying to remove dynamic 'AuthenticatedUsers' group.
   [thomasdesvenain]

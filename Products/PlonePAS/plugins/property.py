@@ -237,17 +237,17 @@ class ZODBMutablePropertyProvider(BasePlugin):
         """ See IUserEnumerationPlugin.
         """
         plugin_id = self.getId()
+
+        # This plugin can't search for a user by id or login, because there is
+        # no such keys in the storage (data dict in the comprehensive list)
+        # If kw is empty or not, we continue the search.
+        if id is not None or login is not None:
+            return ()
+
         criteria=copy.copy(kw)
-        if id is not None:
-            criteria["id"]=id
-        if login is not None:
-            criteria["login"]=login
-        user_info = []
-        if not kw and id:
-            users = self._storage.get(id, [])
-        else:
-            users=[ (user,data) for (user,data) in self._storage.items()
-                        if self.testMemberData(data, criteria, exact_match) and not data.get('isGroup', False)]
+
+        users=[ (user,data) for (user,data) in self._storage.items()
+                    if self.testMemberData(data, criteria, exact_match) and not data.get('isGroup', False)]
 
         user_info=[ { 'id' : self.prefix + user_id,
                      'login' : user_id,
