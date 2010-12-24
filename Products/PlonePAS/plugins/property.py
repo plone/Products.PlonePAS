@@ -255,7 +255,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         # This plugin can't search for a user by id or login, because there is
         # no such keys in the storage (data dict in the comprehensive list)
         # If kw is empty or not, we continue the search.
-        if id or login:
+        if id is not None or login is not None:
             return ()
 
         criteria=copy.copy(kw)

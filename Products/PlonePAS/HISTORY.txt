@@ -4,6 +4,11 @@ Changelog
 3.13 - unreleased
 -----------------
 
+- Fixed issue when searching empty id in mutable_properties.enumerateUsers
+  returned the first user in the storage. References
+  http://dev.plone.org/plone/ticket/9361
+  [vincenfretin]
+
 - Removed deprecation warnings that have been removed from PlonePAS trunk;
   no point in giving dire warnings about removals that will never happen.
   [mj]

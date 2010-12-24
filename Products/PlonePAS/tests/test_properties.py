@@ -268,6 +268,20 @@ class PropertySearchTest(PlonePASTestCase):
         self.assertEqual(results, ['member1', 'member2'])
 
 
+    def testSearchEmptyId(self):
+        self.assertEqual(self.pas.mutable_properties.enumerateUsers(id=''), ())
+        self.assertEqual(self.pas.mutable_properties.enumerateUsers(login=''), ())
+
+
+    def testCantSearchByIdOrLogin(self):
+        # we can't search by id
+        results = self.pas.searchUsers(id='member1')
+        self.assertEqual(results, ())
+        # or login
+        results = self.pas.searchUsers(login='member1')
+        self.assertEqual(results, ())
+
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(PropertiesTest))
