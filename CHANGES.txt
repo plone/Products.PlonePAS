@@ -4,6 +4,10 @@ Changelog
 4.0.4 - unreleased
 ------------------
 
+- Remove plone.openid dependency in setup.py, import errors are already caught
+  in PASInfoView.
+  [elro]
+
 - The code to search by id in mutable_properties.enumerateUsers didn't work at
   all, an exception was always raised and it was actually a good thing.
   We tried to implement it in 3.10 and we had strange listing in Plone UI. Then
