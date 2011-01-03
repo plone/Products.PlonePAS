@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.4 - unreleased
+4.0.4 - 2011-01-03
 ------------------
 
 - Remove plone.openid dependency in setup.py, import errors are already caught
@@ -270,7 +270,7 @@ Changelog
   patched method and introduced different behavior compared to i.e in
   a similar method on LDAPMultiPlugins. For details on the former
   patch see:
-  https://dev.plone.org/collective/changeset/41512/PlonePAS/trunk/pas.py
+  http://dev.plone.org/collective/changeset/41512/PlonePAS/trunk/pas.py
   [jensens]
 
 - Moved a couple DTML files here from CMFPlone that got left out of the earlier
