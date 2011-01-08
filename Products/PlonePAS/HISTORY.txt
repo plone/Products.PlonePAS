@@ -1,7 +1,7 @@
 Changelog
 =========
 
-3.13 - unreleased
+3.13 (2011-01-08)
 -----------------
 
 - Fixed issue when searching empty id in mutable_properties.enumerateUsers
