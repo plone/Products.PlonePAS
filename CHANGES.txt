@@ -4,6 +4,11 @@ Changelog
 4.0.5 - Unreleased
 ------------------
 
+- Use 'defaultUser.png' as the default user portrait, since the .gif version
+  has been deprecated for a long time now. See 
+  http://dev.plone.org/plone/changeset/36350
+  [mj]
+
 4.0.4 - 2011-01-03
 ------------------
 

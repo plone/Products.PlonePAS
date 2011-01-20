@@ -37,7 +37,7 @@ from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
 
-default_portrait = 'defaultUser.gif'
+default_portrait = 'defaultUser.png'
 logger = logging.getLogger('PlonePAS')
 
 
