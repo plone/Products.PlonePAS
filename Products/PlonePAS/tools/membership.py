@@ -5,7 +5,6 @@ import transaction
 from zope import event
 from zope.interface import implements
 
-import PIL
 from DateTime import DateTime
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
@@ -717,6 +716,11 @@ class MembershipTool(BaseTool):
             portrait_data = str(portrait.data)
             if portrait_data == '':
                 continue
+            try:
+                import PIL
+            except ImportError:
+                raise RuntimeError('No Python Imaging Libraries (PIL) found. '
+                    'Unable to validate profile image.')
             try:
                 img = PIL.Image.open(StringIO(portrait_data))
             except ConflictError:

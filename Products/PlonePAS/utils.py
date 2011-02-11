@@ -2,8 +2,6 @@ from cStringIO import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
-from PIL import Image
-
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
@@ -129,6 +127,8 @@ def scale_image(image_file, max_size=None, default_format=None):
         (50, 50)
 
     """
+    from PIL import Image
+    
     if max_size is None:
         max_size = IMAGE_SCALE_PARAMS['scale']
     if default_format is None:

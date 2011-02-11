@@ -4,6 +4,9 @@ Changelog
 4.0.5 - Unreleased
 ------------------
 
+- Avoid breaking on startup if PIL isn't present.
+  [davisagli]
+
 - Use 'defaultUser.png' as the default user portrait, since the .gif version
   has been deprecated for a long time now. See 
   http://dev.plone.org/plone/changeset/36350
