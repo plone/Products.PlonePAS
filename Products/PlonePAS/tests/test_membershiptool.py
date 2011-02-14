@@ -194,7 +194,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetPersonalPortrait(self):
         # Should return the default portrait
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.gif')
+        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.png')
 
     def testChangeMemberPortrait(self):
         # Should change the portrait image
@@ -210,7 +210,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.membership.changeMemberPortrait(image, default_user)
         self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), default_user)
         self.membership.deletePersonalPortrait(default_user)
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.gif')
+        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.png')
 
     def testGetPersonalPortraitWithoutPassingId(self):
         # Should return the logged in users portrait if no id is given
