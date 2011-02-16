@@ -4,7 +4,8 @@ Changelog
 3.14 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Fix missing and broken security declarations.
+  [davisagli]
 
 
 3.13 (2011-01-08)
