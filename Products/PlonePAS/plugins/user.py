@@ -5,6 +5,7 @@ ZODB based user manager with introspection and management interfaces.
 from zope.interface import implements
 
 from AccessControl import ClassSecurityInfo, AuthEncoding
+from AccessControl.Permissions import manage_users as ManageUsers
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PluggableAuthService.utils import createViewName
@@ -42,6 +43,7 @@ class UserManager(BasePlugin):
     implements(IUserManagement, IUserIntrospection, IDeleteCapability,
                IPasswordSetCapability)
 
+    security.declareProtected(ManageUsers, 'addUser')
     def addUser(self, user_id, login_name, password):
         """Original ZODBUserManager.addUser, modified to check if
         incoming password is already encypted.
@@ -101,18 +103,21 @@ class UserManager(BasePlugin):
 
     ## User Introspection interface
 
+    security.declareProtected(ManageUsers, 'getUserIds')
     def getUserIds(self):
         """
         Return a list of user ids
         """
         return self.listUserIds()
 
+    security.declareProtected(ManageUsers, 'getUserNames')
     def getUserNames(self):
         """
         Return a list of usernames
         """
         return [x['login_name'] for x in self.listUserInfo()]
 
+    security.declareProtected(ManageUsers, 'getUsers')
     def getUsers(self):
         """
         Return a list of users
