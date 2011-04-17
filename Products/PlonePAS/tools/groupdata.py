@@ -17,7 +17,6 @@ from ZPublisher.Converters import type_converters
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
-from Products.CMFCore.MemberDataTool import CleanupTemp
 from Products.PluggableAuthService.interfaces.authservice \
         import IPluggableAuthService
 from Products.PluggableAuthService.PluggableAuthService \
@@ -30,6 +29,7 @@ from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.tools.memberdata import MemberData
+from Products.PlonePAS.utils import CleanupTemp
 
 import logging
 

@@ -186,3 +186,18 @@ def safe_unicode(value, encoding='utf-8'):
         except UnicodeDecodeError:
             value = value.decode('utf-8', 'replace')
     return value
+
+
+# Imported from Products.CMFCore.MemberdataTool as it has now been removed.
+class CleanupTemp:
+    """Used to cleanup _v_temps at the end of the request."""
+
+    def __init__(self, tool):
+        self._tool = tool
+
+    def __del__(self):
+        try:
+            del self._tool._v_temps
+        except (AttributeError, KeyError):
+            # The object has already been deactivated.
+            pass
