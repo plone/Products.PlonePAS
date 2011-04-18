@@ -1,11 +1,23 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:five="http://namespaces.zope.org/five">
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:five="http://namespaces.zope.org/five">
 
   <include package=".browser" />
 
   <include file="profiles.zcml"/>
 
   <include file="exportimport.zcml" />
+
+  <genericsetup:importStep
+      name="plonepas"
+      title="PlonePAS setup"
+      description="Configure PlonePas"
+      handler="Products.PlonePAS.setuphandlers.setupPlonePAS">
+    <depends name="componentregistry"/>
+    <depends name="controlpanel"/>
+    <depends name="memberdata-properties"/>
+    <depends name="rolemap"/>
+  </genericsetup:importStep>
 
   <five:deprecatedManageAddDelete
       class=".plugins.cookie_handler.ExtendedCookieAuthHelper" />

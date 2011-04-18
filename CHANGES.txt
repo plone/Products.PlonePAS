@@ -6,6 +6,9 @@ Changelog
 
 - Copy in CleanupTemp from CMFCore as it has been removed from CMFCore 2.3.
   [elro]
+- Move importstep to be registered in ZCML rather than XML.
+  Remove the unexistant dependency on plonepas-content
+  [kiorky]
 
 4.0.6 - 2011-02-25
 ------------------
