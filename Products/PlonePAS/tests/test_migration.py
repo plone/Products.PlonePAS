@@ -281,7 +281,7 @@ class MigrationTest(BaseTest):
         self.checker.run('populateUsers')
         # Don't remove the tools
         self.qi.reinstallProducts(['PlonePAS'])
-        self.checker.run('checkUserFolder', 'checkUsers')
+        self.checker.run('checkUserFolder')
 
     def test_migrate_normal_uf_no_group_tools(self):
         self.loginAsPortalOwner()
@@ -294,7 +294,7 @@ class MigrationTest(BaseTest):
 
         self.checker.run('populateUsers')
         self.qi.reinstallProducts(['PlonePAS'])
-        self.checker.run('checkUserFolder', 'checkUsers')
+        self.checker.run('checkUserFolder')
 
     def test_migrate_populated(self):
         self.loginAsPortalOwner()
