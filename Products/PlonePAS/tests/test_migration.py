@@ -192,8 +192,7 @@ class MigrationTest(BaseTest):
         if 'acl_users' in self.portal.objectIds():
             self.portal.manage_delObjects(ids=['acl_users'])
 
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         self.checker.run('checkUserFolder')
 
     def test_migrate_memberdata_with_selection_property(self):
@@ -207,8 +206,7 @@ class MigrationTest(BaseTest):
         property = pm.getProperty('choice')
         self.assertEquals(property, 'A')
         
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         
         pm = getToolByName(self.portal, 'portal_memberdata')
         property = pm.getProperty('select_choice')
@@ -227,8 +225,7 @@ class MigrationTest(BaseTest):
         property = pm.getProperty('choice')
         self.assertEquals(property, ('A', 'C'))
         
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         
         pm = getToolByName(self.portal, 'portal_memberdata')
         property = pm.getProperty('select_choice')
@@ -247,8 +244,7 @@ class MigrationTest(BaseTest):
         property = gd.getProperty('choice')
         self.assertEquals(property, 'A')
         
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         
         gd = getToolByName(self.portal, 'portal_groupdata')
         property = gd.getProperty('select_choice')
@@ -267,8 +263,7 @@ class MigrationTest(BaseTest):
         property = gd.getProperty('choice')
         self.assertEquals(property, ('A', 'C'))
         
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         
         gd = getToolByName(self.portal, 'portal_groupdata')
         property = gd.getProperty('select_choice')
@@ -285,8 +280,7 @@ class MigrationTest(BaseTest):
 
         self.checker.run('populateUsers')
         # Don't remove the tools
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         self.checker.run('checkUserFolder', 'checkUsers')
 
     def test_migrate_normal_uf_no_group_tools(self):
@@ -299,8 +293,7 @@ class MigrationTest(BaseTest):
                 self.portal.manage_delObjects(ids=[tname])
 
         self.checker.run('populateUsers')
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         self.checker.run('checkUserFolder', 'checkUsers')
 
     def test_migrate_populated(self):
@@ -308,8 +301,7 @@ class MigrationTest(BaseTest):
         self.checker.run('populateUsers', 'populateGroups',
                          'checkUsers', 'checkGroups')
 
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         self.checker.run('checkUserFolder', 'checkUsers', 'checkGroups')
 
     def test_migrate_populated_gruf_no_group_tools(self):
@@ -320,8 +312,7 @@ class MigrationTest(BaseTest):
             if tname in self.portal.objectIds():
                 self.portal.manage_delObjects(ids=[tname])
 
-        self.qi.uninstallProducts(['PlonePAS'], reinstall=True)
-        self.qi.installProduct('PlonePAS', reinstall=True)
+        self.qi.reinstallProducts(['PlonePAS'])
         self.checker.run('checkUserFolder', 'checkUsers')
 
 def test_suite():
