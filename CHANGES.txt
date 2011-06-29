@@ -4,6 +4,8 @@ Changelog
 4.0.8 - unreleased
 ------------------
 
+- Fire IPrincipalDeleted when a user is deleted.
+  [stefan, ggozad]
 
 4.0.7 - 2011-05-12
 ------------------

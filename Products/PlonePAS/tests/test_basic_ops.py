@@ -1,5 +1,9 @@
 import unittest
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
 
+from Products.PluggableAuthService.interfaces.events \
+    import IPrincipalDeletedEvent
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.authservice \
@@ -97,6 +101,21 @@ class BasicOpsTestCase(base.TestCase):
         self.failUnless(self.acl_users.getUser("created_user"))
         self.acl_users.userFolderDelUsers(['created_user'])
         self.failIf(self.acl_users.getUser("created_user"))
+
+    def test_principal_del_event(self):
+        eventsFired = []
+
+        @adapter(IPrincipalDeletedEvent)
+        def gotDeletion(event):
+            eventsFired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(gotDeletion)
+        self.createUser()
+        self.acl_users.userFolderDelUsers(['created_user'])
+        self.assertEqual(len(eventsFired), 1)
+        self.assertEqual(eventsFired[0].principal, 'created_user')
+        gsm.unregisterHandler(gotDeletion)
 
     def test_search(self):
         self.createUser("created_user1")

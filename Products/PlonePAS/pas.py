@@ -1,4 +1,5 @@
 # pas alterations and monkies
+from zope.event import notify
 
 from Products.CMFCore.utils import getToolByName
 
@@ -12,6 +13,7 @@ from Products.PluggableAuthService.PluggableAuthService import \
 from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
+from Products.PluggableAuthService.events import PrincipalDeleted
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement, ILocalRolesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
@@ -47,7 +49,7 @@ def _doDelUsers(self, names, REQUEST=None):
 
 PluggableAuthService._doDelUsers = _doDelUsers
 
- 
+
 def _doDelUser(self, id):
     """
     Given a user id, hand off to a deleter plugin if available.
@@ -64,6 +66,10 @@ def _doDelUser(self, id):
             userdeleter.doDeleteUser(id)
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             pass
+        else:
+            notify(PrincipalDeleted(id))
+
+
 PluggableAuthService._doDelUser = _doDelUser
 
 PluggableAuthService.userFolderDelUsers = postonly(PluggableAuthService._doDelUsers)
