@@ -4,6 +4,10 @@ Changelog
 4.0.9 - unreleased
 ------------------
 
+- Cleaned up and reduced dependencies. New extra ``atstorage`` for the rare case 
+  someone uses PlonePAS w/o Plone but with Archetypes (if this is this 
+  possible). [jensens]
+
 
 4.0.8 - 2011-06-30
 ------------------
