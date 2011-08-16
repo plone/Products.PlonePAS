@@ -1,7 +1,8 @@
 from zope.interface import implements
+from zope.component import queryUtility
 from Products.Five import BrowserView
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import normalizeString
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.PlonePAS.interfaces.browser import IPASSearchView
 
 
@@ -39,8 +40,9 @@ class PASSearchView(BrowserView):
 
 
     def sort(self, results, key):
+        idnormalizer = queryUtility(IIDNormalizer).normalize(a)
         def key_func(a):
-            return normalizeString(a.get(key, "").lower())
+            return idnormalizer.normalize(a)
         results.sort(key=key_func)
         return results
 
