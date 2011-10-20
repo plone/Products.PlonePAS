@@ -4,10 +4,13 @@ Changelog
 4.0.9 - unreleased
 ------------------
 
+- Avoid a failure when we try to add a role to principal that is managed by
+  an other plugin.
+  [thomasdesvenain]
+
 - Cleaned up and reduced dependencies. New extra ``atstorage`` for the rare case 
   someone uses PlonePAS w/o Plone but with Archetypes (if this is this 
   possible). [jensens]
-
 
 4.0.8 - 2011-06-30
 ------------------

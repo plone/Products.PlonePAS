@@ -88,7 +88,9 @@ class GroupAwareRoleManager( ZODBRoleManager ):
                 except KeyError:
                     # Lazily update our roles list and try again
                     self.updateRolesList()
-                    role_info = self._roles[ role_id ] # raise KeyError if unknown!
+                    if role_id in self._roles:
+                        # check if this role is managed by this plugin, and set it
+                        role_info = self._roles[ role_id ]
 
         self._principal_roles[ principal_id ] = tuple(roles)
     assignRolesToPrincipal = postonly(assignRolesToPrincipal)
