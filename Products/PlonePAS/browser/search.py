@@ -29,7 +29,7 @@ class PASSearchView(BrowserView):
         output={}
         for entry in results:
             id=entry[key]
-            if id not in output:
+            if id not in output: 
                 output[id]=entry.copy()
             else:
                 buf=entry.copy()
@@ -39,10 +39,10 @@ class PASSearchView(BrowserView):
         return output.values()
 
 
-    def sort(self, results, key):
-        idnormalizer = queryUtility(IIDNormalizer).normalize(a)
+    def sort(self, results, sort_key):
+        idnormalizer = queryUtility(IIDNormalizer)
         def key_func(a):
-            return idnormalizer.normalize(a)
+            return idnormalizer.normalize(a[sort_key])
         results.sort(key=key_func)
         return results
 
