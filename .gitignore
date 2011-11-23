@@ -1,0 +1,11 @@
+*.pyc
+/bin/
+/parts/
+/var/
+/*.egg-info
+/*eggs/
+.*.cfg
+/coverage/
+/.project
+/.pydevproject
+/.settings/
