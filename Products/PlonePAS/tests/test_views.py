@@ -16,9 +16,14 @@ class TestPASSearchView(base.TestCase):
         values = [{'title': u'Sociologie'}, {'title': u'Économie'},
                   {'title': u'anthropologie'}]
         sorted_values = pas_search.sort(values, 'title')
+        # do not modify original
+        self.assertEqual(values,
+                         [{'title': u'Sociologie'}, {'title': u'Économie'},
+                          {'title': u'anthropologie'}])
+        # sorted here
         self.assertEqual(sorted_values,
-                         [{'title': 'anthropologie'}, {'title': 'Économie'},
-                          {'title': 'Sociologie'}])
+                         [{'title': u'anthropologie'}, {'title': u'Économie'},
+                          {'title': u'Sociologie'}])
 
 
 def test_suite():
