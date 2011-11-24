@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.9 - unreleased
+4.0.9 (2011-11-24)
 ------------------
 
 - Avoid a failure when we try to add a role to principal that is managed by
