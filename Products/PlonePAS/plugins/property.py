@@ -14,10 +14,14 @@ from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 from Products.PlonePAS.utils import safe_unicode
+from zope.i18nmessageid import MessageFactory
+
+_ = MessageFactory('plone')
 
 
 def manage_addZODBMutablePropertyProvider(self, id, title='',
@@ -48,7 +52,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
     meta_type = 'ZODB Mutable Property Provider'
 
     implements(IPropertiesPlugin, IUserEnumerationPlugin,
-               IMutablePropertiesPlugin)
+               IMutablePropertiesPlugin, IValidationPlugin)
 
     security = ClassSecurityInfo()
 
@@ -265,6 +269,24 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         return tuple(user_info)
 
+    security.declarePrivate('validateUserInfo')
+    def validateUserInfo(self, user, set_id, set_info ):
+        """ See IValidationPlugin. Used to validate password property
+        """
+
+        errors = []
+
+        if set_info and set_info.get('password', None) is not None:
+            password = set_info['password']
+            if not password:
+                errors = [{'id':'password','error':_(u'Minimum 5 characters.')}]
+                return []
+            elif len(password) < 5:
+                errors = [{'id':'password','error':
+                    _(u'Your password must contain at least 5 characters.')}]
+            else:
+                errors = []
+        return errors
 
 InitializeClass(ZODBMutablePropertyProvider)
 
