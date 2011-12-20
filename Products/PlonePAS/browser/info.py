@@ -28,10 +28,14 @@ class PASInfoView(BrowserView):
 
 
     @memoize
-    def hasOpenIDdExtractor(self):
+    def hasOpenIDExtractor(self):
         try:
             from plone.openid.interfaces import IOpenIdExtractionPlugin
         except ImportError:
             return False
 
         return self.checkExtractorForInterface(IOpenIdExtractionPlugin)
+
+    def hasOpenIDdExtractor(self):
+        # BBB Keeping method name with typo for backwards compatibility.
+        return self.hasOpenIDExtractor()

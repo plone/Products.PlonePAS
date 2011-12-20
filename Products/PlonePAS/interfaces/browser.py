@@ -10,8 +10,14 @@ class IPASInfoView(Interface):
         conditionally show username & password logins.
         """
 
+    def hasOpenIDExtractor():
+        """Check if an OpenID extraction plugin is active.
+        """
+
     def hasOpenIDdExtractor():
         """Check if an OpenID extraction plugin is active.
+
+        BBB Keeping method name with typo for backwards compatibility.
         """
 
 
