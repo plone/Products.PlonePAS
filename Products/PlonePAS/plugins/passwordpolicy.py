@@ -30,13 +30,8 @@ def manage_addPasswordPolicyPlugin(self, id, title='',
     self._setObject(o.getId(), o)
 
     if RESPONSE is not None:
-        RESPONSE.redirect('manage_workspace')
-
-
-
-def isStringType(data):
-    return isinstance(data, str) or isinstance(data, unicode)
-
+        return RESPONSE.redirect("%s/manage_workspace?manage_tabs_message=DefaultPasswordPlugin+plugin+added" %
+                self.absolute_url())
 
 class PasswordPolicyPlugin(BasePlugin):
     """Simple Password Policy to ensure password is 5 chars long.
