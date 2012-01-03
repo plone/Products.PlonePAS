@@ -176,6 +176,13 @@ def setupPlugins(portal):
         activatePluginInterfaces(portal, 'recursive_groups')
         logger.debug("Added Recursive Groups plugin.")
 
+    found = uf.objectIds(['Default Plone Password Policy'])
+    if not found:
+        plone_pas.manage_addPasswordPolicyPlugin('password_policy',
+                               title="Default Plone Password Policy")
+        logger.debug("Added Default Plone Password Policy.")
+        activatePluginInterfaces(portal, 'password_policy')
+
 
 def setupAuthPlugins(portal, pas, plone_pas,
                      deactivate_basic_reset=True,

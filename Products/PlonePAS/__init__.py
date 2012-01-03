@@ -15,6 +15,7 @@ from plugins import property
 from plugins import crumbler
 from plugins import cookie_handler
 from plugins import autogroup
+from plugins import passwordpolicy
 
 #################################
 # pas monkies
@@ -55,6 +56,7 @@ try:
     registerMultiPlugin( crumbler.CookieCrumblingPlugin.meta_type )
     registerMultiPlugin( cookie_handler.ExtendedCookieAuthHelper.meta_type )
     registerMultiPlugin( autogroup.AutoGroup.meta_type )
+    registerMultiPlugin( passwordpolicy.PasswordPolicyPlugin.meta_type )
 except RuntimeError:
     # make refresh users happy
     pass
@@ -129,5 +131,12 @@ def initialize(context):
                            permission = add_user_folders,
                            constructors = ( autogroup.manage_addAutoGroupForm,
                                             autogroup.manage_addAutoGroup ),
+                           visibility = None
+                           )
+
+    context.registerClass( passwordpolicy.PasswordPolicyPlugin,
+                           permission = add_user_folders,
+                           constructors = ( passwordpolicy.manage_addPasswordPolicyForm,
+                                            passwordpolicy.manage_addPasswordPolicyPlugin ),
                            visibility = None
                            )
