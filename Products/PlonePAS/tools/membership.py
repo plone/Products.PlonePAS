@@ -12,6 +12,7 @@ from OFS.Image import Image
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
@@ -468,11 +469,14 @@ class MembershipTool(BaseTool):
         Modified from CMFPlone version to URL-quote the member id.
         """
         safe_id = self._getSafeMemberId(id)
-        membertool = getToolByName(self, 'portal_memberdata')
-
+        authenticated_id = self.getAuthenticatedMember().getId()
         if not safe_id:
-            safe_id = self.getAuthenticatedMember().getId()
+            safe_id = authenticated_id
+        if safe_id != authenticated_id and not _checkPermission(
+                ManageUsers, self):
+            raise Unauthorized
 
+        membertool = getToolByName(self, 'portal_memberdata')
         return membertool._deletePortrait(safe_id)
 
 
@@ -483,9 +487,12 @@ class MembershipTool(BaseTool):
         Modified from CMFPlone version to URL-quote the member id.
         """
         safe_id = self._getSafeMemberId(id)
+        authenticated_id = self.getAuthenticatedMember().getId()
         if not safe_id:
-            safe_id = self.getAuthenticatedMember().getId()
-
+            safe_id = authenticated_id
+        if safe_id != authenticated_id and not _checkPermission(
+                ManageUsers, self):
+            raise Unauthorized
         if portrait and portrait.filename:
             scaled, mimetype = scale_image(portrait)
             portrait = Image(id=safe_id, file=scaled, title='')

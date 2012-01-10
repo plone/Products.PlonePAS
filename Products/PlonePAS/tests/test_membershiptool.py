@@ -196,7 +196,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # Should return the default portrait
         self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.png')
 
-    def testChangeMemberPortrait(self):
+    def testChangeOwnMemberPortrait(self):
         # Should change the portrait image
         # first we need a valid image
         image = self.makeRealImage()
@@ -204,13 +204,54 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), default_user)
         self.assertEqual(self.membership.getPersonalPortrait(default_user).meta_type, 'Image')
 
-    def testDeletePersonalPortrait(self):
+    def testCannotChangeOtherMemberPortrait(self):
+        # A normal member should not be able to change the portrait of
+        # another member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.assertRaises(Unauthorized, self.membership.changeMemberPortrait,
+                          image, 'joe')
+
+    def testChangeMemberPortraitAsManager(self):
+        # Managers should be able to change the portrait of another
+        # member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.setRoles(['Manager'])
+        # This should not raise Unauthorized:
+        self.membership.changeMemberPortrait(image, 'joe')
+        self.assertEqual(self.membership.getPersonalPortrait('joe').getId(), 'joe')
+        self.assertEqual(self.membership.getPersonalPortrait('joe').meta_type, 'Image')
+
+    def testDeleteOwnPersonalPortrait(self):
         # Should delete the portrait image
         image = self.makeRealImage()
         self.membership.changeMemberPortrait(image, default_user)
         self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), default_user)
         self.membership.deletePersonalPortrait(default_user)
         self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.png')
+
+    def testCannotDeleteOtherPersonalPortrait(self):
+        # A normal member should not be able to delete the portrait of
+        # another member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.setRoles(['Manager'])
+        self.membership.changeMemberPortrait(image, 'joe')
+        self.setRoles(['Member'])
+        self.assertRaises(Unauthorized, self.membership.deletePersonalPortrait,
+                          'joe')
+
+    def testDeleteOtherPersonalPortraitAsManager(self):
+        # Managers should be able to change the portrait of another
+        # member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.setRoles(['Manager'])
+        self.membership.changeMemberPortrait(image, 'joe')
+        self.membership.deletePersonalPortrait('joe')
+        self.assertEqual(self.membership.getPersonalPortrait('joe').getId(),
+                        'defaultUser.png')
 
     def testGetPersonalPortraitWithoutPassingId(self):
         # Should return the logged in users portrait if no id is given

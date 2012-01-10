@@ -4,6 +4,10 @@ Changelog
 4.0.11 (unreleased)
 -------------------
 
+- Do some more checks when changing or deleting a member portrait.
+  Fixes http://dev.plone.org/ticket/5432
+  [maurits]
+
 - Pass request along to getGroupsForPrincipal for caching purposes.
   [esteele]
 
