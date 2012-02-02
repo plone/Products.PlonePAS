@@ -116,7 +116,7 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         plugins = self._getPAS()['plugins']
         if request is None or \
             not request.get('__ignore_group_roles__', False):
-            principal_ids.update(getGroupsForPrincipal(principal, plugins))
+            principal_ids.update(getGroupsForPrincipal(principal, plugins, request))
         for pid in principal_ids:
             roles.update(self._principal_roles.get(pid, ()))
         return tuple(roles)

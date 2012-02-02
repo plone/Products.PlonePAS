@@ -168,10 +168,10 @@ def scale_image(image_file, max_size=None, default_format=None):
     return new_file, mimetype
 
 
-def getGroupsForPrincipal(principal, plugins):
+def getGroupsForPrincipal(principal, plugins, request=None):
     groups = set()
     for iid, plugin in plugins.listPlugins(IGroupsPlugin):
-        groups.update(plugin.getGroupsForPrincipal(principal))
+        groups.update(plugin.getGroupsForPrincipal(principal, request))
     return list(groups)
 
 
