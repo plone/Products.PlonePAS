@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.11 (unreleased)
+4.0.11 (2012-02-08)
 -------------------
 
 - Do some more checks when changing or deleting a member portrait.
