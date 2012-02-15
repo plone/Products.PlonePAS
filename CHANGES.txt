@@ -4,7 +4,10 @@ Changelog
 4.0.12 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Make sure that during registration you can change your member
+  portrait (if this has been enabled the member registration config).
+  Refs http://dev.plone.org/ticket/5432
+  [maurits]
 
 
 4.0.11 (2012-02-08)

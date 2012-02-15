@@ -485,14 +485,23 @@ class MembershipTool(BaseTool):
         """update the portait of a member.
 
         Modified from CMFPlone version to URL-quote the member id.
+
+        Note that this method might be called by an anonymous user who
+        is getting registered.  This method will then be called from
+        plone.app.users and this is fine.  When called from restricted
+        python code or with a curl command by a hacker, the
+        declareProtected line will kick in and prevent use of this
+        method.
         """
         safe_id = self._getSafeMemberId(id)
         authenticated_id = self.getAuthenticatedMember().getId()
         if not safe_id:
+            # The default is to change your own portrait.
             safe_id = authenticated_id
-        if safe_id != authenticated_id and not _checkPermission(
-                ManageUsers, self):
-            raise Unauthorized
+        if authenticated_id and safe_id != authenticated_id:
+            # Only Managers can change portraits of others.
+            if not _checkPermission(ManageUsers, self):
+                raise Unauthorized
         if portrait and portrait.filename:
             scaled, mimetype = scale_image(portrait)
             portrait = Image(id=safe_id, file=scaled, title='')
