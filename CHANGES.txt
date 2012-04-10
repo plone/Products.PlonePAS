@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.12 (unreleased)
+4.0.12 (2012-04-09)
 -------------------
 
 - Make sure that during registration you can change your member
