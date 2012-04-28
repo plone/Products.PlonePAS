@@ -4,7 +4,10 @@ Changelog
 4.0.13 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Require ListPortalMembers permission for searchForMembers
+  and getMemberInfo so anonymous users can not get a list
+  of site users.
+  [vangheem]
 
 
 4.0.12 (2012-04-09)

@@ -26,6 +26,7 @@ from Products.CMFCore.permissions import ManageUsers
 from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.permissions import SetOwnPassword
 from Products.CMFCore.permissions import View
+from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
@@ -139,7 +140,7 @@ class MembershipTool(BaseTool):
             member = self.getMemberById(id)
             member.setMemberProperties(properties)
 
-    security.declarePublic('searchForMembers')
+    security.declareProtected(ListPortalMembers, 'searchForMembers')
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
@@ -343,7 +344,7 @@ class MembershipTool(BaseTool):
     security.declarePublic('createMemberArea')
     createMemberArea = createMemberarea
 
-    security.declarePublic('getMemberInfo')
+    security.declareProtected(ListPortalMembers, 'getMemberInfo')
     def getMemberInfo(self, memberId=None):
         """
         Return 'harmless' Memberinfo of any member, such as Full name,

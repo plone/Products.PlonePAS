@@ -732,6 +732,8 @@ class TestMethodProtection(base.TestCase):
         'changeMemberPortrait',
         'deletePersonalPortrait',
         'testCurrentPassword',
+        'searchForMembers',
+        'getMemberInfo'
     )
 
     def afterSetUp(self):
