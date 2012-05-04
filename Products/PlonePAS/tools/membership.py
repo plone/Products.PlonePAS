@@ -344,12 +344,10 @@ class MembershipTool(BaseTool):
     security.declarePublic('createMemberArea')
     createMemberArea = createMemberarea
 
-    security.declareProtected(ListPortalMembers, 'getMemberInfo')
+    security.declarePublic('getMemberInfo')
     def getMemberInfo(self, memberId=None):
-        """
-        Return 'harmless' Memberinfo of any member, such as Full name,
-        Location, etc
-        """
+        # Return 'harmless' Memberinfo of any member, such as Full name,
+        # Location, etc
         if not memberId:
             member = self.getAuthenticatedMember()
         else:
