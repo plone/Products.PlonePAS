@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.13 (unreleased)
+4.0.13 (2012-05-07)
 -------------------
 
 - Require ListPortalMembers permission for searchForMembers
