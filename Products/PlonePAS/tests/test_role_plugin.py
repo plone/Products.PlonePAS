@@ -4,12 +4,12 @@
 
 import unittest
 
-from Acquisition import Implicit
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.plugins.tests.helpers import (
     FauxPAS, DummyUser, makeRequestAndResponse)
-from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
+from Products.PluggableAuthService.PluggableAuthService \
+    import _PLUGIN_TYPE_INFO
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from Products.PlonePAS.tests import base
 from zope.interface import implements
@@ -17,9 +17,10 @@ from zope.interface import implements
 
 class FauxGroupsPlugin(BasePlugin):
     implements(IGroupsPlugin)
-    
+
     def getGroupsForPrincipal(self, principal, request=None):
         return principal._groups
+
 
 class GroupAwareRoleManagerTests(base.TestCase):
     """Roles manager that takes care of goup of principal"""
@@ -41,16 +42,18 @@ class GroupAwareRoleManagerTests(base.TestCase):
         """There's a special case, the users control panel for which
         we should never grant to users the roles they have got through
         the groups they belong.
-        In that intent, the control panels view pushes '__ignore_group_roles__' = True
+        In that intent, the control panels view pushes
+        '__ignore_group_roles__' = True
         in the request.
         """
         root = FauxPAS()
-        
-        # Add a minimal PluginRegistry with a mock IGroupsPlugin, because the roles plugin depends on it:
+
+        # Add a minimal PluginRegistry with a mock IGroupsPlugin, because the
+        # roles plugin depends on it:
         root._setObject('plugins', PluginRegistry(_PLUGIN_TYPE_INFO))
         root._setObject('groups', FauxGroupsPlugin())
         root['plugins'].activatePlugin(IGroupsPlugin, 'groups')
-        
+
         garm = self._makeOne('garm').__of__(root)
 
         # 2 roles
@@ -84,4 +87,5 @@ class GroupAwareRoleManagerTests(base.TestCase):
 
 
 def test_suite():
-    return unittest.TestSuite((unittest.makeSuite(GroupAwareRoleManagerTests),))
+    return unittest.TestSuite(
+                (unittest.makeSuite(GroupAwareRoleManagerTests),))

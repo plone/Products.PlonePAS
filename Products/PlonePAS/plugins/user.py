@@ -21,6 +21,7 @@ from Products.PluggableAuthService.plugins.ZODBUserManager import \
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
                                           globals())
 
+
 def manage_addUserManager(dispatcher, id, title=None, REQUEST=None):
     """ Add a UserManager to a Pluggable Auth Service. """
 
@@ -33,6 +34,7 @@ def manage_addUserManager(dispatcher, id, title=None, REQUEST=None):
             '?manage_tabs_message='
             'UserManager+added.'
             % dispatcher.absolute_url())
+
 
 class UserManager(BasePlugin):
     """PAS plugin for managing users. (adds write API)
@@ -52,16 +54,16 @@ class UserManager(BasePlugin):
         Should go into PAS.
         """
         if self._user_passwords.get(user_id) is not None:
-            raise KeyError, 'Duplicate user ID: %s' % user_id
+            raise KeyError('Duplicate user ID: %s' % user_id)
 
         if self._login_to_userid.get(login_name) is not None:
-            raise KeyError, 'Duplicate login name: %s' % login_name
+            raise KeyError('Duplicate login name: %s' % login_name)
 
         if not AuthEncoding.is_encrypted(password):
             password = AuthEncoding.pw_encrypt(password)
-        self._user_passwords[ user_id ] = password
-        self._login_to_userid[ login_name ] = user_id
-        self._userid_to_login[ user_id ] = login_name
+        self._user_passwords[user_id] = password
+        self._login_to_userid[login_name] = user_id
+        self._userid_to_login[user_id] = login_name
 
         # enumerateUsers return value has changed
         view_name = createViewName('enumerateUsers')
@@ -80,7 +82,7 @@ class UserManager(BasePlugin):
         """Change a user's password
         """
         if self._user_passwords.get(principal_id) is None:
-            raise RuntimeError, "User does not exist: %s" % principal_id
+            raise RuntimeError("User does not exist: %s" % principal_id)
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
 
     # implement interfaces IDeleteCapability, IPasswordSetCapability

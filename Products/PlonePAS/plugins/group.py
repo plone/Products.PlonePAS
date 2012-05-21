@@ -12,20 +12,25 @@ from AccessControl import ClassSecurityInfo
 
 from zope.interface import implements
 
-from Products.PluggableAuthService.PluggableAuthService import _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
-from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
+from Products.PluggableAuthService.PluggableAuthService \
+    import _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.plugins.ZODBGroupManager \
+    import ZODBGroupManager
+from Products.PluggableAuthService.interfaces.plugins \
+    import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.utils import createViewName
 
-from Products.PlonePAS.interfaces.group import IGroupManagement, IGroupIntrospection
+from Products.PlonePAS.interfaces.group \
+    import IGroupManagement, IGroupIntrospection
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from ufactory import PloneUser
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
 logger = logging.getLogger('PlonePAS')
+
 
 def manage_addGroupManager(self, id, title='', RESPONSE=None):
     """
@@ -50,36 +55,40 @@ class GroupManager(ZODBGroupManager):
 
     def __init__(self, *args, **kw):
         ZODBGroupManager.__init__(self, *args, **kw)
-        self._group_principal_map = OOBTree() # reverse index of groups->principal
+        # reverse index of groups->principal
+        self._group_principal_map = OOBTree()
 
     #################################
     # overrides to ease group principal lookups for introspection api
 
     def addGroup(self, group_id, *args, **kw):
         ZODBGroupManager.addGroup(self, group_id, *args, **kw)
-        self._group_principal_map[ group_id ] = OOSet()
+        self._group_principal_map[group_id] = OOSet()
         return True
 
     def removeGroup(self, group_id):
         ZODBGroupManager.removeGroup(self, group_id)
-        del self._group_principal_map[ group_id ]
+        del self._group_principal_map[group_id]
         return True
 
     def addPrincipalToGroup(self, principal_id, group_id):
         ZODBGroupManager.addPrincipalToGroup(self, principal_id, group_id)
-        self._group_principal_map[ group_id ].insert(principal_id)
+        self._group_principal_map[group_id].insert(principal_id)
         return True
 
     def removePrincipalFromGroup(self, principal_id, group_id):
-        already = ZODBGroupManager.removePrincipalFromGroup(self, principal_id, group_id)
-        if already: self._group_principal_map[ group_id ].remove(principal_id)
+        already = ZODBGroupManager.removePrincipalFromGroup(self, principal_id,
+                                                            group_id)
+        if already:
+            self._group_principal_map[group_id].remove(principal_id)
         return True
 
     #################################
     # overrides for api matching/massage
 
     def updateGroup(self, group_id, title=None, description=None):
-        ZODBGroupManager.updateGroup(self, group_id, title=title, description=description)
+        ZODBGroupManager.updateGroup(self, group_id, title=title,
+                                     description=description)
         return True
 
     #################################
@@ -100,7 +109,7 @@ class GroupManager(ZODBGroupManager):
         return self.listGroupIds()
 
     def getGroupMembers(self, group_id):
-        return tuple(self._group_principal_map.get(group_id,()))
+        return tuple(self._group_principal_map.get(group_id, ()))
 
     #################################
     # capabilties interface impls.
@@ -114,24 +123,33 @@ class GroupManager(ZODBGroupManager):
             return 1
         return 0
 
-    def getGroupInfo( self, group_id ):
-        """Over-ride parent to not explode when getting group info dict by group id."""
-        return self._groups.get(group_id,None)
+    def getGroupInfo(self, group_id):
+        """Over-ride parent to not explode when getting group info dict by
+        group id."""
+        return self._groups.get(group_id, None)
 
     def allowGroupAdd(self, user_id, group_id):
-        """True iff this plugin will allow adding a certain user to a certain group."""
+        """True iff this plugin will allow adding a certain user to a
+        certain group."""
         present = self.getGroupInfo(group_id)
-        if present: return 1   # if we have a group, we can add users to it
-                                # slightly naive, but should be okay.
+        # if we have a group, we can add users to it
+        # slightly naive, but should be okay.
+        if present:
+            return 1
+
         return 0
 
     def allowGroupRemove(self, user_id, group_id):
-        """True iff this plugin will allow removing a certain user from a certain group."""
+        """True iff this plugin will allow removing a certain user from a
+        certain group."""
         present = self.getGroupInfo(group_id)
-        if not present: return 0   # if we don't have a group, we can't do anything
+        # if we don't have a group, we can't do anything
+        if not present:
+            return 0
 
         group_members = self.getGroupMembers(group_id)
-        if user_id in group_members: return 1
+        if user_id in group_members:
+            return 1
         return 0
 
     #################################
@@ -153,9 +171,7 @@ class GroupManager(ZODBGroupManager):
         """
 
         view_name = '_findGroup-%s' % group_id
-        keywords = { 'group_id' : group_id
-                   , 'title' : title
-                   }
+        keywords = {'group_id': group_id, 'title': title}
 
         group = self._createGroup(plugins, group_id, title)
 
@@ -166,8 +182,8 @@ class GroupManager(ZODBGroupManager):
             if data:
                 group.addPropertysheet(propfinder_id, data)
 
-        groups = self._getPAS()._getGroupsForPrincipal(group, request
-                                            , plugins=plugins)
+        groups = self._getPAS()._getGroupsForPrincipal(group, request,
+                                                       plugins=plugins)
         group._addGroups(groups)
 
         rolemakers = plugins.listPlugins(IRolesPlugin)
@@ -190,11 +206,11 @@ class GroupManager(ZODBGroupManager):
         criteria = {}
 
         if group_id is not None:
-            criteria[ 'id' ] = group_id
-            criteria[ 'exact_match' ] = True
+            criteria['id'] = group_id
+            criteria['exact_match'] = True
 
         if title is not None:
-            criteria[ 'title' ] = title
+            criteria['title'] = title
 
         if criteria:
             view_name = createViewName('_verifyGroup', group_id)
@@ -209,8 +225,8 @@ class GroupManager(ZODBGroupManager):
 
                 except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                     logger.info(
-                        'PluggableAuthService: GroupEnumerationPlugin %s error',
-                        enumerator_id, exc_info=1)
+                       'PluggableAuthService: GroupEnumerationPlugin %s error',
+                       enumerator_id, exc_info=1)
 
         return 0
 
@@ -233,17 +249,18 @@ class PloneGroup(PloneUser):
         return self._id
 
     security.declarePrivate("getMemberIds")
-    def getMemberIds(self, transitive = 1):
+    def getMemberIds(self, transitive=1):
         """Return member ids of this group, including or not
         transitive groups.
         """
         # acquired from the groups_source
         plugins = self._getPAS().plugins
         introspectors = plugins.listPlugins(IGroupIntrospection)
-        members=[]
+        members = []
         for iid, introspector in introspectors:
             try:
-                members.extend(list(introspector.getGroupMembers(self.getId())))
+                members.extend(
+                    list(introspector.getGroupMembers(self.getId())))
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 logger.info(
                     'PluggableAuthService: getGroupMembers %s error',

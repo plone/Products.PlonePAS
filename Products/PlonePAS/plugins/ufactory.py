@@ -8,7 +8,8 @@ from App.special_dtml import DTMLFile
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
-from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
+from Products.PluggableAuthService.interfaces.propertysheets \
+    import IPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
@@ -21,6 +22,7 @@ manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
                                           globals())
 
 _marker = object()
+
 
 def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
     """
@@ -60,14 +62,14 @@ class PloneUser(PropertiedUser):
     # GRUF API
     _isGroup = False
 
-    def __init__( self, id, login=None ):
-        super( PloneUser, self).__init__( id, login )
+    def __init__(self, id, login=None):
+        super(PloneUser, self).__init__(id, login)
         self._propertysheets = OrderedDict()
 
     def _getPAS(self):
         # XXX This is not very optimal *at all*
         return self.acl_users
-        
+
     def _getPlugins(self):
         # XXX This is not very optimal *at all*
         return self._getPAS().plugins
@@ -123,7 +125,7 @@ class PloneUser(PropertiedUser):
             sheet = UserPropertySheet(id, **data)
 
         if self._propertysheets.get(id) is not None:
-            raise KeyError, 'Duplicate property sheet: %s' % id
+            raise KeyError('Duplicate property sheet: %s' % id)
 
         self._propertysheets[id] = sheet
 
@@ -148,7 +150,7 @@ class PloneUser(PropertiedUser):
         roles.update(self.getRoles())
         return list(roles)
 
-    def allowed(self, object, object_roles = None):
+    def allowed(self, object, object_roles=None):
         if object_roles is _what_not_even_god_should_do:
             return 0
 
@@ -197,26 +199,25 @@ class PloneUser(PropertiedUser):
 
     def setProperties(self, properties=None, **kw):
         if properties is None:
-            properties=kw
+            properties = kw
 
         for sheet in self.getOrderedPropertySheets():
             if not IMutablePropertySheet.providedBy(sheet):
                 continue
 
-            update={}
-            for (key,value) in kw.items():
+            update = {}
+            for (key, value) in kw.items():
                 if sheet.hasProperty(key):
-                    update[key]=value
+                    update[key] = value
                     del kw[key]
 
             if update:
                 sheet.setProperties(self, update)
 
-
     def getProperty(self, id, default=_marker):
         for sheet in self.getOrderedPropertySheets():
             if sheet.hasProperty(id):
-                value=sheet.getProperty(id)
+                value = sheet.getProperty(id)
                 if isinstance(value, unicode):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return

@@ -13,7 +13,8 @@ from Products.CMFCore.utils import getToolByName
 
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
-from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import IUserEnumerationPlugin
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
@@ -81,10 +82,10 @@ class ZODBMutablePropertyProvider(BasePlugin):
         else:
             valuetuples = [(name, value) for name, type, value in schema]
             schema = [(name, type) for name, type, value in schema]
-            for name, value in valuetuples: defaultvalues[name] = value
+            for name, value in valuetuples:
+                defaultvalues[name] = value
         self._schema = tuple(schema)
         self._defaultvalues = defaultvalues
-
 
     def _getSchema(self, isgroup=None):
         # this could probably stand to be cached
@@ -100,7 +101,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 mdschema = mdtool.propertyMap()
                 schema = [(elt['id'], elt['type']) for elt in mdschema]
         return schema
-
 
     def _getDefaultValues(self, isgroup=None):
         """Returns a dictionary mapping of property names to default values.
@@ -129,14 +129,14 @@ class ZODBMutablePropertyProvider(BasePlugin):
                     else:
                         defaultvalues[name] = value
 
-            # ALERT! if someone gives their *_data tool a title, and want a title
-            #        as a property of the user/group (and groups do by default)
-            #        we don't want them all to have this title, since a title is
-            #        used in the UI if it exists
-            if defaultvalues.get("title"): defaultvalues["title"] = ""
+            # ALERT! if someone gives their *_data tool a title, and want a
+            #        title as a property of the user/group (and groups do by
+            #        default) we don't want them all to have this title, since
+            #        a title is used in the UI if it exists
+            if defaultvalues.get("title"):
+                defaultvalues["title"] = ""
         return defaultvalues
 
-    
     security.declarePrivate('getPropertiesForUser')
     def getPropertiesForUser(self, user, request=None):
         """Get property values for a user or group.
@@ -153,14 +153,14 @@ class ZODBMutablePropertyProvider(BasePlugin):
         defaults = self._getDefaultValues(isGroup)
 
         # provide default values where missing
-        if not data: data = {}
+        if not data:
+            data = {}
         for key, val in defaults.items():
-            if not data.has_key(key):
+            if not key in data:
                 data[key] = val
 
         return MutablePropertySheet(self.id,
                                     schema=self._getSchema(isGroup), **data)
-
 
     security.declarePrivate('setPropertiesForUser')
     def setPropertiesForUser(self, user, propertysheet):
@@ -170,28 +170,28 @@ class ZODBMutablePropertyProvider(BasePlugin):
         isGroup = getattr(user, 'isGroup', lambda: None)()
 
         properties = dict(propertysheet.propertyItems())
-                
+
         for name, property_type in self._getSchema(isGroup) or ():
             if (name in properties and not
                 validateValue(property_type, properties[name])):
-                raise ValueError, ('Invalid value: %s does not conform '
+                raise ValueError('Invalid value: %s does not conform '
                                    'to %s' % (name, property_type))
 
         allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]
         if allowed_prop_keys:
             prop_names = set(properties.keys()) - set(allowed_prop_keys)
             if prop_names:
-                raise ValueError, 'Unknown Properties: %r' % prop_names
+                raise ValueError('Unknown Properties: %r' % prop_names)
 
         userid = user.getId()
         userprops = self._storage.get(userid)
-        properties.update({'isGroup':isGroup})
+        properties.update({'isGroup': isGroup})
         if userprops is not None:
             userprops.update(properties)
-            self._storage[userid] = self._storage[userid]   # notify persistence machinery of change
+            # notify persistence machinery of change
+            self._storage[userid] = self._storage[userid]
         else:
             self._storage.insert(user.getId(), properties)
-
 
     security.declarePrivate('deleteUser')
     def deleteUser(self, user_id):
@@ -203,44 +203,38 @@ class ZODBMutablePropertyProvider(BasePlugin):
         except KeyError:
             pass
 
-
     security.declarePrivate('testMemberData')
     def testMemberData(self, memberdata, criteria, exact_match=False):
         """Test if a memberdata matches the search criteria.
         """
         for (key, value) in criteria.items():
-            testvalue=memberdata.get(key, None)
+            testvalue = memberdata.get(key, None)
             if testvalue is None:
                 return False
 
             if isStringType(testvalue):
-                testvalue=safe_unicode(testvalue.lower())
+                testvalue = safe_unicode(testvalue.lower())
             if isStringType(value):
-                value=safe_unicode(value.lower())
-                
+                value = safe_unicode(value.lower())
+
             if exact_match:
-                if value!=testvalue:
+                if value != testvalue:
                     return False
             else:
                 try:
                     if value not in testvalue:
                         return False
                 except TypeError:
-                    # Fall back to exact match if we can check for sub-component
-                    if value!=testvalue:
+                    # Fall back to exact match if we can check for
+                    # sub-component
+                    if value != testvalue:
                         return False
-
 
         return True
 
     security.declarePrivate('enumerateUsers')
-    def enumerateUsers( self
-                      , id=None
-                      , login=None
-                      , exact_match=False
-                      , **kw
-                      ):
-
+    def enumerateUsers(self, id=None, login=None,
+                       exact_match=False, **kw):
         """ See IUserEnumerationPlugin.
         """
         plugin_id = self.getId()
@@ -251,17 +245,18 @@ class ZODBMutablePropertyProvider(BasePlugin):
         if id is not None or login is not None:
             return ()
 
-        criteria=copy.copy(kw)
+        criteria = copy.copy(kw)
 
-        users=[ (user,data) for (user,data) in self._storage.items()
-                    if self.testMemberData(data, criteria, exact_match) and not data.get('isGroup', False)]
+        users = [(user, data) for (user, data) in self._storage.items()
+                    if self.testMemberData(data, criteria, exact_match)
+                        and not data.get('isGroup', False)]
 
-        user_info=[ { 'id' : self.prefix + user_id,
-                     'login' : user_id,
-                     'title' : data.get('fullname', user_id),
-                     'description' : data.get('fullname', user_id),
-                     'email' : data.get('email', ''),
-                     'pluginid' : plugin_id } for (user_id, data) in users ]
+        user_info = [{'id': self.prefix + user_id,
+                      'login': user_id,
+                      'title': data.get('fullname', user_id),
+                      'description': data.get('fullname', user_id),
+                      'email': data.get('email', ''),
+                      'pluginid': plugin_id} for (user_id, data) in users]
 
         return tuple(user_info)
 

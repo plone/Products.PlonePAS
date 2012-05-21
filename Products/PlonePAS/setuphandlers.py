@@ -50,8 +50,9 @@ def setupGroups(site):
     uf = getToolByName(site, 'acl_users')
     gtool = getToolByName(site, 'portal_groups')
     if not uf.searchGroups(id='Administrators'):
-        gtool.addGroup('Administrators', title='Administrators', roles=['Manager'])
-    
+        gtool.addGroup('Administrators', title='Administrators',
+                       roles=['Manager'])
+
     # Add Site Administrators group on Plone 4.1+ only.
     try:
         pkg_resources.get_distribution('Products.CMFPlone>=4.1a1')
@@ -65,7 +66,9 @@ def setupGroups(site):
     if not uf.searchGroups(id='Reviewers'):
         gtool.addGroup('Reviewers', title='Reviewers', roles=['Reviewer'])
     # if not uf.searchGroups(id='AuthenticatedUsers'):
-    #     gtool.addGroup('Authenticated Users', title='Authenticated Users (Virtual Group)')
+    #     gtool.addGroup('Authenticated Users',
+    #                    title='Authenticated Users (Virtual Group)')
+
 
 def installPAS(portal):
     # Add user folder
@@ -79,10 +82,11 @@ def installPAS(portal):
     setupPlugins(portal)
 
     # XXX Why are we doing this?
-    # According to Sidnei, "either cookie or basic auth for a user in the root folder doesn't work
+    # According to Sidnei, "either cookie or basic auth for a user in the root
+    # folder doesn't work
     # if it's not a PAS UF when you sign in to Plone. IIRC."
     # See: http://twitter.com/#!/sidneidasilva/status/14030732112429056
-    # And here's the original commit: 
+    # And here's the original commit:
     # http://dev.plone.org/collective/changeset/10720/PlonePAS/trunk/Extensions/Install.py
     migrate_root_uf(portal)
 

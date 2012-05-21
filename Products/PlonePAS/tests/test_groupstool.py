@@ -79,6 +79,7 @@ class GroupsToolTest(base.TestCase):
         group = self.gt.getGroupById(self.group_id)
         self.failUnless('Reviewers' in group.getGroups())
 
+
 class TestMethodProtection(base.TestCase):
     # GroupData has wrong security declarations
 
@@ -93,13 +94,15 @@ class TestMethodProtection(base.TestCase):
 
     def testAnonRemoveMember(self):
         self.logout()
-        self.assertRaises(Unauthorized, self.groupdata.removeMember, default_user)
+        self.assertRaises(Unauthorized, self.groupdata.removeMember,
+                          default_user)
 
     def testMemberAddMember(self):
         self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
 
     def testMemberRemoveMember(self):
-        self.assertRaises(Unauthorized, self.groupdata.removeMember, default_user)
+        self.assertRaises(Unauthorized, self.groupdata.removeMember,
+                          default_user)
 
     def testManagerAddMember(self):
         self.setPermissions([Permissions.manage_users])
@@ -144,13 +147,15 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         g = self.groups.getGroupById('foo')
         self.assertEqual(g.__class__.__name__, 'GroupData')
         self.assertEqual(g.aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__, 'GroupManager')
+        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__,
+                         'GroupManager')
 
     def testEditGroup(self):
         self.groups.addGroup('foo', )
-        self.groups.editGroup('foo', roles = ['Reviewer'])
+        self.groups.editGroup('foo', roles=['Reviewer'])
         g = self.groups.getGroupById('foo')
-        self.assertEqual(sortTuple(g.getRoles()), ('Authenticated', 'Reviewer'))
+        self.assertEqual(sortTuple(g.getRoles()),
+                         ('Authenticated', 'Reviewer'))
 
     def testEditBadGroup(self):
         # Error type depends on the user folder...
@@ -185,7 +190,8 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         gs = self.groups.getGroupsByUserId(default_user)
         self.assertEqual(gs[0].__class__.__name__, 'GroupData')
         self.assertEqual(gs[0].aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__, 'GroupManager')
+        self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__,
+                         'GroupManager')
 
     def testListGroups(self):
         self.groups.addGroup('foo', [], [])
@@ -199,7 +205,8 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         gs = self.groups.listGroups()
         self.assertEqual(gs[0].__class__.__name__, 'GroupData')
         self.assertEqual(gs[0].aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__, 'GroupManager')
+        self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__,
+                         'GroupManager')
 
     def testSetGroupOwnership(self):
         self.groups.addGroup('foo', [], [])
@@ -209,7 +216,8 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         self.groups.setGroupOwnership(g, doc)
         self.assertEqual(doc.getOwnerTuple()[1], 'foo')
         self.assertEqual(doc.get_local_roles_for_userid('foo'), ('Owner',))
-        self.assertEqual(doc.get_local_roles_for_userid(default_user), ('Owner',))
+        self.assertEqual(doc.get_local_roles_for_userid(default_user),
+                         ('Owner',))
 
     def testWrapGroup(self):
         self.groups.addGroup('foo', [], [])
@@ -218,14 +226,16 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         g = self.groups.wrapGroup(g)
         self.assertEqual(g.__class__.__name__, 'GroupData')
         self.assertEqual(g.aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__, 'GroupManager')
+        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__,
+                         'GroupManager')
 
     def testGetGroupInfo(self):
-        self.groups.addGroup('foo', title='Foo', description='Bar', email='foo@foo.com')
+        self.groups.addGroup('foo', title='Foo', description='Bar',
+                             email='foo@foo.com')
         info = self.groups.getGroupInfo('foo')
         self.assertEqual(info.get('title'), 'Foo')
         self.assertEqual(info.get('description'), 'Bar')
-        self.assertEqual(info.get('email'), None) # No email!
+        self.assertEqual(info.get('email'), None)  # No email!
 
     def testGetGroupInfoAsAnonymous(self):
         self.groups.addGroup('foo', title='Foo', description='Bar')
@@ -248,4 +258,3 @@ def test_suite():
     suite.addTest(unittest.makeSuite(TestMethodProtection))
     suite.addTest(unittest.makeSuite(TestGroupsTool))
     return suite
-

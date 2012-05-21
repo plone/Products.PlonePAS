@@ -3,23 +3,28 @@ from zope.interface import implements
 from App.class_init import InitializeClass
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin, IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import IGroupsPlugin, IPropertiesPlugin
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 
 manage_addAutoGroupForm = PageTemplateFile("../zmi/AutoGroupForm", globals())
 
-def manage_addAutoGroup(self, id, title='', group='', description='', RESPONSE=None):
+
+def manage_addAutoGroup(self, id, title='', group='', description='',
+                        RESPONSE=None):
     """Add an Auto Group plugin."""
 
     plugin = AutoGroup(id, title, group, description)
     self._setObject(id, plugin)
 
     if RESPONSE is not None:
-        return RESPONSE.redirect("%s/manage_workspace?manage_tabs_message=AutoGroup+plugin+added" %
-                self.absolute_url())
+        return RESPONSE.redirect(
+            "%s/manage_workspace?manage_tabs_message=AutoGroup+plugin+added"
+                % self.absolute_url())
 
 
 class VirtualGroup(PropertiedUser):
@@ -28,7 +33,7 @@ class VirtualGroup(PropertiedUser):
         self.id = id
         self.title = title
         self.description = description
-        
+
     def getId(self):
         return self.id
 
@@ -60,26 +65,25 @@ class VirtualGroup(PropertiedUser):
 class AutoGroup(BasePlugin):
     meta_type = "Automatic Group Plugin"
 
-    implements(IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection, IPropertiesPlugin)
+    implements(IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection,
+               IPropertiesPlugin)
 
     _properties = (
-            { 'id'      : 'title',
-              'label'   : 'Title',
-              'type'    : 'string',
-              'mode'    : 'w',
+            {'id': 'title',
+             'label': 'Title',
+             'type': 'string',
+             'mode': 'w',
             },
-            { 'id'      : 'group',
-              'label'   : 'Group',
-              'type'    : 'string',
-              'mode'    : 'w',
+            {'id': 'group',
+             'label': 'Group',
+             'type': 'string',
+             'mode': 'w',
             },
-            { 'id'      : 'description',
-              'label'   : 'Description',
-              'type'    : 'string',
-              'mode'    : 'w',
-            },
-            )
-                
+            {'id': 'description',
+             'label': 'Description',
+             'type': 'string',
+             'mode': 'w',
+            },)
 
     def __init__(self, id, title='', group=None, description=''):
         self._setId(id)
@@ -88,7 +92,8 @@ class AutoGroup(BasePlugin):
         self.description = description
 
     # IGroupEnumerationPlugin implementation
-    def enumerateGroups(self, id=None, exact_match=False, sort_by=None, max_results=None, **kw):
+    def enumerateGroups(self, id=None, exact_match=False, sort_by=None,
+                        max_results=None, **kw):
         if kw:
             return []
 
@@ -96,18 +101,16 @@ class AutoGroup(BasePlugin):
             id = id.lower()
             mygroup = self.group.lower()
 
-            if exact_match and id!=mygroup:
+            if exact_match and id != mygroup:
                 return []
 
             if not exact_match and id not in mygroup:
                 return []
 
-        return [ { 'id' : self.group,
-                   'groupid' : self.group,
-                   'title' : self.title,
-                   'pluginid' : self.getId(),
-               } ]
-
+        return [{'id': self.group,
+                 'groupid': self.group,
+                 'title': self.title,
+                 'pluginid': self.getId()}]
 
     # IGroupsPlugin implementation
     def getGroupsForPrincipal(self, principal, request=None):
@@ -116,22 +119,19 @@ class AutoGroup(BasePlugin):
 
         return (self.group,)
 
-
     # IGroupIntrospection implementation
     def getGroupById(self, group_id):
         if group_id != self.group:
             return None
 
-        return VirtualGroup(self.group, title=self.title, description=self.description)
-
+        return VirtualGroup(self.group, title=self.title,
+                            description=self.description)
 
     def getGroups(self):
         return [self.getGroupById(id) for id in self.getGroupIds()]
 
-
     def getGroupIds(self):
-        return [ self.group ]
-
+        return [self.group]
 
     def getGroupMembers(self, group_id):
         return ()
@@ -146,4 +146,3 @@ class AutoGroup(BasePlugin):
 
 
 InitializeClass(AutoGroup)
-

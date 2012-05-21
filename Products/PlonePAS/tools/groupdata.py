@@ -38,7 +38,8 @@ _marker = object()
 
 
 class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
-    """This tool wraps group objects, allowing transparent access to properties.
+    """This tool wraps group objects, allowing transparent access to
+    properties.
     """
 
     id = 'portal_groupdata'
@@ -47,7 +48,7 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
     implements(IGroupDataTool)
 
     _v_temps = None
-    _properties=({'id':'title', 'type': 'string', 'mode': 'wd'},)
+    _properties = ({'id': 'title', 'type': 'string', 'mode': 'wd'},)
     security = ClassSecurityInfo()
 
     def __init__(self):
@@ -61,17 +62,17 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
 
         id = g.getId()
         members = self._members
-        if not members.has_key(id):
+        if not id in members:
             # Get a temporary member that might be
             # registered later via registerMemberData().
             temps = self._v_temps
-            if temps is not None and temps.has_key(id):
+            if temps is not None and id in temps:
                 portal_group = temps[id]
             else:
                 base = aq_base(self)
                 portal_group = GroupData(base, id)
                 if temps is None:
-                    self._v_temps = {id:portal_group}
+                    self._v_temps = {id: portal_group}
                     if hasattr(self, 'REQUEST'):
                         self.REQUEST._hold(CleanupTemp(self))
                 else:
@@ -142,14 +143,14 @@ class GroupData(SimpleItem):
         return aq_parent(aq_inner(self))
 
     security.declarePublic("getGroupMemberIds")
-    def getGroupMemberIds(self,):
+    def getGroupMemberIds(self):
         """
         Return a list of group member ids
         """
         return map(lambda x: x.getMemberId(), self.getGroupMembers())
 
     security.declarePublic("getAllGroupMemberIds")
-    def getAllGroupMemberIds(self,):
+    def getAllGroupMemberIds(self):
         """
         Return a list of group member ids
         """
@@ -166,14 +167,16 @@ class GroupData(SimpleItem):
         ret = []
         for u_name in gtool.getGroupMembers(self.getId()):
             usr = self._getGRUF().getUserById(u_name)
-            # getUserById from Products.PluggableAuthService.PluggableAuthService
+            # getUserById from
+            #   Products.PluggableAuthService.PluggableAuthService
             # The returned object is not wrapped, we wrapped it below
             if not usr:
                 usr = self._getGRUF().getGroupById(u_name)
                 # getGroupById from Products.PlonePAS.pas
                 # The returned object is already wrapped
                 if not usr:
-                    logger.debug("Group has a non-existing principal %s" % u_name)
+                    logger.debug("Group has a non-existing principal %s"
+                                    % u_name)
                     continue
                 ret.append(usr)
             else:
@@ -181,7 +184,7 @@ class GroupData(SimpleItem):
         return ret
 
     security.declarePublic('getAllGroupMembers')
-    def getAllGroupMembers(self, ):
+    def getAllGroupMembers(self):
         """
         Returns a list of the portal_memberdata-ish members of the group.
         This will include transitive groups / users
@@ -193,7 +196,8 @@ class GroupData(SimpleItem):
             if not usr:
                 usr = self._getGRUF().getGroupById(u_name)
                 if not usr:
-                    logger.debug("Group has a non-existing principal %s" % u_name)
+                    logger.debug("Group has a non-existing principal %s"
+                                    % u_name)
                     continue
                 ret.append(usr)
             else:
@@ -207,15 +211,15 @@ class GroupData(SimpleItem):
         return self.getGroup()
 
     security.declarePrivate("canAdministrateGroup")
-    def canAdministrateGroup(self,):
+    def canAdministrateGroup(self):
         """
         Return true if the #current# user can administrate this group
         """
         user = getSecurityManager().getUser()
         tool = self.getTool()
         portal = getToolByName(tool, 'portal_url').getPortalObject()
-        
-        # Has manager users pemission? 
+
+        # Has manager users pemission?
         if user.has_permission(Permissions.manage_users, portal):
             return True
 
@@ -224,7 +228,8 @@ class GroupData(SimpleItem):
         if user.getId() in managers:
             return True
 
-        # Belongs to a group which is explicitly mentionned as a group administrator
+        # Belongs to a group which is explicitly mentionned as a group
+        # administrator
         meth = getattr(user, "getAllGroupNames", None)
         if meth:
             groups = meth()
@@ -242,8 +247,8 @@ class GroupData(SimpleItem):
     def addMember(self, id, REQUEST=None):
         """ Add the existing member with the given id to the group"""
         if not self.canAdministrateGroup():
-            raise Unauthorized, "You cannot add a member to the group."
-        
+            raise Unauthorized("You cannot add a member to the group.")
+
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
         for mid, manager in managers:
@@ -259,7 +264,7 @@ class GroupData(SimpleItem):
         """Remove the member with the provided id from the group.
         """
         if not self.canAdministrateGroup():
-            raise Unauthorized, "You cannot remove a member from the group."
+            raise Unauthorized("You cannot remove a member from the group.")
 
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
@@ -314,8 +319,8 @@ class GroupData(SimpleItem):
                     sheet.setProperty(group, k, v)
                     modified = True
                 else:
-                    raise RuntimeError, ("Mutable property provider "
-                                         "shadowed by read only provider")
+                    raise RuntimeError("Mutable property provider "
+                                       "shadowed by read only provider")
         if modified:
             self.notifyModified()
 
@@ -325,21 +330,22 @@ class GroupData(SimpleItem):
         # Sets the properties given in the MemberDataTool.
         tool = self.getTool()
         for id in tool.propertyIds():
-            if mapping.has_key(id):
-                if not self.__class__.__dict__.has_key(id):
+            if id in mapping:
+                if not id in self.__class__.__dict__:
                     value = mapping[id]
-                    if type(value)==type(''):
+                    if type(value) == type(''):
                         proptype = tool.getPropertyType(id) or 'string'
-                        if type_converters.has_key(proptype):
+                        if proptype in type_converters:
                             value = type_converters[proptype](value)
                     setattr(self, id, value)
-                    
+
         # Hopefully we can later make notifyModified() implicit.
         self.notifyModified()
 
     security.declarePublic('getProperties')
     def getProperties(self):
-        """ Return the properties of this group. Properties are as usual in Zope.
+        """ Return the properties of this group. Properties are as usual
+            in Zope.
         """
         tool = self.getTool()
         ret = {}
@@ -370,30 +376,31 @@ class GroupData(SimpleItem):
         # delegate back to the base implementation.
 
         tool = self.getTool()
-        base = aq_base( self )
+        base = aq_base(self)
 
         # Then, check the user object, the tool, and attrs of myself for a
         # value:
-        user_value = getattr( aq_base(self.getGroup()), id, _marker )
-        tool_value = tool.getProperty( id, _marker )
-        value = getattr( base, id, _marker )
-        
+        user_value = getattr(aq_base(self.getGroup()), id, _marker)
+        tool_value = tool.getProperty(id, _marker)
+        value = getattr(base, id, _marker)
+
         # Take the first of the above that is filled out:
         for v in [user_value, tool_value, value]:
             if v is not _marker:
                 return v
-        
+
         return default
 
     def __str__(self):
         return self.getGroupId()
 
     security.declarePublic("isGroup")
-    def isGroup(self,):
+    def isGroup(self):
         """
         isGroup(self,) => Return true if this is a group.
         Will always return true for groups.
-        As MemberData objects do not support this method, it is quite useless by now.
+        As MemberData objects do not support this method, it is quite useless
+        by now.
         So one can use groupstool.isGroup(g) instead to get this information.
         """
         return 1
@@ -418,7 +425,7 @@ class GroupData(SimpleItem):
         return title or self.getGroupName()
 
     security.declarePublic("getMemberId")
-    def getMemberId(self,):
+    def getMemberId(self):
         """This exists only for a basic user/group API compatibility
         """
         return self.getGroupId()
