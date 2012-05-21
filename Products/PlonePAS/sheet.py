@@ -18,7 +18,10 @@ from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 
-class PropertyValueError(ValueError): pass
+
+class PropertyValueError(ValueError):
+    pass
+
 
 class PropertySchemaTypeMap(object):
 
@@ -38,7 +41,7 @@ class PropertySchemaTypeMap(object):
         for ptype, inspector in ptypes:
             if inspector(value):
                 return ptype
-        raise TypeError, 'Invalid property type: %s' % type(value)
+        raise TypeError('Invalid property type: %s' % type(value))
 
     def validate(self, property_type, value):
         inspector = self.tmap[property_type]
@@ -51,25 +54,32 @@ PropertySchema.addType('boolean', lambda x: 1)  # anything can be boolean
 PropertySchema.addType('int', lambda x:  x is None or type(x) is IntType)
 PropertySchema.addType('long', lambda x:  x is None or type(x) is LongType)
 PropertySchema.addType('float', lambda x:  x is None or type(x) is FloatType)
-PropertySchema.addType('lines', lambda x:  x is None or type(x) in _SequenceTypes)
-PropertySchema.addType('selection', lambda x:  x is None or type(x) in StringTypes)
-PropertySchema.addType('multiple selection', lambda x:  x is None or type(x) in _SequenceTypes)
-PropertySchema.addType('date', lambda x: 1 or x is None or type(x) is InstanceType and isinstance(x, DateTime))
+PropertySchema.addType('lines',
+                       lambda x:  x is None or type(x) in _SequenceTypes)
+PropertySchema.addType('selection',
+                       lambda x:  x is None or type(x) in StringTypes)
+PropertySchema.addType('multiple selection',
+                       lambda x:  x is None or type(x) in _SequenceTypes)
+PropertySchema.addType('date',
+                       lambda x: 1 or x is None \
+                                 or type(x) is InstanceType \
+                                 and isinstance(x, DateTime))
 validateValue = PropertySchema.validate
+
 
 class MutablePropertySheet(UserPropertySheet):
 
     implements(IMutablePropertySheet)
 
     def validateProperty(self, id, value):
-        if not self._properties.has_key(id):
-            raise PropertyValueError, 'No such property found on this schema'
+        if not id in self._properties:
+            raise PropertyValueError('No such property found on this schema')
 
         proptype = self.getPropertyType(id)
         if not validateValue(proptype, value):
-            raise PropertyValueError, ("Invalid value (%s) for "
-                                       "property '%s' of type %s" %
-                                       (value, id, proptype))
+            raise PropertyValueError("Invalid value (%s) for "
+                                     "property '%s' of type %s"
+                                        % (value, id, proptype))
 
     def setProperty(self, user, id, value):
         self.validateProperty(id, value)
@@ -106,4 +116,3 @@ class MutablePropertySheet(UserPropertySheet):
 
 class SchemaMutablePropertySheet(MutablePropertySheet):
     pass
-

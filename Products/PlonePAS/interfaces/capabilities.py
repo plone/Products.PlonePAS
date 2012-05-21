@@ -3,6 +3,7 @@
 
 from Products.PluggableAuthService.interfaces.plugins import Interface
 
+
 class IDeleteCapability(Interface):
     """Interface for plugin to say if it allows for deletion of a user.
     Expected to be found on IUserManagement plugins.
@@ -12,8 +13,10 @@ class IDeleteCapability(Interface):
     def allowDeletePrincipal(self, id):
         """True iff this plugin can delete a certain user/group."""
 
+
 class IPasswordSetCapability(Interface):
-    """Interface for plugin to say if it allows for setting the password of a user.
+    """Interface for plugin to say if it allows for setting the password of a
+    user.
     Expected to be found on IUserManagement plugins.
     For Plone UI.
     """
@@ -28,10 +31,12 @@ class IGroupCapability(Interface):
     """
 
     def allowGroupAdd(self, principal_id, group_id):
-        """True iff this plugin will allow adding a certain principal to a certain group."""
+        """True iff this plugin will allow adding a certain principal to a
+        certain group."""
 
     def allowGroupRemove(self, principal_id, group_id):
-        """True iff this plugin will allow removing a certain principal from a certain group."""
+        """True iff this plugin will allow removing a certain principal from a
+        certain group."""
 
 
 class IAssignRoleCapability(Interface):
@@ -40,12 +45,13 @@ class IAssignRoleCapability(Interface):
     """
 
     def allowRoleAssign(self, id, role):
-        """True iff this plugin will allow assigning a certain principal a certain role."""
+        """True iff this plugin will allow assigning a certain principal a
+        certain role."""
 
 
 class IManageCapabilities(Interface):
-    """Interface for MemberData/GroupData to provide information as to whether or not
-    the member can be deleted, reset password, modify a property.
+    """Interface for MemberData/GroupData to provide information as to whether
+    or not the member can be deleted, reset password, modify a property.
     """
 
     def canDelete(self):

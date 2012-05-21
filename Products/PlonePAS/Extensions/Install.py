@@ -9,7 +9,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 from Products.PluggableAuthService.Extensions.upgrade \
      import replace_acl_users
 from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin \
-     import IRecursiveGroupsPlugin, addRecursiveGroupsPlugin
+     import addRecursiveGroupsPlugin
 
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import IUserManagement
@@ -63,13 +63,13 @@ def registerPluginType(pas, plugin_type, plugin_info):
     pas.plugins._plugin_types = plugin_types
 
     # It's safe to assign over a existing key here.
-    pas.plugins._plugin_type_info[plugin_type] =  plugin_info
+    pas.plugins._plugin_type_info[plugin_type] = plugin_info
 
 
 def registerPluginTypes(pas):
 
     PluginInfo = {
-        'id' : 'IUserManagement',
+        'id': 'IUserManagement',
         'title': 'user_management',
         'description': ("The User Management plugins allow the "
                         "Pluggable Auth Service to add/delete/modify users")
@@ -78,7 +78,7 @@ def registerPluginTypes(pas):
     registerPluginType(pas, IUserManagement, PluginInfo)
 
     PluginInfo = {
-        'id' : 'IUserIntrospection',
+        'id': 'IUserIntrospection',
         'title': 'user_introspection',
         'description': ("The User Introspection plugins allow the "
                         "Pluggable Auth Service to provide lists of users")
@@ -87,7 +87,7 @@ def registerPluginTypes(pas):
     registerPluginType(pas, IUserIntrospection, PluginInfo)
 
     PluginInfo = {
-        'id' : 'IGroupManagement',
+        'id': 'IGroupManagement',
         'title': 'group_management',
         'description': ("Group Management provides add/write/deletion "
                         "of groups and member management")
@@ -96,7 +96,7 @@ def registerPluginTypes(pas):
     registerPluginType(pas, igroup.IGroupManagement, PluginInfo)
 
     PluginInfo = {
-        'id' : 'IGroupIntrospection',
+        'id': 'IGroupIntrospection',
         'title': 'group_introspection',
         'description': ("Group Introspection provides listings "
                         "of groups and membership")
@@ -105,12 +105,13 @@ def registerPluginTypes(pas):
     registerPluginType(pas, igroup.IGroupIntrospection, PluginInfo)
 
     PluginInfo = {
-        'id' : 'ILocalRolesPlugin',
+        'id': 'ILocalRolesPlugin',
         'title': 'local_roles',
         'description': "Defines Policy for getting Local Roles"
         }
 
     registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
+
 
 def setupPlugins(portal):
     uf = portal.acl_users
@@ -159,7 +160,8 @@ def setupPlugins(portal):
 
     found = uf.objectIds(['Automatic Group Plugin'])
     if not found:
-        plone_pas.manage_addAutoGroup('auto_group', "Authenticated Users (Virtual Group)",
+        plone_pas.manage_addAutoGroup(
+                "auto_group", "Authenticated Users (Virtual Group)",
                 "AuthenticatedUsers", "Automatic Group Provider")
         logger.debug("Added Automatic Group.")
         activatePluginInterfaces(portal, "auto_group")
@@ -172,7 +174,8 @@ def setupPlugins(portal):
 
     found = uf.objectIds(['Recursive Groups Plugin'])
     if not found:
-        addRecursiveGroupsPlugin(plone_pas, 'recursive_groups', "Recursive Groups Plugin")
+        addRecursiveGroupsPlugin(plone_pas, 'recursive_groups',
+                                 "Recursive Groups Plugin")
         activatePluginInterfaces(portal, 'recursive_groups')
         logger.debug("Added Recursive Groups plugin.")
 
@@ -199,16 +202,17 @@ def setupAuthPlugins(portal, pas, plone_pas,
                                                      cookie_name=cookie_name)
     logger.debug("Added Extended Cookie Auth Helper.")
     if deactivate_basic_reset:
-        disable=['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
+        disable = ['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
     else:
-        disable=[]
+        disable = []
     activatePluginInterfaces(portal, 'credentials_cookie_auth',
             disable=disable)
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
     if 'login_form' in credentials_cookie_auth:
         credentials_cookie_auth.manage_delObjects(ids=['login_form'])
-        logger.debug("Removed default login_form from credentials cookie auth.")
+        logger.debug("Removed default login_form from credentials cookie "
+                     "auth.")
     credentials_cookie_auth.cookie_name = cookie_name
     credentials_cookie_auth.login_path = login_path
 
@@ -233,8 +237,12 @@ def setupAuthPlugins(portal, pas, plone_pas,
 
 
 def updateProperties(tool, properties):
-    propsWithNoDeps = [prop for prop in properties if prop['type'] not in ('selection', 'multiple selection')]
-    propsWithDeps = [prop for prop in properties if prop['type'] in ('selection', 'multiple selection')]
+    propsWithNoDeps = [prop for prop in properties
+                            if prop['type']
+                                not in ('selection', 'multiple selection')]
+    propsWithDeps = [prop for prop in properties
+                          if prop['type']
+                              in ('selection', 'multiple selection')]
     for prop in propsWithNoDeps:
         updateProp(tool, prop)
     for prop in propsWithDeps:
@@ -301,6 +309,7 @@ def migrate_root_uf(self):
     # Configure Challenge Chooser plugin if available
     challenge_chooser_setup(parent)
 
+
 def pas_fixup(self):
     from Products.PluggableAuthService.PluggableAuthService \
          import _PLUGIN_TYPE_INFO
@@ -330,6 +339,7 @@ def pas_fixup(self):
     # Re-assign because it's a non-persistent property.
     plugins._plugin_types = plugin_types
 
+
 def challenge_chooser_setup(self):
     uf = getToolByName(self, 'acl_users')
     plugins = uf['plugins']
@@ -354,7 +364,8 @@ def challenge_chooser_setup(self):
         assert len(found) == 1, 'Found extra plugins %s' % found
         logger.debug('Found existing Challenge Protocol Chooser Plugin.')
         plugin = uf[found[0]]
-        plugin.manage_updateProtocolMapping(mapping=config.DEFAULT_PROTO_MAPPING)
+        plugin.manage_updateProtocolMapping(
+            mapping=config.DEFAULT_PROTO_MAPPING)
         activatePluginInterfaces(self, found[0])
 
     found = uf.objectIds(['Request Type Sniffer Plugin'])
