@@ -15,4 +15,3 @@ class FunctionalTestCase(ptc.FunctionalTestCase):
     '''TestCase for PlonePAS'''
 
     layer = PlonePASLayer
-

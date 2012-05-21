@@ -14,7 +14,7 @@ class PASInfoView(BrowserView):
 
     def checkExtractorForInterface(self, interface):
         acl = getToolByName(aq_inner(self.context), "acl_users")
-        plugins=acl.plugins.listPlugins(IExtractionPlugin)
+        plugins = acl.plugins.listPlugins(IExtractionPlugin)
 
         for plugin in plugins:
             if interface.providedBy(plugin[1]):
@@ -25,7 +25,6 @@ class PASInfoView(BrowserView):
     @memoize
     def hasLoginPasswordExtractor(self):
         return self.checkExtractorForInterface(ILoginPasswordExtractionPlugin)
-
 
     @memoize
     def hasOpenIDExtractor(self):

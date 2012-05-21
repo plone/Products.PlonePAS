@@ -15,6 +15,7 @@ def exception(self, **kw):
     kw['tag_search'] = tag_search
     return orig_exception(self, **kw)
 
+
 orig_setBody = HTTPResponse.setBody
 def setBody(self, *args, **kw):
     kw['is_error'] = 0
@@ -23,6 +24,7 @@ def setBody(self, *args, **kw):
         args = (body,) + args[1:]
     return orig_setBody(self, *args, **kw)
 
+
 def _traceback(self, t, v, tb, as_html=1):
     return ''.join(format_exception(t, v, tb, as_html=as_html))
 
@@ -30,6 +32,7 @@ HTTPResponse._error_format = 'text/plain'
 HTTPResponse._traceback = _traceback
 HTTPResponse.exception = exception
 HTTPResponse.setBody = setBody
+
 
 def test_suite():
     suite = unittest.TestSuite()

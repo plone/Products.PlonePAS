@@ -31,9 +31,14 @@ class File(FileUpload):
         if headers is not None:
             self.headers = headers
 
-    def seek(self, *args): pass
-    def tell(self, *args): return 1
-    def read(self, *args): return self.data
+    def seek(self, *args):
+        pass
+
+    def tell(self, *args):
+        return 1
+
+    def read(self, *args):
+        return self.data
 
 
 class Error(Exception):

@@ -13,11 +13,12 @@ from Products.CMFCore.utils import getToolByName
 
 logger = logging.getLogger('PlonePAS')
 
+
 def authenticate(self, name, password, request):
     """See AccessControl.User.BasicUserFolder.authenticate
-    
-    Products.PluggableAuthService.PluggableAuthService does not provide this 
-    method, BasicUserFolder documents it as "Private UserFolder object 
+
+    Products.PluggableAuthService.PluggableAuthService does not provide this
+    method, BasicUserFolder documents it as "Private UserFolder object
     interface". GRUF does provide the method, so not marked as private.
     """
 
@@ -41,7 +42,8 @@ def authenticate(self, name, password, request):
                 user_id, name = uid_and_name
                 break
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            logger.info('PluggableAuthService: AuthenticationPlugin %s error',
+            logger.info(
+                    'PluggableAuthService: AuthenticationPlugin %s error',
                     authenticator_id, exc_info=1)
             continue
 
@@ -95,6 +97,7 @@ PluggableAuthService.userSetGroups = userSetGroups
 #################################
 # monkies for the diehard introspection.. all these should die, imho - kt
 
+
 def getUserIds(self):
     plugins = self.plugins
 
@@ -109,7 +112,8 @@ def getUserIds(self):
         try:
             results.extend(introspector.getUserIds())
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            logger.info('PluggableAuthService: UserIntrospection %s error',
+            logger.info(
+                    'PluggableAuthService: UserIntrospection %s error',
                     introspector_id, exc_info=1)
 
     return results
@@ -129,8 +133,9 @@ def getUserNames(self):
         try:
             results.extend(introspector.getUserNames())
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            logger.info('PluggableAuthService: UserIntroSpection plugin %s error',
-                    introspector_id, exc_info=1)
+            logger.info(
+                'PluggableAuthService: UserIntroSpection plugin %s error',
+                introspector_id, exc_info=1)
 
     return results
 

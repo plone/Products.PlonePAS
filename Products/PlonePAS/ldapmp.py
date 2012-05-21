@@ -18,6 +18,7 @@ for attrs in GROUP_PROPERTY_MAP.values():
         KNOWN_ATTRS.append(attr)
 KNOWN_ATTRS = set(KNOWN_ATTRS)
 
+
 def getPropertiesForUser(self, user, request=None):
     """Fullfill PropertiesPlugin requirements
     """
@@ -44,12 +45,15 @@ def getPropertiesForUser(self, user, request=None):
 
 wrap_method(LDAPPluginBase, 'getPropertiesForUser', getPropertiesForUser)
 
+
 def getGroupsForPrincipal(self, user, request=None, attr=None):
-    """ Fulfill GroupsPlugin requirements, but don't return any groups for groups """
+    """ Fulfill GroupsPlugin requirements, but don't return any groups for
+    groups """
 
     if not isinstance(user, PloneGroup):
         # It's not a PloneGroup, continue as usual
-        return call(self, 'getGroupsForPrincipal', user, request=request, attr=attr)
+        return call(self, 'getGroupsForPrincipal', user,
+                    request=request, attr=attr)
 
     return ()
 

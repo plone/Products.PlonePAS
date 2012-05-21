@@ -1,6 +1,7 @@
 from Products.PluggableAuthService.interfaces import plugins
 from Products.PluggableAuthService.interfaces.plugins import Interface
 
+
 class IUserIntrospection(Interface):
     """
     Introspect users in a user source, api users need to be careful as
@@ -24,6 +25,7 @@ class IUserIntrospection(Interface):
         """
         Return a list of users
         """
+
 
 class ILocalRolesPlugin(Interface):
     """

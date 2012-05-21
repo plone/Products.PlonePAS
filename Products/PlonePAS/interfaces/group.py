@@ -40,6 +40,7 @@ class IGroupManagement(Interface):
         return True on success
         """
 
+
 class IGroupIntrospection(Interface):
 
     def getGroupById(group_id):
@@ -75,6 +76,7 @@ class IGroupDataTool(Interface):
         decorate a group with property management capabilities if needed
         """
 
+
 class IGroupTool(IGroupIntrospection,
                   IGroupManagement,
                   plugins.IGroupsPlugin):
@@ -90,13 +92,15 @@ class IGroupData(Interface):
 
     def setProperties(properties=None, **kw):
         """Allows setting of group properties en masse.
-        Properties can be given either as a dict or a keyword parameters list"""
+        Properties can be given either as a dict or a keyword parameters
+        list"""
 
     def getProperty(id):
         """ Return the value of the property specified by 'id' """
 
     def getProperties():
-        """ Return the properties of this group. Properties are as usual in Zope."""
+        """ Return the properties of this group. Properties are as usual in
+        Zope."""
 
     def getGroupId():
         """ Return the string id of this group, WITHOUT group prefix."""
@@ -113,14 +117,16 @@ class IGroupData(Interface):
 
     def getAllGroupMembers():
         """ Return a list of the portal_memberdata-ish members of the group
-        including transitive ones (ie. users or groups of a group in that group)."""
+        including transitive ones (ie. users or groups of a group in that
+        group)."""
 
     def getGroupMemberIds():
         """ Return a list of the user ids of the group."""
 
     def getAllGroupMemberIds():
         """ Return a list of the user ids of the group.
-        including transitive ones (ie. users or groups of a group in that group)."""
+        including transitive ones (ie. users or groups of a group in that
+        group)."""
 
     def addMember(id):
         """ Add the existing member with the given id to the group"""
