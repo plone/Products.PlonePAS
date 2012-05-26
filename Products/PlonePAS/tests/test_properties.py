@@ -28,12 +28,12 @@ class PropertiesTest(base.TestCase):
         md.manage_addProperty('age', 20, 'int')
 
         # Assert user has the property now
-        self.failUnless(member.hasProperty('age'))
+        self.assertTrue(member.hasProperty('age'))
 
         # Get the property, should have the default value
         got = member.getProperty('age', None)
         expected = 20
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         # get a handle on the member
         member = mt.getMemberById('user1')
@@ -46,15 +46,15 @@ class PropertiesTest(base.TestCase):
         # Check the properties have been set
         got = member.getProperty('age', None)
         expected = 30
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         got = member.getProperty('fullname', None)
         expected = 'User #1 Is Cool'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         got = member.getProperty('email', None)
         expected = 'user1@anotherhost.qa'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         # Delete the property
         md.manage_delProperties(ids=('age',))
@@ -68,16 +68,16 @@ class PropertiesTest(base.TestCase):
         # Get the property, should return default (None)
         got = member.getProperty('age', None)
         expected = None
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         # Other properties should still be there.
         got = member.getProperty('fullname', None)
         expected = 'User #1 Is Cool'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         got = member.getProperty('email', None)
         expected = 'user1@anotherhost.qa'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
     def test_group_properties(self):
         gt = getToolByName(self.portal, 'portal_groups')
@@ -102,13 +102,13 @@ class PropertiesTest(base.TestCase):
         group = gt.getGroupById('group1')
 
         # Assert group has the property now
-        self.failUnless(group.hasProperty('karma'))
+        self.assertTrue(group.hasProperty('karma'))
 
         # Get the property, should have the default value
         got = group.getProperty('karma', None)
         expected = 20
 
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         # Set some group properties
         group.setGroupProperties({'karma': 30, 'title': 'Group #1 Is Cool',
@@ -117,15 +117,15 @@ class PropertiesTest(base.TestCase):
         # Check the properties have been set
         got = group.getProperty('karma', None)
         expected = 30
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         got = group.getProperty('title', None)
         expected = 'Group #1 Is Cool'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         got = group.getProperty('email', None)
         expected = 'group1@anotherhost.qa'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         # Delete the property
         gd.manage_delProperties(ids=('karma',))
@@ -139,16 +139,16 @@ class PropertiesTest(base.TestCase):
         # Get the property, should return default (None)
         got = group.getProperty('karma', None)
         expected = None
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         # Other properties should still be there.
         got = group.getProperty('title', None)
         expected = 'Group #1 Is Cool'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
         got = group.getProperty('email', None)
         expected = 'group1@anotherhost.qa'
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
     def test_schema_for_mutable_property_provider(self):
         """Add a schema to a ZODBMutablePropertyProvider.
