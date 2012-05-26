@@ -50,11 +50,11 @@ class BasicOpsTestCase(base.TestCase):
             login, password, roles=roles, groups=groups, domains=domains,)
 
     def test_installed(self):
-        self.failUnless(IPluggableAuthService.providedBy(self.acl_users))
+        self.assertTrue(IPluggableAuthService.providedBy(self.acl_users))
 
     def test_add(self):
         self.createUser()
-        self.failUnless(self.acl_users.getUser("created_user"))
+        self.assertTrue(self.acl_users.getUser("created_user"))
 
     def test_edit(self):
         # this will fail unless the PAS role plugin is told it manages
@@ -91,7 +91,7 @@ class BasicOpsTestCase(base.TestCase):
 
     def test_del(self):
         self.createUser()
-        self.failUnless(self.acl_users.getUser("created_user"))
+        self.assertTrue(self.acl_users.getUser("created_user"))
         self.acl_users.userFolderDelUsers(['created_user'])
         self.failIf(self.acl_users.getUser("created_user"))
 
@@ -116,8 +116,8 @@ class BasicOpsTestCase(base.TestCase):
         mt = self.portal.portal_membership
         retlist = mt.searchForMembers(REQUEST=None, login="created_user1")
         usernames = [user.getUserName() for user in retlist]
-        self.assertEquals(len(usernames), 1)
-        self.failUnless("created_user1" in usernames,
+        self.assertEqual(len(usernames), 1)
+        self.assertTrue("created_user1" in usernames,
                         "'created_user1' not in %s" % usernames)
 
     def test_setpw(self):
@@ -139,7 +139,7 @@ class BasicOpsTestCase(base.TestCase):
             result = authenticator.authenticateCredentials(credentials)
             if result is not None:
                 break
-        self.failUnless(result)
+        self.assertTrue(result)
 
 
 def test_suite():
