@@ -10,19 +10,24 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
 
-from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin, IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.authservice \
+    import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.plugins \
+    import IPropertiesPlugin, IRoleAssignerPlugin
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-from Products.PlonePAS.interfaces.capabilities import IDeleteCapability, IPasswordSetCapability
-from Products.PlonePAS.interfaces.capabilities import IGroupCapability, IAssignRoleCapability
+from Products.PlonePAS.interfaces.capabilities \
+    import IDeleteCapability, IPasswordSetCapability
+from Products.PlonePAS.interfaces.capabilities \
+    import IGroupCapability, IAssignRoleCapability
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.utils import getCharset
 from AccessControl.requestmethod import postonly
 
 _marker = object()
+
 
 class MemberDataTool(BaseTool):
     """PAS-specific implementation of memberdata tool.
@@ -34,7 +39,7 @@ class MemberDataTool(BaseTool):
 
     def __init__(self):
         BaseTool.__init__(self)
-        self.portraits=BTreeFolder2(id='portraits')
+        self.portraits = BTreeFolder2(id='portraits')
 
     def _getPortrait(self, member_id):
         "return member_id's portrait if you can "
@@ -44,7 +49,7 @@ class MemberDataTool(BaseTool):
         " store portrait which must be a raw image in _portrais "
         if member_id in self.portraits:
             self.portraits._delObject(member_id)
-        self.portraits._setObject(id= member_id, object=portrait)
+        self.portraits._setObject(id=member_id, object=portrait)
 
     def _deletePortrait(self, member_id):
         " remove member_id's portrait "
@@ -59,8 +64,8 @@ class MemberDataTool(BaseTool):
         and delete anything not in acl_users
         '''
         BaseTool.pruneMemberDataContents(self)
-        membertool= getToolByName(self, 'portal_membership')
-        portraits   = self.portraits
+        membertool = getToolByName(self, 'portal_membership')
+        portraits = self.portraits
         user_list = membertool.listMemberIds()
 
         for tuple in portraits.items():
@@ -71,8 +76,8 @@ class MemberDataTool(BaseTool):
     security.declareProtected(ManagePortal, 'purgeMemberDataContents')
     def purgeMemberDataContents(self):
         '''
-        Delete ALL MemberData information. This is required for us as we change the
-        MemberData class.
+        Delete ALL MemberData information. This is required for us as we change
+        the MemberData class.
         '''
         members = self._members
 
@@ -98,7 +103,7 @@ class MemberDataTool(BaseTool):
 
             # Have to upgrade. Create the values mapping.
             for pty_name in properties:
-                user_value = getattr( member_obj, pty_name, _marker )
+                user_value = getattr(member_obj, pty_name, _marker)
                 if user_value is not _marker:
                     values[pty_name] = user_value
 
@@ -111,14 +116,15 @@ class MemberDataTool(BaseTool):
             # Set its properties
             mbr = self._members.get(member_name, None)
             if not mbr:
-                raise RuntimeError, "Error while upgrading user '%s'." % (member_name, )
-            mbr.setProperties(values, force_local = 1)
+                raise RuntimeError("Error while upgrading user '%s'."
+                                        % (member_name, ))
+            mbr.setProperties(values, force_local=1)
             count += 1
 
         return count
 
-    security.declarePrivate( 'searchMemberDataContents' )
-    def searchMemberDataContents( self, search_param, search_term ):
+    security.declarePrivate('searchMemberDataContents')
+    def searchMemberDataContents(self, search_param, search_term):
         """
         Search members.
         This is the same as CMFCore except that it doesn't check term case.
@@ -130,32 +136,30 @@ class MemberDataTool(BaseTool):
         if search_param == 'username':
             search_param = 'id'
 
-        mtool   = getToolByName(self, 'portal_membership')
+        mtool = getToolByName(self, 'portal_membership')
 
         for member_id in self._members.keys():
-
-            user_wrapper = mtool.getMemberById( member_id )
+            user_wrapper = mtool.getMemberById(member_id)
 
             if user_wrapper is not None:
                 memberProperty = user_wrapper.getProperty
-                searched = memberProperty( search_param, None )
+                searched = memberProperty(search_param, None)
 
                 if searched is not None:
                     if searched.strip().lower().find(search_term) != -1:
 
-                        res.append( { 'username': memberProperty( 'id' )
-                                      , 'email' : memberProperty( 'email', '' )
-                                      }
-                                    )
+                        res.append({'username': memberProperty('id'),
+                                    'email': memberProperty('email', '')})
         return res
 
-    security.declarePublic( 'searchFulltextForMembers' )
+    security.declarePublic('searchFulltextForMembers')
     def searchFulltextForMembers(self, s):
-        """search for members which do have string 's' in name, email or full name (if defined)
+        """search for members which do have string 's' in name, email or full
+        name (if defined)
 
         this is mainly used for the localrole form
         """
-        s=s.strip().lower()
+        s = s.strip().lower()
         mu = getToolByName(self, 'portal_membership')
 
         res = []
@@ -178,7 +182,7 @@ class MemberDataTool(BaseTool):
         '''
         id = u.getId()
         members = self._members
-        if not members.has_key(id):
+        if not id in members:
             base = aq_base(self)
             members[id] = MemberData(base, id)
         # Return a wrapper with self as containment and
@@ -204,7 +208,7 @@ class MemberDataTool(BaseTool):
         # we won't always have PlonePAS users, due to acquisition,
         # nor are guaranteed property sheets
         members = self._members
-        if members.has_key(member_id):
+        if member_id in members:
             del members[member_id]
             return 1
         else:
@@ -224,7 +228,7 @@ class MemberData(BaseMemberData):
 
     ## setProperties uses setMemberProperties. no need to override.
 
-    def setMemberProperties(self, mapping, force_local = 0):
+    def setMemberProperties(self, mapping, force_local=0):
         """PAS-specific method to set the properties of a
         member. Ignores 'force_local', which is not reliably present.
         """
@@ -364,7 +368,8 @@ class MemberData(BaseMemberData):
                 if not sheet.hasProperty(prop_name):
                     continue
                 if IMutablePropertySheet.providedBy(sheet):
-                    # BBB for plugins implementing an older version of IMutablePropertySheet
+                    # BBB for plugins implementing an older version of
+                    # IMutablePropertySheet
                     if hasattr(sheet, 'canWriteProperty'):
                         return sheet.canWriteProperty(user, prop_name)
                     return True
@@ -393,7 +398,6 @@ class MemberData(BaseMemberData):
                     manager.allowGroupRemove(self.getId(), group_id)):
                 return True
         return False
-
 
     def canAssignRole(self, role_id):
         """True iff member can be assigned role. Role id is string."""

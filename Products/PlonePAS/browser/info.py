@@ -14,7 +14,7 @@ class PASInfoView(BrowserView):
 
     def checkExtractorForInterface(self, interface):
         acl = getToolByName(aq_inner(self.context), "acl_users")
-        plugins=acl.plugins.listPlugins(IExtractionPlugin)
+        plugins = acl.plugins.listPlugins(IExtractionPlugin)
 
         for plugin in plugins:
             if interface.providedBy(plugin[1]):
@@ -26,12 +26,15 @@ class PASInfoView(BrowserView):
     def hasLoginPasswordExtractor(self):
         return self.checkExtractorForInterface(ILoginPasswordExtractionPlugin)
 
-
     @memoize
-    def hasOpenIDdExtractor(self):
+    def hasOpenIDExtractor(self):
         try:
             from plone.openid.interfaces import IOpenIdExtractionPlugin
         except ImportError:
             return False
 
         return self.checkExtractorForInterface(IOpenIdExtractionPlugin)
+
+    def hasOpenIDdExtractor(self):
+        # BBB Keeping method name with typo for backwards compatibility.
+        return self.hasOpenIDExtractor()

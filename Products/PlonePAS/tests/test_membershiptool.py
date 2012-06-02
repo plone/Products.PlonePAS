@@ -108,9 +108,9 @@ class MembershipToolTest(base.TestCase):
         ]
         b = [cleanId(id) for id in a]
         c = [decleanId(id) for id in b]
-        ac = zip(a,c)
+        ac = zip(a, c)
         for aa, cc in ac:
-            self.failUnless(aa==cc)
+            self.failUnless(aa == cc)
 
 
 class MemberAreaTest(base.TestCase):
@@ -130,7 +130,7 @@ class MemberAreaTest(base.TestCase):
 
         # Create a new User
         self.portal.acl_users._doAddUser(*minfo)
-        self.mt.createMemberArea,(mid)
+        self.mt.createMemberArea, (mid)
 
     def test_funky_member_ids_2(self):
         # Forward-slash is not allowed
@@ -170,8 +170,10 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
     def addMember(self, username, fullname, email, roles, last_login_time):
         self.membership.addMember(username, 'secret', roles, [])
         member = self.membership.getMemberById(username)
-        member.setMemberProperties({'fullname': fullname, 'email': email,
-                                    'last_login_time': DateTime(last_login_time),})
+        member.setMemberProperties({
+            'fullname': fullname, 'email': email,
+            'last_login_time': DateTime(last_login_time), })
+
     def makeRealImage(self):
         import Products.PlonePAS as ppas
         pas_path = os.path.dirname(ppas.__file__)
@@ -194,30 +196,85 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetPersonalPortrait(self):
         # Should return the default portrait
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.png')
+        self.assertEqual(
+            self.membership.getPersonalPortrait(default_user).getId(),
+            'defaultUser.png')
 
-    def testChangeMemberPortrait(self):
+    def testChangeOwnMemberPortrait(self):
         # Should change the portrait image
         # first we need a valid image
         image = self.makeRealImage()
         self.membership.changeMemberPortrait(image, default_user)
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), default_user)
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).meta_type, 'Image')
+        self.assertEqual(
+            self.membership.getPersonalPortrait(default_user).getId(),
+            default_user)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(default_user).meta_type,
+            'Image')
 
-    def testDeletePersonalPortrait(self):
+    def testCannotChangeOtherMemberPortrait(self):
+        # A normal member should not be able to change the portrait of
+        # another member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.assertRaises(Unauthorized, self.membership.changeMemberPortrait,
+                          image, 'joe')
+
+    def testChangeMemberPortraitAsManager(self):
+        # Managers should be able to change the portrait of another
+        # member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.setRoles(['Manager'])
+        # This should not raise Unauthorized:
+        self.membership.changeMemberPortrait(image, 'joe')
+        self.assertEqual(self.membership.getPersonalPortrait('joe').getId(),
+                         'joe')
+        self.assertEqual(self.membership.getPersonalPortrait('joe').meta_type,
+                         'Image')
+
+    def testDeleteOwnPersonalPortrait(self):
         # Should delete the portrait image
         image = self.makeRealImage()
         self.membership.changeMemberPortrait(image, default_user)
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), default_user)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(default_user).getId(),
+            default_user)
         self.membership.deletePersonalPortrait(default_user)
-        self.assertEqual(self.membership.getPersonalPortrait(default_user).getId(), 'defaultUser.png')
+        self.assertEqual(
+            self.membership.getPersonalPortrait(default_user).getId(),
+            'defaultUser.png')
+
+    def testCannotDeleteOtherPersonalPortrait(self):
+        # A normal member should not be able to delete the portrait of
+        # another member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.setRoles(['Manager'])
+        self.membership.changeMemberPortrait(image, 'joe')
+        self.setRoles(['Member'])
+        self.assertRaises(Unauthorized, self.membership.deletePersonalPortrait,
+                          'joe')
+
+    def testDeleteOtherPersonalPortraitAsManager(self):
+        # Managers should be able to change the portrait of another
+        # member.
+        image = self.makeRealImage()
+        self.membership.addMember('joe', 'secret', ['Member'], [])
+        self.setRoles(['Manager'])
+        self.membership.changeMemberPortrait(image, 'joe')
+        self.membership.deletePersonalPortrait('joe')
+        self.assertEqual(self.membership.getPersonalPortrait('joe').getId(),
+                        'defaultUser.png')
 
     def testGetPersonalPortraitWithoutPassingId(self):
         # Should return the logged in users portrait if no id is given
         image = self.makeRealImage()
         self.membership.changeMemberPortrait(image, default_user)
-        self.assertEqual(self.membership.getPersonalPortrait().getId(), default_user)
-        self.assertEqual(self.membership.getPersonalPortrait().meta_type, 'Image')
+        self.assertEqual(self.membership.getPersonalPortrait().getId(),
+                         default_user)
+        self.assertEqual(self.membership.getPersonalPortrait().meta_type,
+                         'Image')
 
     def testListMembers(self):
         # Should return the members list
@@ -267,7 +324,9 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         try:
             self.membership.setPassword('geheim')
         except BadRequest:
-            import sys; e, v, tb = sys.exc_info(); del tb
+            import sys
+            e, v, tb = sys.exc_info()
+            del tb
             if str(v) == 'Not logged in.':
                 pass
             else:
@@ -281,10 +340,12 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         group = groups.getGroupById(group2)
         self.loginAsPortalOwner()
         group.addMember(default_user)
-        self.login(default_user) # Back to normal
+        self.login(default_user)  # Back to normal
         ugroups = self.portal.acl_users.getUserById(default_user).getGroups()
         self.membership.setPassword('geheim')
-        self.failUnless(self.portal.acl_users.getUserById(default_user).getGroups() == ugroups)
+        self.failUnless(
+            self.portal.acl_users.getUserById(default_user).getGroups()
+                == ugroups)
 
     def testGetMemberById(self):
         # This should work for portal users,
@@ -333,7 +394,8 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'MemberData')
         self.assertEqual(user.aq_parent.__class__.__name__, 'PloneUser')
-        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__, 'PluggableAuthService')
+        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__,
+                         'PluggableAuthService')
 
     def testWrapUserWrapsWrappedUser(self):
         user = self.portal.acl_users.getUserById(default_user)
@@ -342,7 +404,8 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'MemberData')
         self.assertEqual(user.aq_parent.__class__.__name__, 'PloneUser')
-        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__, 'PluggableAuthService')
+        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__,
+                         'PluggableAuthService')
 
     def testWrapUserDoesntWrapMemberData(self):
         user = self.portal.acl_users.getUserById(default_user)
@@ -359,24 +422,32 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         user = self.membership.wrapUser(nobody, wrap_anon=1)
         self.assertEqual(user.__class__.__name__, 'MemberData')
         self.assertEqual(user.aq_parent.__class__.__name__, 'SpecialUser')
-        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__, 'PluggableAuthService')
+        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__,
+                         'PluggableAuthService')
 
     def testGetCandidateLocalRoles(self):
-        self.assertEqual(self.membership.getCandidateLocalRoles(self.folder), ('Owner',))
+        self.assertEqual(self.membership.getCandidateLocalRoles(self.folder),
+                         ('Owner',))
         self.setRoles(['Member', 'Reviewer'])
-        self.assertEqual(self.membership.getCandidateLocalRoles(self.folder), ('Owner', 'Reviewer'))
+        self.assertEqual(self.membership.getCandidateLocalRoles(self.folder),
+                         ('Owner', 'Reviewer'))
 
     def testSetLocalRoles(self):
-        self.failUnless('Owner' in self.folder.get_local_roles_for_userid(default_user))
+        self.failUnless(
+            'Owner' in self.folder.get_local_roles_for_userid(default_user))
         self.setRoles(['Member', 'Reviewer'])
-        self.membership.setLocalRoles(self.folder, [default_user, 'user2'], 'Reviewer')
-        self.assertEqual(self.folder.get_local_roles_for_userid(default_user), ('Owner', 'Reviewer'))
-        self.assertEqual(self.folder.get_local_roles_for_userid('user2'), ('Reviewer',))
+        self.membership.setLocalRoles(self.folder, [default_user, 'user2'],
+                                      'Reviewer')
+        self.assertEqual(self.folder.get_local_roles_for_userid(default_user),
+                         ('Owner', 'Reviewer'))
+        self.assertEqual(self.folder.get_local_roles_for_userid('user2'),
+                         ('Reviewer',))
 
     def testDeleteLocalRoles(self):
         self.setRoles(['Member', 'Reviewer'])
         self.membership.setLocalRoles(self.folder, ['user2'], 'Reviewer')
-        self.assertEqual(self.folder.get_local_roles_for_userid('user2'), ('Reviewer',))
+        self.assertEqual(self.folder.get_local_roles_for_userid('user2'),
+                         ('Reviewer',))
         self.membership.deleteLocalRoles(self.folder, ['user2'])
         self.assertEqual(self.folder.get_local_roles_for_userid('user2'), ())
 
@@ -402,14 +473,16 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesIncludesLocalRolesOnObjectForManager(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(default_user, ('Manager','Owner'))
+        self.folder.manage_setLocalRoles(default_user,
+                                         ('Manager', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.failUnless('my_test_role' in roles,
-                        'my_test_role not in: %s'%str(roles))
+                        'my_test_role not in: %s' % str(roles))
 
     def testGetCandidateLocalRolesIncludesLocalRolesOnObjectForAssignees(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(default_user, ('my_test_role','Owner'))
+        self.folder.manage_setLocalRoles(default_user,
+                                         ('my_test_role', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.failUnless('Owner' in roles)
         self.failUnless('my_test_role' in roles)
@@ -417,7 +490,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesForManager(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(default_user, ('Manager','Owner'))
+        self.folder.manage_setLocalRoles(default_user, ('Manager', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.failUnless('Manager' in roles)
         self.failUnless('Owner' in roles)
@@ -431,7 +504,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesForAssigned(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(default_user, ('Reviewer','Owner'))
+        self.folder.manage_setLocalRoles(default_user, ('Reviewer', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.failUnless('Owner' in roles)
         self.failUnless('Reviewer' in roles)
@@ -441,7 +514,8 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # delete user should delete portal_memberdata
         memberdata = self.portal.portal_memberdata
         self.setRoles(['Manager'])
-        self.addMember('barney', 'Barney Rubble', 'barney@bedrock.com', ['Member'], '2002-01-01')
+        self.addMember('barney', 'Barney Rubble', 'barney@bedrock.com',
+                       ['Member'], '2002-01-01')
         barney = self.membership.getMemberById('barney')
         self.failUnlessEqual(barney.getProperty('email'), 'barney@bedrock.com')
         del barney
@@ -465,7 +539,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
     def testBogusMemberPortrait(self):
         # Should change the portrait image
         bad_file = dummy.File(data='<div>This is a lie!!!</div>',
-                              headers={'content_type':'image/jpeg'})
+                              headers={'content_type': 'image/jpeg'})
         self.assertRaises(IOError, self.membership.changeMemberPortrait,
                           bad_file, default_user)
 
@@ -480,11 +554,12 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.portal.portal_memberdata._setPortrait(bad_file, default_user)
         self.assertEqual(self.membership.getBadMembers(), [default_user])
         # Try an empty image
-        empty_file =  Image(id=default_user, title='', file=StringIO(''))
+        empty_file = Image(id=default_user, title='', file=StringIO(''))
         self.portal.portal_memberdata._setPortrait(empty_file, default_user)
         self.assertEqual(self.membership.getBadMembers(), [])
         # And a good image
-        self.membership.changeMemberPortrait(self.makeRealImage(), default_user)
+        self.membership.changeMemberPortrait(self.makeRealImage(),
+                                             default_user)
         self.assertEqual(self.membership.getBadMembers(), [])
 
     def beforeTearDown(self):
@@ -503,7 +578,8 @@ class TestCreateMemberarea(base.TestCase):
             members = self.membership.getMembersFolder()
             self.membership.createMemberarea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
-            self.failUnless(memberfolder, 'createMemberarea failed to create memberarea')
+            self.failUnless(memberfolder,
+                            'createMemberarea failed to create memberarea')
             # member area creation should be on by default
             self.failUnless(self.membership.getMemberareaCreationFlag())
 
@@ -513,7 +589,10 @@ class TestCreateMemberarea(base.TestCase):
             self.login('user2')
             self.membership.createMemberarea()
             memberfolder = self.membership.getHomeFolder('user2')
-            self.failUnless(memberfolder, 'createMemberarea failed to create memberarea for current user')
+            self.failUnless(
+                memberfolder,
+                'createMemberarea failed to create memberarea for current '
+                    'user')
         else:
             pass
 
@@ -522,10 +601,12 @@ class TestCreateMemberarea(base.TestCase):
         self.portal._delObject('Members')
         self.membership.createMemberarea('user2')
         memberfolder = self.membership.getHomeFolder('user2')
-        self.failIf(memberfolder, 'createMemberarea unexpectedly created a memberarea')
+        self.failIf(memberfolder,
+                    'createMemberarea unexpectedly created a memberarea')
 
     def testNoMemberareaIfMemberareaExists(self):
-        # Should not attempt to create a memberarea if a memberarea already exists
+        # Should not attempt to create a memberarea if a memberarea already
+        # exists
         self.membership.createMemberarea('user2')
         # The second call should do nothing (not cause an error)
         self.membership.createMemberarea('user2')
@@ -534,7 +615,8 @@ class TestCreateMemberarea(base.TestCase):
         # The notify script should be called
         if self.membership.memberareaCreationFlag == True:
             self.portal.notifyMemberAreaCreated = dummy.Raiser(dummy.Error)
-            self.assertRaises(dummy.Error, self.membership.createMemberarea, 'user2')       
+            self.assertRaises(dummy.Error, self.membership.createMemberarea,
+                              'user2')
 
     def testCreateMemberareaAlternateName(self):
         # Alternate method name 'createMemberaArea' should work
@@ -542,7 +624,8 @@ class TestCreateMemberarea(base.TestCase):
             members = self.membership.getMembersFolder()
             self.membership.createMemberArea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
-            self.failUnless(memberfolder, 'createMemberArea failed to create memberarea')
+            self.failUnless(memberfolder,
+                            'createMemberArea failed to create memberarea')
 
     def testCreateMemberareaAlternateType(self):
         # Should be able to create another type instead of a normal Folder
@@ -558,7 +641,9 @@ class TestCreateMemberarea(base.TestCase):
         self.failIf(self.membership.getMemberareaCreationFlag())
         self.membership.createMemberarea('user2')
         memberfolder = self.membership.getHomeFolder('user2')
-        self.failIf(memberfolder, 'createMemberarea created memberarea despite flag')
+        self.failIf(memberfolder,
+                    'createMemberarea created memberarea despite flag')
+
 
 class TestMemberareaSetup(base.TestCase):
 
@@ -577,20 +662,23 @@ class TestMemberareaSetup(base.TestCase):
     def testMemberareaIsOwnedByMember(self):
         if self.membership.memberareaCreationFlag == True:
             # Memberarea should be owned by member
-            try: owner_info = self.home.getOwnerTuple()
+            try:
+                owner_info = self.home.getOwnerTuple()
             except AttributeError:
                 owner_info = self.home.getOwner(info=1)
             self.assertEqual(owner_info[0], [portal_name, 'acl_users'])
             self.assertEqual(owner_info[1], 'user2')
             self.assertEqual(len(self.home.get_local_roles()), 1)
-            self.assertEqual(self.home.get_local_roles_for_userid('user2'), ('Owner',))
+            self.assertEqual(self.home.get_local_roles_for_userid('user2'),
+                             ('Owner',))
 
     def testMemberareaIsCataloged(self):
         if self.membership.memberareaCreationFlag == True:
             # Memberarea should be cataloged
             catalog = self.portal.portal_catalog
             self.failUnless(catalog(id='user2', Type='Folder', Title="user2"),
-                            "Could not find user2's home folder in the catalog")
+                            "Could not find user2's home folder in the "
+                            "catalog")
 
     def testHomePageNotExists(self):
         if self.membership.memberareaCreationFlag == True:
@@ -619,12 +707,13 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
         self.memberdata._v_temps = None
         self._trap_warning_output()
 
-
     def addMember(self, username, fullname, email, roles, last_login_time):
         self.membership.addMember(username, 'secret', roles, [])
         member = self.membership.getMemberById(username)
-        member.setMemberProperties({'fullname': fullname, 'email': email,
-                                    'last_login_time': DateTime(last_login_time),})
+        member.setMemberProperties({
+            'fullname': fullname,
+            'email': email,
+            'last_login_time': DateTime(last_login_time), })
 
     def testSearchById(self):
         # Should search id and fullname
@@ -649,7 +738,6 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
         self.assertEqual(len(search(roles=['Member'])), 3)
         self.assertEqual(len(search(roles=['Reviewer'])), 1)
 
-
     def testSearchByNameAndEmail(self):
         search = self.membership.searchForMembers
         self.assertEqual(len(search(name='rubble', email='bedrock')), 1)
@@ -659,7 +747,6 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
         search = self.membership.searchForMembers
         self.assertEqual(len(search(name='fred', roles=['Reviewer'])), 1)
         self.assertEqual(len(search(name='fred', roles=['Manager'])), 0)
-
 
     def testSearchByEmailAndRoles(self):
         search = self.membership.searchForMembers
@@ -691,6 +778,7 @@ class TestMethodProtection(base.TestCase):
         'changeMemberPortrait',
         'deletePersonalPortrait',
         'testCurrentPassword',
+        'searchForMembers',
     )
 
     def afterSetUp(self):
@@ -706,7 +794,8 @@ class TestMethodProtection(base.TestCase):
 
     for method in _unprotected:
         exec "def testUnprotected_%s(self):" \
-             "    self.assertProtected(self.membership, '%s')" % (method, method)
+             "    self.assertProtected(self.membership, '%s')" \
+                % (method, method)
 
         exec "def testMemberAccessible_%s(self):" \
              "    self.membership.restrictedTraverse('%s')" % (method, method)

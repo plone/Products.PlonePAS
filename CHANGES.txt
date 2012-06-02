@@ -1,10 +1,47 @@
 Changelog
 =========
 
-4.0.10 (unreleased)
+4.0.14 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+4.0.13 (2012-05-07)
+-------------------
+
+- Require ListPortalMembers permission for searchForMembers
+  so anonymous users can not get a list of site users.
+  [vangheem]
+
+
+4.0.12 (2012-04-09)
+-------------------
+
+- Make sure that during registration you can change your member
+  portrait (if this has been enabled the member registration config).
+  Refs http://dev.plone.org/ticket/5432
+  [maurits]
+
+
+4.0.11 (2012-02-08)
+-------------------
+
+- Do some more checks when changing or deleting a member portrait.
+  Fixes http://dev.plone.org/ticket/5432
+  [maurits]
+
+- Pass request along to getGroupsForPrincipal for caching purposes.
+  [esteele]
+
+
+4.0.10 (2012-01-04)
+-------------------
+
+- Fixed typo in method name hasOpenIDExtractor, keeping the old name
+  (hasOpenIDdExtractor) around for backwards compatibility.
+  Fixes http://dev.plone.org/ticket/11040
+  [maurits]
 
 
 4.0.9 (2011-11-24)

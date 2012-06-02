@@ -31,7 +31,8 @@ class TestGroupDataTool(base.TestCase):
         g = self.groupdata.wrapGroup(g)
         self.assertEqual(g.__class__.__name__, 'GroupData')
         self.assertEqual(g.aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__, 'GroupManager')
+        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__,
+                         'GroupManager')
 
 
 class TestGroupData(base.TestCase, WarningInterceptor):
@@ -71,7 +72,8 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         ms = g.getGroupMembers()
         self.assertEqual(ms[0].__class__.__name__, 'MemberData')
         self.assertEqual(ms[0].aq_parent.__class__.__name__, 'PloneUser')
-        self.assertEqual(ms[0].aq_parent.aq_parent.__class__.__name__, 'PluggableAuthService')
+        self.assertEqual(ms[0].aq_parent.aq_parent.__class__.__name__,
+                         'PluggableAuthService')
 
     def testAddMember(self):
         self.setPermissions([Permissions.manage_users])
@@ -118,7 +120,8 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         self.assertEqual(tuple(g.getRoles()), ('Authenticated',))
         self.groups.editGroup(g.getId(), roles=['Member'])
         g = self.groups.getGroupById('foo')
-        self.assertEqual(sortTuple(tuple(g.getRoles())), ('Authenticated', 'Member'))
+        self.assertEqual(sortTuple(tuple(g.getRoles())),
+                         ('Authenticated', 'Member'))
 
     def testGetRolesInContext(self):
         g = self.groups.getGroupById('foo')
@@ -127,7 +130,7 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         self.assertEqual(user.getRolesInContext(self.folder).sort(),
                         ['Member', 'Authenticated', 'Owner'].sort())
         self.folder.manage_setLocalRoles(g.getId(), ['NewRole'])
-        self.assertEqual(user.getRolesInContext(self.folder).sort(), 
+        self.assertEqual(user.getRolesInContext(self.folder).sort(),
                         ['Member', 'Authenticated', 'Owner', 'NewRole'].sort())
 
     def testGetDomains(self):
@@ -157,13 +160,15 @@ class TestMethodProtection(base.TestCase):
 
     def testAnonRemoveMember(self):
         self.logout()
-        self.assertRaises(Unauthorized, self.groupdata.removeMember, default_user)
+        self.assertRaises(Unauthorized, self.groupdata.removeMember,
+                          default_user)
 
     def testMemberAddMember(self):
         self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
 
     def testMemberRemoveMember(self):
-        self.assertRaises(Unauthorized, self.groupdata.removeMember, default_user)
+        self.assertRaises(Unauthorized, self.groupdata.removeMember,
+                          default_user)
 
     def testManagerAddMember(self):
         self.setPermissions([Permissions.manage_users])

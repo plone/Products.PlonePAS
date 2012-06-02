@@ -29,7 +29,7 @@ class BasicOpsTestCase(base.TestCase):
         """
         u = self.acl_users.getUser(user)
         if not u:
-            raise RuntimeError, "compareRoles: Invalid user: '%s'" % user
+            raise RuntimeError("compareRoles: Invalid user: '%s'" % user)
         non_roles = ('Authenticated', 'Anonymous', '')
         if target is None:
             user_roles = list(u.getRoles())
@@ -41,25 +41,20 @@ class BasicOpsTestCase(base.TestCase):
         wished_roles.sort()
         if actual_roles == wished_roles:
             return 1
-        raise RuntimeError, ("User %s: Whished roles: %s BUT current "
-                             "roles: %s" % (user, wished_roles, actual_roles))
+        raise RuntimeError("User %s: Whished roles: %s BUT current "
+                           "roles: %s" % (user, wished_roles, actual_roles))
 
     def createUser(self, login="created_user", password="secret",
                    roles=[], groups=[], domains=()):
         self.acl_users.userFolderAddUser(
-            login,
-            password,
-            roles = roles,
-            groups = groups,
-            domains = domains,
-            )
+            login, password, roles=roles, groups=groups, domains=domains,)
 
     def test_installed(self):
-        self.failUnless(IPluggableAuthService.providedBy(self.acl_users))
+        self.assertTrue(IPluggableAuthService.providedBy(self.acl_users))
 
     def test_add(self):
         self.createUser()
-        self.failUnless(self.acl_users.getUser("created_user"))
+        self.assertTrue(self.acl_users.getUser("created_user"))
 
     def test_edit(self):
         # this will fail unless the PAS role plugin is told it manages
@@ -67,12 +62,11 @@ class BasicOpsTestCase(base.TestCase):
         self.createUser()
         self.compareRoles(None, "created_user", [])
         self.acl_users.userFolderEditUser(
-            "created_user", # name
-            "secret2", # password
-            roles = ["Member"],
-            groups = ["g1"],
-            domains = (),
-            )
+            "created_user",  # name
+            "secret2",  # password
+            roles=["Member"],
+            groups=["g1"],
+            domains=(),)
         self.compareRoles(None, "created_user", ['Member'])
 
     def test_edit_userDefinedRole(self):
@@ -88,17 +82,16 @@ class BasicOpsTestCase(base.TestCase):
         self.createUser()
         self.compareRoles(None, "created_user", [])
         self.acl_users.userFolderEditUser(
-            "created_user", # name
-            "secret2", # password
-            roles = ["r1"],
-            groups = ["g1"],
-            domains = (),
-            )
+            "created_user",  # name
+            "secret2",  # password
+            roles=["r1"],
+            groups=["g1"],
+            domains=(),)
         self.compareRoles(None, "created_user", ['r1'])
 
     def test_del(self):
         self.createUser()
-        self.failUnless(self.acl_users.getUser("created_user"))
+        self.assertTrue(self.acl_users.getUser("created_user"))
         self.acl_users.userFolderDelUsers(['created_user'])
         self.failIf(self.acl_users.getUser("created_user"))
 
@@ -123,19 +116,19 @@ class BasicOpsTestCase(base.TestCase):
         mt = self.portal.portal_membership
         retlist = mt.searchForMembers(REQUEST=None, login="created_user1")
         usernames = [user.getUserName() for user in retlist]
-        self.assertEquals(len(usernames), 1)
-        self.failUnless("created_user1" in usernames,
+        self.assertEqual(len(usernames), 1)
+        self.assertTrue("created_user1" in usernames,
                         "'created_user1' not in %s" % usernames)
 
     def test_setpw(self):
         # there is more than one place where one can set the password.
-        # insane. anyway we have to check the patch in pas.py userSetPassword 
+        # insane. anyway we have to check the patch in pas.py userSetPassword
         # here its checked in the general setup using ZODBUserManager.
         self.createUser()
         uf = self.acl_users
         new_secret = 'new_secret'
         uf.userSetPassword('created_user', new_secret)
-        
+
         # possible to authenticate with new password?
         from Products.PluggableAuthService.interfaces.plugins \
             import IAuthenticationPlugin
@@ -146,10 +139,10 @@ class BasicOpsTestCase(base.TestCase):
             result = authenticator.authenticateCredentials(credentials)
             if result is not None:
                 break
-        self.failUnless(result)        
+        self.assertTrue(result)
+
 
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(BasicOpsTestCase))
     return suite
-

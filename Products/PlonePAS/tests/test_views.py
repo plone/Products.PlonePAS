@@ -1,16 +1,10 @@
 # -*- encoding: utf-8 -*-
 
-from DateTime import DateTime
-from OFS.Image import Image
-
-from Products.PloneTestCase.ptc import default_user
-
 from Products.PlonePAS.tests import base
-from Products.PlonePAS.tests import dummy
 
 
 class TestPASSearchView(base.TestCase):
-    
+
     def test_sort(self):
         pas_search = self.portal.restrictedTraverse('@@pas_search')
         values = [{'title': u'Sociologie'}, {'title': u'Économie'},

@@ -20,12 +20,13 @@ from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
 from Products.PluggableAuthService.permissions import ManageUsers
 
-def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
+
+def manage_addGroupAwareRoleManager(self, id, title='', RESPONSE=None):
     """
     this is a doc string
     """
-    garm = GroupAwareRoleManager( id, title )
-    self._setObject( garm.getId(), garm)
+    garm = GroupAwareRoleManager(id, title)
+    self._setObject(garm.getId(), garm)
 
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
@@ -33,69 +34,71 @@ def manage_addGroupAwareRoleManager( self, id, title='', RESPONSE=None):
 manage_addGroupAwareRoleManagerForm = DTMLFile(
     '../zmi/GroupAwareRoleManagerForm', globals())
 
-class GroupAwareRoleManager( ZODBRoleManager ):
+
+class GroupAwareRoleManager(ZODBRoleManager):
 
     meta_type = "Group Aware Role Manager"
     security = ClassSecurityInfo()
     implements(IAssignRoleCapability)
 
     def updateRolesList(self):
-        role_holder = aq_parent( aq_inner( self._getPAS() ) )
-        for role in getattr( role_holder, '__ac_roles__', () ):
+        role_holder = aq_parent(aq_inner(self._getPAS()))
+        for role in getattr(role_holder, '__ac_roles__', ()):
             if role not in ('Anonymous', 'Authenticated') and \
                     role not in self._roles:
                 try:
-                    self.addRole( role )
+                    self.addRole(role)
                 except KeyError:
                     pass
 
     # don't blow up if manager already exists; mostly for ZopeVersionControl
-    def manage_afterAdd( self, item, container ):
-
+    def manage_afterAdd(self, item, container):
         try:
-            self.addRole( 'Manager' )
+            self.addRole('Manager')
         except KeyError:
             pass
 
         if item is self:
             self.updateRolesList()
 
-
-    security.declareProtected( ManageUsers, 'assignRoleToPrincipal' )
-    def assignRoleToPrincipal( self, role_id, principal_id, REQUEST=None ):
+    security.declareProtected(ManageUsers, 'assignRoleToPrincipal')
+    def assignRoleToPrincipal(self, role_id, principal_id, REQUEST=None):
         try:
-            return ZODBRoleManager.assignRoleToPrincipal( self, role_id,
-                    principal_id, REQUEST)
+            return ZODBRoleManager.assignRoleToPrincipal(
+                                        self, role_id, principal_id, REQUEST)
         except KeyError:
             # Lazily update our roles list and try again
             self.updateRolesList()
-            return ZODBRoleManager.assignRoleToPrincipal( self, role_id,
-                    principal_id, REQUEST)
+            return ZODBRoleManager.assignRoleToPrincipal(
+                                        self, role_id, principal_id, REQUEST)
 
-
-    security.declareProtected( ManageUsers, 'assignRolesToPrincipal' )
-    def assignRolesToPrincipal( self, roles, principal_id, REQUEST=None ):
-        """ Assign a specific set of roles, and only those roles, to a principal.
+    security.declareProtected(ManageUsers, 'assignRolesToPrincipal')
+    def assignRolesToPrincipal(self, roles, principal_id, REQUEST=None):
+        """ Assign a specific set of roles, and only those roles, to a
+        principal.
 
         o no return value
 
         o Raise KeyError if a role_id is unknown.
         """
         for role_id in roles:
-            if role_id not in ('Authenticated','Anonymous','Owner'):
+            if role_id not in ('Authenticated', 'Anonymous', 'Owner'):
                 try:
-                    role_info = self._roles[ role_id ] # raise KeyError if unknown!
+                    # raise KeyError if unknown!
+                    role_info = self._roles[role_id]
                 except KeyError:
                     # Lazily update our roles list and try again
                     self.updateRolesList()
                     if role_id in self._roles:
-                        # check if this role is managed by this plugin, and set it
-                        role_info = self._roles[ role_id ]
+                        # check if this role is managed by this plugin, and
+                        # set it
+                        role_info = self._roles[role_id]
 
-        self._principal_roles[ principal_id ] = tuple(roles)
+        self._principal_roles[principal_id] = tuple(roles)
+
     assignRolesToPrincipal = postonly(assignRolesToPrincipal)
 
-    security.declarePrivate( 'getRolesForPrincipal' )
+    security.declarePrivate('getRolesForPrincipal')
     def getRolesForPrincipal(self, principal, request=None):
         """ See IRolesPlugin.
         """
@@ -116,7 +119,8 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         plugins = self._getPAS()['plugins']
         if request is None or \
             not request.get('__ignore_group_roles__', False):
-            principal_ids.update(getGroupsForPrincipal(principal, plugins))
+            principal_ids.update(getGroupsForPrincipal(principal, plugins,
+                                                       request))
         for pid in principal_ids:
             roles.update(self._principal_roles.get(pid, ()))
         return tuple(roles)
@@ -133,8 +137,11 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         http://dev.plone.org/plone/ticket/7762
         """
         present = self.getRoleInfo(role_id)
-        if present: return 1   # if we have a role, we can assign it
-                               # slightly naive, but should be okay.
+        if present:
+            # if we have a role, we can assign it
+            # slightly naive, but should be okay.
+            return 1
+
         return 0
 
     def listRoleIds(self):
@@ -151,4 +158,4 @@ class GroupAwareRoleManager( ZODBRoleManager ):
         return ZODBRoleManager.getRoleInfo(self, role_id)
 
 
-InitializeClass( GroupAwareRoleManager )
+InitializeClass(GroupAwareRoleManager)

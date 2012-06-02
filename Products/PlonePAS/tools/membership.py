@@ -12,6 +12,7 @@ from OFS.Image import Image
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
@@ -25,6 +26,7 @@ from Products.CMFCore.permissions import ManageUsers
 from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.permissions import SetOwnPassword
 from Products.CMFCore.permissions import View
+from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
@@ -65,10 +67,9 @@ class MembershipTool(BaseTool):
                      'mode': 'rw',
                      },))
 
-    manage_options = (BaseTool.manage_options +
-                      ( { 'label' : 'Portraits'
-                     , 'action' : 'manage_portrait_fix'
-                     },))
+    manage_options = (BaseTool.manage_options
+                        + ({'label': 'Portraits',
+                            'action': 'manage_portrait_fix'},))
 
     # TODO I'm not quite sure why getPortalRoles is declared 'Managed'
     #    in CMFCore.MembershipTool - but in Plone we are not so anal ;-)
@@ -138,7 +139,7 @@ class MembershipTool(BaseTool):
             member = self.getMemberById(id)
             member.setMemberProperties(properties)
 
-    security.declarePublic('searchForMembers')
+    security.declareProtected(ListPortalMembers, 'searchForMembers')
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
@@ -172,8 +173,8 @@ class MembershipTool(BaseTool):
             searchmap['fullname'] = searchmap['name']
             del searchmap['name']
 
-        user_search = dict([ x for x in searchmap.items() 
-                                if x[0] in self.user_search_keywords and x[1]])
+        user_search = dict([x for x in searchmap.items()
+                               if x[0] in self.user_search_keywords and x[1]])
 
         fullname = searchmap.get('fullname', None)
         email = searchmap.get('email', None)
@@ -206,8 +207,8 @@ class MembershipTool(BaseTool):
         wrap = self.wrapUser
         getUserById = acl_users.getUserById
 
-        members = [ getUserById(userid) for userid in set(uf_users)]
-        members = [ member for member in members if member is not None ]
+        members = [getUserById(userid) for userid in set(uf_users)]
+        members = [member for member in members if member is not None]
 
         if (not email and
             not fullname and
@@ -218,7 +219,6 @@ class MembershipTool(BaseTool):
                 'searchForMembers: searching users '
                 'with no extra filter, immediate return.')
             return members
-
 
         # Now perform individual checks on each user
         res = []
@@ -243,8 +243,8 @@ class MembershipTool(BaseTool):
 
                 if isinstance(last_login, basestring):
                     # value is a string when member hasn't yet logged in
-                   last_login = DateTime(last_login or '2000/01/01')
-                   
+                    last_login = DateTime(last_login or '2000/01/01')
+
                 if before_specified_time:
                     if last_login >= last_login_time:
                         continue
@@ -278,7 +278,7 @@ class MembershipTool(BaseTool):
             member_id = member.getId()
 
         if hasattr(members, 'aq_explicit'):
-            members=members.aq_explicit
+            members = members.aq_explicit
 
         if members is None:
             # no members area
@@ -317,8 +317,8 @@ class MembershipTool(BaseTool):
             user = getSecurityManager().getUser()
             # check that we do not do something wrong
             if user.getId() != member_id:
-                raise NotImplementedError, \
-                    'cannot get user for member area creation'
+                raise NotImplementedError(
+                        'cannot get user for member area creation')
 
         member_object = self.getMemberById(member_id)
 
@@ -344,10 +344,8 @@ class MembershipTool(BaseTool):
 
     security.declarePublic('getMemberInfo')
     def getMemberInfo(self, memberId=None):
-        """
-        Return 'harmless' Memberinfo of any member, such as Full name,
-        Location, etc
-        """
+        # Return 'harmless' Memberinfo of any member, such as Full name,
+        # Location, etc
         if not memberId:
             member = self.getAuthenticatedMember()
         else:
@@ -356,17 +354,16 @@ class MembershipTool(BaseTool):
         if member is None:
             return None
 
-        memberinfo = { 'fullname'    : member.getProperty('fullname'),
-                       'description' : member.getProperty('description'),
-                       'location'    : member.getProperty('location'),
-                       'language'    : member.getProperty('language'),
-                       'home_page'   : member.getProperty('home_page'),
-                       'username'    : member.getUserName(),
-                       'has_email'   : bool(member.getProperty('email')),
+        memberinfo = {'fullname'    : member.getProperty('fullname'),
+                      'description' : member.getProperty('description'),
+                      'location'    : member.getProperty('location'),
+                      'language'    : member.getProperty('language'),
+                      'home_page'   : member.getProperty('home_page'),
+                      'username'    : member.getUserName(),
+                      'has_email'   : bool(member.getProperty('email')),
                      }
 
         return memberinfo
-
 
     def _getSafeMemberId(self, id=None):
         """Return a safe version of a member id.
@@ -381,7 +378,6 @@ class MembershipTool(BaseTool):
             id = member.getMemberId()
 
         return cleanId(id)
-
 
     security.declarePublic('getHomeFolder')
     def getHomeFolder(self, id=None, verifyPermission=0):
@@ -409,7 +405,6 @@ class MembershipTool(BaseTool):
                 pass
         return None
 
-
     def getHomeUrl(self, id=None, verifyPermission=0):
         """ Return the URL to a member's home folder, or None.
         """
@@ -419,21 +414,17 @@ class MembershipTool(BaseTool):
         else:
             return None
 
-
     security.declarePublic('getPersonalFolder')
     def getPersonalFolder(self, member_id=None):
         """
         returns the Personal Item folder for a member
         if no Personal Folder exists will return None
         """
-        home=self.getHomeFolder(member_id)
-        personal=None
+        home = self.getHomeFolder(member_id)
+        personal = None
         if home:
-            personal=getattr( home
-                            , self.personal_id
-                            , None )
+            personal = getattr(home, self.personal_id, None)
         return personal
-
 
     security.declarePublic('getPersonalPortrait')
     def getPersonalPortrait(self, id=None, verifyPermission=0):
@@ -442,7 +433,7 @@ class MembershipTool(BaseTool):
         Modified from CMFPlone version to URL-quote the member id.
         """
         safe_id = self._getSafeMemberId(id)
-        membertool   = getToolByName(self, 'portal_memberdata')
+        membertool = getToolByName(self, 'portal_memberdata')
 
         if not safe_id:
             safe_id = self.getAuthenticatedMember().getId()
@@ -460,49 +451,61 @@ class MembershipTool(BaseTool):
 
         return portrait
 
-
-    security.declareProtected(SetOwnProperties, 'deletePersonalPortrait') 
+    security.declareProtected(SetOwnProperties, 'deletePersonalPortrait')
     def deletePersonalPortrait(self, id=None):
         """deletes the Portait of a member.
 
         Modified from CMFPlone version to URL-quote the member id.
         """
         safe_id = self._getSafeMemberId(id)
-        membertool = getToolByName(self, 'portal_memberdata')
-
+        authenticated_id = self.getAuthenticatedMember().getId()
         if not safe_id:
-            safe_id = self.getAuthenticatedMember().getId()
+            safe_id = authenticated_id
+        if safe_id != authenticated_id and not _checkPermission(
+                ManageUsers, self):
+            raise Unauthorized
 
+        membertool = getToolByName(self, 'portal_memberdata')
         return membertool._deletePortrait(safe_id)
-
 
     security.declareProtected(SetOwnProperties, 'changeMemberPortrait')
     def changeMemberPortrait(self, portrait, id=None):
         """update the portait of a member.
 
         Modified from CMFPlone version to URL-quote the member id.
+
+        Note that this method might be called by an anonymous user who
+        is getting registered.  This method will then be called from
+        plone.app.users and this is fine.  When called from restricted
+        python code or with a curl command by a hacker, the
+        declareProtected line will kick in and prevent use of this
+        method.
         """
         safe_id = self._getSafeMemberId(id)
+        authenticated_id = self.getAuthenticatedMember().getId()
         if not safe_id:
-            safe_id = self.getAuthenticatedMember().getId()
-
+            # The default is to change your own portrait.
+            safe_id = authenticated_id
+        if authenticated_id and safe_id != authenticated_id:
+            # Only Managers can change portraits of others.
+            if not _checkPermission(ManageUsers, self):
+                raise Unauthorized
         if portrait and portrait.filename:
             scaled, mimetype = scale_image(portrait)
             portrait = Image(id=safe_id, file=scaled, title='')
             membertool = getToolByName(self, 'portal_memberdata')
             membertool._setPortrait(portrait, safe_id)
 
-
     security.declareProtected(ManageUsers, 'listMembers')
     def listMembers(self):
         '''Gets the list of all members.
-        THIS METHOD MIGHT BE VERY EXPENSIVE ON LARGE USER FOLDERS AND MUST BE USED
-        WITH CARE! We plan to restrict its use in the future (ie. force large requests
-        to use searchForMembers instead of listMembers, so that it will not be
-        possible anymore to have a method returning several hundred of users :)
+        THIS METHOD MIGHT BE VERY EXPENSIVE ON LARGE USER FOLDERS AND MUST
+        BE USED WITH CARE! We plan to restrict its use in the future (ie.
+        force large requests to use searchForMembers instead of listMembers,
+        so that it will not be possible anymore to have a method returning
+        several hundred of users :)
         '''
         return BaseTool.listMembers(self)
-
 
     security.declareProtected(ManageUsers, 'listMemberIds')
     def listMemberIds(self):
@@ -512,21 +515,19 @@ class MembershipTool(BaseTool):
         '''
         return self.acl_users.getUserIds()
 
-
     security.declareProtected(SetOwnPassword, 'testCurrentPassword')
     def testCurrentPassword(self, password):
         """ test to see if password is current """
-        REQUEST=getattr(self, 'REQUEST', {})
-        userid=self.getAuthenticatedMember().getUserId()
+        REQUEST = getattr(self, 'REQUEST', {})
+        userid = self.getAuthenticatedMember().getUserId()
         acl_users = self._findUsersAclHome(userid)
         if not acl_users:
             return 0
         return acl_users.authenticate(userid, password, REQUEST)
 
-
     def _findUsersAclHome(self, userid):
         portal = getToolByName(self, 'portal_url').getPortalObject()
-        acl_users=portal.acl_users
+        acl_users = portal.acl_users
         parent = acl_users
         while parent:
             if acl_users.aq_explicit.getUserById(userid, None) is not None:
@@ -538,7 +539,6 @@ class MembershipTool(BaseTool):
         else:
             return None
 
-
     security.declareProtected(SetOwnPassword, 'setPassword')
     def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
@@ -546,14 +546,16 @@ class MembershipTool(BaseTool):
         registration = getToolByName(self, 'portal_registration', None)
         if not self.isAnonymousUser():
             member = self.getAuthenticatedMember()
-            acl_users = self._findUsersAclHome(member.getUserId())#self.acl_users
+            #self.acl_users
+            acl_users = self._findUsersAclHome(member.getUserId())
             if not acl_users:
                 # should not possibly ever happen
-                raise BadRequest, 'did not find current user in any user folder'
+                raise BadRequest('did not find current user in any '
+                                 'user folder')
             if registration:
                 failMessage = registration.testPasswordValidity(password)
                 if failMessage is not None:
-                    raise BadRequest, failMessage
+                    raise BadRequest(failMessage)
 
             if domains is None:
                 domains = []
@@ -563,14 +565,14 @@ class MembershipTool(BaseTool):
             if hasattr(user, 'changePassword'):
                 user.changePassword(password)
             else:
-                acl_users._doChangeUser(member.getUserId(), password, member.getRoles(), domains)
+                acl_users._doChangeUser(member.getUserId(), password,
+                                        member.getRoles(), domains)
             if REQUEST is None:
                 REQUEST = aq_get(self, 'REQUEST', None)
             self.credentialsChanged(password, REQUEST=REQUEST)
         else:
-            raise BadRequest, 'Not logged in.'
+            raise BadRequest('Not logged in.')
     setPassword = postonly(setPassword)
-
 
     security.declareProtected(View, 'getCandidateLocalRoles')
     def getCandidateLocalRoles(self, obj):
@@ -585,11 +587,10 @@ class MembershipTool(BaseTool):
             local_roles = [r for r in obj.valid_roles() if r not in
                             ('Anonymous', 'Authenticated', 'Shared')]
         else:
-            local_roles = [ role for role in member.getRolesInContext(obj)
-                            if role not in ('Member', 'Authenticated') ]
+            local_roles = [role for role in member.getRolesInContext(obj)
+                                if role not in ('Member', 'Authenticated')]
         local_roles.sort()
         return tuple(local_roles)
-
 
     security.declareProtected(View, 'loginUser')
     def loginUser(self, REQUEST=None):
@@ -603,7 +604,7 @@ class MembershipTool(BaseTool):
         - storing the login time
         - create the member area if it does not exist
         """
-        user=getSecurityManager().getUser()
+        user = getSecurityManager().getUser()
         if user is None:
             return
 
@@ -613,7 +614,7 @@ class MembershipTool(BaseTool):
             event.notify(UserLoggedInEvent(user))
 
         if REQUEST is None:
-            REQUEST=getattr(self, 'REQUEST', None)
+            REQUEST = getattr(self, 'REQUEST', None)
         if REQUEST is None:
             return
 
@@ -629,7 +630,6 @@ class MembershipTool(BaseTool):
         except AttributeError:
             # The cookie plugin may not be present
             pass
-
 
     security.declareProtected(View, 'logoutUser')
     def logoutUser(self, REQUEST=None):
@@ -648,7 +648,7 @@ class MembershipTool(BaseTool):
                             session.invalidate()
 
         if REQUEST is None:
-            REQUEST=getattr(self, 'REQUEST', None)
+            REQUEST = getattr(self, 'REQUEST', None)
         if REQUEST is not None:
             pas = getToolByName(self, 'acl_users')
             try:
@@ -662,22 +662,21 @@ class MembershipTool(BaseTool):
             st = getToolByName(self, "portal_skins")
             skinvar = st.getRequestVarname()
             if skinvar in REQUEST and not st.getCookiePersistence():
-                    portal = getToolByName(self, "portal_url").getPortalObject()
+                    portal = getToolByName(self, "portal_url") \
+                                .getPortalObject()
                     path = '/' + portal.absolute_url(1)
                     # XXX check if this path is sane
                     REQUEST.RESPONSE.expireCookie(skinvar, path=path)
 
-        user=getSecurityManager().getUser()
+        user = getSecurityManager().getUser()
         if user is not None:
             event.notify(UserLoggedOutEvent(user))
-
 
     security.declareProtected(View, 'immediateLogout')
     def immediateLogout(self):
         """ Log the current user out immediately.  Used by logout.py so that
             we do not have to do a redirect to show the logged out status. """
         noSecurityManager()
-
 
     security.declarePublic('setLoginTimes')
     def setLoginTimes(self):
@@ -698,7 +697,6 @@ class MembershipTool(BaseTool):
             member.setProperties(login_time=self.ZopeTime(),
                                  last_login_time=login_time)
         return res
-
 
     security.declareProtected(ManagePortal, 'getBadMembers')
     def getBadMembers(self):
@@ -730,7 +728,7 @@ class MembershipTool(BaseTool):
                 # and ask questions later.
                 portraits._delObject(member_id)
                 bad_member_ids.append(member_id)
-            if not counter%TXN_THRESHOLD:
+            if not counter % TXN_THRESHOLD:
                 transaction.savepoint(optimistic=True)
             counter = counter + 1
 

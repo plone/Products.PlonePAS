@@ -6,11 +6,13 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 
+
 def unique(iterable):
     d = {}
     for i in iterable:
         d[i] = None
     return d.keys()
+
 
 def getCharset(context):
     """Returns the site default charset, or utf-8.
@@ -21,24 +23,28 @@ def getCharset(context):
         return site_properties.getProperty('default_charset')
     return 'utf-8'
 
+
 def cleanId(id):
     """'url_quote' turns strange chars into '%xx', which is not a valid char
-    for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as escaping).
+    for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as
+    escaping).
     De-clean is possible; see 'decleanId'.
     Assumes that id can start with non-alpha(numeric), which is true.
     """
     __traceback_info__ = (id,)
     if id:
         # note: we provide the 'safe' param to get '/' encoded
-        return url_quote(id, '').replace('-','--').replace('%','-')
+        return url_quote(id, '').replace('-', '--').replace('%', '-')
     return ''
 
+
 def decleanId(id):
-   """Reverse cleanId."""
-   if id:
-       id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
-       return url_unquote(id)
-   return ''
+    """Reverse cleanId."""
+    if id:
+        id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
+        return url_unquote(id)
+    return ''
+
 
 def scale_image(image_file, max_size=None, default_format=None):
     """Scales an image down to at most max_size preserving aspect ratio
@@ -128,7 +134,7 @@ def scale_image(image_file, max_size=None, default_format=None):
 
     """
     from PIL import Image
-    
+
     if max_size is None:
         max_size = IMAGE_SCALE_PARAMS['scale']
     if default_format is None:
@@ -140,7 +146,7 @@ def scale_image(image_file, max_size=None, default_format=None):
     image = Image.open(image_file)
     # When might image.format not be true?
     format = image.format
-    mimetype = 'image/%s'%format.lower()
+    mimetype = 'image/%s' % format.lower()
     cur_size = image.size
     # from Archetypes ImageField
     # consider image mode when scaling
@@ -168,10 +174,10 @@ def scale_image(image_file, max_size=None, default_format=None):
     return new_file, mimetype
 
 
-def getGroupsForPrincipal(principal, plugins):
+def getGroupsForPrincipal(principal, plugins, request=None):
     groups = set()
     for iid, plugin in plugins.listPlugins(IGroupsPlugin):
-        groups.update(plugin.getGroupsForPrincipal(principal))
+        groups.update(plugin.getGroupsForPrincipal(principal, request))
     return list(groups)
 
 

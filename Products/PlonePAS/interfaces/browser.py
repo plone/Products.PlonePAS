@@ -1,5 +1,6 @@
 from zope.interface import Interface
 
+
 class IPASInfoView(Interface):
 
     def hasLoginPasswordExtractor():
@@ -10,8 +11,14 @@ class IPASInfoView(Interface):
         conditionally show username & password logins.
         """
 
+    def hasOpenIDExtractor():
+        """Check if an OpenID extraction plugin is active.
+        """
+
     def hasOpenIDdExtractor():
         """Check if an OpenID extraction plugin is active.
+
+        BBB Keeping method name with typo for backwards compatibility.
         """
 
 
@@ -33,7 +40,7 @@ class IPASSearchView(Interface):
         Duplicate results returned by PAS are filtered so only the first
         result remains in the result set. The results can be sorted on
         sort_bys (case insensitive).
-        
+
         In addition, a single search string can be sought in multiple
         fields at a time by passing any_field='your-string'. The fields
         that will be searched are not explicitly enumerated but will be the
@@ -41,12 +48,11 @@ class IPASSearchView(Interface):
         and full name. (Perhaps any_field should/could be moved into PAS
         proper. This could be done without breaking code that depends on
         this interface.)
-        
+
         If you specify both any_field and other criteria that include a
         field that any_field would typically search (such as login name),
         the other criteria will be enforced at the expense of any_field.
         """
-
 
     def searchUsersByRequest(request, sort_by=None):
         """Search for users matching a set of criteria found in a request.
@@ -59,7 +65,6 @@ class IPASSearchView(Interface):
         sort_by (case insensitive).
         """
 
-
     def searchGroups(**criteria):
         """Search for groups matching a set of criteria.
 
@@ -67,7 +72,6 @@ class IPASSearchView(Interface):
         to values and have the semantics declared by
         IPluggableAuthService.searchGroups().
         """
-
 
     def searchGroupsByRequest(request):
         """Search for groups matching a set of criteria found in a request.

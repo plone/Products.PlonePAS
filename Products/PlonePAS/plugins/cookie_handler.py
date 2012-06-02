@@ -40,7 +40,8 @@ def manage_addExtendedCookieAuthHelper(self, id, title='',
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
 
-manage_addExtendedCookieAuthHelperForm = DTMLFile("../zmi/ExtendedCookieAuthHelperForm", globals())
+manage_addExtendedCookieAuthHelperForm = \
+    DTMLFile("../zmi/ExtendedCookieAuthHelperForm", globals())
 
 
 class ExtendedCookieAuthHelper(BasePlugin):
@@ -65,7 +66,8 @@ class ExtendedCookieAuthHelper(BasePlugin):
             cookie_val = cookie_val.rstrip()
             setAuthCookie(response, self.cookie_name, quote(cookie_val))
         else:
-            BasePlugin.updateCredentials(self, request, response, login, new_password)
+            BasePlugin.updateCredentials(self, request, response, login,
+                                         new_password)
 
     security.declarePublic('login')
     def login(self):
@@ -92,10 +94,12 @@ class ExtendedCookieAuthHelper(BasePlugin):
         else:
             # User does not originate from a PAS user folder, so lets try
             # to do our own thing.
-            # XXX Perhaps we should do nothing here; test with pure User Folder!
+            # XXX Perhaps we should do nothing here; test with pure User
+            # Folder!
             pas_instance = self._getPAS()
             if pas_instance is not None:
-                pas_instance.updateCredentials(request, response, login, password)
+                pas_instance.updateCredentials(request, response, login,
+                                               password)
 
 
 InitializeClass(ExtendedCookieAuthHelper)

@@ -22,8 +22,9 @@ logger = logging.getLogger('PlonePAS')
 
 CC_ID = 'cookie_auth'
 
+
 def manage_addCookieCrumblingPlugin(self, id, title='',
-                                          RESPONSE=None, **kw):
+                                    RESPONSE=None, **kw):
     """
     Create an instance of a cookie crumbling plugin.
     """
@@ -38,7 +39,8 @@ def manage_addCookieCrumblingPlugin(self, id, title='',
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
 
-manage_addCookieCrumblingPluginForm = DTMLFile("../zmi/CookieCrumblingPluginForm", globals())
+manage_addCookieCrumblingPluginForm = \
+    DTMLFile("../zmi/CookieCrumblingPluginForm", globals())
 
 
 class CookieCrumblingPlugin(Folder, BasePlugin):
