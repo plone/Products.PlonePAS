@@ -19,6 +19,9 @@ from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 from Products.PlonePAS.utils import safe_unicode
+from zope.i18nmessageid import MessageFactory
+
+_ = MessageFactory('plone')
 
 
 def manage_addZODBMutablePropertyProvider(self, id, title='',

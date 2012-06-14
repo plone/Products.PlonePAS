@@ -179,6 +179,8 @@ def setupPlugins(portal):
         activatePluginInterfaces(portal, 'recursive_groups')
         logger.debug("Added Recursive Groups plugin.")
 
+    setupPasswordPolicyPlugin(portal)
+
 
 def setupAuthPlugins(portal, pas, plone_pas,
                      deactivate_basic_reset=True,
@@ -377,3 +379,16 @@ def challenge_chooser_setup(self):
         assert len(found) == 1, 'Found extra plugins %s' % found
         logger.debug('Found existing Request Type Sniffer Plugin.')
         activatePluginInterfaces(self, found[0])
+
+
+def setupPasswordPolicyPlugin(portal):
+    uf = portal.acl_users
+    plone_pas = uf.manage_addProduct['PlonePAS']
+
+    found = uf.objectIds(['Default Plone Password Policy'])
+    logger.debug("\nDefault Password Ploicy Plugin setup")
+    if not found:
+        plone_pas.manage_addPasswordPolicyPlugin('password_policy',
+                               title="Default Plone Password Policy")
+        logger.debug("Added Default Plone Password Policy.")
+        activatePluginInterfaces(portal, 'password_policy')
