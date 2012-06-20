@@ -483,10 +483,11 @@ class MembershipTool(BaseTool):
         """
         safe_id = self._getSafeMemberId(id)
         authenticated_id = self.getAuthenticatedMember().getId()
+        safe_authenticated_id = self._getSafeMemberId(authenticated_id)
         if not safe_id:
             # The default is to change your own portrait.
-            safe_id = authenticated_id
-        if authenticated_id and safe_id != authenticated_id:
+            safe_id = safe_authenticated_id
+        if safe_authenticated_id and safe_id != safe_authenticated_id:
             # Only Managers can change portraits of others.
             if not _checkPermission(ManageUsers, self):
                 raise Unauthorized
