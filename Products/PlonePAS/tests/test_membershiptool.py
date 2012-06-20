@@ -212,6 +212,24 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
             self.membership.getPersonalPortrait(default_user).meta_type,
             'Image')
 
+    def testChangeOwnMemberPortraitWithEmailUsers(self):
+        member_id = 'member2@host.com'
+        self.membership.addMember(member_id, 'pw', ['Member'], [],
+                     {'email': 'member2@host.com',
+                      'title': 'Member #2'})   
+
+        self.login(member_id)     
+        image = self.makeRealImage()
+        safe_member_id = self.membership._getSafeMemberId(member_id)
+
+        self.membership.changeMemberPortrait(image, member_id)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(member_id).getId(),
+            safe_member_id)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(member_id).meta_type,
+            'Image')
+
     def testCannotChangeOtherMemberPortrait(self):
         # A normal member should not be able to change the portrait of
         # another member.
