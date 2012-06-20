@@ -4,6 +4,10 @@ Changelog
 4.0.14 (unreleased)
 -------------------
 
+- Allow members with usernames that contain special characters (such as @ when
+  use email to login), set their own member portrait
+  [erral]
+
 - PEP8 Cleanup
   [pbdiode]
 - Add a default password validation policy as PAS plugin see http://dev.plone.org/ticket/10959
