@@ -23,7 +23,9 @@ import logging
 logger = logging.getLogger('PlonePAS setup')
 
 
-def activatePluginInterfaces(portal, plugin, disable=[]):
+def activatePluginInterfaces(portal, plugin, disable=None):
+    if disable is None:
+        disable=[]
     pas = portal.acl_users
     plugin_obj = pas[plugin]
 
