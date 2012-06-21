@@ -10,7 +10,11 @@ Changelog
 
 - PEP8 Cleanup
   [pbdiode]
+
 - Add a default password validation policy as PAS plugin see http://dev.plone.org/ticket/10959
+
+- Extensions/Install.py: Don't use list as default argument value to activatePluginInterfaces()
+  [patch by rossp, applied by kleist]
 
 
 4.0.13 (2012-05-07)
