@@ -4,7 +4,9 @@ Changelog
 4.1a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bug fix: User with e-mail login got 'Insufficient Privileges'
+  when trying to delete own portrait. Fixes http://dev.plone.org/ticket/12819.
+  [patch by kagesenshi, applied by kleist]
 
 
 4.1a1 (2012-06-29)
