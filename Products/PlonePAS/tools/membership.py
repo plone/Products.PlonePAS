@@ -459,11 +459,13 @@ class MembershipTool(BaseTool):
         """
         safe_id = self._getSafeMemberId(id)
         authenticated_id = self.getAuthenticatedMember().getId()
+        safe_authenticated_id = self._getSafeMemberId(authenticated_id)
         if not safe_id:
-            safe_id = authenticated_id
-        if safe_id != authenticated_id and not _checkPermission(
-                ManageUsers, self):
-            raise Unauthorized
+            safe_id = safe_authenticated_id
+        if safe_authenticated_id and safe_id != safe_authenticated_id:
+            # Only Managers can delete portraits of others.
+            if not _checkPermission(ManageUsers, self):
+                raise Unauthorized
 
         membertool = getToolByName(self, 'portal_memberdata')
         return membertool._deletePortrait(safe_id)
