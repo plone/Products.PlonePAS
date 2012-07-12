@@ -207,7 +207,15 @@ class MembershipTool(BaseTool):
         wrap = self.wrapUser
         getUserById = acl_users.getUserById
 
-        members = [getUserById(userid) for userid in set(uf_users)]
+        def dedupe(seq):
+            # Thanks http://www.peterbe.com/plog/uniqifiers-benchmark
+            seen = set()
+            seen_add = seen.add
+            # nice trick! set.add() does always return None
+            return [ x for x in seq if x not in seen and not seen_add(x)]
+
+        uf_users = dedupe(uf_users)
+        members = [getUserById(userid) for userid in uf_users]
         members = [member for member in members if member is not None]
 
         if (not email and
