@@ -4,24 +4,29 @@ Changelog
 4.1a2 (unreleased)
 ------------------
 
-- Bug fix: User with e-mail login got 'Insufficient Privileges'
-  when trying to delete own portrait. Fixes http://dev.plone.org/ticket/12819.
+- Bug fix: User with e-mail login got 'Insufficient Privileges' when
+  trying to delete own portrait. Fixes http://dev.plone.org/ticket/12819.
   [patch by kagesenshi, applied by kleist]
 
+- MembershipTool.searchForMembers() now preserves sort order.
+  Fixes http://dev.plone.org/ticket/11716.
+  [patch by neaj, applied by kleist]
 
 4.1a1 (2012-06-29)
 ------------------
 
-- Allow members with usernames that contain special characters (such as @ when
-  use email to login), set their own member portrait
+- Allow members with usernames that contain special characters
+  (such as @ when use email to login), set their own member portrait
   [erral]
 
 - PEP8 Cleanup
   [pbdiode]
 
-- Add a default password validation policy as PAS plugin see http://dev.plone.org/ticket/10959
+- Add a default password validation policy as PAS plugin,
+  see http://dev.plone.org/ticket/10959
 
-- Extensions/Install.py: Don't use list as default argument value to activatePluginInterfaces()
+- Extensions/Install.py: Don't use list as default argument value
+  to activatePluginInterfaces()
   [patch by rossp, applied by kleist]
 
 
@@ -69,8 +74,8 @@ Changelog
   an other plugin.
   [thomasdesvenain]
 
-- Cleaned up and reduced dependencies. New extra ``atstorage`` for the rare case 
-  someone uses PlonePAS w/o Plone but with Archetypes (if this is this 
+- Cleaned up and reduced dependencies. New extra ``atstorage`` for the rare case
+  someone uses PlonePAS w/o Plone but with Archetypes (if this is this
   possible). [jensens]
 
 4.0.8 - 2011-06-30
@@ -102,7 +107,7 @@ Changelog
   [davisagli]
 
 - Use 'defaultUser.png' as the default user portrait, since the .gif version
-  has been deprecated for a long time now. See 
+  has been deprecated for a long time now. See
   http://dev.plone.org/plone/changeset/36350
   [mj]
 
