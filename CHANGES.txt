@@ -12,6 +12,9 @@ Changelog
   Fixes http://dev.plone.org/ticket/11716.
   [patch by neaj, applied by kleist]
 
+- Changed deprecated getSiteEncoding to hardcoded `utf-8`
+  [tom_gross]
+
 4.1a1 (2012-06-29)
 ------------------
 

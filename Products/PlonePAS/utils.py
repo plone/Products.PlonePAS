@@ -2,7 +2,6 @@ from cStringIO import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
-from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 
@@ -14,13 +13,10 @@ def unique(iterable):
     return d.keys()
 
 
+# XXX this can probably be removed
 def getCharset(context):
     """Returns the site default charset, or utf-8.
     """
-    properties = getToolByName(context, "portal_properties")
-    site_properties = getattr(properties, 'site_properties', None)
-    if site_properties is not None:
-        return site_properties.getProperty('default_charset')
     return 'utf-8'
 
 
