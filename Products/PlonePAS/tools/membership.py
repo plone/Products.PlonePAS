@@ -519,11 +519,11 @@ class MembershipTool(BaseTool):
     def testCurrentPassword(self, password):
         """ test to see if password is current """
         REQUEST = getattr(self, 'REQUEST', {})
-        userid = self.getAuthenticatedMember().getUserId()
-        acl_users = self._findUsersAclHome(userid)
+        member = self.getAuthenticatedMember()
+        acl_users = self._findUsersAclHome(member.getUserId())
         if not acl_users:
             return 0
-        return acl_users.authenticate(userid, password, REQUEST)
+        return acl_users.authenticate(member.getUserName(), password, REQUEST)
 
     def _findUsersAclHome(self, userid):
         portal = getToolByName(self, 'portal_url').getPortalObject()

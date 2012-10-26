@@ -4,6 +4,10 @@ Changelog
 4.0.14 (unreleased)
 -------------------
 
+- Fix the test for the current password if the user id differs from
+  the login name.
+  [maurits]
+
 - PEP8 Cleanup
   [pbdiode]
 
