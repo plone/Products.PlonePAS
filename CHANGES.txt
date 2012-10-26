@@ -28,6 +28,10 @@ Changelog
   (such as @ when use email to login), set their own member portrait
   [erral]
 
+- Fix the test for the current password if the user id differs from
+  the login name.
+  [maurits]
+
 - PEP8 Cleanup
   [pbdiode]
 
