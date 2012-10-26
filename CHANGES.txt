@@ -4,7 +4,9 @@ Changelog
 4.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Fix the test for the current password if the user id differs from
+  the login name.
+  [maurits]
 
 
 4.1a2 (2012-08-29)
@@ -21,16 +23,13 @@ Changelog
 - Changed deprecated getSiteEncoding to hardcoded `utf-8`
   [tom_gross]
 
+
 4.1a1 (2012-06-29)
 ------------------
 
 - Allow members with usernames that contain special characters
   (such as @ when use email to login), set their own member portrait
   [erral]
-
-- Fix the test for the current password if the user id differs from
-  the login name.
-  [maurits]
 
 - PEP8 Cleanup
   [pbdiode]
