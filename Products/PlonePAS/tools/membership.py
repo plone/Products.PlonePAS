@@ -472,7 +472,7 @@ class MembershipTool(BaseTool):
     def changeMemberPortrait(self, portrait, id=None):
         """update the portait of a member.
 
-        Modified from CMFPlone version to URL-quote the member id.
+        We URL-quote the member id.
 
         Note that this method might be called by an anonymous user who
         is getting registered.  This method will then be called from
