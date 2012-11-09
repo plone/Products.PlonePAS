@@ -294,6 +294,56 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertEqual(self.membership.getPersonalPortrait().meta_type,
                          'Image')
 
+    def testPortraitForNonStandardUserId(self):
+        # Some characters in a user id can give problems for getting
+        # or saving a portrait, especially '-', '+', '@'.
+        image = self.makeRealImage()
+        user_id = 'bob-jones+test@example.org'
+        safe_id = self.membership._getSafeMemberId(user_id)
+        self.assertEqual(safe_id, 'bob--jones-2Btest-40example.org')
+        self.membership.addMember(user_id, 'secret', ['Member'], [])
+        self.login(user_id)
+
+        # Should return the default portrait
+        self.assertEqual(
+            self.membership.getPersonalPortrait(user_id).getId(),
+            'defaultUser.png')
+
+        # Change your own portrait.
+        self.membership.changeMemberPortrait(image, user_id)
+        self.assertEqual(self.membership.getPersonalPortrait().getId(),
+                         safe_id)
+        self.assertEqual(self.membership.getPersonalPortrait().meta_type,
+                         'Image')
+
+        # Other users should be able to see your portrait.
+        self.login(default_user)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(user_id).getId(),
+            safe_id)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(user_id).meta_type,
+            'Image')
+
+        # You can delete your own portrait.
+        self.login(user_id)
+        self.membership.deletePersonalPortrait(user_id)
+        self.assertEqual(
+            self.membership.getPersonalPortrait(user_id).getId(),
+            'defaultUser.png')
+
+        # Managers should be able to change the portrait of another
+        # member and delete it.
+        manager_image = self.makeRealImage()
+        self.loginAsPortalOwner()
+        # This should not raise Unauthorized:
+        self.membership.changeMemberPortrait(manager_image, user_id)
+        self.assertEqual(self.membership.getPersonalPortrait(user_id).getId(),
+                         safe_id)
+        self.membership.deletePersonalPortrait(user_id)
+        self.assertEqual(self.membership.getPersonalPortrait(user_id).getId(),
+                        'defaultUser.png')
+
     def testListMembers(self):
         # Should return the members list
         members = self.membership.listMembers()
