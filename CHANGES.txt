@@ -4,6 +4,10 @@ Changelog
 4.0.14 (unreleased)
 -------------------
 
+- Fix saving, getting and deleting the user portrait for non-standard
+  user ids like 'bob-jones' or 'bob-jones+test@example.org'.
+  [maurits]
+
 - Fix the test for the current password if the user id differs from
   the login name.
   [maurits]

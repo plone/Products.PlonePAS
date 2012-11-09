@@ -432,12 +432,10 @@ class MembershipTool(BaseTool):
 
         Modified from CMFPlone version to URL-quote the member id.
         """
+        if not id:
+            id = self.getAuthenticatedMember().getId()
         safe_id = self._getSafeMemberId(id)
         membertool = getToolByName(self, 'portal_memberdata')
-
-        if not safe_id:
-            safe_id = self.getAuthenticatedMember().getId()
-
         portrait = membertool._getPortrait(safe_id)
         if isinstance(portrait, str):
             portrait = None
@@ -454,14 +452,12 @@ class MembershipTool(BaseTool):
     security.declareProtected(SetOwnProperties, 'deletePersonalPortrait')
     def deletePersonalPortrait(self, id=None):
         """deletes the Portait of a member.
-
-        Modified from CMFPlone version to URL-quote the member id.
         """
-        safe_id = self._getSafeMemberId(id)
         authenticated_id = self.getAuthenticatedMember().getId()
-        if not safe_id:
-            safe_id = authenticated_id
-        if safe_id != authenticated_id and not _checkPermission(
+        if not id:
+            id = authenticated_id
+        safe_id = self._getSafeMemberId(id)
+        if id != authenticated_id and not _checkPermission(
                 ManageUsers, self):
             raise Unauthorized
 
@@ -472,7 +468,7 @@ class MembershipTool(BaseTool):
     def changeMemberPortrait(self, portrait, id=None):
         """update the portait of a member.
 
-        We URL-quote the member id.
+        We URL-quote the member id if needed.
 
         Note that this method might be called by an anonymous user who
         is getting registered.  This method will then be called from
@@ -481,12 +477,11 @@ class MembershipTool(BaseTool):
         declareProtected line will kick in and prevent use of this
         method.
         """
-        safe_id = self._getSafeMemberId(id)
         authenticated_id = self.getAuthenticatedMember().getId()
-        if not safe_id:
-            # The default is to change your own portrait.
-            safe_id = authenticated_id
-        if authenticated_id and safe_id != authenticated_id:
+        if not id:
+            id = authenticated_id
+        safe_id = self._getSafeMemberId(id)
+        if authenticated_id and id != authenticated_id:
             # Only Managers can change portraits of others.
             if not _checkPermission(ManageUsers, self):
                 raise Unauthorized
