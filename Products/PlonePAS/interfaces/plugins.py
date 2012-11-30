@@ -11,17 +11,17 @@ class IUserIntrospection(Interface):
     plugins which have intimate knowledge of such.
     """
 
-    def getUserIds(self):
+    def getUserIds():
         """
         Return a list of user ids
         """
 
-    def getUserNames(self):
+    def getUserNames():
         """
         Return a list of usernames
         """
 
-    def getUsers(self):
+    def getUsers():
         """
         Return a list of users
         """

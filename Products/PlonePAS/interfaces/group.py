@@ -10,7 +10,7 @@ class IGroupManagement(Interface):
         return True if the operation suceeded
         """
 
-    def addPrincipalToGroup(self, principal_id, group_id):
+    def addPrincipalToGroup(principal_id, group_id):
         """
         Add a given principal to the group.
         return True on success

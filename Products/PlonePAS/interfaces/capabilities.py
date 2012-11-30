@@ -10,7 +10,7 @@ class IDeleteCapability(Interface):
     For Plone UI.
     """
 
-    def allowDeletePrincipal(self, id):
+    def allowDeletePrincipal(id):
         """True iff this plugin can delete a certain user/group."""
 
 
@@ -21,7 +21,7 @@ class IPasswordSetCapability(Interface):
     For Plone UI.
     """
 
-    def allowPasswordSet(self, id):
+    def allowPasswordSet(id):
         """True iff this plugin can set the password of a certain user."""
 
 
@@ -30,11 +30,11 @@ class IGroupCapability(Interface):
     For Plone UI.
     """
 
-    def allowGroupAdd(self, principal_id, group_id):
+    def allowGroupAdd(principal_id, group_id):
         """True iff this plugin will allow adding a certain principal to a
         certain group."""
 
-    def allowGroupRemove(self, principal_id, group_id):
+    def allowGroupRemove(principal_id, group_id):
         """True iff this plugin will allow removing a certain principal from a
         certain group."""
 
@@ -44,7 +44,7 @@ class IAssignRoleCapability(Interface):
     For Plone UI.
     """
 
-    def allowRoleAssign(self, id, role):
+    def allowRoleAssign(id, role):
         """True iff this plugin will allow assigning a certain principal a
         certain role."""
 
@@ -54,25 +54,25 @@ class IManageCapabilities(Interface):
     or not the member can be deleted, reset password, modify a property.
     """
 
-    def canDelete(self):
+    def canDelete():
         """True iff user can be removed from the Plone UI."""
 
-    def canPasswordSet(self):
+    def canPasswordSet():
         """True iff user can change password."""
 
-    def passwordInClear(self):
+    def passwordInClear():
         """True iff password can be retrieved in the clear (not hashed.)"""
 
-    def canWriteProperty(self, prop_name):
+    def canWriteProperty(prop_name):
         """True iff the member/group property named in 'prop_name'
         can be changed.
         """
 
-    def canAddToGroup(self, group_id):
+    def canAddToGroup(group_id):
         """True iff member can be added to group."""
 
-    def canRemoveFromGroup(self, group_id):
+    def canRemoveFromGroup(group_id):
         """True iff member can be removed from group."""
 
-    def canAssignRole(self, role):
+    def canAssignRole(role):
         """True iff member can be assigned role."""

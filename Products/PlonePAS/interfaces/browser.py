@@ -24,7 +24,7 @@ class IPASInfoView(Interface):
 
 class IPASMemberView(Interface):
 
-    def info(self, userid=None):
+    def info(userid=None):
         """Return 'harmless' member info of any user, such as full name,
         location, etc.
         """
