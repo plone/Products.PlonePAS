@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.14 (unreleased)
+4.0.14 (2012-12-14)
 -------------------
 
 - Fix saving, getting and deleting the user portrait for non-standard
