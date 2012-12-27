@@ -4,6 +4,9 @@ Changelog
 4.1 (unreleased)
 ----------------
 
+- Fix assignRoleToPrincipal to work with new Products.PluggableAuthService 1.10.0.
+  [maurits]
+
 - Fix saving, getting and deleting the user portrait for non-standard
   user ids like 'bob-jones' or 'bob-jones+test@example.org'.
   [maurits]

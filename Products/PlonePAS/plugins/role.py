@@ -65,12 +65,12 @@ class GroupAwareRoleManager(ZODBRoleManager):
     def assignRoleToPrincipal(self, role_id, principal_id, REQUEST=None):
         try:
             return ZODBRoleManager.assignRoleToPrincipal(
-                                        self, role_id, principal_id, REQUEST)
+                                        self, role_id, principal_id)
         except KeyError:
             # Lazily update our roles list and try again
             self.updateRolesList()
             return ZODBRoleManager.assignRoleToPrincipal(
-                                        self, role_id, principal_id, REQUEST)
+                                        self, role_id, principal_id)
 
     security.declareProtected(ManageUsers, 'assignRolesToPrincipal')
     def assignRolesToPrincipal(self, roles, principal_id, REQUEST=None):
