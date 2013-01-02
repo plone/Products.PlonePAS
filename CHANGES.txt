@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.1 (unreleased)
+4.1 (2013-01-01)
 ----------------
 
 - Fix assignRoleToPrincipal to work with new Products.PluggableAuthService 1.10.0.
