@@ -19,9 +19,17 @@ def exception(self, **kw):
 orig_setBody = HTTPResponse.setBody
 def setBody(self, *args, **kw):
     kw['is_error'] = 0
-    if len(args[0]) == 2:
-        title, body = args[0]
-        args = (body,) + args[1:]
+    try:
+        arg_length = len(args[0])
+    except TypeError:
+        # The first argument can be None with status: 302 Moved Temporarily.
+        # Or you get a 'Products.Five.metaclass.AuthenticatorView object'.
+        # Or maybe other exceptions.
+        pass
+    else:
+        if arg_length == 2:
+            title, body = args[0]
+            args = (body,) + args[1:]
     return orig_setBody(self, *args, **kw)
 
 
