@@ -4,7 +4,10 @@ Changelog
 4.1.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added empty updateUser and updateEveryLoginName methods in
+  ZODBMutablePropertyProvider to fulfill the new standards of the
+  IUserEnumerationPlugin.
+  [maurits]
 
 
 4.1 (2013-01-01)
