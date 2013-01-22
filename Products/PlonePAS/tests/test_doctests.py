@@ -36,7 +36,11 @@ def setBody(self, *args, **kw):
 def _traceback(self, t, v, tb, as_html=1):
     return ''.join(format_exception(t, v, tb, as_html=as_html))
 
-HTTPResponse._error_format = 'text/plain'
+# These are suspicious and hopefully not needed anymore.  The first
+# one causes a test failure in Products.CMFPlone redirection.txt when
+# those tests are run in combination with PlonePAS.  No test failures
+# come up when I comment it out.
+#HTTPResponse._error_format = 'text/plain'
 HTTPResponse._traceback = _traceback
 HTTPResponse.exception = exception
 HTTPResponse.setBody = setBody
