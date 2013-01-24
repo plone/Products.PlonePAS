@@ -1,6 +1,7 @@
 import logging
 
 from zope.interface import implements
+from zope.site.hooks import getSite
 
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
@@ -42,6 +43,10 @@ class GroupsTool(object):
     ##
     # basic group mgmt
     ##
+
+    @property
+    def acl_users(self):
+        return getToolByName(getSite(), 'acl_users')
 
     security.declareProtected(AddGroups, 'addGroup')
     @postonly
@@ -413,7 +418,8 @@ class GroupsTool(object):
             # member data tool at least partially.
             return g
 
-        parent = self.aq_inner.aq_parent
+        parent = getSite()
+        # TODO Remove once groupdata is moved to a utility
         base = getattr(parent, 'aq_base', None)
         if hasattr(base, 'portal_groupdata'):
             # Get portal_groupdata to do the wrapping.
