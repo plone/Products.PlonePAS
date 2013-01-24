@@ -3,6 +3,7 @@ from cStringIO import StringIO
 
 import transaction
 from zope import event
+from zope.component import getUtility
 from zope.interface import implements
 
 from DateTime import DateTime
@@ -35,6 +36,7 @@ from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
+from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
 
@@ -159,7 +161,7 @@ class MembershipTool(BaseTool):
 
         acl_users = getToolByName(self, "acl_users")
         md = getToolByName(self, "portal_memberdata")
-        groups_tool = getToolByName(self, "portal_groups")
+        groups_tool = getUtility(IGroupTool)
 
         if REQUEST is not None:
             searchmap = REQUEST

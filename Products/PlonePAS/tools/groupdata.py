@@ -1,3 +1,4 @@
+from zope.component import getUtility
 from zope.interface import implements
 
 from Acquisition import aq_base
@@ -25,6 +26,7 @@ from Products.PluggableAuthService.PluggableAuthService \
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.group import IGroupData
+from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -163,7 +165,7 @@ class GroupData(SimpleItem):
         This doesn't include TRANSITIVE groups/users.
         """
         md = self.portal_memberdata
-        gtool = self.portal_groups
+        gtool = getUtility(IGroupTool)
         ret = []
         for u_name in gtool.getGroupMembers(self.getId()):
             usr = self._getGRUF().getUserById(u_name)

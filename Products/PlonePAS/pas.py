@@ -1,4 +1,6 @@
 # pas alterations and monkies
+from Products.PlonePAS.interfaces.group import IGroupTool
+from zope.component import getUtility
 from zope.event import notify
 
 from Products.CMFCore.utils import getToolByName
@@ -133,7 +135,7 @@ PluggableAuthService.userFolderAddUser__roles__ = \
 
 
 def _doAddGroup(self, id, roles, groups=None, **kw):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.addGroup(id, roles, groups, **kw)
 
 PluggableAuthService._doAddGroup = _doAddGroup
@@ -141,7 +143,7 @@ PluggableAuthService._doAddGroup = _doAddGroup
 
 # for prefs_group_manage compatibility. really should be using tool.
 def _doDelGroups(self, names, REQUEST=None):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     for group_id in names:
         gtool.removeGroup(group_id)
 
@@ -160,7 +162,7 @@ def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
 
     See also _doChangeUser
     """
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     gtool.editGroup(principal_id, roles, groups, **kw)
     return True
 
@@ -186,7 +188,7 @@ PluggableAuthService.userFolderEditGroup__roles__ = \
 
 
 def getGroups(self):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.listGroups()
 
 PluggableAuthService.getGroups = getGroups
@@ -195,7 +197,7 @@ PluggableAuthService.getGroups__roles__ = \
 
 
 def getGroupNames(self):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.getGroupIds()
 
 PluggableAuthService.getGroupNames = getGroupNames
@@ -204,7 +206,7 @@ PluggableAuthService.getGroupNames__roles__ = \
 
 
 def getGroupIds(self):
-    gtool = getToolByName(self, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     return gtool.getGroupIds()
 
 PluggableAuthService.getGroupIds = getGroupIds
@@ -243,7 +245,7 @@ PluggableAuthService.getGroupByName__roles__ = \
 
 
 def getGroupById(self, id, default=None):
-    gtool = getToolByName(self, "portal_groups")
+    gtool = getUtility(IGroupTool)
     ret = gtool.getGroupById(id)
     if ret is None:
         return default

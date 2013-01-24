@@ -4,11 +4,13 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from AccessControl import Permissions
 from AccessControl import Unauthorized
+from zope.component import getUtility
 
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase.ptc import default_user
 
+from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
 from Products.PlonePAS.tests import base
@@ -23,7 +25,7 @@ def sortTuple(t):
 class GroupsToolTest(base.TestCase):
 
     def afterSetUp(self):
-        self.gt = gt = getToolByName(self.portal, 'portal_groups')
+        self.gt = gt = getUtility(IGroupTool)
         self.gd = gd = getToolByName(self.portal, 'portal_groupdata')
 
         self.group_id = 'group1'
@@ -84,7 +86,7 @@ class TestMethodProtection(base.TestCase):
     # GroupData has wrong security declarations
 
     def afterSetUp(self):
-        self.groups = self.portal.portal_groups
+        self.groups = getUtility(IGroupTool)
         self.groups.addGroup('foo')
         self.groupdata = self.groups.getGroupById('foo')
 
@@ -119,7 +121,7 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
         self.acl_users = self.portal.acl_users
-        self.groups = self.portal.portal_groups
+        self.groups = getUtility(IGroupTool)
         self._trap_warning_output()
 
         if 'auto_group' in self.acl_users:
@@ -240,7 +242,7 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
     def testGetGroupInfoAsAnonymous(self):
         self.groups.addGroup('foo', title='Foo', description='Bar')
         self.logout()
-        info = self.groups.restrictedTraverse('getGroupInfo')('foo')
+        info = self.groups.getGroupInfo('foo')
         self.assertEqual(info.get('title'), 'Foo')
         self.assertEqual(info.get('description'), 'Bar')
 

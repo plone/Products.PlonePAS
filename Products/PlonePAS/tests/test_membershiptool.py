@@ -9,6 +9,7 @@ from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
 from zExceptions import BadRequest
+from zope.component import getUtility
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
@@ -18,6 +19,7 @@ from Products.PloneTestCase.ptc import default_user
 from Products.PloneTestCase.ptc import portal_name
 from Products.PloneTestCase.ptc import portal_owner
 
+from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.browser.member import PASMemberView
 from Products.PlonePAS.plugins.ufactory import PloneUser
@@ -160,7 +162,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
-        self.groups = self.portal.portal_groups
+        self.groups = getUtility(IGroupTool)
         self._trap_warning_output()
 
     def test_interface(self):

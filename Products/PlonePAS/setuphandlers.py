@@ -1,11 +1,13 @@
 import pkg_resources
 
 from Products.CMFCore.utils import getToolByName
+from zope.component import getUtility
 
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
 from Products.PlonePAS.Extensions.Install import migrate_root_uf
 from Products.PlonePAS.Extensions.Install import registerPluginTypes
 from Products.PlonePAS.Extensions.Install import setupPlugins
+from Products.PlonePAS.interfaces.group import IGroupTool
 
 
 def setLoginFormInCookieAuth(context):
@@ -48,7 +50,7 @@ def setupGroups(site):
     Create Plone's default set of groups.
     """
     uf = getToolByName(site, 'acl_users')
-    gtool = getToolByName(site, 'portal_groups')
+    gtool = getUtility(IGroupTool)
     if not uf.searchGroups(id='Administrators'):
         gtool.addGroup('Administrators', title='Administrators',
                        roles=['Manager'])

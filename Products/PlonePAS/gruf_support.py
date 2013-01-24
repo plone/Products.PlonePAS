@@ -2,14 +2,16 @@
 
 import logging
 
+from zope.component import getUtility
+
 from Products.PluggableAuthService.PluggableAuthService import \
           PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins \
      import IAuthenticationPlugin
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
+from Products.PlonePAS.interfaces.group import IGroupTool
 
-from Products.CMFCore.utils import getToolByName
 
 logger = logging.getLogger('PlonePAS')
 
@@ -60,7 +62,7 @@ PluggableAuthService.authenticate__roles__ = ()
 # compat code galore
 def userSetGroups(self, id, groupnames):
     plugins = self.plugins
-    gtool = getToolByName(self, "portal_groups")
+    gtool = getUtility(IGroupTool)
 
     member = self.getUser(id)
     groupnameset = set(groupnames)

@@ -1,9 +1,12 @@
 import unittest
 
+from zope.component import getUtility
+
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.plugins \
     import IUserEnumerationPlugin
 
+from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
 from Products.PlonePAS.tests import base
 
@@ -80,7 +83,7 @@ class PropertiesTest(base.TestCase):
         self.assertEqual(got, expected)
 
     def test_group_properties(self):
-        gt = getToolByName(self.portal, 'portal_groups')
+        gt = getUtility(IGroupTool)
         gd = getToolByName(self.portal, 'portal_groupdata')
 
         self.loginAsPortalOwner()
@@ -189,7 +192,7 @@ class PropertySearchTest(base.TestCase):
     def afterSetUp(self):
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
-        self.gt = getToolByName(self.portal, 'portal_groups')
+        self.gt = getUtility(IGroupTool)
 
         # Create a new Member
         self.mt.addMember('member1', 'pw', ['Member'], [],
