@@ -6,20 +6,19 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
 from AccessControl.User import nobody
-from App.class_init import InitializeClass
-from OFS.SimpleItem import SimpleItem
 from ZODB.POSException import ConflictError
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.utils import registerToolInterface
-from Products.CMFCore.utils import UniqueObject
 
 from Products.PluggableAuthService.interfaces.plugins \
     import IRoleAssignerPlugin
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 
-from Products.PlonePAS.interfaces import group as igroup
+from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
+
 from Products.PlonePAS.permissions import AddGroups
 from Products.PlonePAS.permissions import ManageGroups
 from Products.PlonePAS.permissions import DeleteGroups
@@ -35,19 +34,10 @@ class NotSupported(Exception):
     pass
 
 
-class GroupsTool(UniqueObject, SimpleItem):
-    """ This tool accesses group data through a acl_users object.
+class GroupsTool(object):
+    implements(IGroupTool)
 
-    It can be replaced with something that groups member data in a
-    different way.
-    """
-
-    implements(igroup.IGroupTool)
-
-    id = 'portal_groups'
-    meta_type = 'PlonePAS Groups Tool'
     security = ClassSecurityInfo()
-    toolicon = 'tool.gif'
 
     ##
     # basic group mgmt
@@ -135,7 +125,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             # add groups
             try:
                 groupmanagers = self.acl_users.plugins.listPlugins(
-                                    igroup.IGroupManagement)
+                                    IGroupManagement)
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 logger.exception('Plugin listing error')
                 groupmanagers = ()
@@ -328,21 +318,21 @@ class GroupsTool(UniqueObject, SimpleItem):
     security.declarePrivate('_getGroupManagers')
     def _getGroupManagers(self):
         return self._getPlugins().listPlugins(
-            igroup.IGroupManagement
+            IGroupManagement
             )
 
     security.declarePrivate('_getGroupIntrospectors')
     def _getGroupIntrospectors(self):
         return self._getPlugins().listPlugins(
-            igroup.IGroupIntrospection
+            IGroupIntrospection
             )
 
     security.declarePrivate('_getGroupTools')
     def _getGroupTools(self):
         managers = self._getPlugins().listPlugins(
-                        igroup.IGroupManagement)
+                        IGroupManagement)
         return [(id, manager) for (id, manager) in managers
-                             if igroup.IGroupIntrospection.providedBy(manager)]
+                             if IGroupIntrospection.providedBy(manager)]
 
     ##
     # BBB
@@ -438,7 +428,3 @@ class GroupsTool(UniqueObject, SimpleItem):
                 logger.exception('Error during wrapGroup')
         # Failed.
         return g
-
-
-InitializeClass(GroupsTool)
-registerToolInterface('portal_groups', igroup.IGroupTool)

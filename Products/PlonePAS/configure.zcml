@@ -27,4 +27,8 @@
   <five:deprecatedManageAddDelete
       class=".plugins.role.GroupAwareRoleManager" />
 
+  <utility
+    provides=".interfaces.group.IGroupTool"
+    factory=".tools.groups.GroupsTool" />
+
 </configure>
