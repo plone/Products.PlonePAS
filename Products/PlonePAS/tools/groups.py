@@ -7,6 +7,7 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
 from AccessControl.User import nobody
+
 from ZODB.POSException import ConflictError
 
 from Products.CMFCore.utils import getToolByName
@@ -48,7 +49,7 @@ class GroupsTool(object):
     def acl_users(self):
         return getToolByName(getSite(), 'acl_users')
 
-    security.declareProtected(AddGroups, 'addGroup')
+    @security.protected(AddGroups)
     @postonly
     def addGroup(self, id, roles=[], groups=[], properties=None,
                  REQUEST=None, *args, **kw):
@@ -87,7 +88,7 @@ class GroupsTool(object):
 
         return success
 
-    security.declareProtected(ManageGroups, 'editGroup')
+    @security.protected(ManageGroups)
     @postonly
     def editGroup(self, id, roles=None, groups=None, REQUEST=None,
                   *args, **kw):
@@ -144,7 +145,7 @@ class GroupsTool(object):
                         logger.exception('AuthenticationPlugin %s error'
                                             % gm_id)
 
-    security.declareProtected(DeleteGroups, 'removeGroup')
+    @security.protected(DeleteGroups)
     @postonly
     def removeGroup(self, group_id, REQUEST=None):
         """Remove a single group.
@@ -160,7 +161,7 @@ class GroupsTool(object):
 
         return retval
 
-    security.declareProtected(DeleteGroups, 'removeGroups')
+    @security.protected(DeleteGroups)
     @postonly
     def removeGroups(self, ids, REQUEST=None):
         """Remove the group in the provided list (if possible).
@@ -168,7 +169,7 @@ class GroupsTool(object):
         for gid in ids:
             self.removeGroup(gid)
 
-    security.declareProtected(ManageGroups, 'setRolesForGroup')
+    @security.protected(ManageGroups)
     @postonly
     def setRolesForGroup(self, group_id, roles=(), REQUEST=None):
         rmanagers = self._getPlugins().listPlugins(IRoleAssignerPlugin)
@@ -182,7 +183,7 @@ class GroupsTool(object):
     # basic principal mgmt
     ##
 
-    security.declareProtected(ManageGroups, 'addPrincipalToGroup')
+    @security.protected(ManageGroups)
     @postonly
     def addPrincipalToGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
@@ -193,7 +194,7 @@ class GroupsTool(object):
                 return True
         return False
 
-    security.declareProtected(ManageGroups, 'removePrincipalFromGroup')
+    @security.protected(ManageGroups)
     @postonly
     def removePrincipalFromGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
@@ -204,19 +205,18 @@ class GroupsTool(object):
                 return True
         return False
 
-
     ##
     # group getters
     ##
 
-    security.declareProtected(ViewGroups, 'getGroupById')
+    @security.protected(ViewGroups)
     def getGroupById(self, group_id):
         group = self.acl_users.getGroup(group_id)
         if group is not None:
             group = self.wrapGroup(group)
         return group
 
-    security.declareProtected(ManageGroups, 'searchGroups')
+    @security.protected(ManageGroups)
     def searchGroups(self, *args, **kw):
         return self.acl_users.searchGroups(*args, **kw)
 
@@ -280,7 +280,7 @@ class GroupsTool(object):
 
         return groups
 
-    security.declareProtected(ViewGroups, 'listGroups')
+    @security.protected(ViewGroups)
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
@@ -290,7 +290,7 @@ class GroupsTool(object):
             groups.extend(introspector.getGroups())
         return [self.wrapGroup(elt) for elt in groups]
 
-    security.declareProtected(ViewGroups, 'getGroupIds')
+    @security.protected(ViewGroups)
     def getGroupIds(self):
         groups = []
         introspectors = self._getGroupIntrospectors()
@@ -300,7 +300,7 @@ class GroupsTool(object):
 
     listGroupIds = getGroupIds
 
-    security.declareProtected(ViewGroups, 'getGroupMembers')
+    @security.protected(ViewGroups)
     def getGroupMembers(self, group_id):
         members = set()
         introspectors = self._getGroupIntrospectors()
@@ -308,7 +308,7 @@ class GroupsTool(object):
             members.update(introspector.getGroupMembers(group_id))
         return list(members)
 
-    security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
+    @security.protected(ViewGroups)
     def getGroupsForPrincipal(self, principal):
         return getGroupsForPrincipal(principal, self._getPlugins())
 
@@ -316,23 +316,23 @@ class GroupsTool(object):
     # plugin getters
     ##
 
-    security.declarePrivate('_getPlugins')
+    @security.private
     def _getPlugins(self):
         return self.acl_users.plugins
 
-    security.declarePrivate('_getGroupManagers')
+    @security.private
     def _getGroupManagers(self):
         return self._getPlugins().listPlugins(
             IGroupManagement
             )
 
-    security.declarePrivate('_getGroupIntrospectors')
+    @security.private
     def _getGroupIntrospectors(self):
         return self._getPlugins().listPlugins(
             IGroupIntrospection
             )
 
-    security.declarePrivate('_getGroupTools')
+    @security.private
     def _getGroupTools(self):
         managers = self._getPlugins().listPlugins(
                         IGroupManagement)
@@ -343,7 +343,7 @@ class GroupsTool(object):
     # BBB
     ##
 
-    security.declarePublic('getGroupInfo')
+    @security.public
     def getGroupInfo(self, groupId):
         """
         Return default group info of any group
@@ -358,7 +358,7 @@ class GroupsTool(object):
 
         return groupinfo
 
-    security.declareProtected(ViewGroups, 'getGroupsByUserId')
+    @security.protected(ViewGroups)
     def getGroupsByUserId(self, userid):
         """Return a list of the groups the user corresponding to 'userid'
         belongs to."""
@@ -371,13 +371,13 @@ class GroupsTool(object):
             groups = []
         return [self.getGroupById(elt) for elt in groups]
 
-    security.declareProtected(ViewGroups, 'listGroupNames')
+    @security.protected(ViewGroups)
     def listGroupNames(self):
         """Return a list of the available groups' ids as entered
         (without group prefixes)."""
         return self.acl_users.getGroupNames()
 
-    security.declarePublic("isGroup")
+    @security.public
     def isGroup(self, u):
         """Test if a user/group object is a group or not.
         You must pass an object you get earlier with wrapUser() or wrapGroup()
@@ -387,7 +387,7 @@ class GroupsTool(object):
             return 1
         return 0
 
-    security.declareProtected(SetGroupOwnership, 'setGroupOwnership')
+    @security.protected(SetGroupOwnership)
     @postonly
     def setGroupOwnership(self, group, object, REQUEST=None):
         """Make the object  'object' owned by group 'group'
@@ -400,7 +400,7 @@ class GroupsTool(object):
         object.changeOwnership(user)
         object.manage_setLocalRoles(user.getId(), ['Owner'])
 
-    security.declarePrivate('wrapGroup')
+    @security.private
     def wrapGroup(self, g, wrap_anon=0):
         ''' Sets up the correct acquisition wrappers for a group
         object and provides an opportunity for a portal_memberdata
