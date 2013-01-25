@@ -427,7 +427,7 @@ class MembershipTool(object):
         # XXX: this method violates the rules for tools/utilities:
         # it depends on self.REQUEST
         if REQUEST is None:
-            REQUEST = self.REQUEST
+            REQUEST = getSite().REQUEST
             warn("credentialsChanged should be called with 'REQUEST' as "
                  "second argument. The BBB code will be removed in CMF 2.3.",
                  DeprecationWarning, stacklevel=2)
