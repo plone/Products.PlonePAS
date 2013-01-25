@@ -692,7 +692,7 @@ class MembershipTool(object):
             id = authenticated_id
         safe_id = self._getSafeMemberId(id)
         if id != authenticated_id and not _checkPermission(
-                ManageUsers, self):
+                ManageUsers, getSite()):
             raise Unauthorized
 
         membertool = getToolByName(getSite(), 'portal_memberdata')
@@ -717,7 +717,7 @@ class MembershipTool(object):
         safe_id = self._getSafeMemberId(id)
         if authenticated_id and id != authenticated_id:
             # Only Managers can change portraits of others.
-            if not _checkPermission(ManageUsers, self):
+            if not _checkPermission(ManageUsers, getSite()):
                 raise Unauthorized
         if portrait and portrait.filename:
             scaled, mimetype = scale_image(portrait)
