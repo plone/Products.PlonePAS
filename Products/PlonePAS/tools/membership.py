@@ -160,8 +160,6 @@ class MembershipTool(BaseTool):
         logger.debug('searchForMembers: started.')
 
         acl_users = getToolByName(self, "acl_users")
-        md = getToolByName(self, "portal_memberdata")
-        groups_tool = getUtility(IGroupTool)
 
         if REQUEST is not None:
             searchmap = REQUEST
@@ -206,7 +204,6 @@ class MembershipTool(BaseTool):
         if not uf_users:
             return []
 
-        wrap = self.wrapUser
         getUserById = acl_users.getUserById
 
         def dedupe(seq):
@@ -232,7 +229,6 @@ class MembershipTool(BaseTool):
 
         # Now perform individual checks on each user
         res = []
-        portal = getToolByName(self, 'portal_url').getPortalObject()
 
         for member in members:
             if groupname and groupname not in member.getGroupIds():
