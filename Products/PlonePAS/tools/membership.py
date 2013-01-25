@@ -43,7 +43,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
-from Products.PlonePAS.interfaces import membership
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
 
@@ -55,7 +55,7 @@ class MembershipTool(Folder):
     """PAS-based customization of MembershipTool.
     """
 
-    implements(membership.IMembershipTool)
+    implements(IMembershipTool)
 
     meta_type = "PlonePAS Membership Tool"
     toolicon = 'tool.gif'
