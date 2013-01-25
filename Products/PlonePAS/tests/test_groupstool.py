@@ -11,6 +11,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase.ptc import default_user
 
 from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
 from Products.PlonePAS.tests import base
@@ -119,7 +120,7 @@ class TestMethodProtection(base.TestCase):
 class TestGroupsTool(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.acl_users = self.portal.acl_users
         self.groups = getUtility(IGroupTool)
         self._trap_warning_output()

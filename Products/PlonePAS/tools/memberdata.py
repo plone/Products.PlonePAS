@@ -63,7 +63,7 @@ class MemberDataTool(BaseTool):
         and delete anything not in acl_users
         '''
         BaseTool.pruneMemberDataContents(self)
-        membertool = getToolByName(self, 'portal_membership')
+        membertool = getUtility(IMembershipTool)
         portraits = self.portraits
         user_list = membertool.listMemberIds()
 
@@ -135,7 +135,7 @@ class MemberDataTool(BaseTool):
         if search_param == 'username':
             search_param = 'id'
 
-        mtool = getToolByName(self, 'portal_membership')
+        mtool = getUtility(IMembershipTool)
 
         for member_id in self._members.keys():
             user_wrapper = mtool.getMemberById(member_id)
@@ -159,7 +159,7 @@ class MemberDataTool(BaseTool):
         this is mainly used for the localrole form
         """
         s = s.strip().lower()
-        mu = getToolByName(self, 'portal_membership')
+        mu = getUtility(IMembershipTool)
 
         res = []
         for member in mu.listMembers():

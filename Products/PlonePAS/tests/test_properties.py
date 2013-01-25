@@ -7,6 +7,7 @@ from Products.PluggableAuthService.interfaces.plugins \
     import IUserEnumerationPlugin
 
 from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
 from Products.PlonePAS.tests import base
 
@@ -14,7 +15,7 @@ from Products.PlonePAS.tests import base
 class PropertiesTest(base.TestCase):
 
     def test_user_properties(self):
-        mt = getToolByName(self.portal, 'portal_membership')
+        mt = getUtility(IMembershipTool)
         md = getToolByName(self.portal, 'portal_memberdata')
 
         # Create a new Member
@@ -174,7 +175,7 @@ class PropertiesTest(base.TestCase):
         # few more basic tests.
 
         # Create a new Member
-        mt = getToolByName(self.portal, 'portal_membership')
+        mt = getUtility(IMembershipTool)
         mt.addMember('user1', 'u1', ['Member'], [],
                      {'email': 'user1@host.com',
                       'fullname': 'User #1'})
@@ -190,7 +191,7 @@ class PropertiesTest(base.TestCase):
 class PropertySearchTest(base.TestCase):
 
     def afterSetUp(self):
-        self.mt = getToolByName(self.portal, 'portal_membership')
+        self.mt = getUtility(IMembershipTool)
         self.md = getToolByName(self.portal, 'portal_memberdata')
         self.gt = getUtility(IGroupTool)
 

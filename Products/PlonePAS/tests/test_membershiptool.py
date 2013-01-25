@@ -32,7 +32,7 @@ from Products.PlonePAS.tools.membership import MembershipTool
 class MembershipToolTest(base.TestCase):
 
     def afterSetUp(self):
-        self.mt = mt = getToolByName(self.portal, 'portal_membership')
+        self.mt = mt = getUtility(IMembershipTool)
         self.md = md = getToolByName(self.portal, 'portal_memberdata')
 
         self.member_id = 'member1'
@@ -118,7 +118,7 @@ class MembershipToolTest(base.TestCase):
 class MemberAreaTest(base.TestCase):
 
     def afterSetUp(self):
-        self.mt = mt = getToolByName(self.portal, 'portal_membership')
+        self.mt = mt = getUtility(IMembershipTool)
         self.md = md = getToolByName(self.portal, 'portal_memberdata')
         # Enable member-area creation
         self.mt.memberareaCreationFlag = 1
@@ -161,7 +161,7 @@ class MemberAreaTest(base.TestCase):
 class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.groups = getUtility(IGroupTool)
         self._trap_warning_output()
 
@@ -639,7 +639,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 class TestCreateMemberarea(base.TestCase):
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.membership.addMember('user2', 'secret', ['Member'], [])
 
     def testCreateMemberarea(self):
@@ -718,7 +718,7 @@ class TestCreateMemberarea(base.TestCase):
 class TestMemberareaSetup(base.TestCase):
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.membership.addMember('user2', 'secret', ['Member'], [])
         self.membership.createMemberArea('user2')
         self.home = self.membership.getHomeFolder('user2')
@@ -760,7 +760,7 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.memberdata = self.portal.portal_memberdata
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         # Don't let default_user disturb results
         self.portal.acl_users._doDelUsers([default_user])
         # Add some members
@@ -831,7 +831,7 @@ class TestDefaultUserAndPasswordNotChanged(base.TestCase):
     # A test for a silly transaction/persistency bug in PlonePAS
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
 
     def testDefaultUserAndPasswordUnchanged(self):
         member = self.membership.getAuthenticatedMember()
@@ -852,7 +852,7 @@ class TestMethodProtection(base.TestCase):
     )
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
 
     def assertUnprotected(self, object, method):
         self.logout()
@@ -874,7 +874,7 @@ class TestMethodProtection(base.TestCase):
 class TestMemberInfoView(base.TestCase):
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.view = PASMemberView(self.portal, self.portal.REQUEST)
 
     def testMemberInfoViewForAuthenticated(self):

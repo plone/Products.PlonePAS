@@ -7,6 +7,7 @@ from Products.PloneTestCase.ptc import default_user
 
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 
 
 def sortTuple(t):
@@ -40,7 +41,7 @@ class TestGroupDataTool(base.TestCase):
 class TestGroupData(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.memberdata = self.portal.portal_memberdata
         self.acl_users = self.portal.acl_users
         self.groups = getUtility(IGroupTool)

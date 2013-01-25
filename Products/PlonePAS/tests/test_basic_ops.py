@@ -1,6 +1,7 @@
 import unittest
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
+from zope.component import getUtility
 
 from Products.PluggableAuthService.interfaces.events \
     import IPrincipalDeletedEvent
@@ -12,6 +13,7 @@ from Products.PluggableAuthService.interfaces.plugins \
      import IRolesPlugin
 
 from Products.PlonePAS.tests import base
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 
 
 class BasicOpsTestCase(base.TestCase):
@@ -113,7 +115,7 @@ class BasicOpsTestCase(base.TestCase):
     def test_search(self):
         self.createUser("created_user1")
         self.createUser("created_user2")
-        mt = self.portal.portal_membership
+        mt = getUtility(IMembershipTool)
         retlist = mt.searchForMembers(REQUEST=None, login="created_user1")
         usernames = [user.getUserName() for user in retlist]
         self.assertEqual(len(usernames), 1)

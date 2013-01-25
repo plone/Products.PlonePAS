@@ -1,8 +1,10 @@
 from DateTime import DateTime
 from OFS.Image import Image
+from zope.component import getUtility
 
 from Products.PloneTestCase.ptc import default_user
 
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
 
@@ -11,7 +13,7 @@ class TestMemberDataTool(base.TestCase):
 
     def afterSetUp(self):
         self.memberdata = self.portal.portal_memberdata
-        self.membership = self.portal.portal_membership
+        self.membership = getUtility(IMembershipTool)
         self.membership.memberareaCreationFlag = 0
         # Don't let default_user disturb results
         self.portal.acl_users._doDelUsers([default_user])

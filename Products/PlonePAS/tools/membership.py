@@ -51,7 +51,7 @@ default_portrait = 'defaultUser.png'
 logger = logging.getLogger('PlonePAS')
 
 
-class MembershipTool(Folder):
+class MembershipTool(object):
     """PAS-based customization of MembershipTool.
     """
 
@@ -308,7 +308,7 @@ class MembershipTool(Folder):
         """
         if not self.getMemberareaCreationFlag():
             return None
-        membership = getToolByName(self, 'portal_membership')
+        membership = getUtility(IMembershipTool)
         members = self.getMembersFolder()
 
         if not member_id:

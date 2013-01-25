@@ -1,10 +1,10 @@
-from plone.memoize.instance import memoize
+from zope.component import getUtility
 from zope.interface import implements
 from zope.publisher.browser import BrowserView
-
-from Products.CMFCore.utils import getToolByName
+from plone.memoize.instance import memoize
 
 from Products.PlonePAS.interfaces.browser import IPASMemberView
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 
 
 class PASMemberView(BrowserView):
@@ -12,7 +12,7 @@ class PASMemberView(BrowserView):
 
     @memoize
     def info(self, userid=None):
-        pm = getToolByName(self.context, 'portal_membership')
+        pm = getUtility(IMembershipTool)
         result = pm.getMemberInfo(memberId=userid)
         if result is None:
             # No such member: removed?  We return something useful anyway.
