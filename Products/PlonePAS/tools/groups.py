@@ -7,10 +7,12 @@ from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
 from AccessControl.User import nobody
+from Globals import InitializeClass
 
 from ZODB.POSException import ConflictError
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
 
 from Products.PluggableAuthService.interfaces.plugins \
     import IRoleAssignerPlugin
@@ -438,3 +440,7 @@ class GroupsTool(object):
                 logger.exception('Error during wrapGroup')
         # Failed.
         return g
+
+
+InitializeClass(GroupsTool)
+registerToolInterface('portal_groups', IGroupTool)
