@@ -37,7 +37,6 @@ from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.permissions import SetOwnPassword
 from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import ListPortalMembers
-from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 
@@ -415,7 +414,7 @@ class MembershipTool(object):
         '''
         if subobjectName is not None:
             object = getattr(object, subobjectName)
-        return _checkPermission(permissionName, object)
+        return getSecurityManager().checkPermission(permissionName, object)
 
     @security.public
     def credentialsChanged(self, password, REQUEST=None):
@@ -508,7 +507,7 @@ class MembershipTool(object):
         if members:
             try:
                 folder = members._getOb(safe_id)
-                if verifyPermission and not _checkPermission(View, folder):
+                if verifyPermission and not getSecurityManager().checkPermission(View, folder):
                     # Don't return the folder if the user can't get to it.
                     return None
                 return folder
@@ -571,7 +570,7 @@ class MembershipTool(object):
                       REQUEST=None):
         """ Add local roles on an item.
         """
-        if (_checkPermission(ChangeLocalRoles, obj)
+        if (getSecurityManager().checkPermission(ChangeLocalRoles, obj)
              and member_role in self.getCandidateLocalRoles(obj)):
             for member_id in member_ids:
                 roles = list(obj.get_local_roles_for_userid(userid=member_id))
@@ -589,7 +588,7 @@ class MembershipTool(object):
                          REQUEST=None):
         """ Delete local roles of specified members.
         """
-        if _checkPermission(ChangeLocalRoles, obj):
+        if getSecurityManager().checkPermission(ChangeLocalRoles, obj):
             for member_id in member_ids:
                 if obj.get_local_roles_for_userid(userid=member_id):
                     obj.manage_delLocalRoles(userids=member_ids)
@@ -614,7 +613,7 @@ class MembershipTool(object):
 
         # Delete members in acl_users.
         acl_users = self.acl_users
-        if _checkPermission(ManageUsers, acl_users):
+        if getSecurityManager().checkPermission(ManageUsers, acl_users):
             if isinstance(member_ids, basestring):
                 member_ids = (member_ids,)
             member_ids = list(member_ids)
@@ -674,7 +673,7 @@ class MembershipTool(object):
         if isinstance(portrait, str):
             portrait = None
         if portrait is not None:
-            if verifyPermission and not _checkPermission('View', portrait):
+            if verifyPermission and not getSecurityManager().checkPermission('View', portrait):
                 # Don't return the portrait if the user can't get to it
                 portrait = None
         if portrait is None:
@@ -691,7 +690,7 @@ class MembershipTool(object):
         if not id:
             id = authenticated_id
         safe_id = self._getSafeMemberId(id)
-        if id != authenticated_id and not _checkPermission(
+        if id != authenticated_id and not getSecurityManager().checkPermission(
                 ManageUsers, getSite()):
             raise Unauthorized
 
@@ -717,7 +716,7 @@ class MembershipTool(object):
         safe_id = self._getSafeMemberId(id)
         if authenticated_id and id != authenticated_id:
             # Only Managers can change portraits of others.
-            if not _checkPermission(ManageUsers, getSite()):
+            if not getSecurityManager().checkPermission(ManageUsers, getSite()):
                 raise Unauthorized
         if portrait and portrait.filename:
             scaled, mimetype = scale_image(portrait)
