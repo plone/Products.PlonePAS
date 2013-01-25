@@ -171,7 +171,7 @@ class MembershipTool(object):
         """
         logger.debug('searchForMembers: started.')
 
-        acl_users = getToolByName(self, "acl_users")
+        acl_users = getToolByName(getSite(), "acl_users")
 
         if REQUEST is not None:
             searchmap = REQUEST
@@ -354,7 +354,7 @@ class MembershipTool(object):
         member_folder = fti._constructInstance(members, safe_member_id)
 
         # Get the user object from acl_users
-        acl_users = getToolByName(self, "acl_users")
+        acl_users = getToolByName(getSite(), "acl_users")
         user = acl_users.getUserById(member_id)
         if user is not None:
             user = user.__of__(acl_users)
@@ -561,7 +561,7 @@ class MembershipTool(object):
         """ Search the membership """
         # XXX: this method violates the rules for tools/utilities:
         # it depends on a non-utility tool
-        md = getToolByName(self, 'portal_memberdata')
+        md = getToolByName(getSite(), 'portal_memberdata')
 
         return md.searchMemberData(search_param, search_term)
 
@@ -631,7 +631,7 @@ class MembershipTool(object):
                                  'permission for the underlying User Folder.')
 
         # Delete member data in portal_memberdata.
-        mdtool = getToolByName(self, 'portal_memberdata', None)
+        mdtool = getToolByName(getSite(), 'portal_memberdata', None)
         if mdtool is not None:
             for member_id in member_ids:
                 mdtool.deleteMemberData(member_id)
@@ -669,7 +669,7 @@ class MembershipTool(object):
         if not id:
             id = self.getAuthenticatedMember().getId()
         safe_id = self._getSafeMemberId(id)
-        membertool = getToolByName(self, 'portal_memberdata')
+        membertool = getToolByName(getSite(), 'portal_memberdata')
         portrait = membertool._getPortrait(safe_id)
         if isinstance(portrait, str):
             portrait = None
@@ -678,7 +678,7 @@ class MembershipTool(object):
                 # Don't return the portrait if the user can't get to it
                 portrait = None
         if portrait is None:
-            portal = getToolByName(self, 'portal_url').getPortalObject()
+            portal = getToolByName(getSite(), 'portal_url').getPortalObject()
             portrait = getattr(portal, default_portrait, None)
 
         return portrait
@@ -695,7 +695,7 @@ class MembershipTool(object):
                 ManageUsers, self):
             raise Unauthorized
 
-        membertool = getToolByName(self, 'portal_memberdata')
+        membertool = getToolByName(getSite(), 'portal_memberdata')
         return membertool._deletePortrait(safe_id)
 
     @security.protected(SetOwnProperties)
@@ -722,7 +722,7 @@ class MembershipTool(object):
         if portrait and portrait.filename:
             scaled, mimetype = scale_image(portrait)
             portrait = Image(id=safe_id, file=scaled, title='')
-            membertool = getToolByName(self, 'portal_memberdata')
+            membertool = getToolByName(getSite(), 'portal_memberdata')
             membertool._setPortrait(portrait, safe_id)
 
     @security.protected(ManageUsers)
@@ -755,7 +755,7 @@ class MembershipTool(object):
         return acl_users.authenticate(member.getUserName(), password, REQUEST)
 
     def _findUsersAclHome(self, userid):
-        portal = getToolByName(self, 'portal_url').getPortalObject()
+        portal = getToolByName(getSite(), 'portal_url').getPortalObject()
         acl_users = portal.acl_users
         parent = acl_users
         while parent:
@@ -772,7 +772,7 @@ class MembershipTool(object):
     def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
         '''
-        registration = getToolByName(self, 'portal_registration', None)
+        registration = getToolByName(getSite(), 'portal_registration', None)
         if not self.isAnonymousUser():
             member = self.getAuthenticatedMember()
             #self.acl_users
@@ -841,7 +841,7 @@ class MembershipTool(object):
                         portal_role not in u.roles):
                     u.roles.append(portal_role)
 
-        mdtool = getToolByName(self, 'portal_memberdata', None)
+        mdtool = getToolByName(getSite(), 'portal_memberdata', None)
         if mdtool is not None:
             try:
                 u = mdtool.wrapUser(u)
@@ -949,7 +949,7 @@ class MembershipTool(object):
         self.createMemberArea()
 
         try:
-            pas = getToolByName(self, 'acl_users')
+            pas = getToolByName(getSite(), 'acl_users')
             pas.credentials_cookie_auth.login()
         except AttributeError:
             # The cookie plugin may not be present
@@ -965,7 +965,7 @@ class MembershipTool(object):
         - invalidate a Zope session if there is one
         """
         # Invalidate existing sessions, but only if they exist.
-        sdm = getToolByName(self, 'session_data_manager', None)
+        sdm = getToolByName(getSite(), 'session_data_manager', None)
         if sdm is not None:
                 session = sdm.getSessionData(create=0)
                 if session is not None:
@@ -974,7 +974,7 @@ class MembershipTool(object):
         if REQUEST is None:
             REQUEST = getattr(self, 'REQUEST', None)
         if REQUEST is not None:
-            pas = getToolByName(self, 'acl_users')
+            pas = getToolByName(getSite(), 'acl_users')
             try:
                 pas.logout(REQUEST)
             except:
@@ -983,10 +983,10 @@ class MembershipTool(object):
                 pass
 
             # Expire the skin cookie if it is not configured to persist
-            st = getToolByName(self, "portal_skins")
+            st = getToolByName(getSite(), "portal_skins")
             skinvar = st.getRequestVarname()
             if skinvar in REQUEST and not st.getCookiePersistence():
-                    portal = getToolByName(self, "portal_url") \
+                    portal = getToolByName(getSite(), "portal_url") \
                                 .getPortalObject()
                     path = '/' + portal.absolute_url(1)
                     # XXX check if this path is sane
@@ -1026,7 +1026,7 @@ class MembershipTool(object):
     def getBadMembers(self):
         """Will search for members with bad images in the portal_memberdata
         delete their portraits and return their member ids"""
-        memberdata = getToolByName(self, 'portal_memberdata')
+        memberdata = getToolByName(getSite(), 'portal_memberdata')
         portraits = getattr(memberdata, 'portraits', None)
         if portraits is None:
             return []
