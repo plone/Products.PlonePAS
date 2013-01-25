@@ -1,7 +1,7 @@
-from Products.CMFCore import interfaces
+from Products.CMFCore.interfaces import IMembershipTool
 
 
-class IMembershipTool(interfaces.IMembershipTool):
+class IMembershipTool(IMembershipTool):
 
     def getMemberInfo(memberId=None):
         """Return 'harmless' Memberinfo of any member, such as full name,
