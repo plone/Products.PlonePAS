@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from zope.interface import implements
 
 from AccessControl import ClassSecurityInfo
@@ -15,7 +16,6 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-from Products.PlonePAS.odict import OrderedDict
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
                                           globals())
