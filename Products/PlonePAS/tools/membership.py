@@ -56,8 +56,6 @@ class MembershipTool(object):
 
     implements(IMembershipTool)
 
-    meta_type = "PlonePAS Membership Tool"
-    toolicon = 'tool.gif'
     personal_id = '.personal'
     portrait_id = 'MyPortrait'
     default_portrait = 'defaultUser.gif'
