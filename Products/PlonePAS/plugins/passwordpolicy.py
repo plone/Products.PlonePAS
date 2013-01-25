@@ -2,13 +2,10 @@
 Password Validation plugin (IValidationPlugin)
 Mutable Property Provider
 """
-import copy
 
 from zope.interface import implements
 from AccessControl import ClassSecurityInfo
 from App.class_init import InitializeClass
-from BTrees.OOBTree import OOBTree
-from ZODB.PersistentMapping import PersistentMapping
 
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
