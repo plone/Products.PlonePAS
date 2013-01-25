@@ -13,9 +13,11 @@ from OFS.Image import Image
 
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
+
 from AccessControl import Unauthorized
 from AccessControl.SecurityManagement import noSecurityManager
 from AccessControl.requestmethod import postonly
+from AccessControl.User import nobody
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
@@ -574,6 +576,17 @@ class MembershipTool(BaseTool):
         else:
             raise BadRequest('Not logged in.')
     setPassword = postonly(setPassword)
+
+    security.declarePublic('getAuthenticatedMember')
+    def getAuthenticatedMember(self):
+        '''
+        Returns the currently authenticated member object
+        or the Anonymous User.  Never returns None.
+        '''
+        u = getSecurityManager().getUser()
+        if u is None:
+            u = nobody
+        return self.wrapUser(u)
 
     security.declareProtected(View, 'getCandidateLocalRoles')
     def getCandidateLocalRoles(self, obj):
