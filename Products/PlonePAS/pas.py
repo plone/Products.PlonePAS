@@ -3,8 +3,6 @@ from Products.PlonePAS.interfaces.group import IGroupTool
 from zope.component import getUtility
 from zope.event import notify
 
-from Products.CMFCore.utils import getToolByName
-
 from AccessControl import Unauthorized, getSecurityManager
 from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.Permissions import manage_properties, change_permissions
