@@ -378,10 +378,6 @@ class MembershipTool(Folder):
         if notify_script is not None:
             notify_script()
 
-     # deal with ridiculous API change in CMF
-    security.declarePublic('createMemberArea')
-    createMemberArea = createMemberarea
-
     security.declareProtected(ManageUsers, 'deleteMemberArea')
     @postonly
     def deleteMemberArea(self, member_id, REQUEST=None):
