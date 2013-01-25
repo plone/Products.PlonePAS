@@ -301,7 +301,7 @@ class MembershipTool(Folder):
                action='manage_mapRoles')
 
     @security.public
-    def createMemberarea(self, member_id=None, minimal=None):
+    def createMemberArea(self, member_id=None, minimal=None):
         """
         Create a member area for 'member_id' or the authenticated
         user, but don't assume that member_id is url-safe.
