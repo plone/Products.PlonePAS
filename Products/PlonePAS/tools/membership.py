@@ -854,7 +854,7 @@ class MembershipTool(object):
         which means roles that are useful and understood
         by the portal object
         """
-        parent = self.aq_inner.aq_parent
+        parent = getSite()
         roles = list(parent.userdefined_roles())
 
         # This is *not* a local role in the portal but used by it
