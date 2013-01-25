@@ -31,4 +31,8 @@
     provides=".interfaces.group.IGroupTool"
     factory=".tools.groups.GroupsTool" />
 
+  <utility
+    provides=".interfaces.membership.IMembershipTool"
+    factory=".tools.membership.MembershipTool" />
+
 </configure>
