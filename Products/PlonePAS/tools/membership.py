@@ -1,4 +1,3 @@
-from OFS.Folder import Folder
 from warnings import warn
 import logging
 from cStringIO import StringIO
@@ -7,6 +6,7 @@ import transaction
 from zope import event
 from zope.component import getUtility
 from zope.interface import implements
+from zope.site.hooks import getSite
 
 from DateTime import DateTime
 from App.class_init import InitializeClass
@@ -39,6 +39,7 @@ from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
 
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
@@ -128,8 +129,8 @@ class MembershipTool(object):
     def getMembersFolder(self):
         """ Get the members folder object.
         """
-        parent = aq_parent(aq_inner(self))
-        members = getattr(parent, self.membersfolder_id, None)
+        site = getSite()
+        members = getattr(site, self.membersfolder_id, None)
         return members
 
     @security.private
@@ -1053,5 +1054,5 @@ class MembershipTool(object):
 
         return bad_member_ids
 
-
 InitializeClass(MembershipTool)
+registerToolInterface('portal_membership', IMembershipTool)
