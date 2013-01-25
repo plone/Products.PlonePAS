@@ -150,7 +150,7 @@ class MemberAreaTest(base.TestCase):
         self.failIf('foo' in self.portal.Members)
         self.failIf('bar' in self.portal.Members)
 
-        self.mt.createMemberarea('foo')
+        self.mt.createMemberArea('foo')
         self.failUnless('foo' in self.portal.Members)
 
         self.mt.memberareaCreationFlag = 0
@@ -646,7 +646,7 @@ class TestCreateMemberarea(base.TestCase):
         # Should create a memberarea for user2
         if self.membership.memberareaCreationFlag == True:
             members = self.membership.getMembersFolder()
-            self.membership.createMemberarea('user2')
+            self.membership.createMemberArea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
             self.failUnless(memberfolder,
                             'createMemberarea failed to create memberarea')
@@ -657,7 +657,7 @@ class TestCreateMemberarea(base.TestCase):
         if self.membership.memberareaCreationFlag == True:
             # Should create a memberarea for user2
             self.login('user2')
-            self.membership.createMemberarea()
+            self.membership.createMemberArea()
             memberfolder = self.membership.getHomeFolder('user2')
             self.failUnless(
                 memberfolder,
@@ -669,7 +669,7 @@ class TestCreateMemberarea(base.TestCase):
     def testNoMemberareaIfNoMembersFolder(self):
         # Should not create a memberarea if the Members folder is missing
         self.portal._delObject('Members')
-        self.membership.createMemberarea('user2')
+        self.membership.createMemberArea('user2')
         memberfolder = self.membership.getHomeFolder('user2')
         self.failIf(memberfolder,
                     'createMemberarea unexpectedly created a memberarea')
@@ -677,15 +677,15 @@ class TestCreateMemberarea(base.TestCase):
     def testNoMemberareaIfMemberareaExists(self):
         # Should not attempt to create a memberarea if a memberarea already
         # exists
-        self.membership.createMemberarea('user2')
+        self.membership.createMemberArea('user2')
         # The second call should do nothing (not cause an error)
-        self.membership.createMemberarea('user2')
+        self.membership.createMemberArea('user2')
 
     def testNotifyScriptIsCalled(self):
         # The notify script should be called
         if self.membership.memberareaCreationFlag == True:
             self.portal.notifyMemberAreaCreated = dummy.Raiser(dummy.Error)
-            self.assertRaises(dummy.Error, self.membership.createMemberarea,
+            self.assertRaises(dummy.Error, self.membership.createMemberArea,
                               'user2')
 
     def testCreateMemberareaAlternateName(self):
@@ -701,7 +701,7 @@ class TestCreateMemberarea(base.TestCase):
         # Should be able to create another type instead of a normal Folder
         if self.membership.memberareaCreationFlag == True:
             self.membership.setMemberAreaType('Document')
-            self.membership.createMemberarea('user2')
+            self.membership.createMemberArea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
             self.assertEqual(memberfolder.getPortalTypeName(), 'Document')
 
@@ -709,7 +709,7 @@ class TestCreateMemberarea(base.TestCase):
         # Should not create a member area
         self.membership.setMemberareaCreationFlag = False
         self.failIf(self.membership.getMemberareaCreationFlag())
-        self.membership.createMemberarea('user2')
+        self.membership.createMemberArea('user2')
         memberfolder = self.membership.getHomeFolder('user2')
         self.failIf(memberfolder,
                     'createMemberarea created memberarea despite flag')
@@ -720,7 +720,7 @@ class TestMemberareaSetup(base.TestCase):
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
         self.membership.addMember('user2', 'secret', ['Member'], [])
-        self.membership.createMemberarea('user2')
+        self.membership.createMemberArea('user2')
         self.home = self.membership.getHomeFolder('user2')
 
     def testMemberareaIsFolder(self):
