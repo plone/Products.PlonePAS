@@ -4,6 +4,10 @@ Changelog
 4.1.1 (unreleased)
 ------------------
 
+- Fix a bug in setSecurityProfile where the login name was passed
+  instead of the user id.
+  [davisagli]
+
 - Added empty updateUser and updateEveryLoginName methods in
   ZODBMutablePropertyProvider to fulfill the new standards of the
   IUserEnumerationPlugin.

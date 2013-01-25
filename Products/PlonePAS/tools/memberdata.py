@@ -407,6 +407,21 @@ class MemberData(BaseMemberData):
                 return True
         return False
 
+    security.declarePrivate('setSecurityProfile')
+    def setSecurityProfile(self, password=None, roles=None, domains=None):
+        """Set the user's basic security profile"""
+        u = self.getUser()
+
+        # The Zope User API is stupid, it should check for None.
+        if roles is None:
+            roles = list(u.getRoles())
+            if 'Authenticated' in roles:
+                roles.remove('Authenticated')
+        if domains is None:
+            domains = u.getDomains()
+
+        u.userFolderEditUser(u.getUserId(), password, roles, domains)
+
     ## plugin getters
 
     security.declarePrivate('_getPlugins')
