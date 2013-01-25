@@ -588,6 +588,43 @@ class MembershipTool(BaseTool):
             u = nobody
         return self.wrapUser(u)
 
+    security.declarePrivate('wrapUser')
+    def wrapUser(self, u, wrap_anon=0):
+        """ Set up the correct acquisition wrappers for a user object.
+
+        Provides an opportunity for a portal_memberdata tool to retrieve and
+        store member data independently of the user object.
+        """
+        # XXX: this method violates the rules for tools/utilities:
+        # it depends on a non-utility tool
+        b = getattr(u, 'aq_base', None)
+        if b is None:
+            # u isn't wrapped at all.  Wrap it in self.acl_users.
+            b = u
+            u = u.__of__(self.acl_users)
+        if (b is nobody and not wrap_anon) or hasattr(b, 'getMemberId'):
+            # This user is either not recognized by acl_users or it is
+            # already registered with something that implements the
+            # member data tool at least partially.
+            return u
+
+        # Apply any role mapping if we have it
+        if hasattr(self, 'role_map'):
+            for portal_role in self.role_map.keys():
+                if (self.role_map.get(portal_role) in u.roles and
+                        portal_role not in u.roles):
+                    u.roles.append(portal_role)
+
+        mdtool = getToolByName(self, 'portal_memberdata', None)
+        if mdtool is not None:
+            try:
+                u = mdtool.wrapUser(u)
+            except ConflictError:
+                raise
+            except:
+                logger.exception("Error during wrapUser")
+        return u
+
     security.declareProtected(View, 'getCandidateLocalRoles')
     def getCandidateLocalRoles(self, obj):
         """ What local roles can I assign?
