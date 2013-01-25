@@ -84,10 +84,6 @@ class MembershipTool(Folder):
                    ( { 'label': 'Portraits'
                      , 'action': 'manage_portrait_fix'},))
 
-    # TODO I'm not quite sure why getPortalRoles is declared 'Managed'
-    #    in CMFCore.MembershipTool - but in Plone we are not so anal ;-)
-    security.declareProtected(View, 'getPortalRoles')
-
     security.declareProtected(ManagePortal, 'manage_mapRoles')
     manage_mapRoles = DTMLFile('../zmi/membershipRolemapping', globals())
 
@@ -854,7 +850,7 @@ class MembershipTool(Folder):
                 logger.exception("Error during wrapUser")
         return u
 
-    security.declareProtected(ManagePortal, 'getPortalRoles')
+    security.declareProtected(View, 'getPortalRoles')
     def getPortalRoles(self):
         """
         Return all local roles defined by the portal itself,
