@@ -90,7 +90,7 @@ class MembershipTool(Folder):
     security.declareProtected(ManagePortal, 'manage_portrait_fix')
     manage_portrait_fix = DTMLFile('../zmi/portrait_fix', globals())
 
-    security.declareProtected(ManagePortal, 'manage_setMemberAreaType')
+    @security.protected(ManagePortal)
     def manage_setMemberAreaType(self, type_name, REQUEST=None):
         """ ZMI method to set the home folder type by its type name.
         """
@@ -100,7 +100,7 @@ class MembershipTool(Folder):
                     + '/manage_mapRoles'
                     + '?manage_tabs_message=Member+area+type+changed.')
 
-    security.declareProtected(ManagePortal, 'manage_setMembersFolderById')
+    @security.protected(ManagePortal)
     def manage_setMembersFolderById(self, id, REQUEST=None):
         """ ZMI method to set the members folder object by its id.
         """
@@ -110,7 +110,7 @@ class MembershipTool(Folder):
                     + '/manage_mapRoles'
                     + '?manage_tabs_message=Members+folder+id+changed.')
 
-    security.declareProtected(ManagePortal, 'setMemberAreaType')
+    @security.protected(ManagePortal)
     def setMemberAreaType(self, type_name):
         """ Sets the portal type to use for new home folders.
         """
@@ -118,13 +118,13 @@ class MembershipTool(Folder):
         # members to have objects instead of folders as home "directory".
         self.memberarea_type = str(type_name).strip()
 
-    security.declareProtected(ManagePortal, 'setMembersFolderById')
+    @security.protected(ManagePortal)
     def setMembersFolderById(self, id=''):
         """ Set the members folder object by its id.
         """
         self.membersfolder_id = id.strip()
 
-    security.declarePublic('getMembersFolder')
+    @security.public
     def getMembersFolder(self):
         """ Get the members folder object.
         """
@@ -132,7 +132,7 @@ class MembershipTool(Folder):
         members = getattr(parent, self.membersfolder_id, None)
         return members
 
-    security.declarePrivate('addMember')
+    @security.private
     def addMember(self, id, password, roles, domains, properties=None):
         """Adds a new member to the user folder.
 
@@ -148,7 +148,7 @@ class MembershipTool(Folder):
             member = self.getMemberById(id)
             member.setMemberProperties(properties)
 
-    security.declareProtected(ListPortalMembers, 'searchForMembers')
+    @security.protected(ListPortalMembers)
     def searchForMembers(self, REQUEST=None, **kw):
         """Hacked up version of Plone searchForMembers.
 
@@ -269,7 +269,7 @@ class MembershipTool(Folder):
         logger.debug('searchForMembers: finished.')
         return res
 
-    security.declareProtected(ManagePortal, 'getMemberareaCreationFlag')
+    @security.protected(ManagePortal)
     def getMemberareaCreationFlag(self):
         """
         Returns the flag indicating whether the membership tool
@@ -279,7 +279,7 @@ class MembershipTool(Folder):
         """
         return self.memberareaCreationFlag
 
-    security.declareProtected(ManagePortal, 'setMemberareaCreationFlag')
+    @security.protected(ManagePortal)
     def setMemberareaCreationFlag(self):
         """
         sets the flag indicating whether the membership tool
@@ -300,7 +300,7 @@ class MembershipTool(Folder):
                message='Member area creation flag has been updated',
                action='manage_mapRoles')
 
-    security.declarePublic('createMemberarea')
+    @security.public
     def createMemberarea(self, member_id=None, minimal=None):
         """
         Create a member area for 'member_id' or the authenticated
@@ -378,7 +378,7 @@ class MembershipTool(Folder):
         if notify_script is not None:
             notify_script()
 
-    security.declareProtected(ManageUsers, 'deleteMemberArea')
+    @security.protected(ManageUsers)
     @postonly
     def deleteMemberArea(self, member_id, REQUEST=None):
         """ Delete member area of member specified by member_id.
@@ -392,7 +392,7 @@ class MembershipTool(Folder):
         else:
             return 0
 
-    security.declarePublic('isAnonymousUser')
+    @security.public
     def isAnonymousUser(self):
         '''
         Returns 1 if the user is not logged in.
@@ -402,7 +402,7 @@ class MembershipTool(Folder):
             return 1
         return 0
 
-    security.declarePublic('checkPermission')
+    @security.public
     def checkPermission(self, permissionName, object, subobjectName=None):
         '''
         Checks whether the current user has the given permission on
@@ -412,7 +412,7 @@ class MembershipTool(Folder):
             object = getattr(object, subobjectName)
         return _checkPermission(permissionName, object)
 
-    security.declarePublic('credentialsChanged')
+    @security.public
     def credentialsChanged(self, password, REQUEST=None):
         '''
         Notifies the authentication mechanism that this user has changed
@@ -439,7 +439,7 @@ class MembershipTool(Folder):
                 change = self.restrictedTraverse(p)
                 change(user, name, password)
 
-    security.declareProtected(ManageUsers, 'getMemberById')
+    @security.protected(ManageUsers)
     def getMemberById(self, id):
         '''
         Returns the given member.
@@ -449,7 +449,7 @@ class MembershipTool(Folder):
             user = self.wrapUser(user)
         return user
 
-    security.declarePublic('getMemberInfo')
+    @security.public
     def getMemberInfo(self, memberId=None):
         # Return 'harmless' Memberinfo of any member, such as Full name,
         # Location, etc
@@ -486,7 +486,7 @@ class MembershipTool(Folder):
 
         return cleanId(id)
 
-    security.declarePublic('getHomeFolder')
+    @security.public
     def getHomeFolder(self, id=None, verifyPermission=0):
         """ Return a member's home folder object, or None.
 
@@ -551,7 +551,7 @@ class MembershipTool(Folder):
              stacklevel=2)
         return self.acl_users
 
-    security.declareProtected(ListPortalMembers, 'searchMembers')
+    @security.protected(ListPortalMembers)
     def searchMembers(self, search_param, search_term):
         """ Search the membership """
         # XXX: this method violates the rules for tools/utilities:
@@ -560,7 +560,7 @@ class MembershipTool(Folder):
 
         return md.searchMemberData(search_param, search_term)
 
-    security.declareProtected(View, 'setLocalRoles')
+    @security.protected(View)
     @postonly
     def setLocalRoles(self, obj, member_ids, member_role, reindex=1,
                       REQUEST=None):
@@ -578,7 +578,7 @@ class MembershipTool(Folder):
         if reindex and hasattr(aq_base(obj), 'reindexObjectSecurity'):
             obj.reindexObjectSecurity()
 
-    security.declareProtected(View, 'deleteLocalRoles')
+    @security.protected(View)
     @postonly
     def deleteLocalRoles(self, obj, member_ids, reindex=1, recursive=0,
                          REQUEST=None):
@@ -598,7 +598,7 @@ class MembershipTool(Folder):
             # reindexObjectSecurity is always recursive
             obj.reindexObjectSecurity()
 
-    security.declareProtected(ManageUsers, 'deleteMembers')
+    @security.protected(ManageUsers)
     @postonly
     def deleteMembers(self, member_ids, delete_memberareas=1,
                       delete_localroles=1, REQUEST=None):
@@ -643,7 +643,7 @@ class MembershipTool(Folder):
 
         return tuple(member_ids)
 
-    security.declarePublic('getPersonalFolder')
+    @security.public
     def getPersonalFolder(self, member_id=None):
         """
         returns the Personal Item folder for a member
@@ -655,7 +655,7 @@ class MembershipTool(Folder):
             personal = getattr(home, self.personal_id, None)
         return personal
 
-    security.declarePublic('getPersonalPortrait')
+    @security.public
     def getPersonalPortrait(self, id=None, verifyPermission=0):
         """Return a members personal portait.
 
@@ -678,7 +678,7 @@ class MembershipTool(Folder):
 
         return portrait
 
-    security.declareProtected(SetOwnProperties, 'deletePersonalPortrait')
+    @security.protected(SetOwnProperties)
     def deletePersonalPortrait(self, id=None):
         """deletes the Portait of a member.
         """
@@ -693,7 +693,7 @@ class MembershipTool(Folder):
         membertool = getToolByName(self, 'portal_memberdata')
         return membertool._deletePortrait(safe_id)
 
-    security.declareProtected(SetOwnProperties, 'changeMemberPortrait')
+    @security.protected(SetOwnProperties)
     def changeMemberPortrait(self, portrait, id=None):
         """update the portait of a member.
 
@@ -720,7 +720,7 @@ class MembershipTool(Folder):
             membertool = getToolByName(self, 'portal_memberdata')
             membertool._setPortrait(portrait, safe_id)
 
-    security.declareProtected(ManageUsers, 'listMembers')
+    @security.protected(ManageUsers)
     def listMembers(self):
         '''Gets the list of all members.
         THIS METHOD MIGHT BE VERY EXPENSIVE ON LARGE USER FOLDERS AND MUST
@@ -731,7 +731,7 @@ class MembershipTool(Folder):
         '''
         return map(self.wrapUser, self.acl_users.getUsers())
 
-    security.declareProtected(ManageUsers, 'listMemberIds')
+    @security.protected(ManageUsers)
     def listMemberIds(self):
         '''Lists the ids of all members.  This may eventually be
         replaced with a set of methods for querying pieces of the
@@ -739,7 +739,7 @@ class MembershipTool(Folder):
         '''
         return self.acl_users.getUserIds()
 
-    security.declareProtected(SetOwnPassword, 'testCurrentPassword')
+    @security.protected(SetOwnPassword)
     def testCurrentPassword(self, password):
         """ test to see if password is current """
         REQUEST = getattr(self, 'REQUEST', {})
@@ -763,7 +763,7 @@ class MembershipTool(Folder):
         else:
             return None
 
-    security.declareProtected(SetOwnPassword, 'setPassword')
+    @security.protected(SetOwnPassword)
     def setPassword(self, password, domains=None, REQUEST=None):
         '''Allows the authenticated member to set his/her own password.
         '''
@@ -798,7 +798,7 @@ class MembershipTool(Folder):
             raise BadRequest('Not logged in.')
     setPassword = postonly(setPassword)
 
-    security.declarePublic('getAuthenticatedMember')
+    @security.public
     def getAuthenticatedMember(self):
         '''
         Returns the currently authenticated member object
@@ -846,7 +846,7 @@ class MembershipTool(Folder):
                 logger.exception("Error during wrapUser")
         return u
 
-    security.declareProtected(View, 'getPortalRoles')
+    @security.protected(View)
     def getPortalRoles(self):
         """
         Return all local roles defined by the portal itself,
@@ -862,7 +862,7 @@ class MembershipTool(Folder):
 
         return roles
 
-    security.declareProtected(ManagePortal, 'setRoleMapping')
+    @security.protected(ManagePortal)
     @postonly
     def setRoleMapping(self, portal_role, userfolder_role, REQUEST=None):
         """
@@ -882,7 +882,7 @@ class MembershipTool(Folder):
                message='The Role mappings have been updated',
                action ='manage_mapRoles')
 
-    security.declareProtected(ManagePortal, 'getMappedRole')
+    @security.protected(ManagePortal)
     def getMappedRole(self, portal_role):
         """
         returns a role name if the portal role is mapped to
@@ -893,7 +893,7 @@ class MembershipTool(Folder):
         else:
             return ''
 
-    security.declareProtected(View, 'getCandidateLocalRoles')
+    @security.protected(View)
     def getCandidateLocalRoles(self, obj):
         """ What local roles can I assign?
             Override the CMFCore version so that we can see the local roles on
@@ -911,7 +911,7 @@ class MembershipTool(Folder):
         local_roles.sort()
         return tuple(local_roles)
 
-    security.declareProtected(View, 'loginUser')
+    @security.protected(View)
     def loginUser(self, REQUEST=None):
         """ Handle a login for the current user.
 
@@ -950,7 +950,7 @@ class MembershipTool(Folder):
             # The cookie plugin may not be present
             pass
 
-    security.declareProtected(View, 'logoutUser')
+    @security.protected(View)
     def logoutUser(self, REQUEST=None):
         """Process a user logout.
 
@@ -991,13 +991,13 @@ class MembershipTool(Folder):
         if user is not None:
             event.notify(UserLoggedOutEvent(user))
 
-    security.declareProtected(View, 'immediateLogout')
+    @security.protected(View)
     def immediateLogout(self):
         """ Log the current user out immediately.  Used by logout.py so that
             we do not have to do a redirect to show the logged out status. """
         noSecurityManager()
 
-    security.declarePublic('setLoginTimes')
+    @security.public
     def setLoginTimes(self):
         """ Called by logged_in to set the login time properties
             even if members lack the "Set own properties" permission.
@@ -1017,7 +1017,7 @@ class MembershipTool(Folder):
                                  last_login_time=login_time)
         return res
 
-    security.declareProtected(ManagePortal, 'getBadMembers')
+    @security.protected(ManagePortal)
     def getBadMembers(self):
         """Will search for members with bad images in the portal_memberdata
         delete their portraits and return their member ids"""
