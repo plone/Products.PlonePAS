@@ -132,7 +132,7 @@ class MembershipTool(Folder):
     def getMembersFolder(self):
         """ Get the members folder object.
         """
-        parent = aq_parent( aq_inner(self) )
+        parent = aq_parent(aq_inner(self))
         members = getattr(parent, self.membersfolder_id, None)
         return members
 
@@ -222,7 +222,7 @@ class MembershipTool(Folder):
             seen = set()
             seen_add = seen.add
             # nice trick! set.add() does always return None
-            return [ x for x in seq if x not in seen and not seen_add(x)]
+            return [x for x in seq if x not in seen and not seen_add(x)]
 
         uf_users = dedupe(uf_users)
         members = [getUserById(userid) for userid in uf_users]
@@ -457,7 +457,6 @@ class MembershipTool(Folder):
             user = self.wrapUser(user)
         return user
 
-
     security.declarePublic('getMemberInfo')
     def getMemberInfo(self, memberId=None):
         # Return 'harmless' Memberinfo of any member, such as Full name,
@@ -470,13 +469,13 @@ class MembershipTool(Folder):
         if member is None:
             return None
 
-        memberinfo = {'fullname'    : member.getProperty('fullname'),
-                      'description' : member.getProperty('description'),
-                      'location'    : member.getProperty('location'),
-                      'language'    : member.getProperty('language'),
-                      'home_page'   : member.getProperty('home_page'),
-                      'username'    : member.getUserName(),
-                      'has_email'   : bool(member.getProperty('email')),
+        memberinfo = {'fullname': member.getProperty('fullname'),
+                      'description': member.getProperty('description'),
+                      'location': member.getProperty('location'),
+                      'language': member.getProperty('language'),
+                      'home_page': member.getProperty('home_page'),
+                      'username': member.getUserName(),
+                      'has_email': bool(member.getProperty('email')),
                      }
 
         return memberinfo
@@ -530,7 +529,6 @@ class MembershipTool(Folder):
         else:
             return None
 
-
     def _huntUserFolder(self, member_id, context):
         """Find userfolder containing user in the hierarchy
            starting from context
@@ -562,13 +560,13 @@ class MembershipTool(Folder):
         return self.acl_users
 
     security.declareProtected(ListPortalMembers, 'searchMembers')
-    def searchMembers( self, search_param, search_term ):
+    def searchMembers(self, search_param, search_term):
         """ Search the membership """
         # XXX: this method violates the rules for tools/utilities:
         # it depends on a non-utility tool
-        md = getToolByName( self, 'portal_memberdata' )
+        md = getToolByName(self, 'portal_memberdata')
 
-        return md.searchMemberData( search_param, search_term )
+        return md.searchMemberData(search_param, search_term)
 
     security.declareProtected(View, 'setLocalRoles')
     @postonly
@@ -576,14 +574,14 @@ class MembershipTool(Folder):
                       REQUEST=None):
         """ Add local roles on an item.
         """
-        if ( _checkPermission(ChangeLocalRoles, obj)
-             and member_role in self.getCandidateLocalRoles(obj) ):
+        if (_checkPermission(ChangeLocalRoles, obj)
+             and member_role in self.getCandidateLocalRoles(obj)):
             for member_id in member_ids:
-                roles = list(obj.get_local_roles_for_userid( userid=member_id ))
+                roles = list(obj.get_local_roles_for_userid(userid=member_id))
 
                 if member_role not in roles:
-                    roles.append( member_role )
-                    obj.manage_setLocalRoles( member_id, roles )
+                    roles.append(member_role)
+                    obj.manage_setLocalRoles(member_id, roles)
 
         if reindex and hasattr(aq_base(obj), 'reindexObjectSecurity'):
             obj.reindexObjectSecurity()
@@ -600,7 +598,7 @@ class MembershipTool(Folder):
                     obj.manage_delLocalRoles(userids=member_ids)
                     break
 
-        if recursive and hasattr( aq_base(obj), 'contentValues' ):
+        if recursive and hasattr(aq_base(obj), 'contentValues'):
             for subobj in obj.contentValues():
                 self.deleteLocalRoles(subobj, member_ids, 0, 1)
 
@@ -644,15 +642,14 @@ class MembershipTool(Folder):
         # Delete members' home folders including all content items.
         if delete_memberareas:
             for member_id in member_ids:
-                 self.deleteMemberArea(member_id)
+                self.deleteMemberArea(member_id)
 
         # Delete members' local roles.
         if delete_localroles:
-            self.deleteLocalRoles( getUtility(ISiteRoot), member_ids,
-                                   reindex=1, recursive=1 )
+            self.deleteLocalRoles(getUtility(ISiteRoot), member_ids,
+                                   reindex=1, recursive=1)
 
         return tuple(member_ids)
-
 
     security.declarePublic('getPersonalFolder')
     def getPersonalFolder(self, member_id=None):
@@ -903,7 +900,6 @@ class MembershipTool(Folder):
             return self.role_map.get(portal_role, '')
         else:
             return ''
-
 
     security.declareProtected(View, 'getCandidateLocalRoles')
     def getCandidateLocalRoles(self, obj):
