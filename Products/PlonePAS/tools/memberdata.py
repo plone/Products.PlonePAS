@@ -2,6 +2,7 @@ from App.class_init import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
 
+from zope.component import getUtility
 from zope.interface import implements
 
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
@@ -17,6 +18,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.interfaces.capabilities \
     import IDeleteCapability, IPasswordSetCapability
