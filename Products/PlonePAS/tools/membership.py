@@ -29,7 +29,6 @@ from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.exceptions import AccessControl_Unauthorized
 from Products.CMFCore.permissions import ChangeLocalRoles
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.permissions import ManageUsers
@@ -626,7 +625,7 @@ class MembershipTool(object):
                 raise NotImplementedError('The underlying User Folder '
                                          'doesn\'t support deleting members.')
         else:
-            raise AccessControl_Unauthorized('You need the \'Manage users\' '
+            raise Unauthorized('You need the \'Manage users\' '
                                  'permission for the underlying User Folder.')
 
         # Delete member data in portal_memberdata.
