@@ -91,6 +91,10 @@ class MembershipTool(object):
     security.declareProtected(ManagePortal, 'manage_portrait_fix')
     manage_portrait_fix = DTMLFile('../zmi/portrait_fix', globals())
 
+    @property
+    def acl_users(self):
+        return getToolByName(getSite(), 'acl_users')
+
     @security.protected(ManagePortal)
     def manage_setMemberAreaType(self, type_name, REQUEST=None):
         """ ZMI method to set the home folder type by its type name.
