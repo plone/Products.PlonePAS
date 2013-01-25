@@ -37,6 +37,9 @@ class NotSupported(Exception):
 
 
 class GroupsTool(object):
+    """ This utility accesses group data through an acl_users object.
+    """
+
     implements(IGroupTool)
 
     security = ClassSecurityInfo()
@@ -418,6 +421,7 @@ class GroupsTool(object):
             # member data tool at least partially.
             return g
 
+        # TODO Is this section at all necessary?
         parent = getSite()
         # TODO Remove once groupdata is moved to a utility
         base = getattr(parent, 'aq_base', None)
