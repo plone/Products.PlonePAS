@@ -1,5 +1,6 @@
 from zope.component import getUtility
 from zope.interface import implements
+from zope.site.hooks import getSite
 
 from Acquisition import aq_base
 from Acquisition import aq_inner
@@ -17,8 +18,6 @@ from ZPublisher.Converters import type_converters
 
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.utils import registerToolInterface
-from Products.CMFCore.utils import UniqueObject
 from Products.PluggableAuthService.interfaces.authservice \
         import IPluggableAuthService
 from Products.PluggableAuthService.PluggableAuthService \
@@ -40,14 +39,11 @@ logger = logging.getLogger('PlonePAS')
 _marker = object()
 
 
-class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
+class GroupDataTool(PropertyManager):
     """This tool wraps group objects, allowing transparent access to
     properties.
     """
 
-    id = 'portal_groupdata'
-    meta_type = "PlonePAS GroupData Tool"
-    toolicon = 'tool.gif'
     implements(IGroupDataTool)
 
     _v_temps = None
@@ -97,10 +93,6 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
         self._members[id] = aq_base(g)
 
 
-InitializeClass(GroupDataTool)
-registerToolInterface('portal_groupdata', IGroupDataTool)
-
-
 class GroupData(SimpleItem):
 
     implements(IGroupData, IManageCapabilities)
@@ -115,6 +107,10 @@ class GroupData(SimpleItem):
         # Make a temporary reference to the tool.
         # The reference will be removed by notifyModified().
         self._tool = tool
+
+    @property
+    def acl_users(self):
+        return getToolByName(getSite(), 'acl_users')
 
     def _getGRUF(self,):
         return self.acl_users
@@ -219,8 +215,8 @@ class GroupData(SimpleItem):
         Return true if the #current# user can administrate this group
         """
         user = getSecurityManager().getUser()
-        tool = self.getTool()
-        portal = getToolByName(tool, 'portal_url').getPortalObject()
+        site = getSite()
+        portal = getToolByName(site, 'portal_url').getPortalObject()
 
         # Has manager users pemission?
         if user.has_permission(Permissions.manage_users, portal):
@@ -488,7 +484,7 @@ class GroupData(SimpleItem):
         return False
 
     def _groupdataHasProperty(self, prop_name):
-        gdata = getToolByName(self, 'portal_groupdata', None)
+        gdata = getUtility(IGroupDataTool)
         if gdata:
             return gdata.hasProperty(prop_name)
         return 0

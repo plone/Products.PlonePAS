@@ -7,6 +7,7 @@ from Products.PluggableAuthService.interfaces.plugins \
     import IUserEnumerationPlugin
 
 from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
 from Products.PlonePAS.tests import base
@@ -85,7 +86,7 @@ class PropertiesTest(base.TestCase):
 
     def test_group_properties(self):
         gt = getUtility(IGroupTool)
-        gd = getToolByName(self.portal, 'portal_groupdata')
+        gd = getUtility(IGroupDataTool)
 
         self.loginAsPortalOwner()
 

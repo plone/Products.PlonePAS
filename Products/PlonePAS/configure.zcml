@@ -32,6 +32,11 @@
     factory=".tools.groups.GroupsTool" />
 
   <utility
+    provides=".interfaces.group.IGroupDataTool"
+    factory=".tools.groupdata.GroupDataTool" />
+
+
+  <utility
     provides=".interfaces.membership.IMembershipTool"
     factory=".tools.membership.MembershipTool" />
 

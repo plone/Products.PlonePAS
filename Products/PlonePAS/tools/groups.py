@@ -1,5 +1,6 @@
 import logging
 
+from zope.component import getUtility
 from zope.interface import implements
 from zope.site.hooks import getSite
 
@@ -19,6 +20,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.group import IGroupTool
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
@@ -130,6 +132,7 @@ class GroupsTool(object):
             p_groups = set(self.getGroupsForPrincipal(g))
             rmgroups = p_groups - groupset
             for gid in rmgroups:
+                # TODO Should we check for all autogroups instead?
                 if gid != 'AuthenticatedUsers':
                     self.removePrincipalFromGroup(g, gid)
 
@@ -423,21 +426,16 @@ class GroupsTool(object):
             # member data tool at least partially.
             return g
 
-        # TODO Is this section at all necessary?
-        parent = getSite()
-        # TODO Remove once groupdata is moved to a utility
-        base = getattr(parent, 'aq_base', None)
-        if hasattr(base, 'portal_groupdata'):
-            # Get portal_groupdata to do the wrapping.
-            gd = getToolByName(parent, 'portal_groupdata')
-            try:
-                #log("wrapping group %s" % g)
-                portal_group = gd.wrapGroup(g)
-                return portal_group
-            except ConflictError:
-                raise
-            except:
-                logger.exception('Error during wrapGroup')
+        # Get portal_groupdata to do the wrapping.
+        gd = getUtility(IGroupDataTool)
+        try:
+            #log("wrapping group %s" % g)
+            portal_group = gd.wrapGroup(g)
+            return portal_group
+        except ConflictError:
+            raise
+        except:
+            logger.exception('Error during wrapGroup')
         # Failed.
         return g
 

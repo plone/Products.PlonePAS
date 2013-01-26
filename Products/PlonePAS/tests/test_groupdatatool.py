@@ -8,6 +8,7 @@ from Products.PloneTestCase.ptc import default_user
 
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.membership import IMembershipTool
 
 
@@ -22,7 +23,7 @@ class TestGroupDataTool(base.TestCase):
     def afterSetUp(self):
         self.acl_users = self.portal.acl_users
         self.groups = getUtility(IGroupTool)
-        self.groupdata = self.portal.portal_groupdata
+        self.groupdata = getUtility(IGroupDataTool)
         self.groups.addGroup('foo')
         # MUST reset _v_ attributes!
         self.groupdata._v_temps = None
@@ -46,7 +47,7 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         self.memberdata = getUtility(IMemberDataTool)
         self.acl_users = self.portal.acl_users
         self.groups = getUtility(IGroupTool)
-        self.groupdata = self.portal.portal_groupdata
+        self.groupdata = getUtility(IGroupDataTool)
         self.groups.addGroup('foo')
         if 'auto_group' in self.acl_users:
             self.acl_users.manage_delObjects(['auto_group'])
@@ -63,7 +64,7 @@ class TestGroupData(base.TestCase, WarningInterceptor):
 
     def testGetTool(self):
         g = self.groups.getGroupById('foo')
-        self.assertEqual(g.getTool().getId(), 'portal_groupdata')
+        self.assertTrue(IGroupDataTool.providedBy(g.getTool()))
 
     def testGetGroupMembers(self):
         g = self.groups.getGroupById('foo')

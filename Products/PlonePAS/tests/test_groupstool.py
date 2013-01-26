@@ -11,6 +11,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.PloneTestCase.ptc import default_user
 
 from Products.PlonePAS.interfaces.group import IGroupTool
+from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
@@ -27,7 +28,7 @@ class GroupsToolTest(base.TestCase):
 
     def afterSetUp(self):
         self.gt = gt = getUtility(IGroupTool)
-        self.gd = gd = getToolByName(self.portal, 'portal_groupdata')
+        self.gd = gd = getUtility(IGroupDataTool)
 
         self.group_id = 'group1'
         # Create a new Group

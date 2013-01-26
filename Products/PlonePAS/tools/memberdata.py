@@ -55,7 +55,7 @@ class MemberDataTool(PropertyManager):
 
     @property
     def acl_users(self):
-        getToolByName(getSite(), 'acl_users')
+        return getToolByName(getSite(), 'acl_users')
 
     @security.private
     def registerMemberData(self, m, id):
