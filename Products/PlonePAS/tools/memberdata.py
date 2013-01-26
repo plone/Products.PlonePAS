@@ -57,7 +57,7 @@ class MemberDataTool(PropertyManager):
     def acl_users(self):
         getToolByName(getSite(), 'acl_users')
 
-    security.declarePrivate('registerMemberData')
+    @security.private
     def registerMemberData(self, m, id):
         """ Add the given member data to the _members btree.
         """
@@ -78,7 +78,7 @@ class MemberDataTool(PropertyManager):
         if member_id in self.portraits:
             self.portraits._delObject(member_id)
 
-    security.declarePrivate('getMemberDataContents')
+    @security.private
     def getMemberDataContents(self):
         '''
         Return the number of members stored in the _members
@@ -98,7 +98,7 @@ class MemberDataTool(PropertyManager):
         return [{'member_count': member_count,
                  'orphan_count': orphan_count}]
 
-    security.declarePrivate('pruneMemberDataContents')
+    @security.private
     def pruneMemberDataContents(self):
         '''
         Compare the user IDs stored in the member data
@@ -121,7 +121,7 @@ class MemberDataTool(PropertyManager):
             if member_id not in user_list:
                 self.portraits._delObject(member_id)
 
-    security.declareProtected(ManagePortal, 'purgeMemberDataContents')
+    @security.protected(ManagePortal)
     def purgeMemberDataContents(self):
         '''
         Delete ALL MemberData information. This is required for us as we change
@@ -135,7 +135,7 @@ class MemberDataTool(PropertyManager):
 
         return "Done."
 
-    security.declarePrivate("updateMemberDataContents")
+    @security.private
     def updateMemberDataContents(self,):
         """Update former MemberData objects to new MemberData objects
         """
@@ -171,7 +171,7 @@ class MemberDataTool(PropertyManager):
 
         return count
 
-    security.declarePrivate('searchMemberDataContents')
+    @security.private
     def searchMemberDataContents(self, search_param, search_term):
         """
         Search members.
@@ -200,7 +200,7 @@ class MemberDataTool(PropertyManager):
                                     'email': memberProperty('email', '')})
         return res
 
-    security.declarePublic('searchFulltextForMembers')
+    @security.public
     def searchFulltextForMembers(self, s):
         """search for members which do have string 's' in name, email or full
         name (if defined)
@@ -462,7 +462,7 @@ class MemberData(BaseMemberData):
 
     ## plugin getters
 
-    security.declarePrivate('_getPlugins')
+    @security.private
     def _getPlugins(self):
         return self.acl_users.plugins
 
