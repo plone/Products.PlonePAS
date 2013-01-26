@@ -5,6 +5,7 @@ from cStringIO import StringIO
 import transaction
 from zope import event
 from zope.component import getUtility
+from zope.globalrequest import getRequest
 from zope.interface import implements
 from zope.site.hooks import getSite
 
@@ -424,7 +425,7 @@ class MembershipTool(object):
         # XXX: this method violates the rules for tools/utilities:
         # it depends on self.REQUEST
         if REQUEST is None:
-            REQUEST = getSite().REQUEST
+            REQUEST = getRequest()
             warn("credentialsChanged should be called with 'REQUEST' as "
                  "second argument. The BBB code will be removed in CMF 2.3.",
                  DeprecationWarning, stacklevel=2)
