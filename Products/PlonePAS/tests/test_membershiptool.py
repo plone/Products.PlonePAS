@@ -11,8 +11,8 @@ from OFS.Image import Image
 from zExceptions import BadRequest
 from zope.component import getUtility
 
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
+from Products.CMFCore.interfaces import IMemberDataTool
 
 from Products.PloneTestCase.ptc import default_password
 from Products.PloneTestCase.ptc import default_user
@@ -33,7 +33,7 @@ class MembershipToolTest(base.TestCase):
 
     def afterSetUp(self):
         self.mt = mt = getUtility(IMembershipTool)
-        self.md = md = getToolByName(self.portal, 'portal_memberdata')
+        self.md = md = getUtility(IMemberDataTool)
 
         self.member_id = 'member1'
         # Create a new Member
@@ -119,7 +119,7 @@ class MemberAreaTest(base.TestCase):
 
     def afterSetUp(self):
         self.mt = mt = getUtility(IMembershipTool)
-        self.md = md = getToolByName(self.portal, 'portal_memberdata')
+        self.md = md = getUtility(IMemberDataTool)
         # Enable member-area creation
         self.mt.memberareaCreationFlag = 1
         # Those are all valid chars in Zope.
@@ -582,7 +582,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def test_bug4333_delete_user_remove_memberdata(self):
         # delete user should delete portal_memberdata
-        memberdata = self.portal.portal_memberdata
+        memberdata = getUtility(IMemberDataTool)
         self.setRoles(['Manager'])
         self.addMember('barney', 'Barney Rubble', 'barney@bedrock.com',
                        ['Member'], '2002-01-01')
@@ -620,12 +620,13 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # Let's add one
         bad_file = Image(id=default_user, title='',
                                file=StringIO('<div>This is a lie!!!</div>'))
+        memberdata = getUtility(IMemberDataTool)
         # Manually set a bad image using private methods
-        self.portal.portal_memberdata._setPortrait(bad_file, default_user)
+        memberdata._setPortrait(bad_file, default_user)
         self.assertEqual(self.membership.getBadMembers(), [default_user])
         # Try an empty image
         empty_file = Image(id=default_user, title='', file=StringIO(''))
-        self.portal.portal_memberdata._setPortrait(empty_file, default_user)
+        memberdata._setPortrait(empty_file, default_user)
         self.assertEqual(self.membership.getBadMembers(), [])
         # And a good image
         self.membership.changeMemberPortrait(self.makeRealImage(),
@@ -759,7 +760,7 @@ class TestMemberareaSetup(base.TestCase):
 class TestSearchForMembers(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
-        self.memberdata = self.portal.portal_memberdata
+        self.memberdata = getUtility(IMemberDataTool)
         self.membership = getUtility(IMembershipTool)
         # Don't let default_user disturb results
         self.portal.acl_users._doDelUsers([default_user])

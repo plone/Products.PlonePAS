@@ -1023,6 +1023,7 @@ class MembershipTool(object):
     def getBadMembers(self):
         """Will search for members with bad images in the portal_memberdata
         delete their portraits and return their member ids"""
+
         memberdata = getToolByName(getSite(), 'portal_memberdata')
         portraits = getattr(memberdata, 'portraits', None)
         if portraits is None:

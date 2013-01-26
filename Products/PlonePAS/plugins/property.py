@@ -249,7 +249,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
             return ()
 
         criteria = copy.copy(kw)
-
         users = [(user, data) for (user, data) in self._storage.items()
                     if self.testMemberData(data, criteria, exact_match)
                         and not data.get('isGroup', False)]

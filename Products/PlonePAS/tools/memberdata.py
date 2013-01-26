@@ -1,15 +1,20 @@
+from BTrees.OOBTree import OOBTree
 from App.class_init import InitializeClass
 from Acquisition import aq_base
 from AccessControl import ClassSecurityInfo
+from OFS.PropertyManager import PropertyManager
 
 from zope.component import getUtility
 from zope.interface import implements
+from zope.site.hooks import getSite
 
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.permissions import ManagePortal
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
+from Products.CMFCore.interfaces import IMemberDataTool
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
 
 from Products.PluggableAuthService.interfaces.authservice \
     import IPluggableAuthService
@@ -30,17 +35,35 @@ from AccessControl.requestmethod import postonly
 _marker = object()
 
 
-class MemberDataTool(BaseTool):
+class MemberDataTool(PropertyManager):
     """PAS-specific implementation of memberdata tool.
     """
 
-    meta_type = "PlonePAS MemberData Tool"
+    implements(IMemberDataTool)
+
     security = ClassSecurityInfo()
-    toolicon = 'tool.gif'
+    _properties = ()
 
     def __init__(self):
-        BaseTool.__init__(self)
+        # BaseTool.__init__(self)
+        self._members = OOBTree()
         self.portraits = BTreeFolder2(id='portraits')
+
+        self._setProperty('email', '', 'string')
+        self._setProperty('portal_skin', '', 'string')
+        self._setProperty('listed', '', 'boolean')
+        self._setProperty('login_time', '2000/01/01', 'date')
+        self._setProperty('last_login_time', '2000/01/01', 'date')
+
+    @property
+    def acl_users(self):
+        getToolByName(getSite(), 'acl_users')
+
+    security.declarePrivate('registerMemberData')
+    def registerMemberData(self, m, id):
+        """ Add the given member data to the _members btree.
+        """
+        self._members[id] = aq_base(m)
 
     def _getPortrait(self, member_id):
         "return member_id's portrait if you can "
@@ -220,12 +243,17 @@ class MemberDataTool(BaseTool):
         return self.acl_users.plugins
 
 InitializeClass(MemberDataTool)
+registerToolInterface('portal_memberdata', IMemberDataTool)
 
 
 class MemberData(BaseMemberData):
 
     security = ClassSecurityInfo()
     implements(IManageCapabilities)
+
+    @property
+    def acl_users(self):
+        return getToolByName(getSite(), 'acl_users')
 
     ## setProperties uses setMemberProperties. no need to override.
 
@@ -234,7 +262,6 @@ class MemberData(BaseMemberData):
         member. Ignores 'force_local', which is not reliably present.
         """
         sheets = None
-
         # We could pay attention to force_local here...
         if not IPluggableAuthService.providedBy(self.acl_users):
             # Defer to base impl in absence of PAS, a PAS user, or
@@ -345,6 +372,7 @@ class MemberData(BaseMemberData):
 
     def _memberdataHasProperty(self, prop_name):
         mdata = getToolByName(self, 'portal_memberdata', None)
+        import pdb; pdb.set_trace( )
         if mdata:
             return mdata.hasProperty(prop_name)
         return 0

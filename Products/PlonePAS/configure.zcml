@@ -35,4 +35,8 @@
     provides=".interfaces.membership.IMembershipTool"
     factory=".tools.membership.MembershipTool" />
 
+  <utility
+    provides="Products.CMFCore.interfaces.IMemberDataTool"
+    factory=".tools.memberdata.MemberDataTool" />
+
 </configure>

@@ -15,6 +15,7 @@ from OFS.SimpleItem import SimpleItem
 from OFS.PropertyManager import PropertyManager
 from ZPublisher.Converters import type_converters
 
+from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.CMFCore.utils import UniqueObject
@@ -164,7 +165,7 @@ class GroupData(SimpleItem):
         Returns a list of the portal_memberdata-ish members of the group.
         This doesn't include TRANSITIVE groups/users.
         """
-        md = self.portal_memberdata
+        md = getUtility(IMemberDataTool)
         gtool = getUtility(IGroupTool)
         ret = []
         for u_name in gtool.getGroupMembers(self.getId()):
@@ -191,7 +192,7 @@ class GroupData(SimpleItem):
         Returns a list of the portal_memberdata-ish members of the group.
         This will include transitive groups / users
         """
-        md = self.portal_memberdata
+        md = getUtility(IMemberDataTool)
         ret = []
         for u_name in self.getGroup().getMemberIds():
             usr = self._getGRUF().getUserById(u_name)

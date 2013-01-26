@@ -2,6 +2,7 @@ from AccessControl import Permissions
 from AccessControl import Unauthorized
 from zope.component import getUtility
 
+from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.PloneTestCase.ptc import default_user
 
@@ -42,7 +43,7 @@ class TestGroupData(base.TestCase, WarningInterceptor):
 
     def afterSetUp(self):
         self.membership = getUtility(IMembershipTool)
-        self.memberdata = self.portal.portal_memberdata
+        self.memberdata = getUtility(IMemberDataTool)
         self.acl_users = self.portal.acl_users
         self.groups = getUtility(IGroupTool)
         self.groupdata = self.portal.portal_groupdata
