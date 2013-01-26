@@ -11,7 +11,6 @@ from zope.site.hooks import getSite
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
-from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
@@ -45,7 +44,6 @@ class MemberDataTool(PropertyManager):
     _properties = ()
 
     def __init__(self):
-        # BaseTool.__init__(self)
         self._members = OOBTree()
         self.portraits = BTreeFolder2(id='portraits')
 
@@ -80,6 +78,26 @@ class MemberDataTool(PropertyManager):
         if member_id in self.portraits:
             self.portraits._delObject(member_id)
 
+    security.declarePrivate('getMemberDataContents')
+    def getMemberDataContents(self):
+        '''
+        Return the number of members stored in the _members
+        BTree and some other useful info
+        '''
+        membertool = getToolByName(self, 'portal_membership')
+        members = self._members
+        user_list = membertool.listMemberIds()
+        member_list = members.keys()
+        member_count = len(members)
+        orphan_count = 0
+
+        for member in member_list:
+            if member not in user_list:
+                orphan_count = orphan_count + 1
+
+        return [{'member_count': member_count,
+                 'orphan_count': orphan_count}]
+
     security.declarePrivate('pruneMemberDataContents')
     def pruneMemberDataContents(self):
         '''
@@ -87,10 +105,16 @@ class MemberDataTool(PropertyManager):
         tool with the list in the actual underlying acl_users
         and delete anything not in acl_users
         '''
-        BaseTool.pruneMemberDataContents(self)
+
         membertool = getUtility(IMembershipTool)
-        portraits = self.portraits
+        members = self._members
         user_list = membertool.listMemberIds()
+
+        for member_id in list(members.keys()):
+            if member_id not in user_list:
+                del members[member_id]
+
+        portraits = self.portraits
 
         for tuple in portraits.items():
             member_id = tuple[0]
@@ -372,7 +396,6 @@ class MemberData(BaseMemberData):
 
     def _memberdataHasProperty(self, prop_name):
         mdata = getToolByName(self, 'portal_memberdata', None)
-        import pdb; pdb.set_trace( )
         if mdata:
             return mdata.hasProperty(prop_name)
         return 0
