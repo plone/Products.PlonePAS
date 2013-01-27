@@ -18,6 +18,7 @@ from ZPublisher.Converters import type_converters
 
 from Products.CMFCore.interfaces import IMemberDataTool
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
 from Products.PluggableAuthService.interfaces.authservice \
         import IPluggableAuthService
 from Products.PluggableAuthService.PluggableAuthService \
@@ -91,6 +92,10 @@ class GroupDataTool(PropertyManager):
         entries.
         '''
         self._members[id] = aq_base(g)
+
+
+InitializeClass(GroupDataTool)
+registerToolInterface('portal_groupdata', IGroupDataTool)
 
 
 class GroupData(SimpleItem):
