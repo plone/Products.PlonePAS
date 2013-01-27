@@ -613,6 +613,12 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertRaises(IOError, self.membership.changeMemberPortrait,
                           bad_file, default_user)
 
+    def beforeTearDown(self):
+        self._free_warning_output()
+
+
+class TestBadMembers(TestMembershipTool):
+
     def testGetBadMembers(self):
         # Should list members with bad images
         # We should not have any bad images out of the box
@@ -632,9 +638,6 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.membership.changeMemberPortrait(self.makeRealImage(),
                                              default_user)
         self.assertEqual(self.membership.getBadMembers(), [])
-
-    def beforeTearDown(self):
-        self._free_warning_output()
 
 
 class TestCreateMemberarea(base.TestCase):
