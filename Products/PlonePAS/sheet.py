@@ -12,7 +12,7 @@ from zope.component import getUtility
 from zope.interface import implements
 
 from DateTime.DateTime import DateTime
-from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
@@ -110,7 +110,7 @@ class MutablePropertySheet(UserPropertySheet):
     def _getPropertyProviderForUser(self, user):
         # XXX This assumes that the acl_users that we want is in the portal
         # root. This may not always be the case.
-        portal = getUtility(ISiteRoot)
+        portal = getUtility(IPloneSiteRoot)
         return portal.acl_users._getOb(self._id)
 
 

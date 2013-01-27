@@ -29,7 +29,6 @@ from Acquisition import aq_parent
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ChangeLocalRoles
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.permissions import ManageUsers
@@ -39,6 +38,7 @@ from Products.CMFCore.permissions import View
 from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserInitialLoginInEvent
@@ -640,7 +640,7 @@ class MembershipTool(object):
 
         # Delete members' local roles.
         if delete_localroles:
-            self.deleteLocalRoles(getUtility(ISiteRoot), member_ids,
+            self.deleteLocalRoles(getUtility(IPloneSiteRoot), member_ids,
                                    reindex=1, recursive=1)
 
         return tuple(member_ids)
