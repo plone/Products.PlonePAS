@@ -1,5 +1,6 @@
 import pkg_resources
 
+from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
@@ -88,7 +89,8 @@ def installPAS(portal):
     # See: http://twitter.com/#!/sidneidasilva/status/14030732112429056
     # And here's the original commit:
     # http://dev.plone.org/collective/changeset/10720/PlonePAS/trunk/Extensions/Install.py
-    migrate_root_uf(portal)
+    if aq_parent(portal):
+        migrate_root_uf(portal)
 
 
 def setupPlonePAS(context):
