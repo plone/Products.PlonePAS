@@ -141,7 +141,7 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         g = self.groups.getGroupById('foo')
         self.groups.editGroup(g.getId(), roles=['Member'])
         g = self.groups.getGroupById('foo')
-        self.failUnless(g.has_role('Member'))
+        self.assertTrue(g.has_role('Member'))
 
     def beforeTearDown(self):
         self._free_warning_output()

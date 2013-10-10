@@ -93,7 +93,7 @@ class BasicOpsTestCase(base.TestCase):
         self.createUser()
         self.assertTrue(self.acl_users.getUser("created_user"))
         self.acl_users.userFolderDelUsers(['created_user'])
-        self.failIf(self.acl_users.getUser("created_user"))
+        self.assertFalse(self.acl_users.getUser("created_user"))
 
     def test_principal_del_event(self):
         eventsFired = []

@@ -19,10 +19,10 @@ class PropertiesTest(base.TestCase):
                      {'email': 'user1@host.com',
                       'fullname': 'User #1'})
         member = mt.getMemberById('user1')
-        self.failIf(member is None)
+        self.assertFalse(member is None)
 
         # Assert user doesn't have the property yet
-        self.failIf(member.hasProperty('age'))
+        self.assertFalse(member.hasProperty('age'))
 
         # Add new property
         md.manage_addProperty('age', 20, 'int')
@@ -63,7 +63,7 @@ class PropertiesTest(base.TestCase):
         member = mt.getMemberById('user1')
 
         # Assert property is gone
-        self.failIf(member.hasProperty('age'))
+        self.assertFalse(member.hasProperty('age'))
 
         # Get the property, should return default (None)
         got = member.getProperty('age', None)
@@ -90,10 +90,10 @@ class PropertiesTest(base.TestCase):
                      {'email': 'group1@host.com',
                       'title': 'Group #1'})
         group = gt.getGroupById('group1')
-        self.failIf(group is None)
+        self.assertFalse(group is None)
 
         # Assert group doesn't have the property yet
-        self.failIf(group.hasProperty('karma'))
+        self.assertFalse(group.hasProperty('karma'))
 
         # Add new property
         gd.manage_addProperty('karma', 20, 'int')
@@ -134,7 +134,7 @@ class PropertiesTest(base.TestCase):
         group = gt.getGroupById('group1')
 
         # Assert property is gone
-        self.failIf(group.hasProperty('karma'))
+        self.assertFalse(group.hasProperty('karma'))
 
         # Get the property, should return default (None)
         got = group.getProperty('karma', None)
@@ -196,18 +196,18 @@ class PropertySearchTest(base.TestCase):
                      {'email': 'member1@host.com',
                       'title': 'Member #1'})
         member = self.mt.getMemberById('member1')
-        self.failIf(member is None)
+        self.assertFalse(member is None)
 
         self.mt.addMember('member2', 'pw', ['Member'], [],
                      {'email': 'user2@otherhost.com',
                       'fullname': 'User #2'})
         member = self.mt.getMemberById('member2')
-        self.failIf(member is None)
+        self.assertFalse(member is None)
 
         # Add a Group to make sure searchUsers isn't returning them in results.
         self.gt.addGroup('group1', title="Group 1")
         group = self.gt.getGroupById('group1')
-        self.failIf(group is None)
+        self.assertFalse(group is None)
 
         self.pas = getToolByName(self.portal, "acl_users")
         for plugin in self.pas.plugins \
@@ -262,7 +262,7 @@ class PropertySearchTest(base.TestCase):
            See http://dev.plone.org/plone/ticket/9435"""
         results = self.pas.searchUsers()
         resultIds = [a['id'] for a in results]
-        self.failIf('group1' in resultIds)
+        self.assertFalse('group1' in resultIds)
 
     def testSearchEmptyId(self):
         self.assertEqual(self.pas.mutable_properties.enumerateUsers(id=''), ())

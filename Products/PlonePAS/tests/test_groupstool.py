@@ -36,23 +36,23 @@ class GroupsToolTest(base.TestCase):
     def test_get_group(self):
         # Use PAS (monkeypatched) API method to get a group by id.
         group = self.portal.acl_users.getGroup(self.group_id)
-        self.failIf(group is None)
+        self.assertFalse(group is None)
 
         # Should be wrapped into the GroupManagement, which is wrapped
         # into the PAS.
         got = aq_base(aq_parent(aq_parent(group)))
         expected = aq_base(self.portal.acl_users)
-        self.assertEquals(got, expected)
+        self.assertEqual(got, expected)
 
-        self.failUnless(isinstance(group, PloneGroup))
+        self.assertTrue(isinstance(group, PloneGroup))
 
     def test_get_group_by_id(self):
         # Use tool way of getting group by id. This returns a
         # GroupData object wrapped by the group
         group = self.gt.getGroupById(self.group_id)
-        self.failIf(group is None)
-        self.failUnless(isinstance(group, GroupData))
-        self.failUnless(isinstance(aq_parent(group), PloneGroup))
+        self.assertFalse(group is None)
+        self.assertTrue(isinstance(group, GroupData))
+        self.assertTrue(isinstance(aq_parent(group), PloneGroup))
 
     def test_edit_group(self):
         # Use the tool way to edit a group.
@@ -65,19 +65,19 @@ class GroupsToolTest(base.TestCase):
 
         # test edition of roles and properties
         group = self.gt.getGroupById(self.group_id)
-        self.failUnless(group.has_role('Manager'))
+        self.assertTrue(group.has_role('Manager'))
         self.assertEqual(group.getProperty('email'), properties['email'])
         self.assertEqual(group.getProperty('title'), properties['title'])
 
         # test for empty list of roles
         self.gt.editGroup(self.group_id, roles=[])
-        self.failUnless(group.has_role('Authenticated'))
+        self.assertTrue(group.has_role('Authenticated'))
 
         # test edition of group groups
         self.gt.editGroup(self.group_id, groups=['Reviewers'],
             **properties)
         group = self.gt.getGroupById(self.group_id)
-        self.failUnless('Reviewers' in group.getGroups())
+        self.assertTrue('Reviewers' in group.getGroups())
 
 
 class TestMethodProtection(base.TestCase):
@@ -136,7 +136,7 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
     def testGetGroupById(self):
         self.groups.addGroup('foo', [], [])
         g = self.groups.getGroupById('foo')
-        self.failIfEqual(g, None)
+        self.assertEqual(g, None)
 
     def testGetBadGroupById(self):
         g = self.groups.getGroupById('foo')

@@ -70,18 +70,18 @@ class GroupAwareRoleManagerTests(base.TestCase):
         # 'johndoe' should have 'foo_role' and 'bar_roles'
         got = garm.getRolesForPrincipal(johndoe)
         expected = ['foo_role', 'bar_role']
-        self.failUnlessEqual(set(got), set(expected))
+        self.assertEqual(set(got), set(expected))
 
         # For the users control panel, johndoe has only the 'foo_role'
         garm.REQUEST.set('__ignore_group_roles__', True)
         got = garm.getRolesForPrincipal(johndoe)
-        self.failUnlessEqual(got, ('foo_role',))
+        self.assertEqual(got, ('foo_role',))
 
         # Confirm we can get only the inherited roles
         garm.REQUEST.set('__ignore_group_roles__', False)
         garm.REQUEST.set('__ignore_direct_roles__', True)
         got = garm.getRolesForPrincipal(johndoe)
-        self.failUnlessEqual(got, ('bar_role',))
+        self.assertEqual(got, ('bar_role',))
 
         return
 
