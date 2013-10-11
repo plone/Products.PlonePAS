@@ -417,13 +417,13 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetMemberById(self):
         # This should work for portal users,
-        self.assertEqual(self.membership.getMemberById(default_user), None)
+        self.assertNotEqual(self.membership.getMemberById(default_user), None)
         self.assertEqual(self.membership.getMemberById('foo'), None)
-        self.assertEqual(self.membership.getMemberById(portal_owner), None)
+        self.assertNotEqual(self.membership.getMemberById(portal_owner), None)
 
     def testGetMemberByIdIsWrapped(self):
         member = self.membership.getMemberById(default_user)
-        self.assertEqual(member, None)
+        self.assertNotEqual(member, None)
         self.assertEqual(member.__class__.__name__, 'MemberData')
         self.assertEqual(member.aq_parent.__class__.__name__, 'PloneUser')
 
@@ -446,7 +446,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # Also see http://dev.plone.org/plone/ticket/1851
         self.logout()
         member = self.membership.getAuthenticatedMember()
-        self.assertEqual(member.__class__.__name__, 'MemberData')
+        self.assertNotEqual(member.__class__.__name__, 'MemberData')
         self.assertEqual(member.__class__.__name__, 'SpecialUser')
 
     def testIsAnonymousUser(self):
@@ -520,11 +520,11 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertEqual(self.folder.get_local_roles_for_userid('user2'), ())
 
     def testGetHomeFolder(self):
-        self.assertEqual(self.membership.getHomeFolder(), None)
+        self.assertNotEqual(self.membership.getHomeFolder(), None)
         self.assertEqual(self.membership.getHomeFolder('user2'), None)
 
     def testGetHomeUrl(self):
-        self.assertEqual(self.membership.getHomeUrl(), None)
+        self.assertNotEqual(self.membership.getHomeUrl(), None)
         self.assertEqual(self.membership.getHomeUrl('user2'), None)
 
     def testGetAuthenticatedMemberInfo(self):
@@ -601,8 +601,8 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
         self.membership.addMember('barney', 'secret', ['Member'], [])
         barney = self.membership.getMemberById('barney')
-        self.assertEqual(barney.getProperty('fullname'), 'Barney Rubble')
-        self.assertEqual(barney.getProperty('email'), 'barney@bedrock.com')
+        self.assertNotEqual(barney.getProperty('fullname'), 'Barney Rubble')
+        self.assertNotEqual(barney.getProperty('email'), 'barney@bedrock.com')
 
     def testBogusMemberPortrait(self):
         # Should change the portrait image

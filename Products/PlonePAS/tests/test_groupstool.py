@@ -136,7 +136,7 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
     def testGetGroupById(self):
         self.groups.addGroup('foo', [], [])
         g = self.groups.getGroupById('foo')
-        self.assertEqual(g, None)
+        self.assertNotEqual(g, None)
 
     def testGetBadGroupById(self):
         g = self.groups.getGroupById('foo')
