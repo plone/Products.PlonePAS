@@ -2,6 +2,22 @@ from setuptools import setup, find_packages
 
 version = '4.1.2.dev0'
 
+install_requires=[
+        'setuptools',
+        'plone.memoize',
+        'plone.session',
+        'plone.i18n',
+        'Products.CMFCore',
+        'Products.GenericSetup',
+        'Products.PluggableAuthService',
+        'Zope2 > 2.12.4',
+      ]
+
+try:
+    from collections import OrderedDict
+except ImportError:
+    install_requires.append('ordereddict')
+
 setup(name='Products.PlonePAS',
       version=version,
       description="PlonePAS adapts the PluggableAuthService for use by Plone.",
@@ -29,14 +45,5 @@ setup(name='Products.PlonePAS',
             'Products.Archetypes',
         ]
       ),
-      install_requires=[
-        'setuptools',
-        'plone.memoize',
-        'plone.session',
-        'plone.i18n',
-        'Products.CMFCore',
-        'Products.GenericSetup',
-        'Products.PluggableAuthService',
-        'Zope2 > 2.12.4',
-      ],
+      install_requires=install_requires,
 )

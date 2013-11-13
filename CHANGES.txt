@@ -7,6 +7,9 @@ Changelog
 - Don't try to migrate the root user folder if the portal has no parent.
   [davisagli]
 
+- Use batteries included odict implementation in favour of homegrown one.
+  [tomgross]
+
 
 4.1.1 (2013-03-05)
 ------------------
