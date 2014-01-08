@@ -922,9 +922,7 @@ class TestMemberInfoView(base.TestCase):
         for role in TEST_USER_ROLES:
             pas.portal_role_manager.doAssignRoleToPrincipal(TEST_USER_ID, role)
         self.portal.portal_groups.addGroup('Editors', [], [])
-        # neither A (TEST_USER_ID) nor B (TEST_USER_NAME) works, but one of them should
-        #self.setGroups(['Editors'], name=TEST_USER_ID)    # A
-        self.setGroups(['Editors'], name=TEST_USER_NAME)   # B
+        self.setGroups(['Editors'], name=TEST_USER_ID)
         self.login(TEST_USER_ID)
         user = getSecurityManager().getUser()
         self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))

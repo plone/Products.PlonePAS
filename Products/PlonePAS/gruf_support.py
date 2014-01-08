@@ -62,7 +62,7 @@ def userSetGroups(self, id, groupnames):
     plugins = self.plugins
     gtool = getToolByName(self, "portal_groups")
 
-    member = self.getUser(id)
+    member = self.getUserById(id)
     groupnameset = set(groupnames)
 
     # remove absent groups
