@@ -3,6 +3,7 @@ import unittest
 from cStringIO import StringIO
 
 from AccessControl.User import nobody
+from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_parent
@@ -25,6 +26,7 @@ from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
+from Products.PlonePAS.utils import getGroupsForPrincipal
 
 
 class MembershipToolTest(base.TestCase):
@@ -909,6 +911,32 @@ class TestMemberInfoView(base.TestCase):
         self.assertEqual(info['fullname'], None)
         self.assertEqual(info['name_or_id'], 'Anonymous User')
 
+    def testSetGroupsWithUserNameIdDifference(self):
+        # XXX these constants can be imported from plone.app.testing later
+        TEST_USER_NAME = 'test-user-2'
+        TEST_USER_ID = 'test_user_2_'
+        TEST_USER_PASSWORD = 'secret2'
+        TEST_USER_ROLES = ['Member',]
+        pas = self.portal['acl_users']
+        pas.source_users.addUser(TEST_USER_ID, TEST_USER_NAME, TEST_USER_PASSWORD)
+        for role in TEST_USER_ROLES:
+            pas.portal_role_manager.doAssignRoleToPrincipal(TEST_USER_ID, role)
+        self.portal.portal_groups.addGroup('Editors', [], [])
+        # neither A (TEST_USER_ID) nor B (TEST_USER_NAME) works, but one of them should
+        #self.setGroups(['Editors'], name=TEST_USER_ID)    # A
+        self.setGroups(['Editors'], name=TEST_USER_NAME)   # B
+        self.login(TEST_USER_ID)
+        user = getSecurityManager().getUser()
+        self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))
+        self.login()
+
+    def testSetGroupsWithSameUserNameAndId(self):
+        pas = self.portal['acl_users']
+        self.portal.portal_groups.addGroup('Editors', [], [])
+        self.setGroups(['Editors'])
+        self.login()
+        user = getSecurityManager().getUser()
+        self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))
 
 def test_suite():
     suite = unittest.TestSuite()
