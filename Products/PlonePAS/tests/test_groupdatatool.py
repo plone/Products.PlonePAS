@@ -2,7 +2,8 @@ from AccessControl import Permissions
 from AccessControl import Unauthorized
 
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
-from Products.PloneTestCase.ptc import default_user
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
 
 from Products.PlonePAS.tests import base
 
@@ -63,12 +64,12 @@ class TestGroupData(base.TestCase, WarningInterceptor):
 
     def testGetGroupMembers(self):
         g = self.groups.getGroupById('foo')
-        self.acl_users.userSetGroups(default_user, groupnames=['foo'])
-        self.assertEqual(g.getGroupMembers()[0].getId(), default_user)
+        self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
+        self.assertEqual(g.getGroupMembers()[0].getId(), TEST_USER_ID)
 
     def testGroupMembersAreWrapped(self):
         g = self.groups.getGroupById('foo')
-        self.acl_users.userSetGroups(default_user, groupnames=['foo'])
+        self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
         ms = g.getGroupMembers()
         self.assertEqual(ms[0].__class__.__name__, 'MemberData')
         self.assertEqual(ms[0].aq_parent.__class__.__name__, 'PloneUser')
@@ -78,14 +79,14 @@ class TestGroupData(base.TestCase, WarningInterceptor):
     def testAddMember(self):
         self.setPermissions([Permissions.manage_users])
         g = self.groups.getGroupById('foo')
-        g.addMember(default_user)
-        self.assertEqual(g.getGroupMembers()[0].getId(), default_user)
+        g.addMember(TEST_USER_ID)
+        self.assertEqual(g.getGroupMembers()[0].getId(), TEST_USER_ID)
 
     def testRemoveMember(self):
         self.setPermissions([Permissions.manage_users])
         g = self.groups.getGroupById('foo')
-        g.addMember(default_user)
-        g.removeMember(default_user)
+        g.addMember(TEST_USER_ID)
+        g.removeMember(TEST_USER_ID)
         self.assertEqual(len(g.getGroupMembers()), 0)
 
     def testSetGroupProperties(self):
@@ -96,9 +97,9 @@ class TestGroupData(base.TestCase, WarningInterceptor):
 
     def testSetMemberProperties(self):
         # For reference
-        m = self.membership.getMemberById(default_user)
+        m = self.membership.getMemberById(TEST_USER_ID)
         m.setMemberProperties({'email': 'foo@bar.com'})
-        md = self.membership.getMemberById(default_user)
+        md = self.membership.getMemberById(TEST_USER_ID)
         self.assertEqual(md.getProperty('email'), 'foo@bar.com')
 
     def testGetProperty(self):
@@ -125,8 +126,8 @@ class TestGroupData(base.TestCase, WarningInterceptor):
 
     def testGetRolesInContext(self):
         g = self.groups.getGroupById('foo')
-        self.acl_users.userSetGroups(default_user, groupnames=['foo'])
-        user = self.acl_users.getUser(default_user)
+        self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
+        user = self.acl_users.getUser(TEST_USER_NAME)
         self.assertEqual(user.getRolesInContext(self.folder).sort(),
                         ['Member', 'Authenticated', 'Owner'].sort())
         self.folder.manage_setLocalRoles(g.getId(), ['NewRole'])
@@ -156,34 +157,26 @@ class TestMethodProtection(base.TestCase):
 
     def testAnonAddMember(self):
         self.logout()
-        self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
+        self.assertRaises(Unauthorized, self.groupdata.addMember, TEST_USER_ID)
 
     def testAnonRemoveMember(self):
         self.logout()
         self.assertRaises(Unauthorized, self.groupdata.removeMember,
-                          default_user)
+                          TEST_USER_ID)
 
     def testMemberAddMember(self):
-        self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
+        self.assertRaises(Unauthorized, self.groupdata.addMember, TEST_USER_ID)
 
     def testMemberRemoveMember(self):
         self.assertRaises(Unauthorized, self.groupdata.removeMember,
-                          default_user)
+                          TEST_USER_ID)
 
     def testManagerAddMember(self):
         self.setPermissions([Permissions.manage_users])
-        self.groupdata.addMember(default_user)
+        self.groupdata.addMember(TEST_USER_ID)
 
     def testManagerRemoveMember(self):
         self.setPermissions([Permissions.manage_users])
-        self.groupdata.addMember(default_user)
-        self.groupdata.removeMember(default_user)
+        self.groupdata.addMember(TEST_USER_ID)
+        self.groupdata.removeMember(TEST_USER_ID)
 
-
-def test_suite():
-    from unittest import TestSuite, makeSuite
-    suite = TestSuite()
-    suite.addTest(makeSuite(TestGroupDataTool))
-    suite.addTest(makeSuite(TestGroupData))
-    suite.addTest(makeSuite(TestMethodProtection))
-    return suite

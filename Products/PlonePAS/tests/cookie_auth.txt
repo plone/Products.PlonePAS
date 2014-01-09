@@ -1,22 +1,22 @@
 Test for Cookie Auth
 ====================
 
-  >>> import base64
-  >>> from urllib import quote
   >>> from zope.interface import implementedBy
-  >>> from Products.PloneTestCase.ptc import portal_name
+  >>> from plone.app.testing import TEST_USER_NAME
+  >>> from plone.app.testing import TEST_USER_PASSWORD
 
 User in Plone Site
 ------------------
 
 Plone Site has PAS installed
 
-  >>> print self.portal.acl_users.meta_type
+  >>> portal = layer['portal']
+  >>> print portal.acl_users.meta_type
   Pluggable Auth Service
 
 User exists in the user folder inside the Plone Site.
 
-  >>> uf = self.portal.acl_users
+  >>> uf = portal.acl_users
   >>> print uf.meta_type
   Pluggable Auth Service
 
@@ -28,11 +28,12 @@ User exists in the user folder inside the Plone Site.
 
 Login to Plone Site using Basic Auth works.
 
-  >>> print http(r"""
-  ... GET /%s/manage HTTP/1.1
-  ... Authorization: Basic %s:%s
-  ... """ % (portal_name, user_name, user_password), handle_errors=False)
-  HTTP/1.1 200 OK...
+  >>> from plone.testing.z2 import Browser
+  >>> browser = Browser(layer['app'])
+  >>> browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
+  >>> browser.open('%s/manage' % portal.absolute_url())
+  >>> print browser.headers
+  Status: 200 Ok...
 
 Make sure cookie plugin is installed and activated.
 
@@ -58,8 +59,7 @@ Make sure cookie plugin is installed and activated.
   ...            print True
   <...IExtraction...> True
   <...IChallenge...> True
-  <...ICredentialsUpdate...> 
-  <...ICredentialsReset...> 
+  <...ICredentialsUpdate...> <...ICredentialsReset...>
 
 User in parent folder
 ---------------------
@@ -67,7 +67,7 @@ User in parent folder
 User Exists on the folder containing the Plone Site, which should be a
 Pluggable Auth Service too.
 
-  >>> uf = self.portal.aq_parent.acl_users
+  >>> uf = layer['app'].acl_users
   >>> print uf.meta_type
   Pluggable Auth Service
 
@@ -77,18 +77,22 @@ Pluggable Auth Service too.
   >>> uf.getUserById(user_name)
   <PropertiedUser 'baz'>
 
+  >>> import transaction
+  >>> transaction.commit()
+
 Login directly to containing folder using Basic Auth works.
 
-  >>> print http(r"""
-  ... GET /manage HTTP/1.1
-  ... Authorization: Basic %s:%s
-  ... """ % (user_name, user_password), handle_errors=False)
-  HTTP/1.1 200 OK...
+  >>> browser = Browser(layer['app'])
+  >>> browser.addHeader('Authorization', 'Basic %s:%s' % (user_name, user_password,))
+  >>> browser.open('%s/manage' % layer['app'].absolute_url())
+  >>> print browser.headers
+  Status: 200 Ok...
 
 Login to Plone Site using Basic Auth works.
 
-  >>> print http(r"""
-  ... GET /%s/manage HTTP/1.1
-  ... Authorization: Basic %s:%s
-  ... """ % (portal_name, user_name, user_password), handle_errors=False)
-  HTTP/1.1 200 OK...
+  >>> browser = Browser(layer['app'])
+  >>> browser.addHeader('Authorization', 'Basic %s:%s' % (user_name, user_password,))
+  >>> browser.open('%s/manage' % portal.absolute_url())
+  >>> print browser.headers
+  Status: 200 Ok...
+

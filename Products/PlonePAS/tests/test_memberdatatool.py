@@ -1,7 +1,7 @@
 from DateTime import DateTime
 from OFS.Image import Image
 
-from Products.PloneTestCase.ptc import default_user
+from plone.app.testing import TEST_USER_ID as default_user
 
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
@@ -70,9 +70,3 @@ class TestMemberDataTool(base.TestCase):
         self.assertEqual(len(search('bedrock.com')), 2)
         self.assertEqual(len(search('brubble')), 1)
 
-
-def test_suite():
-    from unittest import TestSuite, makeSuite
-    suite = TestSuite()
-    suite.addTest(makeSuite(TestMemberDataTool))
-    return suite

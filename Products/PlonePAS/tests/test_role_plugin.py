@@ -85,7 +85,3 @@ class GroupAwareRoleManagerTests(base.TestCase):
 
         return
 
-
-def test_suite():
-    return unittest.TestSuite(
-                (unittest.makeSuite(GroupAwareRoleManagerTests),))

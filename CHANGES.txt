@@ -10,7 +10,10 @@ Changelog
 - Use batteries included odict implementation in favour of homegrown one.
   [tomgross]
 
-- Use correct method to get user from id at gruf_support.
+- Use correct methods for getting users from id or names
+  [tomgross]
+
+- Ported tests to plone.app.testing
   [tomgross]
 
 4.1.1 (2013-03-05)

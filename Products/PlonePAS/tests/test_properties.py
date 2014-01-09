@@ -277,9 +277,3 @@ class PropertySearchTest(base.TestCase):
         results = self.pas.searchUsers(login='member1')
         self.assertEqual(results, ())
 
-
-def test_suite():
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(PropertiesTest))
-    suite.addTest(unittest.makeSuite(PropertySearchTest))
-    return suite
