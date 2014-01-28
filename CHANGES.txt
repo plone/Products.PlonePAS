@@ -1,10 +1,11 @@
 Changelog
 =========
 
-4.1.3 (unreleased)
+4.1.3 (2014-01-28)
 ------------------
 
-- Nothing changed yet.
+- Remove backwards-incompatible changes meant for Plone 5.
+  [esteele]
 
 
 4.1.2 (2014-01-27)
@@ -12,7 +13,6 @@ Changelog
 
 - Don't try to migrate the root user folder if the portal has no parent.
   [davisagli]
-
 
 - Use correct method to get user from id at gruf_support.
   [tomgross]
