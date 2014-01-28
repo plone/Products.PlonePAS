@@ -1,17 +1,21 @@
 import unittest
-import doctest
+from Testing import ZopeTestCase
 
 from Products.PlonePAS.tests import base
-
-from plone.testing import layered
-from plone.app.testing.bbb import PTC_FUNCTIONAL_TESTING
 
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(layered(
-        doctest.DocFileSuite('cookie_auth.txt', package='Products.PlonePAS.tests',
-                             optionflags=doctest.ELLIPSIS),
-        layer=PTC_FUNCTIONAL_TESTING))
-    suite.addTest(doctest.DocTestSuite('Products.PlonePAS.utils')),
+    DocFileSuite = ZopeTestCase.FunctionalDocFileSuite
+    DocTestSuite = ZopeTestCase.FunctionalDocTestSuite
+    tests = (
+        ('cookie_auth.txt', base.FunctionalTestCase),
+        )
+
+    for fname, klass in tests:
+        t = DocFileSuite(fname,
+                         test_class=klass,
+                         package='Products.PlonePAS.tests')
+        suite.addTest(t)
+    suite.addTest(DocTestSuite('Products.PlonePAS.utils')),
     return suite

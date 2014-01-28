@@ -19,3 +19,9 @@ class TestPASSearchView(base.TestCase):
                          [{'title': u'anthropologie'}, {'title': u'Économie'},
                           {'title': u'Sociologie'}])
 
+
+def test_suite():
+    from unittest import TestSuite, makeSuite
+    suite = TestSuite()
+    suite.addTest(makeSuite(TestPASSearchView))
+    return suite

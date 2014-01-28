@@ -7,8 +7,7 @@ from AccessControl import Unauthorized
 
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
+from Products.PloneTestCase.ptc import default_user
 
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
@@ -91,28 +90,28 @@ class TestMethodProtection(base.TestCase):
 
     def testAnonAddMember(self):
         self.logout()
-        self.assertRaises(Unauthorized, self.groupdata.addMember, TEST_USER_ID)
+        self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
 
     def testAnonRemoveMember(self):
         self.logout()
         self.assertRaises(Unauthorized, self.groupdata.removeMember,
-                          TEST_USER_ID)
+                          default_user)
 
     def testMemberAddMember(self):
-        self.assertRaises(Unauthorized, self.groupdata.addMember, TEST_USER_ID)
+        self.assertRaises(Unauthorized, self.groupdata.addMember, default_user)
 
     def testMemberRemoveMember(self):
         self.assertRaises(Unauthorized, self.groupdata.removeMember,
-                          TEST_USER_ID)
+                          default_user)
 
     def testManagerAddMember(self):
         self.setPermissions([Permissions.manage_users])
-        self.groupdata.addMember(TEST_USER_ID)
+        self.groupdata.addMember(default_user)
 
     def testManagerRemoveMember(self):
         self.setPermissions([Permissions.manage_users])
-        self.groupdata.addMember(TEST_USER_ID)
-        self.groupdata.removeMember(TEST_USER_ID)
+        self.groupdata.addMember(default_user)
+        self.groupdata.removeMember(default_user)
 
 
 class TestGroupsTool(base.TestCase, WarningInterceptor):
@@ -181,14 +180,14 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
 
     def testGetGroupsByUserId(self):
         self.groups.addGroup('foo', [], [])
-        self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
-        gs = self.groups.getGroupsByUserId(TEST_USER_ID)
+        self.acl_users.userSetGroups(default_user, groupnames=['foo'])
+        gs = self.groups.getGroupsByUserId(default_user)
         self.assertEqual(gs[0].getId(), 'foo')
 
     def testGroupsByUserIdAreWrapped(self):
         self.groups.addGroup('foo', [], [])
-        self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
-        gs = self.groups.getGroupsByUserId(TEST_USER_ID)
+        self.acl_users.userSetGroups(default_user, groupnames=['foo'])
+        gs = self.groups.getGroupsByUserId(default_user)
         self.assertEqual(gs[0].__class__.__name__, 'GroupData')
         self.assertEqual(gs[0].aq_parent.__class__.__name__, 'PloneGroup')
         self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__,
@@ -217,7 +216,7 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         self.groups.setGroupOwnership(g, doc)
         self.assertEqual(doc.getOwnerTuple()[1], 'foo')
         self.assertEqual(doc.get_local_roles_for_userid('foo'), ('Owner',))
-        self.assertEqual(doc.get_local_roles_for_userid(TEST_USER_ID),
+        self.assertEqual(doc.get_local_roles_for_userid(default_user),
                          ('Owner',))
 
     def testWrapGroup(self):
@@ -252,3 +251,10 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
     def beforeTearDown(self):
         self._free_warning_output()
 
+
+def test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(GroupsToolTest))
+    suite.addTest(unittest.makeSuite(TestMethodProtection))
+    suite.addTest(unittest.makeSuite(TestGroupsTool))
+    return suite

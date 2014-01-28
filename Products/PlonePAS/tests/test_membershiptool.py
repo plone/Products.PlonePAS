@@ -14,11 +14,10 @@ from zExceptions import BadRequest
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import PLONE_SITE_ID
+from Products.PloneTestCase.ptc import default_password
+from Products.PloneTestCase.ptc import default_user
+from Products.PloneTestCase.ptc import portal_name
+from Products.PloneTestCase.ptc import portal_owner
 
 from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.browser.member import PASMemberView
@@ -125,7 +124,6 @@ class MemberAreaTest(base.TestCase):
         self.mt.memberareaCreationFlag = 1
         # Those are all valid chars in Zope.
         self.mid = "Member #1 - Houston, TX. ($100)"
-        self.pas = self.portal.acl_users
         self.loginAsPortalOwner()
 
     def test_funky_member_ids_1(self):
@@ -133,7 +131,7 @@ class MemberAreaTest(base.TestCase):
         minfo = (mid, 'pw', ['Member'], [])
 
         # Create a new User
-        self.pas._doAddUser(*minfo)
+        self.portal.acl_users._doAddUser(*minfo)
         self.mt.createMemberArea, (mid)
 
     def test_funky_member_ids_2(self):
@@ -142,12 +140,12 @@ class MemberAreaTest(base.TestCase):
         minfo = (mid, 'pw', ['Member'], [])
 
         # Create a new User
-        self.pas._doAddUser(*minfo)
+        self.portal.acl_users._doAddUser(*minfo)
         self.mt.createMemberArea(mid)
 
     def test_memberareaCreationFlag_respected(self):
-        self.pas._doAddUser('foo', 'pw', ['Member'], [])
-        self.pas._doAddUser('bar', 'pw', ['Member'], [])
+        self.portal.acl_users._doAddUser('foo', 'pw', ['Member'], [])
+        self.portal.acl_users._doAddUser('bar', 'pw', ['Member'], [])
 
         self.assertFalse('foo' in self.portal.Members)
         self.assertFalse('bar' in self.portal.Members)
@@ -190,30 +188,30 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # .personal folders are history
         personal = getattr(self.folder, self.membership.personal_id, None)
         self.assertEqual(personal, None)
-        self.assertEqual(self.membership.getPersonalFolder(TEST_USER_ID), None)
+        self.assertEqual(self.membership.getPersonalFolder(default_user), None)
 
     def testGetPersonalFolderIfNoHome(self):
         # Should return None as the user has no home folder
         members = self.membership.getMembersFolder()
-        members._delObject(TEST_USER_ID)
-        self.assertEqual(self.membership.getPersonalFolder(TEST_USER_ID), None)
+        members._delObject(default_user)
+        self.assertEqual(self.membership.getPersonalFolder(default_user), None)
 
     def testGetPersonalPortrait(self):
         # Should return the default portrait
         self.assertEqual(
-            self.membership.getPersonalPortrait(TEST_USER_ID).getId(),
+            self.membership.getPersonalPortrait(default_user).getId(),
             'defaultUser.png')
 
     def testChangeOwnMemberPortrait(self):
         # Should change the portrait image
         # first we need a valid image
         image = self.makeRealImage()
-        self.membership.changeMemberPortrait(image, TEST_USER_ID)
+        self.membership.changeMemberPortrait(image, default_user)
         self.assertEqual(
-            self.membership.getPersonalPortrait(TEST_USER_ID).getId(),
-            TEST_USER_ID)
+            self.membership.getPersonalPortrait(default_user).getId(),
+            default_user)
         self.assertEqual(
-            self.membership.getPersonalPortrait(TEST_USER_ID).meta_type,
+            self.membership.getPersonalPortrait(default_user).meta_type,
             'Image')
 
     def testChangeOwnMemberPortraitWithEmailUsers(self):
@@ -258,13 +256,13 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
     def testDeleteOwnPersonalPortrait(self):
         # Should delete the portrait image
         image = self.makeRealImage()
-        self.membership.changeMemberPortrait(image, TEST_USER_ID)
+        self.membership.changeMemberPortrait(image, default_user)
         self.assertEqual(
-            self.membership.getPersonalPortrait(TEST_USER_ID).getId(),
-            TEST_USER_ID)
-        self.membership.deletePersonalPortrait(TEST_USER_ID)
+            self.membership.getPersonalPortrait(default_user).getId(),
+            default_user)
+        self.membership.deletePersonalPortrait(default_user)
         self.assertEqual(
-            self.membership.getPersonalPortrait(TEST_USER_ID).getId(),
+            self.membership.getPersonalPortrait(default_user).getId(),
             'defaultUser.png')
 
     def testCannotDeleteOtherPersonalPortrait(self):
@@ -292,9 +290,9 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
     def testGetPersonalPortraitWithoutPassingId(self):
         # Should return the logged in users portrait if no id is given
         image = self.makeRealImage()
-        self.membership.changeMemberPortrait(image, TEST_USER_ID)
+        self.membership.changeMemberPortrait(image, default_user)
         self.assertEqual(self.membership.getPersonalPortrait().getId(),
-                         TEST_USER_ID)
+                         default_user)
         self.assertEqual(self.membership.getPersonalPortrait().meta_type,
                          'Image')
 
@@ -321,7 +319,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
                          'Image')
 
         # Other users should be able to see your portrait.
-        self.login(TEST_USER_NAME)
+        self.login(default_user)
         self.assertEqual(
             self.membership.getPersonalPortrait(user_id).getId(),
             safe_id)
@@ -352,7 +350,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # Should return the members list
         members = self.membership.listMembers()
         self.assertEqual(len(members), 1)
-        self.assertEqual(members[0].getId(), TEST_USER_ID)
+        self.assertEqual(members[0].getId(), default_user)
 
     def testListMembersSkipsGroups(self):
         # Should only return real members, not groups
@@ -362,13 +360,13 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertEqual(len(uf.getUserNames()), 1)
         members = self.membership.listMembers()
         self.assertEqual(len(members), 1)
-        self.assertEqual(members[0].getId(), TEST_USER_ID)
+        self.assertEqual(members[0].getId(), default_user)
 
     def testListMemberIds(self):
         # Should return the members ids list
         memberids = self.membership.listMemberIds()
         self.assertEqual(len(memberids), 1)
-        self.assertEqual(memberids[0], TEST_USER_ID)
+        self.assertEqual(memberids[0], default_user)
 
     def testListMemberIdsSkipsGroups(self):
         # Should only return real members, not groups
@@ -378,7 +376,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertEqual(len(uf.getUserNames()), 1)
         memberids = self.membership.listMemberIds()
         self.assertEqual(len(memberids), 1)
-        self.assertEqual(memberids[0], TEST_USER_ID)
+        self.assertEqual(memberids[0], default_user)
 
     def testCurrentPassword(self):
         # Password checking should work
@@ -411,33 +409,33 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         groups.addGroup(group2, None, [], [])
         group = groups.getGroupById(group2)
         self.loginAsPortalOwner()
-        group.addMember(TEST_USER_ID)
-        self.login(TEST_USER_NAME)  # Back to normal
-        ugroups = self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
+        group.addMember(default_user)
+        self.login(default_user)  # Back to normal
+        ugroups = self.portal.acl_users.getUserById(default_user).getGroups()
         self.membership.setPassword('geheim')
         self.assertTrue(
-            self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
+            self.portal.acl_users.getUserById(default_user).getGroups()
                 == ugroups)
 
     def testGetMemberById(self):
         # This should work for portal users,
-        self.assertNotEqual(self.membership.getMemberById(TEST_USER_ID), None)
+        self.assertNotEqual(self.membership.getMemberById(default_user), None)
         self.assertEqual(self.membership.getMemberById('foo'), None)
-        self.assertNotEqual(self.membership.getMemberById(SITE_OWNER_NAME), None)
+        self.assertNotEqual(self.membership.getMemberById(portal_owner), None)
 
     def testGetMemberByIdIsWrapped(self):
-        member = self.membership.getMemberById(TEST_USER_ID)
+        member = self.membership.getMemberById(default_user)
         self.assertNotEqual(member, None)
         self.assertEqual(member.__class__.__name__, 'MemberData')
         self.assertEqual(member.aq_parent.__class__.__name__, 'PloneUser')
 
     def testGetAuthenticatedMember(self):
         member = self.membership.getAuthenticatedMember()
-        self.assertEqual(member.getUserName(), TEST_USER_NAME)
+        self.assertEqual(member.getUserName(), default_user)
 
     def testGetAuthenticatedMemberIsWrapped(self):
         member = self.membership.getAuthenticatedMember()
-        self.assertEqual(member.getUserName(), TEST_USER_NAME)
+        self.assertEqual(member.getUserName(), default_user)
         self.assertEqual(member.__class__.__name__, 'MemberData')
         self.assertEqual(member.aq_parent.__class__.__name__, 'PloneUser')
 
@@ -459,7 +457,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertTrue(self.membership.isAnonymousUser())
 
     def testWrapUserWrapsBareUser(self):
-        user = self.portal.acl_users.getUserById(TEST_USER_ID)
+        user = self.portal.acl_users.getUserById(default_user)
         # TODO: GRUF users are wrapped
         self.assertTrue(hasattr(user, 'aq_base'))
         user = aq_base(user)
@@ -470,7 +468,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
                          'PluggableAuthService')
 
     def testWrapUserWrapsWrappedUser(self):
-        user = self.portal.acl_users.getUserById(TEST_USER_ID)
+        user = self.portal.acl_users.getUserById(default_user)
         # TODO: GRUF users are wrapped
         self.assertTrue(hasattr(user, 'aq_base'))
         user = self.membership.wrapUser(user)
@@ -480,7 +478,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
                          'PluggableAuthService')
 
     def testWrapUserDoesntWrapMemberData(self):
-        user = self.portal.acl_users.getUserById(TEST_USER_ID)
+        user = self.portal.acl_users.getUserById(default_user)
         user.getMemberId = lambda x: 1
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'PloneUser')
@@ -506,11 +504,11 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testSetLocalRoles(self):
         self.assertTrue(
-            'Owner' in self.folder.get_local_roles_for_userid(TEST_USER_ID))
+            'Owner' in self.folder.get_local_roles_for_userid(default_user))
         self.setRoles(['Member', 'Reviewer'])
-        self.membership.setLocalRoles(self.folder, [TEST_USER_ID, 'user2'],
+        self.membership.setLocalRoles(self.folder, [default_user, 'user2'],
                                       'Reviewer')
-        self.assertEqual(self.folder.get_local_roles_for_userid(TEST_USER_ID),
+        self.assertEqual(self.folder.get_local_roles_for_userid(default_user),
                          ('Owner', 'Reviewer'))
         self.assertEqual(self.folder.get_local_roles_for_userid('user2'),
                          ('Reviewer',))
@@ -545,7 +543,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesIncludesLocalRolesOnObjectForManager(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(TEST_USER_ID,
+        self.folder.manage_setLocalRoles(default_user,
                                          ('Manager', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.assertTrue('my_test_role' in roles,
@@ -553,7 +551,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesIncludesLocalRolesOnObjectForAssignees(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(TEST_USER_ID,
+        self.folder.manage_setLocalRoles(default_user,
                                          ('my_test_role', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.assertTrue('Owner' in roles)
@@ -562,7 +560,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesForManager(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(TEST_USER_ID, ('Manager', 'Owner'))
+        self.folder.manage_setLocalRoles(default_user, ('Manager', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.assertTrue('Manager' in roles)
         self.assertTrue('Owner' in roles)
@@ -576,7 +574,7 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testGetCandidateLocalRolesForAssigned(self):
         self.folder._addRole('my_test_role')
-        self.folder.manage_setLocalRoles(TEST_USER_ID, ('Reviewer', 'Owner'))
+        self.folder.manage_setLocalRoles(default_user, ('Reviewer', 'Owner'))
         roles = self.membership.getCandidateLocalRoles(self.folder)
         self.assertTrue('Owner' in roles)
         self.assertTrue('Reviewer' in roles)
@@ -613,25 +611,25 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         bad_file = dummy.File(data='<div>This is a lie!!!</div>',
                               headers={'content_type': 'image/jpeg'})
         self.assertRaises(IOError, self.membership.changeMemberPortrait,
-                          bad_file, TEST_USER_ID)
+                          bad_file, default_user)
 
     def testGetBadMembers(self):
         # Should list members with bad images
         # We should not have any bad images out of the box
         self.assertEqual(self.membership.getBadMembers(), [])
         # Let's add one
-        bad_file = Image(id=TEST_USER_ID, title='',
+        bad_file = Image(id=default_user, title='',
                                file=StringIO('<div>This is a lie!!!</div>'))
         # Manually set a bad image using private methods
-        self.portal.portal_memberdata._setPortrait(bad_file, TEST_USER_ID)
-        self.assertEqual(self.membership.getBadMembers(), [TEST_USER_ID])
+        self.portal.portal_memberdata._setPortrait(bad_file, default_user)
+        self.assertEqual(self.membership.getBadMembers(), [default_user])
         # Try an empty image
-        empty_file = Image(id=TEST_USER_ID, title='', file=StringIO(''))
-        self.portal.portal_memberdata._setPortrait(empty_file, TEST_USER_ID)
+        empty_file = Image(id=default_user, title='', file=StringIO(''))
+        self.portal.portal_memberdata._setPortrait(empty_file, default_user)
         self.assertEqual(self.membership.getBadMembers(), [])
         # And a good image
         self.membership.changeMemberPortrait(self.makeRealImage(),
-                                             TEST_USER_ID)
+                                             default_user)
         self.assertEqual(self.membership.getBadMembers(), [])
 
     def beforeTearDown(self):
@@ -738,7 +736,7 @@ class TestMemberareaSetup(base.TestCase):
                 owner_info = self.home.getOwnerTuple()
             except AttributeError:
                 owner_info = self.home.getOwner(info=1)
-            self.assertEqual(owner_info[0], [PLONE_SITE_ID, 'acl_users'])
+            self.assertEqual(owner_info[0], [portal_name, 'acl_users'])
             self.assertEqual(owner_info[1], 'user2')
             self.assertEqual(len(self.home.get_local_roles()), 1)
             self.assertEqual(self.home.get_local_roles_for_userid('user2'),
@@ -764,7 +762,7 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
         self.memberdata = self.portal.portal_memberdata
         self.membership = self.portal.portal_membership
         # Don't let default_user disturb results
-        self.portal.acl_users._doDelUsers([TEST_USER_ID])
+        self.portal.acl_users._doDelUsers([default_user])
         # Add some members
         self.addMember('fred', 'Fred Flintstone',
                        'fred@bedrock.com', ['Member', 'Reviewer'],
@@ -837,8 +835,8 @@ class TestDefaultUserAndPasswordNotChanged(base.TestCase):
 
     def testDefaultUserAndPasswordUnchanged(self):
         member = self.membership.getAuthenticatedMember()
-        self.assertEqual(member.getUserName(), TEST_USER_NAME)
-        self.assertTrue(self.membership.testCurrentPassword(TEST_USER_PASSWORD))
+        self.assertEqual(member.getUserName(), default_user)
+        self.assertTrue(self.membership.testCurrentPassword(default_password))
         self.assertFalse(self.membership.testCurrentPassword('geheim'))
 
 
@@ -883,7 +881,7 @@ class TestMemberInfoView(base.TestCase):
         member = self.membership.getAuthenticatedMember()
         member.setMemberProperties({'fullname': 'Test user'})
         info = self.view.info()
-        self.assertEqual(info['username'], 'test-user')
+        self.assertEqual(info['username'], 'test_user_1_')
         self.assertEqual(info['fullname'], 'Test user')
         self.assertEqual(info['name_or_id'], 'Test user')
 
@@ -914,10 +912,18 @@ class TestMemberInfoView(base.TestCase):
         self.assertEqual(info['name_or_id'], 'Anonymous User')
 
     def testSetGroupsWithUserNameIdDifference(self):
+        # XXX these constants can be imported from plone.app.testing later
+        TEST_USER_NAME = 'test-user-2'
+        TEST_USER_ID = 'test_user_2_'
+        TEST_USER_PASSWORD = 'secret2'
+        TEST_USER_ROLES = ['Member',]
         pas = self.portal['acl_users']
+        pas.source_users.addUser(TEST_USER_ID, TEST_USER_NAME, TEST_USER_PASSWORD)
+        for role in TEST_USER_ROLES:
+            pas.portal_role_manager.doAssignRoleToPrincipal(TEST_USER_ID, role)
         self.portal.portal_groups.addGroup('Editors', [], [])
         self.setGroups(['Editors'], name=TEST_USER_ID)
-        self.login(TEST_USER_NAME)
+        self.login(TEST_USER_ID)
         user = getSecurityManager().getUser()
         self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))
         self.login()
@@ -926,6 +932,19 @@ class TestMemberInfoView(base.TestCase):
         pas = self.portal['acl_users']
         self.portal.portal_groups.addGroup('Editors', [], [])
         self.setGroups(['Editors'])
+        self.login()
         user = getSecurityManager().getUser()
         self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))
 
+def test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(MembershipToolTest))
+    suite.addTest(unittest.makeSuite(MemberAreaTest))
+    suite.addTest(unittest.makeSuite(TestMembershipTool))
+    suite.addTest(unittest.makeSuite(TestCreateMemberarea))
+    suite.addTest(unittest.makeSuite(TestMemberareaSetup))
+    suite.addTest(unittest.makeSuite(TestSearchForMembers))
+    suite.addTest(unittest.makeSuite(TestDefaultUserAndPasswordNotChanged))
+    suite.addTest(unittest.makeSuite(TestMethodProtection))
+    suite.addTest(unittest.makeSuite(TestMemberInfoView))
+    return suite

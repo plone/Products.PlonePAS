@@ -367,7 +367,9 @@ class GroupsTool(UniqueObject, SimpleItem):
     def getGroupsByUserId(self, userid):
         """Return a list of the groups the user corresponding to 'userid'
         belongs to."""
-        user = self.acl_users.getUserById(userid)
+        #log("getGroupsByUserId(%s)" % userid)
+        user = self.acl_users.getUser(userid)
+        #log("user '%s' is in groups %s" % (userid, user.getGroups()))
         if user:
             groups = user.getGroups() or []
         else:

@@ -141,3 +141,8 @@ class BasicOpsTestCase(base.TestCase):
                 break
         self.assertTrue(result)
 
+
+def test_suite():
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(BasicOpsTestCase))
+    return suite

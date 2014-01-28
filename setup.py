@@ -22,8 +22,7 @@ setup(name='Products.PlonePAS',
       zip_safe=False,
       extras_require=dict(
         test=[
-            'plone.app.testing',
-            'plone.testing',
+            'Products.PloneTestCase',
             'Products.Archetypes',
         ],
         atstorage=[
