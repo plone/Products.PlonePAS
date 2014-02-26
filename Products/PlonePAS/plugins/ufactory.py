@@ -197,6 +197,12 @@ class PloneUser(PropertiedUser):
         return None
 
     def setProperties(self, properties=None, **kw):
+        """ Set properties on a given user.
+
+        Accepts either keyword arguments or a mapping for the ``properties``
+        argument. The ``properties`` argument will take precedence over
+        keyword arguments if both are provided; no merging will occur.
+        """
         if properties is None:
             properties = kw
 
@@ -205,10 +211,10 @@ class PloneUser(PropertiedUser):
                 continue
 
             update = {}
-            for (key, value) in kw.items():
+            for (key, value) in properties.items():
                 if sheet.hasProperty(key):
                     update[key] = value
-                    del kw[key]
+                    del properties[key]
 
             if update:
                 sheet.setProperties(self, update)
