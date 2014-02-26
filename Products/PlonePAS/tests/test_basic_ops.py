@@ -141,3 +141,13 @@ class BasicOpsTestCase(base.TestCase):
                 break
         self.assertTrue(result)
 
+    def test_setProperties(self):
+        self.createUser()
+        user = self.acl_users.getUser('created_user')
+        user.setProperties(fullname='Test User', email='test@example.org')
+        self.assertEqual(user.getProperty('fullname'), 'Test User')
+        self.assertEqual(user.getProperty('email'), 'test@example.org')
+
+        user.setProperties(properties={'fullname': 'Test User2', 'email': 'test2@example.org'})
+        self.assertEqual(user.getProperty('fullname'), 'Test User2')
+        self.assertEqual(user.getProperty('email'), 'test2@example.org')
