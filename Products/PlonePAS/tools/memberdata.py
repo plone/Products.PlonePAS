@@ -170,6 +170,20 @@ class MemberDataTool(BaseTool):
                     res.append(member)
         return res
 
+    #### check to see if we can add users. Need to be careful here
+    #### so we do not write on read
+    def canAddMemberData(self):
+        try:
+            if self.REQUEST.REQUEST_METHOD != 'POST':
+                return False
+            if getattr(self, '_p_jar', None) and \
+                    len(self._p_jar._registered_objects) > 0:
+                # XXX do not write on read
+                return True
+        except AttributeError:
+            pass
+        return False
+
     #### an exact copy from the base, so that we pick up the new MemberData.
     #### wrapUser should have a MemberData factory method to over-ride (or even
     #### set at run-time!) so that we don't have to do this.
@@ -183,10 +197,15 @@ class MemberDataTool(BaseTool):
         members = self._members
         if not id in members:
             base = aq_base(self)
-            members[id] = MemberData(base, id)
-        # Return a wrapper with self as containment and
-        # the user as context.
-        return members[id].__of__(self).__of__(u)
+            md = MemberData(base, id)
+            if self.canAddMemberData():
+                # XXX do not write on read
+                members[id] = md
+            return md.__of__(self).__of__(u)
+        else:
+            # Return a wrapper with self as containment and
+            # the user as context.
+            return members[id].__of__(self).__of__(u)
 
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
