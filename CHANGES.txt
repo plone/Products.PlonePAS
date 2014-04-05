@@ -1,8 +1,8 @@
 Changelog
 =========
 
-4.1.3 (unreleased)
-------------------
+5.0 (2014-04-05)
+----------------
 
 - Do not write member data on read
   [vangheem]
