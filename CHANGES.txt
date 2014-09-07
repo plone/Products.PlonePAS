@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.1.4 (unreleased)
+4.1.4 (2014-09-07)
 ------------------
 
 - Allow ``properties`` to be passed to ``PloneUser.setProperties``.
