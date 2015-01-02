@@ -73,11 +73,11 @@ def scale_image(image_file, max_size=None, default_format=None):
         >>> scale_image(invalid, (50, 50))
         Traceback (most recent call last):
         ...
-        IOError: cannot identify image file
+        IOError: cannot identify image file...
         >>> scale_image(sneaky, (50, 50))
         Traceback (most recent call last):
         ...
-        IOError: cannot identify image file
+        IOError: cannot identify image file...
 
     Now that that's out of the way we check on our real images to make
     sure the format and mode are preserved, that they are scaled, and that they
