@@ -1,10 +1,7 @@
-import unittest
-import doctest
-
-from Products.PlonePAS.tests import base
-
-from plone.testing import layered
 from plone.app.testing.bbb import PTC_FUNCTIONAL_TESTING
+from plone.testing import layered
+import doctest
+import unittest
 
 
 def test_suite():
@@ -13,5 +10,5 @@ def test_suite():
         doctest.DocFileSuite('cookie_auth.txt', package='Products.PlonePAS.tests',
                              optionflags=doctest.ELLIPSIS),
         layer=PTC_FUNCTIONAL_TESTING))
-    suite.addTest(doctest.DocTestSuite('Products.PlonePAS.utils')),
+    suite.addTest(doctest.DocTestSuite('Products.PlonePAS.utils', optionflags=doctest.ELLIPSIS)),
     return suite
