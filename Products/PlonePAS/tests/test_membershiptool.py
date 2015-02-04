@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import unittest
 from cStringIO import StringIO
@@ -10,6 +11,7 @@ from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
 from zExceptions import BadRequest
+from zope.component import getUtility
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
@@ -19,6 +21,7 @@ from Products.PloneTestCase.ptc import default_user
 from Products.PloneTestCase.ptc import portal_name
 from Products.PloneTestCase.ptc import portal_owner
 
+from Products.CMFCore.interfaces import IPropertiesTool
 from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.browser.member import PASMemberView
 from Products.PlonePAS.plugins.ufactory import PloneUser
@@ -822,6 +825,20 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
         search = self.membership.searchForMembers
         self.assertEqual(len(search(email='fred', roles=['Reviewer'])), 1)
         self.assertEqual(len(search(email='fred', roles=['Manager'])), 0)
+
+    def testSearchByRequestObj(self):
+        search = self.membership.searchForMembers
+        self.addMember(u'jürgen', u'Jürgen Internationalist',
+                       'juergen@example.com', ['Member'],
+                       '2014-02-03')
+
+        self.assertEqual(len(search(
+            REQUEST=dict(name=u'jürgen'))), 1)
+
+        ptool = getUtility(IPropertiesTool)
+        ptool._setProperty('default_charset', 'iso8859-1')
+        self.assertEqual(len(search(
+            REQUEST=dict(name=u'jürgen'.encode('iso8859-1')))), 1)
 
     def beforeTearDown(self):
         self._free_warning_output()
