@@ -21,6 +21,7 @@ from Acquisition import aq_parent
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 
+from Products.CMFDefault.utils import decode
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.permissions import ManageUsers
 from Products.CMFCore.permissions import SetOwnProperties
@@ -163,6 +164,9 @@ class MembershipTool(BaseTool):
 
         if REQUEST is not None:
             searchmap = REQUEST
+            for key, value in searchmap.items():
+                if isinstance(value, basestring):
+                    searchmap[key] = decode(value, self)
         else:
             searchmap = kw
 
