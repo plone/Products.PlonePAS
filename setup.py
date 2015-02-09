@@ -8,6 +8,7 @@ install_requires=[
         'plone.session',
         'plone.i18n',
         'Products.CMFCore',
+        'Products.CMFDefault',
         'Products.GenericSetup',
         'Products.PluggableAuthService',
         'Zope2 > 2.12.4',
