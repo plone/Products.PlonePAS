@@ -1,11 +1,9 @@
-import unittest
-
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from Products.PluggableAuthService.interfaces.plugins \
-    import IUserEnumerationPlugin
-
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
 from Products.PlonePAS.tests import base
+from Products.PluggableAuthService.interfaces.plugins import \
+    IUserEnumerationPlugin
 
 
 class PropertiesTest(base.TestCase):
@@ -86,9 +84,12 @@ class PropertiesTest(base.TestCase):
         self.loginAsPortalOwner()
 
         # Create a new Group
-        gt.addGroup('group1', ['Reviewer'], [],
-                     {'email': 'group1@host.com',
-                      'title': 'Group #1'})
+        gt.addGroup(
+            'group1',
+            ['Reviewer'],
+            [],
+            {'email': 'group1@host.com', 'title': 'Group #1'}
+        )
         group = gt.getGroupById('group1')
         self.assertFalse(group is None)
 
@@ -192,15 +193,23 @@ class PropertySearchTest(base.TestCase):
         self.gt = getToolByName(self.portal, 'portal_groups')
 
         # Create a new Member
-        self.mt.addMember('member1', 'pw', ['Member'], [],
-                     {'email': 'member1@host.com',
-                      'title': 'Member #1'})
+        self.mt.addMember(
+            'member1',
+            'pw',
+            ['Member'],
+            [],
+            {'email': 'member1@host.com', 'title': 'Member #1'}
+        )
         member = self.mt.getMemberById('member1')
         self.assertFalse(member is None)
 
-        self.mt.addMember('member2', 'pw', ['Member'], [],
-                     {'email': 'user2@otherhost.com',
-                      'fullname': 'User #2'})
+        self.mt.addMember(
+            'member2',
+            'pw',
+            ['Member'],
+            [],
+            {'email': 'user2@otherhost.com', 'fullname': 'User #2'}
+        )
         member = self.mt.getMemberById('member2')
         self.assertFalse(member is None)
 
@@ -276,4 +285,3 @@ class PropertySearchTest(base.TestCase):
         # or login
         results = self.pas.searchUsers(login='member1')
         self.assertEqual(results, ())
-

@@ -1,8 +1,6 @@
-import pkg_resources
-
+# -*- coding: utf-8 -*-
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
-
 from Products.PlonePAS.Extensions.Install import challenge_chooser_setup
 from Products.PlonePAS.Extensions.Install import migrate_root_uf
 from Products.PlonePAS.Extensions.Install import registerPluginTypes
@@ -51,24 +49,21 @@ def setupGroups(site):
     uf = getToolByName(site, 'acl_users')
     gtool = getToolByName(site, 'portal_groups')
     if not uf.searchGroups(id='Administrators'):
-        gtool.addGroup('Administrators', title='Administrators',
-                       roles=['Manager'])
+        gtool.addGroup(
+            'Administrators',
+            title='Administrators',
+            roles=['Manager']
+        )
 
-    # Add Site Administrators group on Plone 4.1+ only.
-    try:
-        pkg_resources.get_distribution('Products.CMFPlone>=4.1a1')
-    except (pkg_resources.VersionConflict, pkg_resources.DistributionNotFound):
-        pass
-    else:
-        if not uf.searchGroups(id='Site Administrators'):
-            gtool.addGroup('Site Administrators', title='Site Administrators',
-                           roles=['Site Administrator'])
+    if not uf.searchGroups(id='Site Administrators'):
+        gtool.addGroup(
+            'Site Administrators',
+            title='Site Administrators',
+            roles=['Site Administrator']
+        )
 
     if not uf.searchGroups(id='Reviewers'):
         gtool.addGroup('Reviewers', title='Reviewers', roles=['Reviewer'])
-    # if not uf.searchGroups(id='AuthenticatedUsers'):
-    #     gtool.addGroup('Authenticated Users',
-    #                    title='Authenticated Users (Virtual Group)')
 
 
 def installPAS(portal):

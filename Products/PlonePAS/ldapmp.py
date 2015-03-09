@@ -1,7 +1,9 @@
-from Products.PlonePAS.patch import call, wrap_method
-from Products.PlonePAS.plugins.group import PloneGroup
-from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
+# -*- coding: utf-8 -*-
 from Products.LDAPMultiPlugins.LDAPMultiPlugin import LDAPMultiPlugin
+from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
+from Products.PlonePAS.patch import call
+from Products.PlonePAS.patch import wrap_method
+from Products.PlonePAS.plugins.group import PloneGroup
 
 GROUP_PROPERTY_MAP = {
     # target property: (possible key, ...)

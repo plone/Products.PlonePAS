@@ -1,32 +1,27 @@
-import logging
-
-from zope.interface import implements
-
-from Acquisition import aq_base
+# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
-from AccessControl.requestmethod import postonly
 from AccessControl.User import nobody
+from AccessControl.requestmethod import postonly
+from Acquisition import aq_base
 from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from ZODB.POSException import ConflictError
-
+from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFCore.utils import UniqueObject
-
-from Products.PluggableAuthService.interfaces.plugins \
-    import IRoleAssignerPlugin
-from Products.PluggableAuthService.PluggableAuthService \
-    import _SWALLOWABLE_PLUGIN_EXCEPTIONS
-
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.permissions import AddGroups
-from Products.PlonePAS.permissions import ManageGroups
 from Products.PlonePAS.permissions import DeleteGroups
-from Products.PlonePAS.permissions import ViewGroups
+from Products.PlonePAS.permissions import ManageGroups
 from Products.PlonePAS.permissions import SetGroupOwnership
+from Products.PlonePAS.permissions import ViewGroups
 from Products.PlonePAS.utils import getGroupsForPrincipal
-
+from Products.PluggableAuthService.PluggableAuthService import \
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.interfaces.plugins import \
+    IRoleAssignerPlugin
+from ZODB.POSException import ConflictError
+from zope.interface import implementer
+import logging
 
 logger = logging.getLogger('PluggableAuthService')
 
@@ -35,14 +30,13 @@ class NotSupported(Exception):
     pass
 
 
+@implementer(igroup.IGroupTool)
 class GroupsTool(UniqueObject, SimpleItem):
     """ This tool accesses group data through a acl_users object.
 
     It can be replaced with something that groups member data in a
     different way.
     """
-
-    implements(igroup.IGroupTool)
 
     id = 'portal_groups'
     meta_type = 'PlonePAS Groups Tool'
@@ -53,7 +47,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     # basic group mgmt
     ##
 
-    security.declareProtected(AddGroups, 'addGroup')
+    @security.protected(AddGroups)
     @postonly
     def addGroup(self, id, roles=[], groups=[], properties=None,
                  REQUEST=None, *args, **kw):
@@ -92,7 +86,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
         return success
 
-    security.declareProtected(ManageGroups, 'editGroup')
+    @security.protected(ManageGroups)
     @postonly
     def editGroup(self, id, roles=None, groups=None, REQUEST=None,
                   *args, **kw):
@@ -115,8 +109,11 @@ class GroupsTool(UniqueObject, SimpleItem):
 
         for tid, tool in gTools:
             if id in tool.getGroupIds():
-                tool.updateGroup(id, title=kw.get('title'),
-                                     description=kw.get('description'))
+                tool.updateGroup(
+                    id,
+                    title=kw.get('title'),
+                    description=kw.get('description')
+                )
                 break
 
         if roles is not None:
@@ -135,7 +132,8 @@ class GroupsTool(UniqueObject, SimpleItem):
             # add groups
             try:
                 groupmanagers = self.acl_users.plugins.listPlugins(
-                                    igroup.IGroupManagement)
+                    igroup.IGroupManagement
+                )
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 logger.exception('Plugin listing error')
                 groupmanagers = ()
@@ -146,10 +144,11 @@ class GroupsTool(UniqueObject, SimpleItem):
                         if gm.addPrincipalToGroup(id, group):
                             break
                     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                        logger.exception('AuthenticationPlugin %s error'
-                                            % gm_id)
+                        logger.exception(
+                            'AuthenticationPlugin {0} error'.format(gm_id)
+                        )
 
-    security.declareProtected(DeleteGroups, 'removeGroup')
+    @security.protected(DeleteGroups)
     @postonly
     def removeGroup(self, group_id, REQUEST=None):
         """Remove a single group.
@@ -165,7 +164,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
         return retval
 
-    security.declareProtected(DeleteGroups, 'removeGroups')
+    @security.protected(DeleteGroups)
     @postonly
     def removeGroups(self, ids, REQUEST=None):
         """Remove the group in the provided list (if possible).
@@ -173,13 +172,14 @@ class GroupsTool(UniqueObject, SimpleItem):
         for gid in ids:
             self.removeGroup(gid)
 
-    security.declareProtected(ManageGroups, 'setRolesForGroup')
+    @security.protected(ManageGroups)
     @postonly
     def setRolesForGroup(self, group_id, roles=(), REQUEST=None):
         rmanagers = self._getPlugins().listPlugins(IRoleAssignerPlugin)
         if not (rmanagers):
-            raise NotImplementedError('There is no plugin that can '
-                                      'assign roles to groups')
+            raise NotImplementedError(
+                'There is no plugin that can assign roles to groups'
+            )
         for rid, rmanager in rmanagers:
             rmanager.assignRolesToPrincipal(roles, group_id)
 
@@ -187,7 +187,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     # basic principal mgmt
     ##
 
-    security.declareProtected(ManageGroups, 'addPrincipalToGroup')
+    @security.protected(ManageGroups)
     @postonly
     def addPrincipalToGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
@@ -198,7 +198,7 @@ class GroupsTool(UniqueObject, SimpleItem):
                 return True
         return False
 
-    security.declareProtected(ManageGroups, 'removePrincipalFromGroup')
+    @security.protected(ManageGroups)
     @postonly
     def removePrincipalFromGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
@@ -209,19 +209,18 @@ class GroupsTool(UniqueObject, SimpleItem):
                 return True
         return False
 
-
     ##
     # group getters
     ##
 
-    security.declareProtected(ViewGroups, 'getGroupById')
+    @security.protected(ViewGroups)
     def getGroupById(self, group_id):
         group = self.acl_users.getGroup(group_id)
         if group is not None:
             group = self.wrapGroup(group)
         return group
 
-    security.declareProtected(ManageGroups, 'searchGroups')
+    @security.protected(ManageGroups)
     def searchGroups(self, *args, **kw):
         return self.acl_users.searchGroups(*args, **kw)
 
@@ -285,7 +284,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
         return groups
 
-    security.declareProtected(ViewGroups, 'listGroups')
+    @security.protected(ViewGroups)
     def listGroups(self):
         # potentially not all groups may be found by this interface
         # if the underlying group source doesn't support introspection
@@ -295,7 +294,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             groups.extend(introspector.getGroups())
         return [self.wrapGroup(elt) for elt in groups]
 
-    security.declareProtected(ViewGroups, 'getGroupIds')
+    @security.protected(ViewGroups)
     def getGroupIds(self):
         groups = []
         introspectors = self._getGroupIntrospectors()
@@ -305,7 +304,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
     listGroupIds = getGroupIds
 
-    security.declareProtected(ViewGroups, 'getGroupMembers')
+    @security.protected(ViewGroups)
     def getGroupMembers(self, group_id):
         members = set()
         introspectors = self._getGroupIntrospectors()
@@ -313,7 +312,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             members.update(introspector.getGroupMembers(group_id))
         return list(members)
 
-    security.declareProtected(ViewGroups, 'getGroupsForPrincipal')
+    @security.protected(ViewGroups)
     def getGroupsForPrincipal(self, principal):
         return getGroupsForPrincipal(principal, self._getPlugins())
 
@@ -321,34 +320,34 @@ class GroupsTool(UniqueObject, SimpleItem):
     # plugin getters
     ##
 
-    security.declarePrivate('_getPlugins')
+    @security.private
     def _getPlugins(self):
         return self.acl_users.plugins
 
-    security.declarePrivate('_getGroupManagers')
+    @security.private
     def _getGroupManagers(self):
         return self._getPlugins().listPlugins(
             igroup.IGroupManagement
             )
 
-    security.declarePrivate('_getGroupIntrospectors')
+    @security.private
     def _getGroupIntrospectors(self):
         return self._getPlugins().listPlugins(
             igroup.IGroupIntrospection
             )
 
-    security.declarePrivate('_getGroupTools')
+    @security.private
     def _getGroupTools(self):
         managers = self._getPlugins().listPlugins(
                         igroup.IGroupManagement)
         return [(id, manager) for (id, manager) in managers
-                             if igroup.IGroupIntrospection.providedBy(manager)]
+                if igroup.IGroupIntrospection.providedBy(manager)]
 
     ##
     # BBB
     ##
 
-    security.declarePublic('getGroupInfo')
+    @security.public
     def getGroupInfo(self, groupId):
         """
         Return default group info of any group
@@ -363,7 +362,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
         return groupinfo
 
-    security.declareProtected(ViewGroups, 'getGroupsByUserId')
+    @security.protected(ViewGroups)
     def getGroupsByUserId(self, userid):
         """Return a list of the groups the user corresponding to 'userid'
         belongs to."""
@@ -374,13 +373,13 @@ class GroupsTool(UniqueObject, SimpleItem):
             groups = []
         return [self.getGroupById(elt) for elt in groups]
 
-    security.declareProtected(ViewGroups, 'listGroupNames')
+    @security.protected(ViewGroups)
     def listGroupNames(self):
         """Return a list of the available groups' ids as entered
         (without group prefixes)."""
         return self.acl_users.getGroupNames()
 
-    security.declarePublic("isGroup")
+    @security.public
     def isGroup(self, u):
         """Test if a user/group object is a group or not.
         You must pass an object you get earlier with wrapUser() or wrapGroup()
@@ -390,7 +389,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             return 1
         return 0
 
-    security.declareProtected(SetGroupOwnership, 'setGroupOwnership')
+    @security.protected(SetGroupOwnership)
     @postonly
     def setGroupOwnership(self, group, object, REQUEST=None):
         """Make the object  'object' owned by group 'group'
@@ -403,7 +402,7 @@ class GroupsTool(UniqueObject, SimpleItem):
         object.changeOwnership(user)
         object.manage_setLocalRoles(user.getId(), ['Owner'])
 
-    security.declarePrivate('wrapGroup')
+    @security.private
     def wrapGroup(self, g, wrap_anon=0):
         ''' Sets up the correct acquisition wrappers for a group
         object and provides an opportunity for a portal_memberdata
@@ -427,7 +426,6 @@ class GroupsTool(UniqueObject, SimpleItem):
             # Get portal_groupdata to do the wrapping.
             gd = getToolByName(parent, 'portal_groupdata')
             try:
-                #log("wrapping group %s" % g)
                 portal_group = gd.wrapGroup(g)
                 return portal_group
             except ConflictError:

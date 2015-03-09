@@ -1,11 +1,10 @@
+# -*- coding: utf-8 -*-
 from AccessControl import Permissions
 from AccessControl import Unauthorized
-
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
+from Products.PlonePAS.tests import base
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-
-from Products.PlonePAS.tests import base
 
 
 def sortTuple(t):

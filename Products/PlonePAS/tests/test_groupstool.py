@@ -1,18 +1,14 @@
-import unittest
-
-from Acquisition import aq_base
-from Acquisition import aq_parent
+# -*- coding: utf-8 -*-
 from AccessControl import Permissions
 from AccessControl import Unauthorized
-
+from Acquisition import aq_base
+from Acquisition import aq_parent
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-
-from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PlonePAS.plugins.group import PloneGroup
 from Products.PlonePAS.tests import base
+from Products.PlonePAS.tools.groupdata import GroupData
+from plone.app.testing import TEST_USER_ID
 
 
 def sortTuple(t):
@@ -24,15 +20,18 @@ def sortTuple(t):
 class GroupsToolTest(base.TestCase):
 
     def afterSetUp(self):
-        self.gt = gt = getToolByName(self.portal, 'portal_groups')
-        self.gd = gd = getToolByName(self.portal, 'portal_groupdata')
+        self.gt = getToolByName(self.portal, 'portal_groups')
+        self.gd = getToolByName(self.portal, 'portal_groupdata')
 
         self.group_id = 'group1'
         # Create a new Group
         self.loginAsPortalOwner()
-        gt.addGroup(self.group_id, ['Reviewer'], [],
-                    {'email': 'group1@host.com',
-                     'title': 'Group #1'})
+        self.gt.addGroup(
+            self.group_id,
+            ['Reviewer'],
+            [],
+            {'email': 'group1@host.com', 'title': 'Group #1'}
+        )
 
     def test_get_group(self):
         # Use PAS (monkeypatched) API method to get a group by id.
@@ -61,8 +60,11 @@ class GroupsToolTest(base.TestCase):
             'email': 'group1@host2.com',
             'title': 'Group #1 new title'
         }
-        self.gt.editGroup(self.group_id, roles=['Manager'],
-            **properties)
+        self.gt.editGroup(
+            self.group_id,
+            roles=['Manager'],
+            **properties
+        )
 
         # test edition of roles and properties
         group = self.gt.getGroupById(self.group_id)
@@ -75,8 +77,11 @@ class GroupsToolTest(base.TestCase):
         self.assertTrue(group.has_role('Authenticated'))
 
         # test edition of group groups
-        self.gt.editGroup(self.group_id, groups=['Reviewers'],
-            **properties)
+        self.gt.editGroup(
+            self.group_id,
+            groups=['Reviewers'],
+            **properties
+        )
         group = self.gt.getGroupById(self.group_id)
         self.assertTrue('Reviewers' in group.getGroups())
 

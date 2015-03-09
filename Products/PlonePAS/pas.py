@@ -1,35 +1,35 @@
+# -*- coding: utf-8 -*-
 # pas alterations and monkies
+from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
+from AccessControl.PermissionRole import PermissionRole
+from AccessControl.Permissions import change_permissions
+from AccessControl.Permissions import manage_properties
+from AccessControl.Permissions import manage_users as ManageUsers
+from AccessControl.requestmethod import postonly
+from OFS.Folder import Folder
+from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.utils import registerToolInterface
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
+from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PluggableAuthService.PluggableAuthService import \
+    PluggableAuthService
+from Products.PluggableAuthService.PluggableAuthService import \
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.events import PrincipalDeleted
+from Products.PluggableAuthService.interfaces.authservice import \
+    IPluggableAuthService
+from Products.PluggableAuthService.interfaces.plugins import \
+    IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import \
+    IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.plugins import \
+    IUserEnumerationPlugin
 from zope.event import notify
 
-from Products.CMFCore.utils import getToolByName
-
-from AccessControl import Unauthorized, getSecurityManager
-from AccessControl.Permissions import manage_users as ManageUsers
-from AccessControl.Permissions import manage_properties, change_permissions
-from AccessControl.PermissionRole import PermissionRole
-
-from Products.PluggableAuthService.PluggableAuthService import \
-     PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.plugins \
-    import IRoleAssignerPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IUserEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupEnumerationPlugin
-from Products.PluggableAuthService.events import PrincipalDeleted
-
-from Products.PlonePAS.interfaces.plugins \
-    import IUserManagement, ILocalRolesPlugin
-from Products.PlonePAS.interfaces.group import IGroupIntrospection
-from Products.PlonePAS.interfaces.plugins import IUserIntrospection
-from AccessControl.requestmethod import postonly
-
-# Register the PAS acl_users as a utility
-from Products.CMFCore.utils import registerToolInterface
-from Products.PluggableAuthService.interfaces.authservice \
-    import IPluggableAuthService
 registerToolInterface('acl_users', IPluggableAuthService)
-
 
 #################################
 # pas folder monkies - standard zope user folder api
@@ -44,8 +44,6 @@ def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
         self.userSetGroups(login, groups)
     return retval
 
-PluggableAuthService._doAddUser = _doAddUser
-
 
 def _doDelUsers(self, names, REQUEST=None):
     """
@@ -54,8 +52,6 @@ def _doDelUsers(self, names, REQUEST=None):
     """
     for name in names:
         self._doDelUser(name)
-
-PluggableAuthService._doDelUsers = _doDelUsers
 
 
 def _doDelUser(self, id):
@@ -66,8 +62,9 @@ def _doDelUser(self, id):
     userdeleters = plugins.listPlugins(IUserManagement)
 
     if not userdeleters:
-        raise NotImplementedError("There is no plugin that can "
-                                   " delete users.")
+        raise NotImplementedError(
+            "There is no plugin that can delete users."
+        )
 
     for userdeleter_id, userdeleter in userdeleters:
         try:
@@ -76,14 +73,6 @@ def _doDelUser(self, id):
             pass
         else:
             notify(PrincipalDeleted(id))
-
-
-PluggableAuthService._doDelUser = _doDelUser
-
-PluggableAuthService.userFolderDelUsers = \
-    postonly(PluggableAuthService._doDelUsers)
-PluggableAuthService.userFolderDelUsers__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
@@ -113,13 +102,6 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
 
     return True
 
-PluggableAuthService._doChangeUser = _doChangeUser
-
-PluggableAuthService.userFolderEditUser = \
-    postonly(PluggableAuthService._doChangeUser)
-PluggableAuthService.userFolderEditUser__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def userFolderAddUser(self, login, password, roles, domains,
                       groups=None, REQUEST=None, **kw):
@@ -127,16 +109,10 @@ def userFolderAddUser(self, login, password, roles, domains,
     if groups is not None:
         self.userSetGroups(login, groups)
 
-PluggableAuthService.userFolderAddUser = postonly(userFolderAddUser)
-PluggableAuthService.userFolderAddUser__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def _doAddGroup(self, id, roles, groups=None, **kw):
     gtool = getToolByName(self, 'portal_groups')
     return gtool.addGroup(id, roles, groups, **kw)
-
-PluggableAuthService._doAddGroup = _doAddGroup
 
 
 # for prefs_group_manage compatibility. really should be using tool.
@@ -144,13 +120,6 @@ def _doDelGroups(self, names, REQUEST=None):
     gtool = getToolByName(self, 'portal_groups')
     for group_id in names:
         gtool.removeGroup(group_id)
-
-PluggableAuthService._doDelGroups = _doDelGroups
-
-PluggableAuthService.userFolderDelGroups = \
-    postonly(PluggableAuthService._doDelGroups)
-PluggableAuthService.userFolderDelGroups__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
@@ -164,8 +133,6 @@ def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
     gtool.editGroup(principal_id, roles, groups, **kw)
     return True
 
-PluggableAuthService._doChangeGroup = _doChangeGroup
-
 
 def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
     """
@@ -177,39 +144,20 @@ def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
     """
     return self._doChangeGroup(principal_id, roles, groups, **kw)
 
-PluggableAuthService._updateGroup = _updateGroup
-
-PluggableAuthService.userFolderEditGroup = \
-    postonly(PluggableAuthService._doChangeGroup)
-PluggableAuthService.userFolderEditGroup__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def getGroups(self):
     gtool = getToolByName(self, 'portal_groups')
     return gtool.listGroups()
-
-PluggableAuthService.getGroups = getGroups
-PluggableAuthService.getGroups__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def getGroupNames(self):
     gtool = getToolByName(self, 'portal_groups')
     return gtool.getGroupIds()
 
-PluggableAuthService.getGroupNames = getGroupNames
-PluggableAuthService.getGroupNames__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def getGroupIds(self):
     gtool = getToolByName(self, 'portal_groups')
     return gtool.getGroupIds()
-
-PluggableAuthService.getGroupIds = getGroupIds
-PluggableAuthService.getGroupIds__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def getGroup(self, group_id):
@@ -226,20 +174,12 @@ def getGroup(self, group_id):
             break
     return group
 
-PluggableAuthService.getGroup = getGroup
-PluggableAuthService.getGroup__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def getGroupByName(self, name, default=None):
     ret = self.getGroup(name)
     if ret is None:
         return default
     return ret
-
-PluggableAuthService.getGroupByName = getGroupByName
-PluggableAuthService.getGroupByName__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def getGroupById(self, id, default=None):
@@ -249,10 +189,6 @@ def getGroupById(self, id, default=None):
         return default
     else:
         return ret
-
-PluggableAuthService.getGroupById = getGroupById
-PluggableAuthService.getGroupById__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def getLocalRolesForDisplay(self, object):
@@ -270,8 +206,6 @@ def getLocalRolesForDisplay(self, object):
         raise Unauthorized(name="getLocalRolesForDisplay")
 
     return self._getLocalRolesForDisplay(object)
-
-PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
 
 
 def _getLocalRolesForDisplay(self, object):
@@ -291,8 +225,6 @@ def _getLocalRolesForDisplay(self, object):
                 userid = user.getId()
         result.append((username, roles, userType, userid))
     return tuple(result)
-
-PluggableAuthService._getLocalRolesForDisplay = _getLocalRolesForDisplay
 
 
 def getUsers(self):
@@ -314,13 +246,6 @@ def getUsers(self):
 
     return retval
 
-PluggableAuthService.getUsers = getUsers
-PluggableAuthService.getUsers__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-PluggableAuthService.getPureUsers = getUsers   # this'll make listMembers work
-PluggableAuthService.getPureUsers__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def canListAllUsers(self):
     plugins = self._getOb('plugins')
@@ -331,10 +256,6 @@ def canListAllUsers(self):
         return False
     return True
 
-PluggableAuthService.canListAllUsers = canListAllUsers
-PluggableAuthService.canListAllUsers__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def canListAllGroups(self):
     plugins = self._getOb('plugins')
@@ -344,10 +265,6 @@ def canListAllGroups(self):
             != len(plugins.listPlugins(IGroupIntrospection)):
         return False
     return True
-
-PluggableAuthService.canListAllGroups = canListAllGroups
-PluggableAuthService.canListAllGroups__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
 
 
 def userSetPassword(self, userid, password):
@@ -373,10 +290,6 @@ def userSetPassword(self, userid, password):
         raise RuntimeError("No user management plugins were able "
                            "to successfully modify the user")
 
-PluggableAuthService.userSetPassword = userSetPassword
-PluggableAuthService.userSetPassword__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def credentialsChanged(self, user, name, new_password):
     """Notifies the authentication mechanism that this user has changed
@@ -392,17 +305,10 @@ def credentialsChanged(self, user, name, new_password):
 
     self.updateCredentials(request, response, login, new_password)
 
-PluggableAuthService.credentialsChanged = credentialsChanged
-PluggableAuthService.credentialsChanged__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 # for ZopeVersionControl, we need to check 'plugins' for more than
 # existence, since it replaces objects (like 'plugins') with SimpleItems
 # and calls _delOb, which tries to use special methods of 'plugins'
-from OFS.Folder import Folder
-
-
 def _delOb(self, id):
     #
     #   Override ObjectManager's version to clean up any plugin
@@ -417,8 +323,6 @@ def _delOb(self, id):
 
     Folder._delOb(self, id)
 
-PluggableAuthService._delOb = _delOb
-
 
 def addRole(self, role):
     plugins = self._getOb('plugins')
@@ -431,18 +335,12 @@ def addRole(self, role):
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             pass
 
-PluggableAuthService.addRole = addRole
-PluggableAuthService.addRole__roles__ = \
-    PermissionRole(ManageUsers, ('Manager',))
-
 
 def getAllLocalRoles(self, context):
     # Perform security check on destination object
     if not getSecurityManager().checkPermission(change_permissions, context):
         raise Unauthorized(name="getAllLocalRoles")
     return self._getAllLocalRoles(context)
-
-PluggableAuthService.getAllLocalRoles = getAllLocalRoles
 
 
 def _getAllLocalRoles(self, context):
@@ -459,4 +357,108 @@ def _getAllLocalRoles(self, context):
 
     return roles
 
-PluggableAuthService._getAllLocalRoles = _getAllLocalRoles
+
+def patch_all():
+    PluggableAuthService._doAddUser = _doAddUser
+    PluggableAuthService._doDelUsers = _doDelUsers
+
+    PluggableAuthService._doDelUser = _doDelUser
+
+    PluggableAuthService.userFolderDelUsers = postonly(
+        PluggableAuthService._doDelUsers
+    )
+    PluggableAuthService.userFolderDelUsers__roles__ = PermissionRole(
+        ManageUsers,
+        ('Manager',)
+    )
+    PluggableAuthService._doChangeUser = _doChangeUser
+
+    PluggableAuthService.userFolderEditUser = postonly(
+        PluggableAuthService._doChangeUser
+    )
+    PluggableAuthService.userFolderEditUser__roles__ = PermissionRole(
+        ManageUsers,
+        ('Manager',)
+    )
+    PluggableAuthService.userFolderAddUser = postonly(userFolderAddUser)
+    PluggableAuthService.userFolderAddUser__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService._doAddGroup = _doAddGroup
+
+    PluggableAuthService._doDelGroups = _doDelGroups
+
+    PluggableAuthService.userFolderDelGroups = \
+        postonly(PluggableAuthService._doDelGroups)
+    PluggableAuthService.userFolderDelGroups__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService._doChangeGroup = _doChangeGroup
+
+    PluggableAuthService._updateGroup = _updateGroup
+
+    PluggableAuthService.userFolderEditGroup = \
+        postonly(PluggableAuthService._doChangeGroup)
+    PluggableAuthService.userFolderEditGroup__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getGroups = getGroups
+    PluggableAuthService.getGroups__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getGroupNames = getGroupNames
+    PluggableAuthService.getGroupNames__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getGroupIds = getGroupIds
+    PluggableAuthService.getGroupIds__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getGroup = getGroup
+    PluggableAuthService.getGroup__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getGroupByName = getGroupByName
+    PluggableAuthService.getGroupByName__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getGroupById = getGroupById
+    PluggableAuthService.getGroupById__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
+    PluggableAuthService._getLocalRolesForDisplay = _getLocalRolesForDisplay
+
+    PluggableAuthService.getUsers = getUsers
+    PluggableAuthService.getUsers__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    # this'll make listMembers work
+    PluggableAuthService.getPureUsers = getUsers
+    PluggableAuthService.getPureUsers__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.canListAllUsers = canListAllUsers
+    PluggableAuthService.canListAllUsers__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.canListAllGroups = canListAllGroups
+    PluggableAuthService.canListAllGroups__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.userSetPassword = userSetPassword
+    PluggableAuthService.userSetPassword__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.credentialsChanged = credentialsChanged
+    PluggableAuthService.credentialsChanged__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService._delOb = _delOb
+
+    PluggableAuthService.addRole = addRole
+    PluggableAuthService.addRole__roles__ = \
+        PermissionRole(ManageUsers, ('Manager',))
+
+    PluggableAuthService.getAllLocalRoles = getAllLocalRoles
+    PluggableAuthService._getAllLocalRoles = _getAllLocalRoles

@@ -1,10 +1,9 @@
+# -*- coding: utf-8 -*-
 from DateTime import DateTime
 from OFS.Image import Image
-
-from plone.app.testing import TEST_USER_ID as default_user
-
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
+from plone.app.testing import TEST_USER_ID as default_user
 
 
 class TestMemberDataTool(base.TestCase):
@@ -69,4 +68,3 @@ class TestMemberDataTool(base.TestCase):
         self.assertEqual(len(search('bambam.net')), 1)
         self.assertEqual(len(search('bedrock.com')), 2)
         self.assertEqual(len(search('brubble')), 1)
-

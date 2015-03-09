@@ -1,15 +1,15 @@
+# -*- coding: utf-8 -*-
 # gruf specific hacks to pas, to make it play well in gruf
-
-import logging
-
-from Products.PluggableAuthService.PluggableAuthService import \
-          PluggableAuthService, _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.plugins \
-     import IAuthenticationPlugin
+from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
-
-from Products.CMFCore.utils import getToolByName
+from Products.PluggableAuthService.PluggableAuthService import \
+    PluggableAuthService
+from Products.PluggableAuthService.PluggableAuthService import \
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.interfaces.plugins import \
+    IAuthenticationPlugin
+import logging
 
 logger = logging.getLogger('PlonePAS')
 

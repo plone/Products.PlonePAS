@@ -1,35 +1,33 @@
-from zope.interface import implements
-
+# -*- coding: utf-8 -*-
+from AccessControl import ClassSecurityInfo
+from AccessControl import Permissions
+from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
+from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from AccessControl import ClassSecurityInfo
-from AccessControl import Unauthorized
-from AccessControl import Permissions
-from AccessControl import getSecurityManager
-from AccessControl.requestmethod import postonly
-from BTrees.OOBTree import OOBTree
 from App.class_init import InitializeClass
-from OFS.SimpleItem import SimpleItem
+from BTrees.OOBTree import OOBTree
 from OFS.PropertyManager import PropertyManager
-from ZPublisher.Converters import type_converters
-
+from OFS.SimpleItem import SimpleItem
+from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.CMFCore.utils import UniqueObject
-from Products.PluggableAuthService.interfaces.authservice \
-        import IPluggableAuthService
-from Products.PluggableAuthService.PluggableAuthService \
-        import _SWALLOWABLE_PLUGIN_EXCEPTIONS
-
-from Products.PlonePAS.interfaces.group import IGroupManagement
-from Products.PlonePAS.interfaces.group import IGroupDataTool
-from Products.PlonePAS.interfaces.group import IGroupData
-from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
+from Products.PlonePAS.interfaces.group import IGroupData
+from Products.PlonePAS.interfaces.group import IGroupDataTool
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.utils import CleanupTemp
+from Products.PluggableAuthService.PluggableAuthService import \
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.interfaces.authservice import \
+    IPluggableAuthService
+from ZPublisher.Converters import type_converters
+from zope.interface import implementer
 
 import logging
 
@@ -37,6 +35,7 @@ logger = logging.getLogger('PlonePAS')
 _marker = object()
 
 
+@implementer(IGroupDataTool)
 class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
     """This tool wraps group objects, allowing transparent access to
     properties.
@@ -45,7 +44,6 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
     id = 'portal_groupdata'
     meta_type = "PlonePAS GroupData Tool"
     toolicon = 'tool.gif'
-    implements(IGroupDataTool)
 
     _v_temps = None
     _properties = ({'id': 'title', 'type': 'string', 'mode': 'wd'},)
@@ -60,30 +58,30 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
     def wrapGroup(self, g):
         """Returns an object implementing the GroupData interface."""
 
-        id = g.getId()
+        gid = g.getId()
         members = self._members
-        if not id in members:
+        if gid not in members:
             # Get a temporary member that might be
             # registered later via registerMemberData().
             temps = self._v_temps
-            if temps is not None and id in temps:
-                portal_group = temps[id]
+            if temps is not None and gid in temps:
+                portal_group = temps[gid]
             else:
                 base = aq_base(self)
-                portal_group = GroupData(base, id)
+                portal_group = GroupData(base, gid)
                 if temps is None:
-                    self._v_temps = {id: portal_group}
+                    self._v_temps = {gid: portal_group}
                     if hasattr(self, 'REQUEST'):
                         self.REQUEST._hold(CleanupTemp(self))
                 else:
-                    temps[id] = portal_group
+                    temps[gid] = portal_group
         else:
-            portal_group = members[id]
+            portal_group = members[gid]
         # Return a wrapper with self as containment and
         # the user as context.
         return portal_group.__of__(self).__of__(g)
 
-    security.declarePrivate('registerGroupData')
+    @security.private
     def registerGroupData(self, g, id):
         '''
         Adds the given member data to the _members dict.
@@ -98,9 +96,8 @@ InitializeClass(GroupDataTool)
 registerToolInterface('portal_groupdata', IGroupDataTool)
 
 
+@implementer(IGroupData, IManageCapabilities)
 class GroupData(SimpleItem):
-
-    implements(IGroupData, IManageCapabilities)
 
     security = ClassSecurityInfo()
 
@@ -116,7 +113,7 @@ class GroupData(SimpleItem):
     def _getGRUF(self,):
         return self.acl_users
 
-    security.declarePrivate('notifyModified')
+    @security.private
     def notifyModified(self):
         # Links self to parent for full persistence.
         tool = getattr(self, '_tool', None)
@@ -124,7 +121,7 @@ class GroupData(SimpleItem):
             del self._tool
             tool.registerGroupData(self, self.getId())
 
-    security.declarePublic('getGroup')
+    @security.public
     def getGroup(self):
         """ Returns the actual group implementation. Varies by group
         implementation (GRUF/Nux/et al). In GRUF this is a user object."""
@@ -142,21 +139,21 @@ class GroupData(SimpleItem):
     def getTool(self):
         return aq_parent(aq_inner(self))
 
-    security.declarePublic("getGroupMemberIds")
+    @security.public
     def getGroupMemberIds(self):
         """
         Return a list of group member ids
         """
         return map(lambda x: x.getMemberId(), self.getGroupMembers())
 
-    security.declarePublic("getAllGroupMemberIds")
+    @security.public
     def getAllGroupMemberIds(self):
         """
         Return a list of group member ids
         """
         return map(lambda x: x.getMemberId(), self.getAllGroupMembers())
 
-    security.declarePublic('getGroupMembers')
+    @security.public
     def getGroupMembers(self):
         """
         Returns a list of the portal_memberdata-ish members of the group.
@@ -175,15 +172,16 @@ class GroupData(SimpleItem):
                 # getGroupById from Products.PlonePAS.pas
                 # The returned object is already wrapped
                 if not usr:
-                    logger.debug("Group has a non-existing principal %s"
-                                    % u_name)
+                    logger.debug(
+                        "Group has a non-existing principal {0}".format(u_name)
+                    )
                     continue
                 ret.append(usr)
             else:
                 ret.append(md.wrapUser(usr))
         return ret
 
-    security.declarePublic('getAllGroupMembers')
+    @security.public
     def getAllGroupMembers(self):
         """
         Returns a list of the portal_memberdata-ish members of the group.
@@ -196,8 +194,9 @@ class GroupData(SimpleItem):
             if not usr:
                 usr = self._getGRUF().getGroupById(u_name)
                 if not usr:
-                    logger.debug("Group has a non-existing principal %s"
-                                    % u_name)
+                    logger.debug(
+                        "Group has a non-existing principal {0}".format(u_name)
+                    )
                     continue
                 ret.append(usr)
             else:
@@ -210,7 +209,7 @@ class GroupData(SimpleItem):
         """
         return self.getGroup()
 
-    security.declarePrivate("canAdministrateGroup")
+    @security.private
     def canAdministrateGroup(self):
         """
         Return true if the #current# user can administrate this group
@@ -242,7 +241,7 @@ class GroupData(SimpleItem):
         # No right to edit this: we complain.
         return False
 
-    security.declarePublic('addMember')
+    @security.public
     @postonly
     def addMember(self, id, REQUEST=None):
         """ Add the existing member with the given id to the group"""
@@ -258,7 +257,7 @@ class GroupData(SimpleItem):
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
 
-    security.declarePublic('removeMember')
+    @security.public
     @postonly
     def removeMember(self, id, REQUEST=None):
         """Remove the member with the provided id from the group.
@@ -275,7 +274,7 @@ class GroupData(SimpleItem):
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
 
-    security.declareProtected(Permissions.manage_users, 'setProperties')
+    @security.protected(Permissions.manage_users)
     def setProperties(self, properties=None, **kw):
         """Allows the manager group to set his/her own properties.
         Accepts either keyword arguments or a mapping for the "properties"
@@ -285,7 +284,7 @@ class GroupData(SimpleItem):
             properties = kw
         return self.setGroupProperties(properties)
 
-    security.declareProtected(Permissions.manage_users, 'setGroupProperties')
+    @security.protected(Permissions.manage_users)
     def setGroupProperties(self, mapping):
         """PAS-specific method to set the properties of a group.
         """
@@ -331,9 +330,9 @@ class GroupData(SimpleItem):
         tool = self.getTool()
         for id in tool.propertyIds():
             if id in mapping:
-                if not id in self.__class__.__dict__:
+                if id not in self.__class__.__dict__:
                     value = mapping[id]
-                    if type(value) == type(''):
+                    if isinstance(value, str):
                         proptype = tool.getPropertyType(id) or 'string'
                         if proptype in type_converters:
                             value = type_converters[proptype](value)
@@ -342,7 +341,7 @@ class GroupData(SimpleItem):
         # Hopefully we can later make notifyModified() implicit.
         self.notifyModified()
 
-    security.declarePublic('getProperties')
+    @security.public
     def getProperties(self):
         """ Return the properties of this group. Properties are as usual
             in Zope.
@@ -357,7 +356,7 @@ class GroupData(SimpleItem):
                 continue
         return ret
 
-    security.declarePublic('getProperty')
+    @security.public
     def getProperty(self, id, default=None):
         """PAS-specific method to fetch a group's properties. Looks
         through the ordered property sheets.
@@ -394,7 +393,7 @@ class GroupData(SimpleItem):
     def __str__(self):
         return self.getGroupId()
 
-    security.declarePublic("isGroup")
+    @security.public
     def isGroup(self):
         """
         isGroup(self,) => Return true if this is a group.
@@ -405,13 +404,13 @@ class GroupData(SimpleItem):
         """
         return 1
 
-    ### Group object interface ###
+    # Group object interface ###
 
-    security.declarePublic('getGroupName')
+    @security.public
     def getGroupName(self):
         return self.getName()
 
-    security.declarePublic('getGroupId')
+    @security.public
     def getGroupId(self):
         """Get the ID of the group. The ID can be used, at least from
         Python, to get the user from the user's UserDatabase.
@@ -424,29 +423,29 @@ class GroupData(SimpleItem):
         title = self.getProperty('title', None)
         return title or self.getGroupName()
 
-    security.declarePublic("getMemberId")
+    @security.public
     def getMemberId(self):
         """This exists only for a basic user/group API compatibility
         """
         return self.getGroupId()
 
-    security.declarePublic('getRoles')
+    @security.public
     def getRoles(self):
         """Return the list of roles assigned to a user."""
         return self.getGroup().getRoles()
 
-    security.declarePublic('getRolesInContext')
+    @security.public
     def getRolesInContext(self, object):
         """Return the list of roles assigned to the user,  including local
         roles assigned in context of the passed in object."""
         return self.getGroup().getRolesInContext(object)
 
-    security.declarePublic('getDomains')
+    @security.public
     def getDomains(self):
         """Return the list of domain restrictions for a user"""
         return self.getGroup().getDomains()
 
-    security.declarePublic('has_role')
+    @security.public
     def has_role(self, roles, object=None):
         """Check to see if a user has a given role or roles."""
         return self.getGroup().has_role(roles, object)
@@ -517,7 +516,7 @@ class GroupData(SimpleItem):
 
     ## plugin getters
 
-    security.declarePrivate('_getPlugins')
+    @security.private
     def _getPlugins(self):
         return self.acl_users.plugins
 

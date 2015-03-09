@@ -2,21 +2,21 @@
 # $Id$
 """Tests for Products.PlonePAS.plugins.role.GroupAwareRoleManager"""
 
-import unittest
-
-from Products.PluginRegistry.PluginRegistry import PluginRegistry
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.plugins.tests.helpers import (
-    FauxPAS, DummyUser, makeRequestAndResponse)
-from Products.PluggableAuthService.PluggableAuthService \
-    import _PLUGIN_TYPE_INFO
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from Products.PlonePAS.tests import base
-from zope.interface import implements
+from Products.PluggableAuthService.PluggableAuthService import \
+    _PLUGIN_TYPE_INFO
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.plugins.tests.helpers import DummyUser
+from Products.PluggableAuthService.plugins.tests.helpers import FauxPAS
+from Products.PluggableAuthService.plugins.tests.helpers import \
+    makeRequestAndResponse
+from Products.PluginRegistry.PluginRegistry import PluginRegistry
+from zope.interface import implementer
 
 
+@implementer(IGroupsPlugin)
 class FauxGroupsPlugin(BasePlugin):
-    implements(IGroupsPlugin)
 
     def getGroupsForPrincipal(self, principal, request=None):
         return principal._groups
@@ -84,4 +84,3 @@ class GroupAwareRoleManagerTests(base.TestCase):
         self.assertEqual(got, ('bar_role',))
 
         return
-

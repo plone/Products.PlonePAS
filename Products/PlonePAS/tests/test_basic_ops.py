@@ -1,17 +1,14 @@
-import unittest
+# -*- coding: utf-8 -*-
+from Products.PlonePAS.tests import base
+from Products.PluggableAuthService.PluggableAuthService import \
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.interfaces.authservice import \
+    IPluggableAuthService
+from Products.PluggableAuthService.interfaces.events import \
+    IPrincipalDeletedEvent
+from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
-
-from Products.PluggableAuthService.interfaces.events \
-    import IPrincipalDeletedEvent
-from Products.PluggableAuthService.PluggableAuthService \
-    import _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.authservice \
-     import IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins \
-     import IRolesPlugin
-
-from Products.PlonePAS.tests import base
 
 
 class BasicOpsTestCase(base.TestCase):

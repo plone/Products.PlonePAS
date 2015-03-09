@@ -1,49 +1,48 @@
-# coding=utf-8
-import os
-import unittest
-from cStringIO import StringIO
-
-from AccessControl.User import nobody
-from AccessControl import getSecurityManager
+# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
+from AccessControl import getSecurityManager
+from AccessControl.User import nobody
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
-from zExceptions import BadRequest
-from zope.component import getUtility
-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.tests.base.testcase import WarningInterceptor
-
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import PLONE_SITE_ID
-
 from Products.CMFCore.interfaces import IPropertiesTool
-from Products.PlonePAS.interfaces.membership import IMembershipTool
+from Products.CMFCore.tests.base.testcase import WarningInterceptor
+from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.browser.member import PASMemberView
+from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.plugins.ufactory import PloneUser
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
+from cStringIO import StringIO
+from plone.app.testing import PLONE_SITE_ID
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
+from zExceptions import BadRequest
+from zope.component import getUtility
+import os
 
 
 class MembershipToolTest(base.TestCase):
 
     def afterSetUp(self):
-        self.mt = mt = getToolByName(self.portal, 'portal_membership')
-        self.md = md = getToolByName(self.portal, 'portal_memberdata')
+        self.mt = getToolByName(self.portal, 'portal_membership')
+        self.md = getToolByName(self.portal, 'portal_memberdata')
 
         self.member_id = 'member1'
         # Create a new Member
-        mt.addMember(self.member_id, 'pw', ['Member'], [],
-                     {'email': 'member1@host.com',
-                      'title': 'Member #1'})
+        self.mt.addMember(
+            self.member_id,
+            'pw',
+            ['Member'],
+            [],
+            {'email': 'member1@host.com', 'title': 'Member #1'}
+        )
 
     def test_get_member(self):
         member = self.portal.acl_users.getUserById(self.member_id)
@@ -122,8 +121,8 @@ class MembershipToolTest(base.TestCase):
 class MemberAreaTest(base.TestCase):
 
     def afterSetUp(self):
-        self.mt = mt = getToolByName(self.portal, 'portal_membership')
-        self.md = md = getToolByName(self.portal, 'portal_memberdata')
+        self.mt = getToolByName(self.portal, 'portal_membership')
+        self.md = getToolByName(self.portal, 'portal_memberdata')
         # Enable member-area creation
         self.mt.memberareaCreationFlag = 1
         # Those are all valid chars in Zope.
@@ -221,9 +220,13 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
 
     def testChangeOwnMemberPortraitWithEmailUsers(self):
         member_id = 'member2@host.com'
-        self.membership.addMember(member_id, 'pw', ['Member'], [],
-                     {'email': 'member2@host.com',
-                      'title': 'Member #2'})
+        self.membership.addMember(
+            member_id,
+            'pw',
+            ['Member'],
+            [],
+            {'email': 'member2@host.com', 'title': 'Member #2'}
+        )
 
         self.login(member_id)
         image = self.makeRealImage()
@@ -289,8 +292,10 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.setRoles(['Manager'])
         self.membership.changeMemberPortrait(image, 'joe')
         self.membership.deletePersonalPortrait('joe')
-        self.assertEqual(self.membership.getPersonalPortrait('joe').getId(),
-                        'defaultUser.png')
+        self.assertEqual(
+            self.membership.getPersonalPortrait('joe').getId(),
+            'defaultUser.png'
+        )
 
     def testGetPersonalPortraitWithoutPassingId(self):
         # Should return the logged in users portrait if no id is given
@@ -348,8 +353,10 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.assertEqual(self.membership.getPersonalPortrait(user_id).getId(),
                          safe_id)
         self.membership.deletePersonalPortrait(user_id)
-        self.assertEqual(self.membership.getPersonalPortrait(user_id).getId(),
-                        'defaultUser.png')
+        self.assertEqual(
+            self.membership.getPersonalPortrait(user_id).getId(),
+            'defaultUser.png'
+        )
 
     def testListMembers(self):
         # Should return the members list
@@ -418,15 +425,17 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         self.login(TEST_USER_NAME)  # Back to normal
         ugroups = self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
         self.membership.setPassword('geheim')
-        self.assertTrue(
-            self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
-                == ugroups)
+        t_groups = self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
+        self.assertTrue(t_groups == ugroups)
 
     def testGetMemberById(self):
         # This should work for portal users,
         self.assertNotEqual(self.membership.getMemberById(TEST_USER_ID), None)
         self.assertEqual(self.membership.getMemberById('foo'), None)
-        self.assertNotEqual(self.membership.getMemberById(SITE_OWNER_NAME), None)
+        self.assertNotEqual(
+            self.membership.getMemberById(SITE_OWNER_NAME),
+            None
+        )
 
     def testGetMemberByIdIsWrapped(self):
         member = self.membership.getMemberById(TEST_USER_ID)
@@ -623,8 +632,11 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         # We should not have any bad images out of the box
         self.assertEqual(self.membership.getBadMembers(), [])
         # Let's add one
-        bad_file = Image(id=TEST_USER_ID, title='',
-                               file=StringIO('<div>This is a lie!!!</div>'))
+        bad_file = Image(
+            id=TEST_USER_ID,
+            title='',
+            file=StringIO('<div>This is a lie!!!</div>')
+        )
         # Manually set a bad image using private methods
         self.portal.portal_memberdata._setPortrait(bad_file, TEST_USER_ID)
         self.assertEqual(self.membership.getBadMembers(), [TEST_USER_ID])
@@ -649,8 +661,7 @@ class TestCreateMemberarea(base.TestCase):
 
     def testCreateMemberarea(self):
         # Should create a memberarea for user2
-        if self.membership.memberareaCreationFlag == True:
-            members = self.membership.getMembersFolder()
+        if self.membership.memberareaCreationFlag is True:
             self.membership.createMemberarea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
             self.assertTrue(memberfolder,
@@ -659,7 +670,7 @@ class TestCreateMemberarea(base.TestCase):
             self.assertTrue(self.membership.getMemberareaCreationFlag())
 
     def testCreatMemberareaUsesCurrentUser(self):
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             # Should create a memberarea for user2
             self.login('user2')
             self.membership.createMemberarea()
@@ -667,7 +678,8 @@ class TestCreateMemberarea(base.TestCase):
             self.assertTrue(
                 memberfolder,
                 'createMemberarea failed to create memberarea for current '
-                    'user')
+                'user'
+            )
         else:
             pass
 
@@ -676,8 +688,10 @@ class TestCreateMemberarea(base.TestCase):
         self.portal._delObject('Members')
         self.membership.createMemberarea('user2')
         memberfolder = self.membership.getHomeFolder('user2')
-        self.assertFalse(memberfolder,
-                    'createMemberarea unexpectedly created a memberarea')
+        self.assertFalse(
+            memberfolder,
+            'createMemberarea unexpectedly created a memberarea'
+        )
 
     def testNoMemberareaIfMemberareaExists(self):
         # Should not attempt to create a memberarea if a memberarea already
@@ -688,15 +702,14 @@ class TestCreateMemberarea(base.TestCase):
 
     def testNotifyScriptIsCalled(self):
         # The notify script should be called
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             self.portal.notifyMemberAreaCreated = dummy.Raiser(dummy.Error)
             self.assertRaises(dummy.Error, self.membership.createMemberarea,
                               'user2')
 
     def testCreateMemberareaAlternateName(self):
         # Alternate method name 'createMemberaArea' should work
-        if self.membership.memberareaCreationFlag == True:
-            members = self.membership.getMembersFolder()
+        if self.membership.memberareaCreationFlag is True:
             self.membership.createMemberArea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
             self.assertTrue(memberfolder,
@@ -704,7 +717,7 @@ class TestCreateMemberarea(base.TestCase):
 
     def testCreateMemberareaAlternateType(self):
         # Should be able to create another type instead of a normal Folder
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             self.membership.setMemberAreaType('Document')
             self.membership.createMemberarea('user2')
             memberfolder = self.membership.getHomeFolder('user2')
@@ -716,8 +729,10 @@ class TestCreateMemberarea(base.TestCase):
         self.assertFalse(self.membership.getMemberareaCreationFlag())
         self.membership.createMemberarea('user2')
         memberfolder = self.membership.getHomeFolder('user2')
-        self.assertFalse(memberfolder,
-                    'createMemberarea created memberarea despite flag')
+        self.assertFalse(
+            memberfolder,
+            'createMemberarea created memberarea despite flag'
+        )
 
 
 class TestMemberareaSetup(base.TestCase):
@@ -729,13 +744,13 @@ class TestMemberareaSetup(base.TestCase):
         self.home = self.membership.getHomeFolder('user2')
 
     def testMemberareaIsFolder(self):
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             # Memberarea should be a folder
             self.assertEqual(self.home.meta_type, 'ATFolder')
             self.assertEqual(self.home.portal_type, 'Folder')
 
     def testMemberareaIsOwnedByMember(self):
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             # Memberarea should be owned by member
             try:
                 owner_info = self.home.getOwnerTuple()
@@ -748,7 +763,7 @@ class TestMemberareaSetup(base.TestCase):
                              ('Owner',))
 
     def testMemberareaIsCataloged(self):
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             # Memberarea should be cataloged
             catalog = self.portal.portal_catalog
             self.assertTrue(catalog(id='user2', Type='Folder', Title="user2"),
@@ -756,7 +771,7 @@ class TestMemberareaSetup(base.TestCase):
                             "catalog")
 
     def testHomePageNotExists(self):
-        if self.membership.memberareaCreationFlag == True:
+        if self.membership.memberareaCreationFlag is True:
             # Should not have an index_html document anymore
             self.assertFalse('index_html' in self.home)
 
@@ -855,7 +870,9 @@ class TestDefaultUserAndPasswordNotChanged(base.TestCase):
     def testDefaultUserAndPasswordUnchanged(self):
         member = self.membership.getAuthenticatedMember()
         self.assertEqual(member.getUserName(), TEST_USER_NAME)
-        self.assertTrue(self.membership.testCurrentPassword(TEST_USER_PASSWORD))
+        self.assertTrue(
+            self.membership.testCurrentPassword(TEST_USER_PASSWORD)
+        )
         self.assertFalse(self.membership.testCurrentPassword('geheim'))
 
 
@@ -936,7 +953,9 @@ class TestMemberInfoView(base.TestCase):
         self.setGroups(['Editors'], name=TEST_USER_ID)
         self.login(TEST_USER_NAME)
         user = getSecurityManager().getUser()
-        self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))
+        self.assertTrue(
+            'Editors' in getGroupsForPrincipal(user, pas['plugins'])
+        )
         self.login()
 
     def testSetGroupsWithSameUserNameAndId(self):
@@ -944,5 +963,6 @@ class TestMemberInfoView(base.TestCase):
         self.portal.portal_groups.addGroup('Editors', [], [])
         self.setGroups(['Editors'])
         user = getSecurityManager().getUser()
-        self.assertTrue('Editors' in getGroupsForPrincipal(user, pas['plugins']))
-
+        self.assertTrue(
+            'Editors' in getGroupsForPrincipal(user, pas['plugins'])
+        )

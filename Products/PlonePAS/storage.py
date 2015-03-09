@@ -1,21 +1,20 @@
+# -*- coding: utf-8 -*-
 """
 an archetypes storage that delegates to a pas property provider.
 
 main use.. cmfmember integration w/ properties providers
 
 """
-
-from zope.interface import implements
-
 from AccessControl import ClassSecurityInfo
 from Products.Archetypes.public import IStorage
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from zope.interface import implementer
 
 
+@implementer(IStorage)
 class PASStorage(object):
 
     security = ClassSecurityInfo()
-    implements(IStorage)
 
     def get(self, name, instance, **kwargs):
         user = instance.getUser()

@@ -1,8 +1,10 @@
-from setuptools import setup, find_packages
+# -*- coding: utf-8 -*-
+from setuptools import setup
+from setuptools import find_packages
 
 version = '5.0.1.dev0'
 
-install_requires=[
+install_requires = [
         'setuptools',
         'plone.memoize',
         'plone.session',
@@ -15,29 +17,33 @@ install_requires=[
       ]
 
 try:
-    from collections import OrderedDict
+    from collections import OrderedDict  # noqa
 except ImportError:
     install_requires.append('ordereddict')
 
-setup(name='Products.PlonePAS',
-      version=version,
-      description="PlonePAS adapts the PluggableAuthService for use by Plone.",
-      long_description=open("README.txt").read() + "\n" + \
-                       open("CHANGES.txt").read(),
-      classifiers=[
+longdescription = open("README.rst").read()
+longdescription += '\n'
+longdescription += open("CHANGES.rst").read()
+
+setup(
+    name='Products.PlonePAS',
+    version=version,
+    description="PlonePAS adapts the PluggableAuthService for use by Plone.",
+    long_description=longdescription,
+    classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
-      ],
-      keywords='Zope CMF Plone PAS authentication',
-      author='Kapil Thangavelu, Wichert Akkerman',
-      author_email='plone-developers@lists.sourceforge.net',
-      url='http://pypi.python.org/pypi/Products.PlonePAS',
-      license='ZPL',
-      packages=find_packages(exclude=['ez_setup']),
-      namespace_packages=['Products'],
-      include_package_data=True,
-      zip_safe=False,
-      extras_require=dict(
+    ],
+    keywords='Zope CMF Plone PAS authentication',
+    author='Kapil Thangavelu, Wichert Akkerman',
+    author_email='plone-developers@lists.sourceforge.net',
+    url='http://pypi.python.org/pypi/Products.PlonePAS',
+    license='ZPL',
+    packages=find_packages(exclude=['ez_setup']),
+    namespace_packages=['Products'],
+    clude_package_data=True,
+    zip_safe=False,
+    extras_require=dict(
         test=[
             'plone.app.testing',
             'plone.testing',
@@ -46,6 +52,6 @@ setup(name='Products.PlonePAS',
         atstorage=[
             'Products.Archetypes',
         ]
-      ),
-      install_requires=install_requires,
+    ),
+    install_requires=install_requires,
 )

@@ -1,29 +1,27 @@
-from App.class_init import InitializeClass
-from Acquisition import aq_base
+# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
-
-from zope.interface import implements
-
+from AccessControl.requestmethod import postonly
+from Acquisition import aq_base
+from App.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
-from Products.CMFCore.permissions import ManagePortal
-from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
-
-from Products.PluggableAuthService.interfaces.authservice \
-    import IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins \
-    import IPropertiesPlugin, IRoleAssignerPlugin
-
-from Products.PlonePAS.interfaces.plugins import IUserManagement
-from Products.PlonePAS.interfaces.group import IGroupManagement
-from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-from Products.PlonePAS.interfaces.capabilities \
-    import IDeleteCapability, IPasswordSetCapability
-from Products.PlonePAS.interfaces.capabilities \
-    import IGroupCapability, IAssignRoleCapability
+from Products.CMFCore.permissions import ManagePortal
+from Products.CMFCore.utils import getToolByName
+from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
-from AccessControl.requestmethod import postonly
+from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
+from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from Products.PluggableAuthService.interfaces.authservice import \
+    IPluggableAuthService
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import \
+    IRoleAssignerPlugin
+from zope.interface import implementer
 
 _marker = object()
 
@@ -55,7 +53,7 @@ class MemberDataTool(BaseTool):
         if member_id in self.portraits:
             self.portraits._delObject(member_id)
 
-    security.declarePrivate('pruneMemberDataContents')
+    @security.private
     def pruneMemberDataContents(self):
         '''
         Compare the user IDs stored in the member data
@@ -72,7 +70,7 @@ class MemberDataTool(BaseTool):
             if member_id not in user_list:
                 self.portraits._delObject(member_id)
 
-    security.declareProtected(ManagePortal, 'purgeMemberDataContents')
+    @security.protected(ManagePortal)
     def purgeMemberDataContents(self):
         '''
         Delete ALL MemberData information. This is required for us as we change
@@ -86,7 +84,7 @@ class MemberDataTool(BaseTool):
 
         return "Done."
 
-    security.declarePrivate("updateMemberDataContents")
+    @security.private
     def updateMemberDataContents(self,):
         """Update former MemberData objects to new MemberData objects
         """
@@ -115,14 +113,15 @@ class MemberDataTool(BaseTool):
             # Set its properties
             mbr = self._members.get(member_name, None)
             if not mbr:
-                raise RuntimeError("Error while upgrading user '%s'."
-                                        % (member_name, ))
+                raise RuntimeError(
+                    "Error while upgrading user '{0}'.".format(member_name)
+                )
             mbr.setProperties(values, force_local=1)
             count += 1
 
         return count
 
-    security.declarePrivate('searchMemberDataContents')
+    @security.private
     def searchMemberDataContents(self, search_param, search_term):
         """
         Search members.
@@ -151,7 +150,7 @@ class MemberDataTool(BaseTool):
                                     'email': memberProperty('email', '')})
         return res
 
-    security.declarePublic('searchFulltextForMembers')
+    @security.public
     def searchFulltextForMembers(self, s):
         """search for members which do have string 's' in name, email or full
         name (if defined)
@@ -165,13 +164,13 @@ class MemberDataTool(BaseTool):
         for member in mu.listMembers():
             u = member.getUser()
             if u.getUserName().lower().find(s) != -1 \
-                or member.getProperty('fullname').lower().find(s) != -1 \
-                or member.getProperty('email').lower().find(s) != -1:
-                    res.append(member)
+               or member.getProperty('fullname').lower().find(s) != -1 \
+               or member.getProperty('email').lower().find(s) != -1:
+                res.append(member)
         return res
 
-    #### check to see if we can add users. Need to be careful here
-    #### so we do not write on read
+    # check to see if we can add users. Need to be careful here
+    # so we do not write on read
     def canAddMemberData(self):
         try:
             if self.REQUEST.REQUEST_METHOD != 'POST':
@@ -184,28 +183,28 @@ class MemberDataTool(BaseTool):
             pass
         return False
 
-    #### an exact copy from the base, so that we pick up the new MemberData.
-    #### wrapUser should have a MemberData factory method to over-ride (or even
-    #### set at run-time!) so that we don't have to do this.
+    # an exact copy from the base, so that we pick up the new MemberData.
+    # wrapUser should have a MemberData factory method to over-ride (or even
+    # set at run-time!) so that we don't have to do this.
     def wrapUser(self, u):
         '''
         If possible, returns the Member object that corresponds
         to the given User object.
         We override this to ensure OUR MemberData class is used
         '''
-        id = u.getId()
+        user_id = u.getId()
         members = self._members
-        if not id in members:
+        if user_id not in members:
             base = aq_base(self)
-            md = MemberData(base, id)
+            md = MemberData(base, user_id)
             if self.canAddMemberData():
                 # XXX do not write on read
-                members[id] = md
+                members[user_id] = md
             return md.__of__(self).__of__(u)
         else:
             # Return a wrapper with self as containment and
             # the user as context.
-            return members[id].__of__(self).__of__(u)
+            return members[user_id].__of__(self).__of__(u)
 
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
@@ -232,19 +231,19 @@ class MemberDataTool(BaseTool):
         else:
             return 0
 
-    ## plugin getter
+    # plugin getter
     def _getPlugins(self):
         return self.acl_users.plugins
 
 InitializeClass(MemberDataTool)
 
 
+@implementer(IManageCapabilities)
 class MemberData(BaseMemberData):
 
     security = ClassSecurityInfo()
-    implements(IManageCapabilities)
 
-    ## setProperties uses setMemberProperties. no need to override.
+    # setProperties uses setMemberProperties. no need to override.
 
     def setMemberProperties(self, mapping, force_local=0):
         """PAS-specific method to set the properties of a
@@ -274,7 +273,7 @@ class MemberData(BaseMemberData):
         # property routing?
         modified = False
         for k, v in mapping.items():
-            if v == None:
+            if v is None:
                 continue
             for sheet in sheets:
                 if not sheet.hasProperty(k):
@@ -284,8 +283,6 @@ class MemberData(BaseMemberData):
                     modified = True
                 else:
                     break
-                    #raise RuntimeError, ("Mutable property provider "
-                    #                     "shadowed by read only provider")
         if modified:
             self.notifyModified()
 
@@ -328,7 +325,7 @@ class MemberData(BaseMemberData):
         """Returns None. Present to avoid NotImplementedError."""
         return None
 
-    ## IManageCapabilities methods
+    # IManageCapabilities methods
 
     def canDelete(self):
         """True iff user can be removed from the Plone UI."""
@@ -426,7 +423,7 @@ class MemberData(BaseMemberData):
                 return True
         return False
 
-    security.declarePrivate('setSecurityProfile')
+    @security.private
     def setSecurityProfile(self, password=None, roles=None, domains=None):
         """Set the user's basic security profile"""
         u = self.getUser()
@@ -441,9 +438,9 @@ class MemberData(BaseMemberData):
 
         u.userFolderEditUser(u.getUserId(), password, roles, domains)
 
-    ## plugin getters
+    # plugin getters
 
-    security.declarePrivate('_getPlugins')
+    @security.private
     def _getPlugins(self):
         return self.acl_users.plugins
 

@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-
 from Products.PlonePAS.tests import base
 
 
@@ -18,4 +17,3 @@ class TestPASSearchView(base.TestCase):
         self.assertEqual(sorted_values,
                          [{'title': u'anthropologie'}, {'title': u'Économie'},
                           {'title': u'Sociologie'}])
-

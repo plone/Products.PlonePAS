@@ -4,6 +4,9 @@ Changelog
 5.0.1 (unreleased)
 ------------------
 
+- Cleanup: PEP8 et all, zca decorators, rough code review
+  [jensens]
+
 - In searchForMembers, ensure that request parameters are properly
   decoded to unicode
   [do3cc]

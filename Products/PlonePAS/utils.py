@@ -1,9 +1,9 @@
+# -*- coding: utf-8 -*-
+from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from cStringIO import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
-
-from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
-from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 
 
 def unique(iterable):
@@ -143,7 +143,7 @@ def scale_image(image_file, max_size=None, default_format=None):
     # When might image.format not be true?
     format = image.format
     mimetype = 'image/%s' % format.lower()
-    cur_size = image.size
+
     # from Archetypes ImageField
     # consider image mode when scaling
     # source images can be mode '1','L,','P','RGB(A)'
