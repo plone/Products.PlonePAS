@@ -4,7 +4,11 @@ Changelog
 5.1 (unreleased)
 ------------------
 
-- Expect Python 2.7 with collections.
+- Moved ``Extensions/Install.py`` fucntions to setuphandlers, kept BBB import
+  for ``activatePluginInterfaces`` since this is imported by ``borg.localrole``.
+  [jensens]
+
+- Expect Python 2.7 with ``collections.OrderedDict``.
   [jensens]
 
 - Remove nasty dependency to Products.CMFDefault.
