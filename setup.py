@@ -30,7 +30,7 @@ setup(
         'Products.CMFCore',
         'Products.GenericSetup',
         'Products.PluggableAuthService',
-        'Zope2 > 2.13.22',
+        'Zope2 >=2.13.22',
         'plone.i18n',
         'plone.memoize',
         'plone.session',
