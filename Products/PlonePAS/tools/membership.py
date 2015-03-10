@@ -12,6 +12,7 @@ from App.special_dtml import DTMLFile
 from DateTime import DateTime
 from OFS.Image import Image
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
+from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.permissions import ManageUsers
@@ -20,7 +21,6 @@ from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.utils import decode
 from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
@@ -31,12 +31,35 @@ from ZODB.POSException import ConflictError
 from cStringIO import StringIO
 from zExceptions import BadRequest
 from zope import event
+from zope.component import getUtility
 from zope.interface import implementer
 import logging
 import transaction
 
 default_portrait = 'defaultUser.png'
 logger = logging.getLogger('PlonePAS')
+
+_marker = dict()
+
+
+def _unicodify_structure(value, charset=_marker):
+    """ Convert value to unicode.
+    """
+    if charset is _marker:
+        ptool = getUtility(IPropertiesTool)
+        charset = ptool.getProperty('default_charset', None)
+
+    if isinstance(value, str):
+        return charset and unicode(value, charset) or unicode(value)
+    if isinstance(value, list):
+        return [_unicodify_structure(val, charset) for val in value]
+    if isinstance(value, tuple):
+        return tuple([_unicodify_structure(entry, charset) for entry in value])
+    if isinstance(value, dict):
+        for key, val in value.items():
+            value[key] = _unicodify_structure(val, charset)
+        return value
+    return value
 
 
 @implementer(membership.IMembershipTool)
@@ -162,8 +185,8 @@ class MembershipTool(BaseTool):
         if REQUEST is not None:
             searchmap = REQUEST
             for key, value in searchmap.items():
-                if isinstance(value, basestring):
-                    searchmap[key] = decode(value, self)
+                if isinstance(value, str):
+                    searchmap[key] = _unicodify_structure(value)
         else:
             searchmap = kw
 
