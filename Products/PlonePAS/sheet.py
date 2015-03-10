@@ -1,22 +1,16 @@
+# -*- coding: utf-8 -*-
 """
 Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
 also a property schema type registry which is extensible.
 
 """
-
-from types import StringTypes, IntType
-from types import LongType, FloatType, InstanceType
-
-from zope.component import getUtility
-from zope.interface import implements
-
-from DateTime.DateTime import DateTime
 from Products.CMFCore.interfaces import ISiteRoot
-
-from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
-from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
+from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
+from zope.component import getUtility
+from zope.interface import implementer
 
 
 class PropertyValueError(ValueError):
@@ -48,38 +42,62 @@ class PropertySchemaTypeMap(object):
         return inspector(value)
 
 PropertySchema = PropertySchemaTypeMap()
-PropertySchema.addType('string', lambda x: x is None or type(x) in StringTypes)
-PropertySchema.addType('text', lambda x: x is None or type(x) in StringTypes)
-PropertySchema.addType('boolean', lambda x: 1)  # anything can be boolean
-PropertySchema.addType('int', lambda x:  x is None or type(x) is IntType)
-PropertySchema.addType('long', lambda x:  x is None or type(x) is LongType)
-PropertySchema.addType('float', lambda x:  x is None or type(x) is FloatType)
-PropertySchema.addType('lines',
-                       lambda x:  x is None or type(x) in _SequenceTypes)
-PropertySchema.addType('selection',
-                       lambda x:  x is None or type(x) in StringTypes)
-PropertySchema.addType('multiple selection',
-                       lambda x:  x is None or type(x) in _SequenceTypes)
-PropertySchema.addType('date',
-                       lambda x: 1 or x is None \
-                                 or type(x) is InstanceType \
-                                 and isinstance(x, DateTime))
+PropertySchema.addType(
+    'string',
+    lambda x: x is None or isinstance(x, basestring)
+)
+PropertySchema.addType(
+    'text',
+    lambda x: x is None or isinstance(x, basestring)
+)
+PropertySchema.addType(
+    'boolean',
+    lambda x: 1  # anything can be boolean
+)
+PropertySchema.addType(
+    'int',
+    lambda x:  x is None or isinstance(x, int)
+)
+PropertySchema.addType(
+    'long',
+    lambda x:  x is None or isinstance(x, long)
+)
+PropertySchema.addType(
+    'float',
+    lambda x:  x is None or isinstance(x, float)
+)
+PropertySchema.addType(
+    'lines',
+    lambda x:  x is None or isinstance(x, _SequenceTypes)
+)
+PropertySchema.addType(
+    'selection',
+    lambda x: x is None or isinstance(x, basestring)
+)
+PropertySchema.addType(
+    'multiple selection',
+    lambda x:  x is None or isinstance(x, _SequenceTypes)
+)
+PropertySchema.addType(
+    'date',
+    lambda x: 1
+)
 validateValue = PropertySchema.validate
 
 
+@implementer(IMutablePropertySheet)
 class MutablePropertySheet(UserPropertySheet):
 
-    implements(IMutablePropertySheet)
-
     def validateProperty(self, id, value):
-        if not id in self._properties:
+        if id not in self._properties:
             raise PropertyValueError('No such property found on this schema')
 
         proptype = self.getPropertyType(id)
         if not validateValue(proptype, value):
-            raise PropertyValueError("Invalid value (%s) for "
-                                     "property '%s' of type %s"
-                                        % (value, id, proptype))
+            raise PropertyValueError(
+                "Invalid value (%s) for property '%s' of type %s" %
+                (value, id, proptype)
+            )
 
     def setProperty(self, user, id, value):
         self.validateProperty(id, value)

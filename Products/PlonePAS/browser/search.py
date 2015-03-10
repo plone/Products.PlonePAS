@@ -1,13 +1,14 @@
-from zope.interface import implements
-from zope.component import queryUtility
-from Products.Five import BrowserView
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
-from plone.i18n.normalizer.interfaces import IIDNormalizer
+from Products.Five import BrowserView
 from Products.PlonePAS.interfaces.browser import IPASSearchView
+from plone.i18n.normalizer.interfaces import IIDNormalizer
+from zope.component import queryUtility
+from zope.interface import implementer
 
 
+@implementer(IPASSearchView)
 class PASSearchView(BrowserView):
-    implements(IPASSearchView)
 
     @staticmethod
     def extractCriteriaFromRequest(request):

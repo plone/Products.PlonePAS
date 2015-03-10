@@ -12,11 +12,13 @@ DEFAULT_PROTO_MAPPING = {
 }
 
 # Settings for member image resize quality
+HAS_PIL = True
 try:
     from PIL import Image
     PIL_SCALING_ALGO = Image.ANTIALIAS
 except ImportError:
     PIL_SCALING_ALGO = None
+    HAS_PIL = False
 
 PIL_QUALITY = 88
 MEMBER_IMAGE_SCALE = (75, 100)
