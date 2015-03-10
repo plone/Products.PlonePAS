@@ -13,13 +13,6 @@ def unique(iterable):
     return d.keys()
 
 
-# XXX this can probably be removed
-def getCharset(context):
-    """Returns the site default charset, or utf-8.
-    """
-    return 'utf-8'
-
-
 def cleanId(id):
     """'url_quote' turns strange chars into '%xx', which is not a valid char
     for ObjectManager. Here we encode '%' into '-' (and '-' into '--' as
