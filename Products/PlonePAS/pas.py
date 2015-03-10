@@ -306,22 +306,18 @@ def getUsers(self):
 
 def canListAllUsers(self):
     plugins = self._getOb('plugins')
-
     # Do we have multiple user plugins?
-    if len(plugins.listPlugins(IUserEnumerationPlugin)) \
-            != len(plugins.listPlugins(IUserIntrospection)):
-        return False
-    return True
+    num_enumeration_plugins = plugins.listPlugins(IUserEnumerationPlugin)
+    num_introspection_plugins = plugins.listPlugins(IUserEnumerationPlugin)
+    return num_enumeration_plugins == num_introspection_plugins
 
 
 def canListAllGroups(self):
     plugins = self._getOb('plugins')
-
-    # Do we have multiple user plugins?
-    if len(plugins.listPlugins(IGroupEnumerationPlugin)) \
-            != len(plugins.listPlugins(IGroupIntrospection)):
-        return False
-    return True
+    # Do we have multiple group plugins?
+    num_enumeration_plugins = plugins.listPlugins(IGroupEnumerationPlugin)
+    num_introspection_plugins = plugins.listPlugins(IGroupEnumerationPlugin)
+    return num_enumeration_plugins == num_introspection_plugins
 
 
 def userSetPassword(self, userid, password):
@@ -330,7 +326,7 @@ def userSetPassword(self, userid, password):
     plugins = self._getOb('plugins')
     managers = plugins.listPlugins(IUserManagement)
 
-    if not (managers):
+    if not managers:
         raise NotImplementedError("There is no plugin that can modify users")
 
     modified = False
@@ -388,7 +384,7 @@ def addRole(self, role):
     for plugin_id, plugin in roles:
         try:
             plugin.addRole(role)
-            return
+            break
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             pass
 
