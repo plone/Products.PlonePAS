@@ -4,24 +4,6 @@ from setuptools import find_packages
 
 version = '5.0.1.dev0'
 
-install_requires = [
-        'Products.CMFCore',
-        'Products.CMFDefault',
-        'Products.GenericSetup',
-        'Products.PluggableAuthService',
-        'Zope2 > 2.12.4',
-        'plone.i18n',
-        'plone.memoize',
-        'plone.session',
-        'setuptools',
-        'zope.deprecation',
-      ]
-
-try:
-    from collections import OrderedDict  # noqa
-except ImportError:
-    install_requires.append('ordereddict')
-
 longdescription = open("README.rst").read()
 longdescription += '\n'
 longdescription += open("CHANGES.rst").read()
@@ -44,6 +26,18 @@ setup(
     namespace_packages=['Products'],
     clude_package_data=True,
     zip_safe=False,
+    install_requires=[
+        'Products.CMFCore',
+        'Products.CMFDefault',
+        'Products.GenericSetup',
+        'Products.PluggableAuthService',
+        'Zope2 > 2.13.22',
+        'plone.i18n',
+        'plone.memoize',
+        'plone.session',
+        'setuptools',
+        'zope.deprecation',
+    ],
     extras_require=dict(
         test=[
             'plone.app.testing',
@@ -54,5 +48,4 @@ setup(
             'Products.Archetypes',
         ]
     ),
-    install_requires=install_requires,
 )

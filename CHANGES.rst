@@ -4,6 +4,9 @@ Changelog
 5.1 (unreleased)
 ------------------
 
+- Expect Python 2.7 with collections.
+  [jensens]
+
 - Remove nasty dependency to Products.CMFDefault.
   [jensens]
 

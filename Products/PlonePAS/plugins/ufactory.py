@@ -12,12 +12,8 @@ from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets \
     import IPropertySheet
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from collections import OrderedDict
 from zope.interface import implementer
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
 
 manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
                                           globals())
