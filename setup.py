@@ -28,7 +28,6 @@ setup(
     zip_safe=False,
     install_requires=[
         'Products.CMFCore',
-        'Products.CMFDefault',
         'Products.GenericSetup',
         'Products.PluggableAuthService',
         'Zope2 > 2.13.22',
@@ -42,10 +41,6 @@ setup(
         test=[
             'plone.app.testing',
             'plone.testing',
-            'Products.Archetypes',
         ],
-        atstorage=[
-            'Products.Archetypes',
-        ]
     ),
 )
