@@ -2,7 +2,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-version = '5.0.1.dev0'
+version = '6.0.dev0'
 
 longdescription = open("README.rst").read()
 longdescription += '\n'
@@ -11,7 +11,7 @@ longdescription += open("CHANGES.rst").read()
 setup(
     name='Products.PlonePAS',
     version=version,
-    description="PlonePAS adapts the PluggableAuthService for use by Plone.",
+    description="PlonePAS modifies the PluggableAuthService for use by Plone.",
     long_description=longdescription,
     classifiers=[
         "Framework :: Plone",
