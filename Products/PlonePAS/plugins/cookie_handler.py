@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Class: ExtendedCookieAuthHelper
 
 Simply extends the standard CookieAuthHelper provided via regular
@@ -5,25 +6,27 @@ PluggableAuthService but overrides the updateCookie mechanism to
 provide similar functionality as CookieCrumbler does... by giving
 the portal the ability to provide a setAuthCookie method.
 """
-
-from base64 import encodestring
-from urllib import quote
-
-from zope.interface import implements
-
+from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from AccessControl.SecurityInfo import ClassSecurityInfo
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
+from Products.PluggableAuthService.interfaces.authservice import \
+    IPluggableAuthService
+from Products.PluggableAuthService.interfaces.plugins \
+    import IChallengePlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import ICredentialsResetPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import ICredentialsUpdatePlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import ILoginPasswordHostExtractionPlugin
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
-from Products.PluggableAuthService.interfaces.authservice \
-        import IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins import \
-        ILoginPasswordHostExtractionPlugin, IChallengePlugin,  \
-        ICredentialsUpdatePlugin, ICredentialsResetPlugin
+from base64 import encodestring
+from urllib import quote
+from zope.interface import implementer
 
 
 def manage_addExtendedCookieAuthHelper(self, id, title='',
@@ -40,10 +43,18 @@ def manage_addExtendedCookieAuthHelper(self, id, title='',
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
 
-manage_addExtendedCookieAuthHelperForm = \
-    DTMLFile("../zmi/ExtendedCookieAuthHelperForm", globals())
+manage_addExtendedCookieAuthHelperForm = DTMLFile(
+    "../zmi/ExtendedCookieAuthHelperForm",
+    globals()
+)
 
 
+@implementer(
+    ILoginPasswordHostExtractionPlugin,
+    IChallengePlugin,
+    ICredentialsUpdatePlugin,
+    ICredentialsResetPlugin
+)
 class ExtendedCookieAuthHelper(BasePlugin):
     """Multi-plugin which adds ability to override the updating of cookie via
     a setAuthCookie method/script.
@@ -52,10 +63,7 @@ class ExtendedCookieAuthHelper(BasePlugin):
     meta_type = 'Extended Cookie Auth Helper'
     security = ClassSecurityInfo()
 
-    implements(ILoginPasswordHostExtractionPlugin, IChallengePlugin,
-               ICredentialsUpdatePlugin, ICredentialsResetPlugin)
-
-    security.declarePrivate('updateCredentials')
+    @security.private
     def updateCredentials(self, request, response, login, new_password):
         """Override standard updateCredentials method
         """
@@ -69,7 +77,7 @@ class ExtendedCookieAuthHelper(BasePlugin):
             BasePlugin.updateCredentials(self, request, response, login,
                                          new_password)
 
-    security.declarePublic('login')
+    @security.public
     def login(self):
         """Set a cookie and redirect to the url that we tried to
         authenticate against originally.

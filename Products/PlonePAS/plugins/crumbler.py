@@ -1,23 +1,21 @@
+# -*- coding: utf-8 -*-
 """ Class: CookieCrumblingPlugin
 
 Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
 
 """
-from zope.interface import implements
-
-from Acquisition import aq_base
 from AccessControl.SecurityInfo import ClassSecurityInfo
+from Acquisition import aq_base
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from OFS.Folder import Folder
-
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
-
 from Products.CMFCore.CookieCrumbler import manage_addCC
-
+from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from zope.interface import implementer
 import logging
+
 logger = logging.getLogger('PlonePAS')
 
 CC_ID = 'cookie_auth'
@@ -43,6 +41,7 @@ manage_addCookieCrumblingPluginForm = \
     DTMLFile("../zmi/CookieCrumblingPluginForm", globals())
 
 
+@implementer(IExtractionPlugin)
 class CookieCrumblingPlugin(Folder, BasePlugin):
     """Multi-plugin for injecting HTTP Basic Authentication
     credentials from form credentials.
@@ -51,8 +50,6 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
 
     security = ClassSecurityInfo()
 
-    implements(IExtractionPlugin)
-
     def __init__(self, id, title=None):
         self._setId(id)
         self.title = title
@@ -60,7 +57,7 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
     def _getCC(self):
         return getattr(aq_base(self), CC_ID, None)
 
-    security.declarePrivate('extractCredentials')
+    @security.private
     def extractCredentials(self, request):
         """ Extract basic auth credentials from 'request'.
         """

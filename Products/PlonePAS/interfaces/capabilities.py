@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 # Define certain interfaces that a plugin must meet if it is to allow
 # certain operations to be done by the Plone UI.
-
 from Products.PluggableAuthService.interfaces.plugins import Interface
 
 

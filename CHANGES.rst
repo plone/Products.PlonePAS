@@ -4,6 +4,11 @@ Changelog
 5.0.1 (unreleased)
 ------------------
 
+- Cleanup patches, allow introspection by using wrap_method, add roles using wrap_method, 
+  add deprecation and merge ``gruf_support.py`` in ``pas,py`` to have a better overview
+  what is patched.
+  [jensens]
+
 - Cleanup: PEP8 et all, zca decorators, rough code review
   [jensens]
 

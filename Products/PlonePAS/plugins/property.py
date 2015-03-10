@@ -1,25 +1,24 @@
+# -*- coding: utf-8 -*-
 """
 Mutable Property Provider
 """
-import copy
-
-from zope.interface import implements
 from AccessControl import ClassSecurityInfo
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOBTree
-from ZODB.PersistentMapping import PersistentMapping
 from Products.CMFCore.utils import getToolByName
-
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
+from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
+from Products.PlonePAS.utils import safe_unicode
+from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins \
     import IUserEnumerationPlugin
-from Products.PluggableAuthService.UserPropertySheet import _guessSchema
-from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
-from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
-from Products.PlonePAS.utils import safe_unicode
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from ZODB.PersistentMapping import PersistentMapping
 from zope.i18nmessageid import MessageFactory
+from zope.interface import implementer
+import copy
 
 _ = MessageFactory('plone')
 
@@ -43,6 +42,11 @@ def isStringType(data):
     return isinstance(data, str) or isinstance(data, unicode)
 
 
+@implementer(
+    IPropertiesPlugin,
+    IUserEnumerationPlugin,
+    IMutablePropertiesPlugin
+)
 class ZODBMutablePropertyProvider(BasePlugin):
     """Storage for mutable properties in the ZODB for users/groups.
 
@@ -50,9 +54,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
     """
 
     meta_type = 'ZODB Mutable Property Provider'
-
-    implements(IPropertiesPlugin, IUserEnumerationPlugin,
-               IMutablePropertiesPlugin)
 
     security = ClassSecurityInfo()
 
@@ -140,7 +141,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 defaultvalues["title"] = ""
         return defaultvalues
 
-    security.declarePrivate('getPropertiesForUser')
+    @security.private
     def getPropertiesForUser(self, user, request=None):
         """Get property values for a user or group.
         Returns a dictionary of values or a PropertySheet.
@@ -159,13 +160,13 @@ class ZODBMutablePropertyProvider(BasePlugin):
         if not data:
             data = {}
         for key, val in defaults.items():
-            if not key in data:
+            if key not in data:
                 data[key] = val
 
         return MutablePropertySheet(self.id,
                                     schema=self._getSchema(isGroup), **data)
 
-    security.declarePrivate('setPropertiesForUser')
+    @security.private
     def setPropertiesForUser(self, user, propertysheet):
         """Set the properties of a user or group based on the contents of a
         property sheet.
@@ -175,10 +176,14 @@ class ZODBMutablePropertyProvider(BasePlugin):
         properties = dict(propertysheet.propertyItems())
 
         for name, property_type in self._getSchema(isGroup) or ():
-            if (name in properties and not
-                validateValue(property_type, properties[name])):
-                raise ValueError('Invalid value: %s does not conform '
-                                   'to %s' % (name, property_type))
+            if (
+                name in properties and not
+                validateValue(property_type, properties[name])
+            ):
+                raise ValueError(
+                    'Invalid value: %s does not conform to %s' %
+                    (name, property_type)
+                )
 
         allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]
         if allowed_prop_keys:
@@ -196,7 +201,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         else:
             self._storage.insert(user.getId(), properties)
 
-    security.declarePrivate('deleteUser')
+    @security.private
     def deleteUser(self, user_id):
         """Delete all user properties
         """
@@ -206,7 +211,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         except KeyError:
             pass
 
-    security.declarePrivate('testMemberData')
+    @security.private
     def testMemberData(self, memberdata, criteria, exact_match=False):
         """Test if a memberdata matches the search criteria.
         """
@@ -235,7 +240,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         return True
 
-    security.declarePrivate('enumerateUsers')
+    @security.private
     def enumerateUsers(self, id=None, login=None,
                        exact_match=False, **kw):
         """ See IUserEnumerationPlugin.
@@ -251,8 +256,8 @@ class ZODBMutablePropertyProvider(BasePlugin):
         criteria = copy.copy(kw)
 
         users = [(user, data) for (user, data) in self._storage.items()
-                    if self.testMemberData(data, criteria, exact_match)
-                        and not data.get('isGroup', False)]
+                 if self.testMemberData(data, criteria, exact_match)
+                 and not data.get('isGroup', False)]
 
         user_info = [{'id': self.prefix + user_id,
                       'login': user_id,
@@ -270,7 +275,6 @@ class ZODBMutablePropertyProvider(BasePlugin):
         not interesting for us.
         """
         pass
-
 
     def updateEveryLoginName(self, quit_on_first_error=True):
         """Update login names of all users to their canonical value.

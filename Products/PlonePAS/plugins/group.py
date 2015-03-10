@@ -3,30 +3,26 @@ ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
 """
-
-import logging
-from BTrees.OOBTree import OOBTree, OOSet
-from App.special_dtml import DTMLFile
-from App.class_init import InitializeClass
 from AccessControl import ClassSecurityInfo
-
-from zope.interface import implements
-
+from App.class_init import InitializeClass
+from App.special_dtml import DTMLFile
+from BTrees.OOBTree import OOBTree, OOSet
+from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PlonePAS.interfaces.capabilities import IGroupCapability
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.plugins.ZODBGroupManager \
-    import ZODBGroupManager
 from Products.PluggableAuthService.interfaces.plugins \
     import IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
-from Products.PluggableAuthService.utils import createViewName
-
-from Products.PlonePAS.interfaces.group \
-    import IGroupManagement, IGroupIntrospection
-from Products.PlonePAS.interfaces.capabilities import IGroupCapability
-from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
+from Products.PluggableAuthService.plugins.ZODBGroupManager \
+    import ZODBGroupManager
 from ufactory import PloneUser
+from zope.interface import implementer
+import logging
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
 logger = logging.getLogger('PlonePAS')
@@ -45,13 +41,16 @@ def manage_addGroupManager(self, id, title='', RESPONSE=None):
         return RESPONSE.redirect('manage_workspace')
 
 
+@implementer(
+    IGroupManagement,
+    IGroupIntrospection,
+    IGroupCapability,
+    IDeleteCapability
+)
 class GroupManager(ZODBGroupManager):
 
     meta_type = "Group Manager"
     security = ClassSecurityInfo()
-
-    implements(IGroupManagement, IGroupIntrospection, IGroupCapability,
-               IDeleteCapability)
 
     def __init__(self, *args, **kw):
         ZODBGroupManager.__init__(self, *args, **kw)
@@ -114,7 +113,7 @@ class GroupManager(ZODBGroupManager):
     #################################
     # capabilties interface impls.
 
-    security.declarePublic('allowDeletePrincipal')
+    @security.public
     def allowDeletePrincipal(self, principal_id):
         """True iff this plugin can delete a certain group.
         This is true if this plugin manages the group.
@@ -155,7 +154,7 @@ class GroupManager(ZODBGroupManager):
     #################################
     # group wrapping mechanics
 
-    security.declarePrivate('_createGroup')
+    @security.private
     def _createGroup(self, plugins, group_id, name):
         """ Create group object. For users, this can be done with a
         plugin, but I don't care to define one for that now. Just uses
@@ -164,15 +163,11 @@ class GroupManager(ZODBGroupManager):
         """
         return PloneGroup(group_id, name).__of__(self)
 
-    security.declarePrivate('_findGroup')
+    @security.private
     def _findGroup(self, plugins, group_id, title=None, request=None):
         """ group_id -> decorated_group
         This method based on PluggableAuthService._findGroup
         """
-
-        view_name = '_findGroup-%s' % group_id
-        keywords = {'group_id': group_id, 'title': title}
-
         group = self._createGroup(plugins, group_id, title)
 
         propfinders = plugins.listPlugins(IPropertiesPlugin)
@@ -197,7 +192,7 @@ class GroupManager(ZODBGroupManager):
 
         return group.__of__(self)
 
-    security.declarePrivate('_verifyGroup')
+    @security.private
     def _verifyGroup(self, plugins, group_id=None, title=None):
 
         """ group_id -> boolean
@@ -213,7 +208,6 @@ class GroupManager(ZODBGroupManager):
             criteria['title'] = title
 
         if criteria:
-            view_name = createViewName('_verifyGroup', group_id)
             enumerators = plugins.listPlugins(IGroupEnumerationPlugin)
 
             for enumerator_id, enumerator in enumerators:
@@ -248,7 +242,7 @@ class PloneGroup(PloneUser):
         """
         return self._id
 
-    security.declarePrivate("getMemberIds")
+    @security.private
     def getMemberIds(self, transitive=1):
         """Return member ids of this group, including or not
         transitive groups.
@@ -268,26 +262,25 @@ class PloneGroup(PloneUser):
 
         return members
 
-
-    security.declarePublic('addMember')
+    @security.public
     def addMember(self, id):
         """Add the existing member with the given id to the group
         """
         self.addPrincipalToGroup(id, self.getId())
 
-    security.declarePublic('removeMember')
+    @security.public
     def removeMember(self, id):
         """Remove the member with the provided id from the group.
         """
         self.removePrincipalFromGroup(id, self.getId())
 
-    security.declarePublic('getRolesInContext')
+    @security.public
     def getRolesInContext(self, object):
         """Since groups can't actually log in, do nothing.
         """
         return []
 
-    security.declarePublic('allowed')
+    @security.public
     def allowed(self, object, object_roles=None):
         """Since groups can't actually log in, do nothing.
         """

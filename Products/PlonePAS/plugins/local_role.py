@@ -5,17 +5,14 @@ ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
 """
-
 from AccessControl import ClassSecurityInfo
 from Acquisition import aq_inner, aq_parent
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-
-from zope.interface import implements
-
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PluggableAuthService.plugins.LocalRolePlugin \
     import LocalRolePlugin
-from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
+from zope.interface import implementer
 
 
 def manage_addLocalRolesManager(dispatcher, id, title=None, RESPONSE=None):
@@ -32,6 +29,7 @@ manage_addLocalRolesManagerForm = \
     DTMLFile('../zmi/LocalRolesManagerForm', globals())
 
 
+@implementer(ILocalRolesPlugin)
 class LocalRolesManager(LocalRolePlugin):
     """Class incorporating local role storage with
     PlonePAS-specific local role permission checking.
@@ -39,8 +37,6 @@ class LocalRolesManager(LocalRolePlugin):
 
     meta_type = "Local Roles Manager"
     security = ClassSecurityInfo()
-
-    implements(ILocalRolesPlugin)
 
     def __init__(self, id, title=None):
         self._id = self.id = id
@@ -162,7 +158,7 @@ class LocalRolesManager(LocalRolePlugin):
                 dict = local_roles
 
                 for principal, localroles in dict.items():
-                    if not principal in roles:
+                    if principal not in roles:
                         roles[principal] = set()
 
                     roles[principal].update(localroles)

@@ -1,15 +1,14 @@
-from zope.interface import implements
-
+# -*- coding: utf-8 -*-
 from App.class_init import InitializeClass
-from Products.PluggableAuthService.PropertiedUser import PropertiedUser
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupsPlugin, IPropertiesPlugin
-from Products.PlonePAS.interfaces.group import IGroupIntrospection
-
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
+from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PluggableAuthService.PropertiedUser import PropertiedUser
+from Products.PluggableAuthService.interfaces.plugins import \
+    IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from zope.interface import implementer
 
 manage_addAutoGroupForm = PageTemplateFile("../zmi/AutoGroupForm", globals())
 
@@ -24,7 +23,7 @@ def manage_addAutoGroup(self, id, title='', group='', description='',
     if RESPONSE is not None:
         return RESPONSE.redirect(
             "%s/manage_workspace?manage_tabs_message=AutoGroup+plugin+added"
-                % self.absolute_url())
+            % self.absolute_url())
 
 
 class VirtualGroup(PropertiedUser):
@@ -62,28 +61,29 @@ class VirtualGroup(PropertiedUser):
         return True
 
 
+@implementer(
+        IGroupEnumerationPlugin,
+        IGroupsPlugin,
+        IGroupIntrospection,
+        IPropertiesPlugin
+)
 class AutoGroup(BasePlugin):
     meta_type = "Automatic Group Plugin"
 
-    implements(IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection,
-               IPropertiesPlugin)
-
     _properties = (
-            {'id': 'title',
-             'label': 'Title',
-             'type': 'string',
-             'mode': 'w',
-            },
-            {'id': 'group',
-             'label': 'Group',
-             'type': 'string',
-             'mode': 'w',
-            },
-            {'id': 'description',
-             'label': 'Description',
-             'type': 'string',
-             'mode': 'w',
-            },)
+        {'id': 'title',
+         'label': 'Title',
+         'type': 'string',
+         'mode': 'w'},
+        {'id': 'group',
+         'label': 'Group',
+         'type': 'string',
+         'mode': 'w'},
+        {'id': 'description',
+         'label': 'Description',
+         'type': 'string',
+         'mode': 'w'},
+    )
 
     def __init__(self, id, title='', group=None, description=''):
         self._setId(id)

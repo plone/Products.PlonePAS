@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 
 

@@ -1,20 +1,19 @@
-from zope.interface import implements
-
+# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-
+from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
+from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
 from Products.PluggableAuthService.interfaces.propertysheets \
     import IPropertySheet
-from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from zope.interface import implementer
 
-from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 try:
     from collections import OrderedDict
 except ImportError:
@@ -38,17 +37,17 @@ def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
         return RESPONSE.redirect('manage_workspace')
 
 
+@implementer(IUserFactoryPlugin)
 class PloneUserFactory(BasePlugin):
 
     security = ClassSecurityInfo()
     meta_type = 'Plone User Factory'
-    implements(IUserFactoryPlugin)
 
     def __init__(self, id, title=''):
         self.id = id
         self.title = title or self.meta_type
 
-    security.declarePrivate('createUser')
+    @security.private
     def createUser(self, user_id, name):
         return PloneUser(user_id, name)
 
@@ -76,26 +75,26 @@ class PloneUser(PropertiedUser):
         # XXX This is not very optimal *at all*
         return self._getPAS().plugins
 
-    security.declarePublic('isGroup')
+    @security.public
     def isGroup(self):
         """Return 1 if this user is a group abstraction"""
         return self._isGroup
 
-    security.declarePublic('getName')
+    @security.public
     def getName(self):
         """Get user's or group's name.
         This is the id. PAS doesn't do prefixes and such like GRUF.
         """
         return self.getId()
 
-    security.declarePublic('getName')
+    @security.public
     def getUserId(self):
         """Get user's or group's name.
         This is the id. PAS doesn't do prefixes and such like GRUF.
         """
         return self.getId()
 
-    security.declarePublic('getGroupNames')
+    @security.public
     def getGroupNames(self):
         """Return ids of this user's groups. GRUF compat."""
         return self.getGroups()
@@ -106,7 +105,7 @@ class PloneUser(PropertiedUser):
     #################################
     # acquisition aware
 
-    security.declarePublic('getPropertysheet')
+    @security.public
     def getPropertysheet(self, id):
         """ -> propertysheet (wrapped if supported)
         """
@@ -116,7 +115,7 @@ class PloneUser(PropertiedUser):
         except AttributeError:
             return sheet
 
-    security.declarePrivate('addPropertysheet')
+    @security.private
     def addPropertysheet(self, id, data):
         """ -> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
@@ -134,7 +133,7 @@ class PloneUser(PropertiedUser):
     def _getPropertyPlugins(self):
         return self._getPAS().plugins.listPlugins(IPropertiesPlugin)
 
-    security.declarePrivate('getOrderedPropertySheets')
+    @security.private
     def getOrderedPropertySheets(self):
         return self._propertysheets.values()
 
@@ -162,8 +161,8 @@ class PloneUser(PropertiedUser):
 
         # Provide short-cut access if object is protected by 'Authenticated'
         # role and user is not nobody
-        if 'Authenticated' in object_roles and (
-            self.getUserName() != 'Anonymous User'):
+        if 'Authenticated' in object_roles \
+           and self.getUserName() != 'Anonymous User':
             return 1
 
         # Check for ancient role data up front, convert if found.

@@ -1,25 +1,22 @@
+# -*- coding: utf-8 -*-
 """
 ZODB based user manager with introspection and management interfaces.
 """
-
-from zope.interface import implements
-
-from AccessControl import ClassSecurityInfo, AuthEncoding
+from AccessControl import AuthEncoding
+from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from Products.PluggableAuthService.utils import createViewName
-
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
-from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
+from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PluggableAuthService.plugins.ZODBUserManager \
+    import ZODBUserManager as BasePlugin
+from Products.PluggableAuthService.utils import createViewName
+from zope.interface import implementer
 
-from Products.PluggableAuthService.plugins.ZODBUserManager import \
-    ZODBUserManager as BasePlugin
-
-manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm',
-                                          globals())
+manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm', globals())
 
 
 def manage_addUserManager(dispatcher, id, title=None, REQUEST=None):
@@ -36,16 +33,20 @@ def manage_addUserManager(dispatcher, id, title=None, REQUEST=None):
             % dispatcher.absolute_url())
 
 
+@implementer(
+    IUserManagement,
+    IUserIntrospection,
+    IDeleteCapability,
+    IPasswordSetCapability
+)
 class UserManager(BasePlugin):
     """PAS plugin for managing users. (adds write API)
     """
 
     meta_type = 'User Manager'
     security = ClassSecurityInfo()
-    implements(IUserManagement, IUserIntrospection, IDeleteCapability,
-               IPasswordSetCapability)
 
-    security.declareProtected(ManageUsers, 'addUser')
+    @security.protected(ManageUsers)
     def addUser(self, user_id, login_name, password):
         """Original ZODBUserManager.addUser, modified to check if
         incoming password is already encypted.
@@ -69,15 +70,15 @@ class UserManager(BasePlugin):
         view_name = createViewName('enumerateUsers')
         self.ZCacheable_invalidate(view_name=view_name)
 
-    ## User Management interface
+    # User Management interface
 
-    security.declarePrivate('doDeleteUser')
+    @security.private
     def doDeleteUser(self, userid):
         """Given a user id, delete that user
         """
         return self.removeUser(userid)
 
-    security.declarePrivate('doChangeUser')
+    @security.private
     def doChangeUser(self, principal_id, password):
         """Change a user's password
         """
@@ -87,7 +88,7 @@ class UserManager(BasePlugin):
 
     # implement interfaces IDeleteCapability, IPasswordSetCapability
 
-    security.declarePublic('allowDeletePrincipal')
+    @security.public
     def allowDeletePrincipal(self, principal_id):
         """True iff this plugin can delete a certain user/group.
         This is true if this plugin manages the user.
@@ -96,30 +97,30 @@ class UserManager(BasePlugin):
             return 1
         return 0
 
-    security.declarePublic('allowPasswordSet')
+    @security.public
     def allowPasswordSet(self, principal_id):
         """True iff this plugin can set the password a certain user.
         This is true if this plugin manages the user.
         """
         return self.allowDeletePrincipal(principal_id)
 
-    ## User Introspection interface
+    # User Introspection interface
 
-    security.declareProtected(ManageUsers, 'getUserIds')
+    @security.protected(ManageUsers)
     def getUserIds(self):
         """
         Return a list of user ids
         """
         return self.listUserIds()
 
-    security.declareProtected(ManageUsers, 'getUserNames')
+    @security.protected(ManageUsers)
     def getUserNames(self):
         """
         Return a list of usernames
         """
         return [x['login_name'] for x in self.listUserInfo()]
 
-    security.declareProtected(ManageUsers, 'getUsers')
+    @security.protected(ManageUsers)
     def getUsers(self):
         """
         Return a list of users
