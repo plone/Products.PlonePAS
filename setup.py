@@ -5,15 +5,16 @@ from setuptools import find_packages
 version = '5.0.1.dev0'
 
 install_requires = [
-        'setuptools',
-        'plone.memoize',
-        'plone.session',
-        'plone.i18n',
         'Products.CMFCore',
         'Products.CMFDefault',
         'Products.GenericSetup',
         'Products.PluggableAuthService',
         'Zope2 > 2.12.4',
+        'plone.i18n',
+        'plone.memoize',
+        'plone.session',
+        'setuptools',
+        'zope.deprecation',
       ]
 
 try:

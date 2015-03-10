@@ -30,11 +30,6 @@ except ImportError:
 else:
     from Products.PlonePAS import  ldapmp
 
-#################################
-# pas monkies 2 play w/ gruf
-if config.PAS_INSIDE_GRUF:
-    from Products.PlonePAS import gruf_support
-
 
 ####################################
 # monkey patch pas, the evil happens

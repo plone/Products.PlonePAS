@@ -11,9 +11,12 @@ from OFS.Folder import Folder
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.patch import wrap_method
+from Products.PlonePAS.patch import ORIG_NAME
 from Products.PluggableAuthService.PluggableAuthService import \
     PluggableAuthService
 from Products.PluggableAuthService.PluggableAuthService import \
@@ -22,26 +25,80 @@ from Products.PluggableAuthService.events import PrincipalDeleted
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import \
+    IAuthenticationPlugin
+from Products.PluggableAuthService.interfaces.plugins import \
     IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
     IUserEnumerationPlugin
 from zope.event import notify
+import logging
+
+logger = logging.getLogger('PlonePAS')
 
 registerToolInterface('acl_users', IPluggableAuthService)
 
-#################################
-# pas folder monkies - standard zope user folder api
 
-_old_doAddUser = PluggableAuthService._doAddUser
+#################################
+# helper functions
+
+def _userSetGroups(pas, user_id, groupnames):
+    """method was used at GRUF level, but is used inside this monkies at several
+    places too.
+
+    We no longer provide it on PAS to clean up patches
+
+    """
+    plugins = pas.plugins
+    gtool = getToolByName(pas, "portal_groups")
+
+    member = pas.getUserById(user_id)
+    groupnameset = set(groupnames)
+
+    # remove absent groups
+    groups = set(gtool.getGroupsForPrincipal(member))
+    rmgroups = groups - groupnameset
+    for gid in rmgroups:
+        try:
+            gtool.removePrincipalFromGroup(user_id, gid)
+        except KeyError:
+            # We could hit a group which does not allow user removal, such as
+            # created by our AutoGroup plugin.
+            pass
+
+    # add groups
+    try:
+        groupmanagers = plugins.listPlugins(IGroupManagement)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        logger.info(
+            'PluggableAuthService: Plugin listing error',
+            exc_info=1
+        )
+        groupmanagers = ()
+
+    for group in groupnames:
+        for gm_id, gm in groupmanagers:
+            try:
+                if gm.addPrincipalToGroup(user_id, group):
+                    break
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                logger.info(
+                    'PluggableAuthService: GroupManagement %s error',
+                    gm_id,
+                    exc_info=1
+                )
+
+#################################
+# pas folder monkies - standard zope user folder api or GRUF
 
 
 def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
     """Masking of PAS._doAddUser to add groups param."""
-    retval = _old_doAddUser(self, login, password, roles, domains)
+    _old_doAddUser = getattr(self, getattr(_doAddUser, ORIG_NAME))
+    retval = _old_doAddUser(login, password, roles, domains)
     if groups is not None:
-        self.userSetGroups(login, groups)
+        _userSetGroups(self, login, groups)
     return retval
 
 
@@ -98,7 +155,7 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
         rmanager.assignRolesToPrincipal(roles, principal_id)
 
     if groups is not None:
-        self.userSetGroups(principal_id, groups)
+        _userSetGroups(self, principal_id, groups)
 
     return True
 
@@ -107,7 +164,7 @@ def userFolderAddUser(self, login, password, roles, domains,
                       groups=None, REQUEST=None, **kw):
     self._doAddUser(login, password, roles, domains, **kw)
     if groups is not None:
-        self.userSetGroups(login, groups)
+        _userSetGroups(self, login, groups)
 
 
 def _doAddGroup(self, id, roles, groups=None, **kw):
@@ -358,107 +415,325 @@ def _getAllLocalRoles(self, context):
     return roles
 
 
+def authenticate(self, name, password, request):
+    """See AccessControl.User.BasicUserFolder.authenticate
+
+    Products.PluggableAuthService.PluggableAuthService does not provide this
+    method, BasicUserFolder documents it as "Private UserFolder object
+    interface". GRUF does provide the method, so not marked as private.
+
+    should be deprecated in future!
+    """
+
+    plugins = self.plugins
+
+    try:
+        authenticators = plugins.listPlugins(IAuthenticationPlugin)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
+        authenticators = ()
+
+    credentials = {'login': name,
+                   'password': password}
+
+    user_id = None
+
+    for authenticator_id, auth in authenticators:
+        try:
+            uid_and_name = auth.authenticateCredentials(credentials)
+            if uid_and_name is not None:
+                user_id, name = uid_and_name
+                break
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            logger.info(
+                    'PluggableAuthService: AuthenticationPlugin %s error',
+                    authenticator_id, exc_info=1)
+            continue
+
+    if not user_id:
+        return
+
+    return self._findUser(plugins, user_id, name, request)
+
+
+def getUserIds(self):
+    """method was used at GRUF and is here for bbb. Not good for many users!
+    DEPRECATED
+    """
+    plugins = self.plugins
+
+    try:
+        introspectors = plugins.listPlugins(IUserIntrospection)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
+        introspectors = ()
+
+    results = []
+    for introspector_id, introspector in introspectors:
+        try:
+            results.extend(introspector.getUserIds())
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            logger.info(
+                    'PluggableAuthService: UserIntrospection %s error',
+                    introspector_id, exc_info=1)
+
+    return results
+
+
+def getUserNames(self):
+    """method was used at GRUF and is here for bbb. Not good for many users!
+    DEPRECATED
+    """
+    plugins = self.plugins
+
+    try:
+        introspectors = plugins.listPlugins(IUserIntrospection)
+    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+        logger.info('PluggableAuthService: Plugin listing error', exc_info=1)
+        introspectors = ()
+
+    results = []
+    for introspector_id, introspector in introspectors:
+        try:
+            results.extend(introspector.getUserNames())
+        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+            logger.info(
+                'PluggableAuthService: UserIntroSpection plugin %s error',
+                introspector_id, exc_info=1)
+
+    return results
+
+
 def patch_all():
-    PluggableAuthService._doAddUser = _doAddUser
-    PluggableAuthService._doDelUsers = _doDelUsers
-
-    PluggableAuthService._doDelUser = _doDelUser
-
-    PluggableAuthService.userFolderDelUsers = postonly(
-        PluggableAuthService._doDelUsers
+    # sort alphabetically by patched/added method name
+    wrap_method(
+        PluggableAuthService,
+        '_delOb',
+        _delOb
     )
-    PluggableAuthService.userFolderDelUsers__roles__ = PermissionRole(
-        ManageUsers,
-        ('Manager',)
+    wrap_method(
+        PluggableAuthService,
+        '_getAllLocalRoles',
+        _getAllLocalRoles,
+        add=True,
     )
-    PluggableAuthService._doChangeUser = _doChangeUser
-
-    PluggableAuthService.userFolderEditUser = postonly(
-        PluggableAuthService._doChangeUser
+    wrap_method(
+        PluggableAuthService,
+        '_doAddGroup',
+        _doAddGroup,
+        add=True
     )
-    PluggableAuthService.userFolderEditUser__roles__ = PermissionRole(
-        ManageUsers,
-        ('Manager',)
+    wrap_method(
+        PluggableAuthService,
+        '_doAddUser',
+        _doAddUser
     )
-    PluggableAuthService.userFolderAddUser = postonly(userFolderAddUser)
-    PluggableAuthService.userFolderAddUser__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService._doAddGroup = _doAddGroup
-
-    PluggableAuthService._doDelGroups = _doDelGroups
-
-    PluggableAuthService.userFolderDelGroups = \
-        postonly(PluggableAuthService._doDelGroups)
-    PluggableAuthService.userFolderDelGroups__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService._doChangeGroup = _doChangeGroup
-
-    PluggableAuthService._updateGroup = _updateGroup
-
-    PluggableAuthService.userFolderEditGroup = \
-        postonly(PluggableAuthService._doChangeGroup)
-    PluggableAuthService.userFolderEditGroup__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getGroups = getGroups
-    PluggableAuthService.getGroups__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getGroupNames = getGroupNames
-    PluggableAuthService.getGroupNames__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getGroupIds = getGroupIds
-    PluggableAuthService.getGroupIds__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getGroup = getGroup
-    PluggableAuthService.getGroup__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getGroupByName = getGroupByName
-    PluggableAuthService.getGroupByName__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getGroupById = getGroupById
-    PluggableAuthService.getGroupById__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getLocalRolesForDisplay = getLocalRolesForDisplay
-    PluggableAuthService._getLocalRolesForDisplay = _getLocalRolesForDisplay
-
-    PluggableAuthService.getUsers = getUsers
-    PluggableAuthService.getUsers__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    # this'll make listMembers work
-    PluggableAuthService.getPureUsers = getUsers
-    PluggableAuthService.getPureUsers__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.canListAllUsers = canListAllUsers
-    PluggableAuthService.canListAllUsers__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.canListAllGroups = canListAllGroups
-    PluggableAuthService.canListAllGroups__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.userSetPassword = userSetPassword
-    PluggableAuthService.userSetPassword__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.credentialsChanged = credentialsChanged
-    PluggableAuthService.credentialsChanged__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService._delOb = _delOb
-
-    PluggableAuthService.addRole = addRole
-    PluggableAuthService.addRole__roles__ = \
-        PermissionRole(ManageUsers, ('Manager',))
-
-    PluggableAuthService.getAllLocalRoles = getAllLocalRoles
-    PluggableAuthService._getAllLocalRoles = _getAllLocalRoles
+    wrap_method(
+        PluggableAuthService,
+        '_doChangeGroup',
+        _doChangeGroup,
+        add=True
+    )
+    wrap_method(
+        PluggableAuthService,
+        '_doChangeUser',
+        _doChangeUser,
+        add=True
+    )
+    wrap_method(
+        PluggableAuthService,
+        '_doDelGroups',
+        _doDelGroups,
+        add=True
+    )
+    wrap_method(
+        PluggableAuthService,
+        '_doDelUser',
+        _doDelUser,
+        add=True
+    )
+    wrap_method(
+        PluggableAuthService,
+        '_doDelUsers',
+        _doDelUsers,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        '_getLocalRolesForDisplay',
+        _getLocalRolesForDisplay,
+        add=True
+    )
+    wrap_method(
+        PluggableAuthService,
+        '_updateGroup',
+        _updateGroup,
+        add=True
+    )
+    wrap_method(
+        PluggableAuthService,
+        'addRole',
+        addRole,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'authenticate',
+        authenticate,
+        add=True,
+        roles=(),
+    )
+    wrap_method(
+        PluggableAuthService,
+        'canListAllGroups',
+        canListAllGroups,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'canListAllUsers',
+        canListAllUsers,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'credentialsChanged',
+        credentialsChanged,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getAllLocalRoles',
+        getAllLocalRoles,
+        add=True,
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getGroup',
+        getGroup,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getGroupById',
+        getGroupById,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getGroupByName',
+        getGroupByName,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getGroupIds',
+        getGroupIds,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getGroupNames',
+        getGroupNames,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getGroups',
+        getGroups,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getLocalRolesForDisplay',
+        getLocalRolesForDisplay,
+        add=True,
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getUserIds',
+        getUserIds,
+        add=True,
+        deprecated="Inefficient GRUF wrapper, use IUserIntrospection instead."
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getUserNames',
+        getUserNames,
+        add=True,
+        deprecated="Inefficient GRUF wrapper, use IUserIntrospection instead."
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getUsers',
+        getUsers,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'getPureUsers',
+        getUsers,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userFolderAddUser',
+        postonly(userFolderAddUser),
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userFolderDelUsers',
+        postonly(_doDelUsers),
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userFolderEditGroup',
+        postonly(_doChangeGroup),
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userFolderEditUser',
+        postonly(_doChangeUser),
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userFolderDelGroups',
+        postonly(_doDelGroups),
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userSetGroups',
+        _userSetGroups,
+        add=True,
+        deprecated="Method from GRUF was removed."
+    )
+    wrap_method(
+        PluggableAuthService,
+        'userSetPassword',
+        userSetPassword,
+        add=True,
+        roles=PermissionRole(ManageUsers, ('Manager',))
+    )
