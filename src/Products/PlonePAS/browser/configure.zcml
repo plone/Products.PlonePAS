@@ -1,0 +1,36 @@
+<configure
+    i18n_domain="Five"
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five">
+
+  <permission
+      id="PAS.SearchPrincipals"
+      title="Search for principals"
+  />
+
+  <browser:page
+      allowed_interface="Products.PlonePAS.interfaces.browser.IPASInfoView"
+      class=".info.PASInfoView"
+      for="*"
+      name="pas_info"
+      permission="zope2.View"
+  />
+
+  <browser:page
+      allowed_interface="Products.PlonePAS.interfaces.browser.IPASMemberView"
+      class=".member.PASMemberView"
+      for="*"
+      name="pas_member"
+      permission="zope2.View"
+  />
+
+  <browser:page
+      allowed_interface="Products.PlonePAS.interfaces.browser.IPASSearchView"
+      class=".search.PASSearchView"
+      for="*"
+      name="pas_search"
+      permission="zope2.View"
+  />
+
+</configure>
