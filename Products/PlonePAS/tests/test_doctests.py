@@ -7,7 +7,7 @@ import unittest
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTest(layered(
-        doctest.DocFileSuite('cookie_auth.txt', package='Products.PlonePAS.tests',
+        doctest.DocFileSuite('cookie_auth.rst', package='Products.PlonePAS.tests',
                              optionflags=doctest.ELLIPSIS),
         layer=PTC_FUNCTIONAL_TESTING))
     suite.addTest(doctest.DocTestSuite('Products.PlonePAS.utils', optionflags=doctest.ELLIPSIS)),
