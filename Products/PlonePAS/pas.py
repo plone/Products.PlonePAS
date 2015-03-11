@@ -500,7 +500,7 @@ def getUserNames(self):
     return results
 
 
-def patch_all():
+def patch_pas():
     # sort alphabetically by patched/added method name
     wrap_method(
         PluggableAuthService,

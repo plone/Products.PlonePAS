@@ -63,6 +63,7 @@ def wrap_method(klass, name, method,
 
 
 def unwrap_method(klass, name):
+    # seems to be dead code, nowwhere used nor tested
     old_method = getattr(klass, name)
     if not isWrapperMethod(old_method):
         raise ValueError('Trying to unwrap non-wrapped '

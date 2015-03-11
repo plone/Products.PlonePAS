@@ -4,13 +4,18 @@ Changelog
 6.0 (unreleased)
 ------------------
 
+- Make patching of LDAPMultiPlugin explizit. Code using those must call
+  ``Products.PlonePAS.ldapmp.patch_ldapmp`` with no parameters in order
+  to activate the patches.
+  [jensens]
+
 - Removed (optional) Archetypes Storage (used in past with CMFMember, which
   itself was long time ago superseeded by Membrane). Probably dead code. If
   theres someone out there needing it in Plone 5 please copy the code from
   git/Plone4 in your addon/project.
   [jensens]
 
-- Moved ``Extensions/Install.py`` fucntions to setuphandlers, kept BBB import
+- Moved ``Extensions/Install.py`` functions to setuphandlers, kept BBB import
   for ``activatePluginInterfaces`` since this is imported by ``borg.localrole``.
   [jensens]
 

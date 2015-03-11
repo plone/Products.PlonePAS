@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from Products.LDAPMultiPlugins.LDAPMultiPlugin import LDAPMultiPlugin
-from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
 from Products.PlonePAS.patch import call
 from Products.PlonePAS.patch import wrap_method
 from Products.PlonePAS.plugins.group import PloneGroup
@@ -45,8 +43,6 @@ def getPropertiesForUser(self, user, request=None):
 
     return properties
 
-wrap_method(LDAPPluginBase, 'getPropertiesForUser', getPropertiesForUser)
-
 
 def getGroupsForPrincipal(self, user, request=None, attr=None):
     """ Fulfill GroupsPlugin requirements, but don't return any groups for
@@ -59,4 +55,18 @@ def getGroupsForPrincipal(self, user, request=None, attr=None):
 
     return ()
 
-wrap_method(LDAPMultiPlugin, 'getGroupsForPrincipal', getGroupsForPrincipal)
+
+def patch_ldapmp():
+    from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
+    wrap_method(
+        LDAPPluginBase,
+        'getPropertiesForUser',
+        getPropertiesForUser
+    )
+
+    from Products.LDAPMultiPlugins.LDAPMultiPlugin import LDAPMultiPlugin
+    wrap_method(
+        LDAPMultiPlugin,
+        'getGroupsForPrincipal',
+        getGroupsForPrincipal
+    )

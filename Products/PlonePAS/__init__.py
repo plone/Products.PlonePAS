@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.utils import ToolInit
-from Products.PlonePAS import config
-from Products.PlonePAS import pas
+from Products.PlonePAS.pas import patch_pas
 from Products.PlonePAS.plugins import autogroup
 from Products.PlonePAS.plugins import cookie_handler
 from Products.PlonePAS.plugins import crumbler
@@ -19,21 +18,9 @@ from Products.PlonePAS.tools.memberdata import MemberDataTool
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PluggableAuthService import registerMultiPlugin
 
-#################################
-# ldapmp monkies if available
-# quite dirty, must be moved to PloneLDAP
-try:
-    from Products import LDAPMultiPlugins
-    from Products import LDAPUserFolder
-except ImportError:
-    pass
-else:
-    from Products.PlonePAS import  ldapmp
-
-
 ####################################
 # monkey patch pas, the evil happens
-pas.patch_all()
+patch_pas()
 
 #################################
 # new groups tool
