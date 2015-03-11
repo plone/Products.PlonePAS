@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from zope.interface import implementer
-from plone.memoize.instance import memoize
 from Acquisition import aq_inner
+from Products.CMFCore.utils import getToolByName
+from Products.Five import BrowserView
 from Products.PlonePAS.interfaces.browser import IPASInfoView
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 from Products.PluggableAuthService.interfaces.plugins \
     import ILoginPasswordExtractionPlugin
-from Products.CMFCore.utils import getToolByName
-from Products.Five import BrowserView
+from plone.memoize.instance import memoize
+from zope.interface import implementer
 
 
 @implementer(IPASInfoView)

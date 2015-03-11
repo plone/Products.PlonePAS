@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
@@ -6,7 +7,8 @@ management (ie. rw) capabilities.
 from AccessControl import ClassSecurityInfo
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from BTrees.OOBTree import OOBTree, OOSet
+from BTrees.OOBTree import OOBTree
+from BTrees.OOBTree import OOSet
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from Products.PlonePAS.interfaces.group import IGroupIntrospection

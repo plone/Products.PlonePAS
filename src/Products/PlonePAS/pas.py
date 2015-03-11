@@ -15,8 +15,8 @@ from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
-from Products.PlonePAS.patch import wrap_method
 from Products.PlonePAS.patch import ORIG_NAME
+from Products.PlonePAS.patch import wrap_method
 from Products.PluggableAuthService.PluggableAuthService import \
     PluggableAuthService
 from Products.PluggableAuthService.PluggableAuthService import \

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from zope.interface import Interface
 from Products.PluggableAuthService.interfaces import plugins
+from zope.interface import Interface
 
 
 class IGroupManagement(Interface):

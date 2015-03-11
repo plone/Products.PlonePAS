@@ -145,6 +145,8 @@ class BasicOpsTestCase(base.TestCase):
         self.assertEqual(user.getProperty('fullname'), 'Test User')
         self.assertEqual(user.getProperty('email'), 'test@example.org')
 
-        user.setProperties(properties={'fullname': 'Test User2', 'email': 'test2@example.org'})
+        user.setProperties(
+            properties={'fullname': 'Test User2', 'email': 'test2@example.org'}
+        )
         self.assertEqual(user.getProperty('fullname'), 'Test User2')
         self.assertEqual(user.getProperty('email'), 'test2@example.org')

@@ -7,9 +7,9 @@ to the principal.
 """
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
-from Acquisition import aq_parent
-from Acquisition import aq_inner
 from Acquisition import aq_get
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability

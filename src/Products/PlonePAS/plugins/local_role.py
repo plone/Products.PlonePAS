@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 A Local Roles Plugin Implementation that respects Black Listing markers.
 
@@ -6,7 +7,8 @@ roles from their containment structure.
 
 """
 from AccessControl import ClassSecurityInfo
-from Acquisition import aq_inner, aq_parent
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin

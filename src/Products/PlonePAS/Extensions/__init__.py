@@ -1,1 +1,1 @@
-# poof!
+# -*- coding: utf-8 -*-

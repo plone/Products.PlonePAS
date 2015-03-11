@@ -8,7 +8,8 @@ from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOBTree
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
-from Products.PlonePAS.sheet import MutablePropertySheet, validateValue
+from Products.PlonePAS.sheet import MutablePropertySheet
+from Products.PlonePAS.sheet import validateValue
 from Products.PlonePAS.utils import safe_unicode
 from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
