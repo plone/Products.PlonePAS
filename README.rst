@@ -1,7 +1,7 @@
 Overview
 ========
 
-This product extends `PluggableAuthService <https://github.com/zopefoundation/Products.PluggableAuthService>'_ (PAS) for use in Plone.
+This product extends `PluggableAuthService <https://github.com/zopefoundation/Products.PluggableAuthService>`_ (PAS) for use in Plone.
 
 It adds
 
