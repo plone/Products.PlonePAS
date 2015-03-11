@@ -73,7 +73,7 @@ Review, cleanup, modernize code, adressing Plone 5:
 Jens Klein, BlueDynamics Alliance - `Klein & Partner KG <http://kleinundpartner.at>`_
 
 Source Code
-===========
+-----------
 
 Contributors please read the document `Process for Plone core's development <http://docs.plone.org/develop/plone-coredev/index.html>`_
 
