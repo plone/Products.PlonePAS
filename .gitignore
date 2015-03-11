@@ -3,7 +3,7 @@
 /devsrc/
 /parts/
 /var/
-/*.egg-info
+/src/*.egg-info
 .mrsd
 /*eggs/
 .*.cfg

@@ -4,6 +4,11 @@ Changelog
 6.0 (unreleased)
 ------------------
 
+- Add a integrated test setup with codeanalysis and travis. For this moved
+  ``Products`` folder to a ``src`` folder in order to follow the package
+  structure expected by ``buildout.plonetest``'s ``qa.cfg``.
+  [jensens]
+
 - Make patching of LDAPMultiPlugin explizit. Code using those must call
   ``Products.PlonePAS.ldapmp.patch_ldapmp`` with no parameters in order
   to activate the patches.
