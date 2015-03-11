@@ -24,7 +24,7 @@ setup(
     license='ZPL',
     packages=find_packages(exclude=['ez_setup']),
     namespace_packages=['Products'],
-    clude_package_data=True,
+    include_package_data=True,
     zip_safe=False,
     install_requires=[
         'Products.CMFCore',
