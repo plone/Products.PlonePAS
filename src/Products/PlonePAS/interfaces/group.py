@@ -79,8 +79,8 @@ class IGroupDataTool(Interface):
 
 
 class IGroupTool(IGroupIntrospection,
-                  IGroupManagement,
-                  plugins.IGroupsPlugin):
+                 IGroupManagement,
+                 plugins.IGroupsPlugin):
 
     """
     Defines an interface for managing and introspecting and

@@ -34,7 +34,7 @@ def wrap_method(klass, name, method,
                 'PlonePAS: *NOT* wrapping already wrapped method at '
                 '{0}.{1}'.format(
                     klass.__name__, name)
-                )
+            )
 
             return
         logger.info('PlonePAS: Wrapping method at %s.%s', klass.__name__, name)

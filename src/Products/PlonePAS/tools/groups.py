@@ -328,18 +328,19 @@ class GroupsTool(UniqueObject, SimpleItem):
     def _getGroupManagers(self):
         return self._getPlugins().listPlugins(
             igroup.IGroupManagement
-            )
+        )
 
     @security.private
     def _getGroupIntrospectors(self):
         return self._getPlugins().listPlugins(
             igroup.IGroupIntrospection
-            )
+        )
 
     @security.private
     def _getGroupTools(self):
         managers = self._getPlugins().listPlugins(
-                        igroup.IGroupManagement)
+            igroup.IGroupManagement
+        )
         return [(id, manager) for (id, manager) in managers
                 if igroup.IGroupIntrospection.providedBy(manager)]
 

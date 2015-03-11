@@ -256,4 +256,3 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
 
     def beforeTearDown(self):
         self._free_warning_output()
-

@@ -346,7 +346,8 @@ class MembershipTool(BaseTool):
             # check that we do not do something wrong
             if user.getId() != member_id:
                 raise NotImplementedError(
-                        'cannot get user for member area creation')
+                    'cannot get user for member area creation'
+                )
 
         member_object = self.getMemberById(member_id)
 
@@ -685,11 +686,10 @@ class MembershipTool(BaseTool):
             st = getToolByName(self, "portal_skins")
             skinvar = st.getRequestVarname()
             if skinvar in REQUEST and not st.getCookiePersistence():
-                    portal = getToolByName(self, "portal_url") \
-                                .getPortalObject()
-                    path = '/' + portal.absolute_url(1)
-                    # XXX check if this path is sane
-                    REQUEST.RESPONSE.expireCookie(skinvar, path=path)
+                portal = getToolByName(self, "portal_url") .getPortalObject()
+                path = '/' + portal.absolute_url(1)
+                # XXX check if this path is sane
+                REQUEST.RESPONSE.expireCookie(skinvar, path=path)
 
         user = getSecurityManager().getUser()
         if user is not None:

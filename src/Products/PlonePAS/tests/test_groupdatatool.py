@@ -127,11 +127,15 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         g = self.groups.getGroupById('foo')
         self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
         user = self.acl_users.getUser(TEST_USER_NAME)
-        self.assertEqual(user.getRolesInContext(self.folder).sort(),
-                        ['Member', 'Authenticated', 'Owner'].sort())
+        self.assertEqual(
+            user.getRolesInContext(self.folder).sort(),
+            ['Member', 'Authenticated', 'Owner'].sort()
+        )
         self.folder.manage_setLocalRoles(g.getId(), ['NewRole'])
-        self.assertEqual(user.getRolesInContext(self.folder).sort(),
-                        ['Member', 'Authenticated', 'Owner', 'NewRole'].sort())
+        self.assertEqual(
+            user.getRolesInContext(self.folder).sort(),
+            ['Member', 'Authenticated', 'Owner', 'NewRole'].sort()
+        )
 
     def testGetDomains(self):
         g = self.groups.getGroupById('foo')
@@ -178,4 +182,3 @@ class TestMethodProtection(base.TestCase):
         self.setPermissions([Permissions.manage_users])
         self.groupdata.addMember(TEST_USER_ID)
         self.groupdata.removeMember(TEST_USER_ID)
-

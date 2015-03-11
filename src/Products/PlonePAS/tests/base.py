@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
-from plone.app.testing.bbb import PloneTestCase as TestCase
-from plone.app.testing.bbb import PloneTestCase as FunctionalTestCase
+from plone.app.testing.bbb import PloneTestCase as TestCase  # noqa
+from plone.app.testing.bbb import PloneTestCase as FunctionalTestCase  # noqa

@@ -10,7 +10,7 @@ GROUP_PROPERTY_MAP = {
               'cn',),
     'description': ('description', ),
     'email': ('mail', ),
-    }
+}
 
 KNOWN_ATTRS = []
 for attrs in GROUP_PROPERTY_MAP.values():

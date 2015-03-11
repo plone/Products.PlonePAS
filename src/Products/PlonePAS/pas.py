@@ -442,8 +442,10 @@ def authenticate(self, name, password, request):
                 break
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             logger.info(
-                    'PluggableAuthService: AuthenticationPlugin %s error',
-                    authenticator_id, exc_info=1)
+                'PluggableAuthService: AuthenticationPlugin %s error',
+                authenticator_id,
+                exc_info=1
+            )
             continue
 
     if not user_id:
@@ -470,8 +472,10 @@ def getUserIds(self):
             results.extend(introspector.getUserIds())
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
             logger.info(
-                    'PluggableAuthService: UserIntrospection %s error',
-                    introspector_id, exc_info=1)
+                'PluggableAuthService: UserIntrospection %s error',
+                introspector_id,
+                exc_info=1
+            )
 
     return results
 

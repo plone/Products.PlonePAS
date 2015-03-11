@@ -161,7 +161,7 @@ class PropertiesTest(base.TestCase):
             ('addresses', 'lines', ['Here', 'There']),
             ('city', 'str', 'Somewhere'),
             ('telephone', 'int', 1234567),
-            ]
+        ]
 
         # This used to give a ValueError, so we just check that it
         # does not.
@@ -276,7 +276,9 @@ class PropertySearchTest(base.TestCase):
     def testSearchEmptyId(self):
         self.assertEqual(self.pas.mutable_properties.enumerateUsers(id=''), ())
         self.assertEqual(
-                self.pas.mutable_properties.enumerateUsers(login=''), ())
+            self.pas.mutable_properties.enumerateUsers(login=''),
+            ()
+        )
 
     def testCantSearchByIdOrLogin(self):
         # we can't search by id

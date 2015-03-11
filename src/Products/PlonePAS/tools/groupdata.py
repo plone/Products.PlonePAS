@@ -450,13 +450,13 @@ class GroupData(SimpleItem):
         """Check to see if a user has a given role or roles."""
         return self.getGroup().has_role(roles, object)
 
-    ## GRUF 3.2 methods...
+    # GRUF 3.2 methods...
 
     def getUserName(self):
         return self.getName()
     getUserNameWithoutGroupPrefix = getUserName
 
-    ## IManageCapabilities methods
+    # IManageCapabilities methods
     def canDelete(self):
         """True iff user can be removed from the Plone UI.
         """
@@ -514,7 +514,7 @@ class GroupData(SimpleItem):
     canRemoveFromGroup = MemberData.canRemoveFromGroup.im_func
     canAssignRole = MemberData.canAssignRole.im_func
 
-    ## plugin getters
+    # plugin getters
 
     @security.private
     def _getPlugins(self):

@@ -62,10 +62,10 @@ class VirtualGroup(PropertiedUser):
 
 
 @implementer(
-        IGroupEnumerationPlugin,
-        IGroupsPlugin,
-        IGroupIntrospection,
-        IPropertiesPlugin
+    IGroupEnumerationPlugin,
+    IGroupsPlugin,
+    IGroupIntrospection,
+    IPropertiesPlugin
 )
 class AutoGroup(BasePlugin):
     meta_type = "Automatic Group Plugin"

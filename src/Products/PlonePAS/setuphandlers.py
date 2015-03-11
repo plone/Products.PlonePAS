@@ -72,7 +72,7 @@ def registerPluginTypes(pas):
         'title': 'user_management',
         'description': ("The User Management plugins allow the "
                         "Pluggable Auth Service to add/delete/modify users")
-        }
+    }
 
     registerPluginType(pas, IUserManagement, PluginInfo)
 
@@ -81,7 +81,7 @@ def registerPluginTypes(pas):
         'title': 'user_introspection',
         'description': ("The User Introspection plugins allow the "
                         "Pluggable Auth Service to provide lists of users")
-        }
+    }
 
     registerPluginType(pas, IUserIntrospection, PluginInfo)
 
@@ -90,7 +90,7 @@ def registerPluginTypes(pas):
         'title': 'group_management',
         'description': ("Group Management provides add/write/deletion "
                         "of groups and member management")
-        }
+    }
 
     registerPluginType(pas, igroup.IGroupManagement, PluginInfo)
 
@@ -99,7 +99,7 @@ def registerPluginTypes(pas):
         'title': 'group_introspection',
         'description': ("Group Introspection provides listings "
                         "of groups and membership")
-        }
+    }
 
     registerPluginType(pas, igroup.IGroupIntrospection, PluginInfo)
 
@@ -107,7 +107,7 @@ def registerPluginTypes(pas):
         'id': 'ILocalRolesPlugin',
         'title': 'local_roles',
         'description': "Defines Policy for getting Local Roles"
-        }
+    }
 
     registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
 
@@ -160,8 +160,8 @@ def setupPlugins(portal):
     found = uf.objectIds(['Automatic Group Plugin'])
     if not found:
         plone_pas.manage_addAutoGroup(
-                "auto_group", "Authenticated Users (Virtual Group)",
-                "AuthenticatedUsers", "Automatic Group Provider")
+            "auto_group", "Authenticated Users (Virtual Group)",
+            "AuthenticatedUsers", "Automatic Group Provider")
         logger.debug("Added Automatic Group.")
         activatePluginInterfaces(portal, "auto_group")
 
@@ -319,7 +319,7 @@ def migrate_root_uf(self):
 
 def pas_fixup(self):
     from Products.PluggableAuthService.PluggableAuthService \
-         import _PLUGIN_TYPE_INFO
+        import _PLUGIN_TYPE_INFO
 
     pas = getToolByName(self, 'acl_users')
     if not IPluggableAuthService.providedBy(pas):
@@ -339,7 +339,7 @@ def pas_fixup(self):
             'id': id,
             'title': title,
             'description': description,
-            }
+        }
     # Make it ordered
     plugin_types.sort()
 

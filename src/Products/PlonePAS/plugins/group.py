@@ -219,8 +219,11 @@ class GroupManager(ZODBGroupManager):
 
                 except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                     logger.info(
-                       'PluggableAuthService: GroupEnumerationPlugin %s error',
-                       enumerator_id, exc_info=1)
+                        'PluggableAuthService: GroupEnumerationPlugin %s '
+                        'error',
+                        enumerator_id,
+                        exc_info=1
+                    )
 
         return 0
 

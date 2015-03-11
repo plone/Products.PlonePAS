@@ -56,19 +56,19 @@ PropertySchema.addType(
 )
 PropertySchema.addType(
     'int',
-    lambda x:  x is None or isinstance(x, int)
+    lambda x: x is None or isinstance(x, int)
 )
 PropertySchema.addType(
     'long',
-    lambda x:  x is None or isinstance(x, long)
+    lambda x: x is None or isinstance(x, long)
 )
 PropertySchema.addType(
     'float',
-    lambda x:  x is None or isinstance(x, float)
+    lambda x: x is None or isinstance(x, float)
 )
 PropertySchema.addType(
     'lines',
-    lambda x:  x is None or isinstance(x, _SequenceTypes)
+    lambda x: x is None or isinstance(x, _SequenceTypes)
 )
 PropertySchema.addType(
     'selection',
@@ -76,7 +76,7 @@ PropertySchema.addType(
 )
 PropertySchema.addType(
     'multiple selection',
-    lambda x:  x is None or isinstance(x, _SequenceTypes)
+    lambda x: x is None or isinstance(x, _SequenceTypes)
 )
 PropertySchema.addType(
     'date',

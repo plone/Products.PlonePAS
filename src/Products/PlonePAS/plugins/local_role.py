@@ -42,7 +42,7 @@ class LocalRolesManager(LocalRolePlugin):
         self._id = self.id = id
         self.title = title
 
-    #security.declarePrivate( 'getRolesInContext' )
+    # security.declarePrivate( 'getRolesInContext' )
     def getRolesInContext(self, user, object):
         user_id = user.getId()
         group_ids = user.getGroups()
@@ -86,7 +86,7 @@ class LocalRolesManager(LocalRolePlugin):
 
         return local.keys()
 
-    #security.declarePrivate( 'checkLocalRolesAllowed' )
+    # security.declarePrivate('checkLocalRolesAllowed')
     def checkLocalRolesAllowed(self, user, object, object_roles):
         # Still have not found a match, so check local roles. We do
         # this manually rather than call getRolesInContext so that
