@@ -1,7 +1,7 @@
 Changelog
 =========
 
-6.0 (unreleased)
+5.0.1 (2015-03-21)
 ------------------
 
 - Add a integrated test setup with codeanalysis and travis. For this moved
