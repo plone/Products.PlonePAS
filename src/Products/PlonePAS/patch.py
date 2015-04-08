@@ -30,20 +30,23 @@ def wrap_method(klass, name, method,
     if not add:
         old_method = getattr(klass, name)
         if isWrapperMethod(old_method):
-            logger.info(
+            logger.warn(
                 'PlonePAS: *NOT* wrapping already wrapped method at '
                 '{0}.{1}'.format(
                     klass.__name__, name)
             )
 
             return
-        logger.info('PlonePAS: Wrapping method at %s.%s', klass.__name__, name)
+        logger.debug(
+            'PlonePAS: Wrapping method at %s.%s',
+            klass.__name__, name
+        )
         setattr(klass, new_name, old_method)
         setattr(method, ORIG_NAME, new_name)
         setattr(method, WRAPPER, True)
         setattr(method, ADDED, False)
     else:
-        logger.info('PlonePAS: Adding method at %s.%s', klass.__name__, name)
+        logger.debug('PlonePAS: Adding method at %s.%s', klass.__name__, name)
         setattr(method, WRAPPER, False)
         setattr(method, ADDED, True)
 
@@ -54,7 +57,7 @@ def wrap_method(klass, name, method,
 
     if roles is not None:
         roles_attr = '{0}__roles__'.format(name)
-        logger.info(
+        logger.debug(
             'PlonePAS: Setting new permission roles at {0}.{1}'.format(
                 klass.__name__, name
             )

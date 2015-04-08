@@ -4,7 +4,8 @@ Changelog
 5.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Reduce logging level for while patching from info down to debug.
+  [jensens]
 
 
 5.0.1 (2015-03-21)
