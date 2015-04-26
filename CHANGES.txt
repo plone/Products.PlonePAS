@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.1.5 (unreleased)
+4.1.5 (2015-04-26)
 ------------------
 
 - In searchForMembers, ensure that request parameters are properly
