@@ -37,6 +37,7 @@ setup(
         'plone.session',
         'setuptools',
         'zope.deprecation',
+        'plone.protect'
     ],
     extras_require=dict(
         test=[
