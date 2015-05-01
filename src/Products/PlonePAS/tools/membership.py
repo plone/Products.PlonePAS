@@ -28,14 +28,14 @@ from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
-from plone.protect.interfaces import IDisableCSRFProtection
 from ZODB.POSException import ConflictError
 from cStringIO import StringIO
+from plone.protect.interfaces import IDisableCSRFProtection
 from zExceptions import BadRequest
 from zope import event
 from zope.component import getUtility
-from zope.interface import implementer
 from zope.interface import alsoProvides
+from zope.interface import implementer
 import logging
 import transaction
 
