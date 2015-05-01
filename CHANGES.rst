@@ -4,6 +4,10 @@ Changelog
 5.0.2 (unreleased)
 ------------------
 
+- Prevent CRSF protecting errors when logging out because of 
+  Zope2 write on read issues
+  [vangheem]
+
 - Reduce logging level for while patching from info down to debug.
   [jensens]
 

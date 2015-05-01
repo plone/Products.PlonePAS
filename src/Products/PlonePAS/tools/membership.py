@@ -28,12 +28,14 @@ from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
+from plone.protect.interfaces import IDisableCSRFProtection
 from ZODB.POSException import ConflictError
 from cStringIO import StringIO
 from zExceptions import BadRequest
 from zope import event
 from zope.component import getUtility
 from zope.interface import implementer
+from zope.interface import alsoProvides
 import logging
 import transaction
 
@@ -667,9 +669,17 @@ class MembershipTool(BaseTool):
         # Invalidate existing sessions, but only if they exist.
         sdm = getToolByName(self, 'session_data_manager', None)
         if sdm is not None:
-                session = sdm.getSessionData(create=0)
-                if session is not None:
-                            session.invalidate()
+            try:
+                # XXX This causes write on read to happen which
+                # causes plone.protect to freak out.
+                # Please remove this once write on read is fixed
+                req = REQUEST or self.REQUEST
+                alsoProvides(req, IDisableCSRFProtection)
+            except AttributeError:
+                pass
+            session = sdm.getSessionData(create=0)
+            if session is not None:
+                session.invalidate()
 
         if REQUEST is None:
             REQUEST = getattr(self, 'REQUEST', None)
