@@ -4,7 +4,7 @@ Changelog
 5.0.2 (unreleased)
 ------------------
 
-- Prevent CRSF protecting errors when logging out because of 
+- Prevent CRSF protecting errors when logging out because of
   Zope2 write on read issues
   [vangheem]
 
