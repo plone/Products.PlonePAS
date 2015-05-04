@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.2 (unreleased)
+5.0.2 (2015-05-04)
 ------------------
 
 - Prevent CRSF protecting errors when logging out because of
