@@ -245,7 +245,7 @@ class MemberData(BaseMemberData):
 
     # setProperties uses setMemberProperties. no need to override.
 
-    def setMemberProperties(self, mapping, force_local=0):
+    def setMemberProperties(self, mapping, force_local=0, force_empty=False):
         """PAS-specific method to set the properties of a
         member. Ignores 'force_local', which is not reliably present.
         """
@@ -273,7 +273,7 @@ class MemberData(BaseMemberData):
         # property routing?
         modified = False
         for k, v in mapping.items():
-            if v is None:
+            if v is None and not force_empty:
                 continue
             for sheet in sheets:
                 if not sheet.hasProperty(k):
