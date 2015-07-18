@@ -1,7 +1,7 @@
 Changelog
 =========
 
-5.0.3 (unreleased)
+5.0.3 (2015-07-18)
 ------------------
 
 - Allow to set a property to None.
