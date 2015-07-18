@@ -4,7 +4,8 @@ Changelog
 5.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Allow to set a property to None.
+  [ebrehault]
 
 
 5.0.2 (2015-05-04)
