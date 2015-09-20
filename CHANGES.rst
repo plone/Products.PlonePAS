@@ -4,8 +4,8 @@ Changelog
 5.0.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Remove tests for non-utf-8 encodings.
+  [esteele]
 
 5.0.3 (2015-07-18)
 ------------------

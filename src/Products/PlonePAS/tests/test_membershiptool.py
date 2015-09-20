@@ -6,7 +6,6 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
-from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.browser.member import PASMemberView
@@ -24,7 +23,6 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from zExceptions import BadRequest
-from zope.component import getUtility
 import os
 
 
@@ -851,11 +849,6 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
 
         self.assertEqual(len(search(
             REQUEST=dict(name=u'jürgen'))), 1)
-
-        ptool = getUtility(IPropertiesTool)
-        ptool._setProperty('default_charset', 'iso8859-1')
-        self.assertEqual(len(search(
-            REQUEST=dict(name=u'jürgen'.encode('iso8859-1')))), 1)
 
     def beforeTearDown(self):
         self._free_warning_output()
