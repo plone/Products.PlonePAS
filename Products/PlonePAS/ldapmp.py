@@ -1,5 +1,6 @@
 from Products.PlonePAS.patch import call, wrap_method
 from Products.PlonePAS.plugins.group import PloneGroup
+from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
 from Products.LDAPMultiPlugins.LDAPMultiPlugin import LDAPMultiPlugin
 
@@ -49,12 +50,10 @@ wrap_method(LDAPPluginBase, 'getPropertiesForUser', getPropertiesForUser)
 def getGroupsForPrincipal(self, user, request=None, attr=None):
     """ Fulfill GroupsPlugin requirements, but don't return any groups for
     groups """
-
-    if not isinstance(user, PloneGroup):
-        # It's not a PloneGroup, continue as usual
-        return call(self, 'getGroupsForPrincipal', user,
-                    request=request, attr=attr)
-
-    return ()
+    # Skip PloneGroup and PropertiedUser, ldapuserfolder would try to
+    # look them up as users
+    if isinstance(user, (PloneGroup, PropertiedUser)):
+        return ()
+    return call(self, 'getGroupsForPrincipal', user, request=request, attr=attr)
 
 wrap_method(LDAPMultiPlugin, 'getGroupsForPrincipal', getGroupsForPrincipal)
