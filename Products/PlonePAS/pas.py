@@ -1,4 +1,6 @@
 # pas alterations and monkies
+import logging
+from itertools import chain
 from zope.event import notify
 
 from Products.CMFCore.utils import getToolByName
@@ -16,7 +18,12 @@ from Products.PluggableAuthService.interfaces.plugins \
     import IUserEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins \
     import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.events import PrincipalDeleted
+from Products.PluggableAuthService.utils import createKeywords
+from Products.PluggableAuthService.utils import createViewName
 
 from Products.PlonePAS.interfaces.plugins \
     import IUserManagement, ILocalRolesPlugin
@@ -35,6 +42,8 @@ registerToolInterface('acl_users', IPluggableAuthService)
 # pas folder monkies - standard zope user folder api
 
 _old_doAddUser = PluggableAuthService._doAddUser
+logger = logging.getLogger('PlonePAS')
+prefetch_logger = logger.getChild('prefetch')
 
 
 def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
@@ -255,6 +264,56 @@ PluggableAuthService.getGroupById__roles__ = \
     PermissionRole(ManageUsers, ('Manager',))
 
 
+def prefetchGetGroupById(self, ids):
+    """Let supporting plugins prefetch a list of groups for getGroupById
+
+    First plugin to support this is LDAPMultiPlugins.
+    """
+    prefetch_logger.debug("request groups %r", ids)
+
+    listPlugins = self._getOb( 'plugins' ).listPlugins
+    plugins = listPlugins(IGroupIntrospection)
+    for name, plugin in plugins:
+        prefetch = getattr(plugin, 'prefetchGroupsByIds', None)
+        if prefetch is not None:
+            prefetch(ids)
+
+PluggableAuthService.prefetchGetGroupById = prefetchGetGroupById
+PluggableAuthService.prefetchGetGroupById__roles__ = \
+    PermissionRole(ManageUsers, ('Manager',))
+
+
+def prefetchGetUserById(self, ids):
+    """Let supporting plugins prefetch a list of users for getUserById
+
+    First plugin to support this is LDAPMultiPlugins.
+    """
+    prefetch_logger.debug("request users %r", ids)
+
+    # if a user is cached in PAS._verifyUser we'll skip
+    def uncached(id):
+        return not self.ZCacheable_get(
+            view_name=createViewName('_verifyUser', id),
+            keywords=createKeywords(id=id, exact_match=True),
+            default=None
+        )
+    ids = filter(uncached, ids)
+    prefetch_logger.debug("remaining after cache  %r", ids)
+
+    listPlugins = self._getOb( 'plugins' ).listPlugins
+    plugins = set(chain.from_iterable(listPlugins(x) for x in (
+        IUserEnumerationPlugin, IPropertiesPlugin, IGroupsPlugin,
+        IRolesPlugin)))
+    for name, plugin in plugins:
+        prefetch = getattr(plugin, 'prefetchUsersByIds', None)
+        if prefetch is not None:
+            prefetch(ids)
+
+PluggableAuthService.prefetchGetUserById = prefetchGetUserById
+PluggableAuthService.prefetchGetUserById__roles__ = \
+    PermissionRole(ManageUsers, ('Manager',))
+
+
 def getLocalRolesForDisplay(self, object):
     """This is used for plone's local roles display
 
@@ -278,6 +337,15 @@ def _getLocalRolesForDisplay(self, object):
     result = []
     # we don't have a PAS-side way to get this
     local_roles = object.get_local_roles()
+
+    # prefetch users and groups in one go. For users it only has an
+    # effect if local role info is stored by userid not username, see
+    # 'user = self.getUserById(userid) or self.getUser(username)' below
+    ids = [x[0] for x in local_roles]
+    if ids:
+        self.prefetchGetGroupById(ids)
+        self.prefetchGetUserById(ids)
+
     for one_user in local_roles:
         username = userid = one_user[0]
         roles = one_user[1]
