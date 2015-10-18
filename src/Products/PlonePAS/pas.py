@@ -7,7 +7,6 @@ from AccessControl.Permissions import change_permissions
 from AccessControl.Permissions import manage_properties
 from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
-from OFS.Folder import Folder
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
