@@ -359,24 +359,6 @@ def credentialsChanged(self, user, name, new_password):
     self.updateCredentials(request, response, login, new_password)
 
 
-# for ZopeVersionControl, we need to check 'plugins' for more than
-# existence, since it replaces objects (like 'plugins') with SimpleItems
-# and calls _delOb, which tries to use special methods of 'plugins'
-def _delOb(self, id):
-    #
-    #   Override ObjectManager's version to clean up any plugin
-    #   registrations for the deleted object
-    #
-    # XXX imo this is a evil one
-    #
-    plugins = self._getOb('plugins', None)
-
-    if getattr(plugins, 'removePluginById', None) is not None:
-        plugins.removePluginById(id)
-
-    Folder._delOb(self, id)
-
-
 def addRole(self, role):
     plugins = self._getOb('plugins')
     roles = plugins.listPlugins(IRoleAssignerPlugin)
@@ -506,11 +488,6 @@ def getUserNames(self):
 
 def patch_pas():
     # sort alphabetically by patched/added method name
-    wrap_method(
-        PluggableAuthService,
-        '_delOb',
-        _delOb
-    )
     wrap_method(
         PluggableAuthService,
         '_getAllLocalRoles',
