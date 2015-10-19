@@ -96,7 +96,7 @@ def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
     _old_doAddUser = getattr(self, getattr(_doAddUser, ORIG_NAME))
     retval = _old_doAddUser(login, password, roles, domains)
     if groups is not None:
-    return retval
+        return retval
 
 
 def _doDelUsers(self, names, REQUEST=None):
@@ -557,12 +557,6 @@ def patch_pas():
         getGroups,
         add=True,
         roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getLocalRolesForDisplay',
-        getLocalRolesForDisplay,
-        add=True,
     )
     wrap_method(
         PluggableAuthService,
