@@ -265,20 +265,6 @@ def getUsers(self):
     return retval
 
 
-def canListAllUsers(self):
-    plugins = self._getOb('plugins')
-    # Do we have multiple user plugins?
-    num_enumeration_plugins = plugins.listPlugins(IUserEnumerationPlugin)
-    num_introspection_plugins = plugins.listPlugins(IUserEnumerationPlugin)
-    return num_enumeration_plugins == num_introspection_plugins
-
-
-def canListAllGroups(self):
-    plugins = self._getOb('plugins')
-    # Do we have multiple group plugins?
-    num_enumeration_plugins = plugins.listPlugins(IGroupEnumerationPlugin)
-    num_introspection_plugins = plugins.listPlugins(IGroupEnumerationPlugin)
-    return num_enumeration_plugins == num_introspection_plugins
 
 
 def userSetPassword(self, userid, password):
@@ -516,20 +502,6 @@ def patch_pas():
         authenticate,
         add=True,
         roles=(),
-    )
-    wrap_method(
-        PluggableAuthService,
-        'canListAllGroups',
-        canListAllGroups,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'canListAllUsers',
-        canListAllUsers,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
     )
     wrap_method(
         PluggableAuthService,
