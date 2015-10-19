@@ -4,7 +4,6 @@ from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
 from AccessControl.PermissionRole import PermissionRole
 from AccessControl.Permissions import change_permissions
-from AccessControl.Permissions import manage_properties
 from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
 from Products.CMFCore.utils import getToolByName
@@ -97,7 +96,6 @@ def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
     _old_doAddUser = getattr(self, getattr(_doAddUser, ORIG_NAME))
     retval = _old_doAddUser(login, password, roles, domains)
     if groups is not None:
-        _userSetGroups(self, login, groups)
     return retval
 
 
@@ -245,42 +243,6 @@ def getGroupById(self, id, default=None):
         return default
     else:
         return ret
-
-
-def getLocalRolesForDisplay(self, object):
-    """This is used for plone's local roles display
-
-    This method returns a tuple (massagedUsername, roles, userType,
-    actualUserName).  This method is protected by the 'access content
-    information' permission. We may change that if it's too
-    permissive...
-
-    A GRUF method originally.
-    """
-    # Perform security check on destination object
-    if not getSecurityManager().checkPermission(manage_properties, object):
-        raise Unauthorized(name="getLocalRolesForDisplay")
-
-    return self._getLocalRolesForDisplay(object)
-
-
-def _getLocalRolesForDisplay(self, object):
-    result = []
-    # we don't have a PAS-side way to get this
-    local_roles = object.get_local_roles()
-    for one_user in local_roles:
-        username = userid = one_user[0]
-        roles = one_user[1]
-        userType = 'user'
-        if self.getGroup(userid):
-            userType = 'group'
-        else:
-            user = self.getUserById(userid) or self.getUser(username)
-            if user:
-                username = user.getUserName()
-                userid = user.getId()
-        result.append((username, roles, userType, userid))
-    return tuple(result)
 
 
 def getUsers(self):
@@ -534,12 +496,6 @@ def patch_pas():
         _doDelUsers,
         add=True,
         roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        '_getLocalRolesForDisplay',
-        _getLocalRolesForDisplay,
-        add=True
     )
     wrap_method(
         PluggableAuthService,
