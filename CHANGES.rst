@@ -4,14 +4,21 @@ Changelog
 5.0.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+New:
+
+- *add item here*
+
+Fixes:
+
+- *add item here*
 
 
 5.0.4 (2015-09-20)
 ------------------
 
-- Remove tests for non-utf-8 encodings.
+- Removed tests for non-utf-8 encodings.
   [esteele]
+
 
 5.0.3 (2015-07-18)
 ------------------
