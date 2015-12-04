@@ -8,7 +8,6 @@ from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
@@ -25,11 +24,7 @@ from Products.PluggableAuthService.interfaces.authservice import \
 from Products.PluggableAuthService.interfaces.plugins import \
     IAuthenticationPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
-    IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IUserEnumerationPlugin
 from zope.event import notify
 import logging
 
@@ -199,74 +194,6 @@ def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
     return self._doChangeGroup(principal_id, roles, groups, **kw)
 
 
-def getGroups(self):
-    gtool = getToolByName(self, 'portal_groups')
-    return gtool.listGroups()
-
-
-def getGroupNames(self):
-    gtool = getToolByName(self, 'portal_groups')
-    return gtool.getGroupIds()
-
-
-def getGroupIds(self):
-    gtool = getToolByName(self, 'portal_groups')
-    return gtool.getGroupIds()
-
-
-def getGroup(self, group_id):
-    """Like getGroupById in groups tool, but doesn't wrap.
-    """
-    group = None
-    introspectors = self.plugins.listPlugins(IGroupIntrospection)
-
-    if not introspectors:
-        raise ValueError('No plugins allow for group management')
-    for iid, introspector in introspectors:
-        group = introspector.getGroupById(group_id)
-        if group is not None:
-            break
-    return group
-
-
-def getGroupByName(self, name, default=None):
-    ret = self.getGroup(name)
-    if ret is None:
-        return default
-    return ret
-
-
-def getGroupById(self, id, default=None):
-    gtool = getToolByName(self, "portal_groups")
-    ret = gtool.getGroupById(id)
-    if ret is None:
-        return default
-    else:
-        return ret
-
-
-def getUsers(self):
-    """
-    Return a list of all users from plugins that implement the user
-    introspection interface.
-
-    Could potentially be very long.
-    """
-    # We should have a method that's cheap about returning number of users.
-    retval = []
-    try:
-        introspectors = self.plugins.listPlugins(IUserIntrospection)
-    except KeyError:
-        return retval
-
-    for iid, introspector in introspectors:
-        retval += introspector.getUsers()
-
-    return retval
-
-
-
-
 def userSetPassword(self, userid, password):
     """Emulate GRUF 3 call for password set, for use with PwRT."""
     # used by _doChangeUser
@@ -388,7 +315,6 @@ def getUserIds(self):
     DEPRECATED
     """
     plugins = self.plugins
-
     try:
         introspectors = plugins.listPlugins(IUserIntrospection)
     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
@@ -518,48 +444,6 @@ def patch_pas():
     )
     wrap_method(
         PluggableAuthService,
-        'getGroup',
-        getGroup,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getGroupById',
-        getGroupById,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getGroupByName',
-        getGroupByName,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getGroupIds',
-        getGroupIds,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getGroupNames',
-        getGroupNames,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getGroups',
-        getGroups,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
         'getUserIds',
         getUserIds,
         add=True,
@@ -571,20 +455,6 @@ def patch_pas():
         getUserNames,
         add=True,
         deprecated="Inefficient GRUF wrapper, use IUserIntrospection instead."
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getUsers',
-        getUsers,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getPureUsers',
-        getUsers,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
     )
     wrap_method(
         PluggableAuthService,
