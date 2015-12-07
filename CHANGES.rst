@@ -4,13 +4,9 @@ Changelog
 5.0.5 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
-- *add item here*
+- Applied Hotfix 2015-12-08.
 
 
 5.0.4 (2015-09-20)

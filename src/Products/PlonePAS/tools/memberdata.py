@@ -152,11 +152,12 @@ class MemberDataTool(BaseTool):
 
     @security.public
     def searchFulltextForMembers(self, s):
-        """search for members which do have string 's' in name, email or full
-        name (if defined)
-
-        this is mainly used for the localrole form
-        """
+        # Note: do NOT add a docstring to this method: it is okay if the method
+        # is public, but it must not be published through the web, which is
+        # what a docstring would do.
+        #
+        # Search for members which do have string 's' in name, email or full
+        # name (if defined).  This is mainly used for the localrole form.
         s = s.strip().lower()
         mu = getToolByName(self, 'portal_membership')
 
