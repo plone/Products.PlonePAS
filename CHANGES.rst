@@ -10,7 +10,9 @@ New:
 
 Fixes:
 
-- *add item here*
+- bring back Python 2.6 support (in 2.6 depend on orderedict) and import
+  conditional with fallback.
+  [gforcada, jensens]
 
 
 5.0.5 (2015-12-08)
