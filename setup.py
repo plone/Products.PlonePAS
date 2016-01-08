@@ -32,7 +32,10 @@ setup(
     long_description=longdescription,
     classifiers=[
         "Framework :: Plone",
+        "Framework :: Plone :: 5.0",
         "Framework :: Zope2",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
     ],
     keywords='Zope CMF Plone PAS authentication',
     author='Kapil Thangavelu, Wichert Akkerman',
