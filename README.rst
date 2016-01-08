@@ -31,7 +31,7 @@ Why doesn't the title of my group, that I set in the ZMI, show up?
     The title for a group comes from the properties plugin.
     The info in the groups plugin isn't used, except for the name.
 
-    The value of the ``title``property on the ``portal_groupdata`` or ``portal_memberdata tools`` themselves (as opposed to the group or member data records within them) will not be used as a default for the title of the group or member.
+    The value of the ``title`` property on the ``portal_groupdata`` or ``portal_memberdata tools`` themselves (as opposed to the group or member data records within them) will not be used as a default for the title of the group or member.
     This is to prevent UI confusion if a title is set without realizing the implications.
     To remove this special case, see ``plugins.property._getDefaultValues``.
 
