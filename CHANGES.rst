@@ -4,13 +4,9 @@ Changelog
 5.0.7 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
-- *add item here*
+- Fixed typo in documentation.  [gforcada]
 
 
 5.0.6 (2015-12-16)
