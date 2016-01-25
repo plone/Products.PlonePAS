@@ -308,7 +308,7 @@ def canListAllUsers(self):
     plugins = self._getOb('plugins')
     # Do we have multiple user plugins?
     num_enumeration_plugins = plugins.listPlugins(IUserEnumerationPlugin)
-    num_introspection_plugins = plugins.listPlugins(IUserEnumerationPlugin)
+    num_introspection_plugins = plugins.listPlugins(IUserIntrospection)
     return num_enumeration_plugins == num_introspection_plugins
 
 
@@ -316,7 +316,7 @@ def canListAllGroups(self):
     plugins = self._getOb('plugins')
     # Do we have multiple group plugins?
     num_enumeration_plugins = plugins.listPlugins(IGroupEnumerationPlugin)
-    num_introspection_plugins = plugins.listPlugins(IGroupEnumerationPlugin)
+    num_introspection_plugins = plugins.listPlugins(IGroupIntrospection)
     return num_enumeration_plugins == num_introspection_plugins
 
 
