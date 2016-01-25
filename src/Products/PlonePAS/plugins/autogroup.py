@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from App.class_init import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
-from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PluggableAuthService.interfaces.plugins import IGroupIntrospection
 from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.interfaces.plugins import \
     IGroupEnumerationPlugin

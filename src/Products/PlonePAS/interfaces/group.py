@@ -42,7 +42,7 @@ class IGroupManagement(Interface):
         """
 
 deprecated(
-    "Import from Products.PluggableAuthService.interfaces instead",
+    "Import from Products.PluggableAuthService.interfaces.plugins instead",
     IGroupIntrospection="Products.PluggableAuthService.interfaces.plugins:"
                         "IGroupIntrospection",
 )
@@ -50,6 +50,12 @@ deprecated(
 deprecated(
     "Import from Products.CMFPlone.interfaces.pas instead",
     IGrouptool="Products.CMFPlone.interfaces.pas:IGroupTool",
+)
+
+deprecated(
+    "Import from Products.PluggableAuthService.interfaces.group instead",
+    IGroupData="Products.PluggableAuthService.interfaces.group:"
+               "IGroupData",
 )
 
 

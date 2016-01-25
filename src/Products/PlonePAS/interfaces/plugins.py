@@ -5,7 +5,7 @@ from zope.deferredimport import deprecated
 
 
 deprecated(
-    "Import from Products.PluggableAuthService.interfaces instead",
+    "Import from Products.PluggableAuthService.interfaces.plugins instead",
     IUserIntrospection="Products.PluggableAuthService.interfaces.plugins:"
                        "IUserIntrospection",
 )
