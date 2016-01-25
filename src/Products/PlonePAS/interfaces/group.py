@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from Products.PluggableAuthService.interfaces import plugins
 from zope.interface import Interface
+from zope.deferredimport import deprecated
 
 
 class IGroupManagement(Interface):
@@ -41,33 +41,16 @@ class IGroupManagement(Interface):
         return True on success
         """
 
+deprecated(
+    "Import from Products.PluggableAuthService.interfaces instead",
+    IGroupIntrospection="Products.PluggableAuthService.interfaces.plugins:"
+                        "IGroupIntrospection",
+)
 
-class IGroupIntrospection(Interface):
-
-    def getGroupById(group_id):
-        """
-        Returns the portal_groupdata-ish object for a group
-        corresponding to this id.
-        """
-
-    #################################
-    # these interface methods are suspect for scalability.
-    #################################
-
-    def getGroups():
-        """
-        Returns an iteration of the available groups
-        """
-
-    def getGroupIds():
-        """
-        Returns a list of the available groups
-        """
-
-    def getGroupMembers(group_id):
-        """
-        return the members of the given group
-        """
+deprecated(
+    "Import from Products.CMFPlone.interfaces.pas instead",
+    IGrouptool="Products.CMFPlone.interfaces.pas:IGroupTool",
+)
 
 
 class IGroupDataTool(Interface):
@@ -77,64 +60,3 @@ class IGroupDataTool(Interface):
         decorate a group with property management capabilities if needed
         """
 
-
-class IGroupTool(IGroupIntrospection,
-                 IGroupManagement,
-                 plugins.IGroupsPlugin):
-
-    """
-    Defines an interface for managing and introspecting and
-    groups and group membership.
-    """
-
-
-class IGroupData(Interface):
-    """ An abstract interface for accessing properties on a group object"""
-
-    def setProperties(properties=None, **kw):
-        """Allows setting of group properties en masse.
-        Properties can be given either as a dict or a keyword parameters
-        list"""
-
-    def getProperty(id):
-        """ Return the value of the property specified by 'id' """
-
-    def getProperties():
-        """ Return the properties of this group. Properties are as usual in
-        Zope."""
-
-    def getGroupId():
-        """ Return the string id of this group, WITHOUT group prefix."""
-
-    def getMemberId():
-        """This exists only for a basic user/group API compatibility
-        """
-
-    def getGroupName():
-        """ Return the name of the group."""
-
-    def getGroupMembers():
-        """ Return a list of the portal_memberdata-ish members of the group."""
-
-    def getAllGroupMembers():
-        """ Return a list of the portal_memberdata-ish members of the group
-        including transitive ones (ie. users or groups of a group in that
-        group)."""
-
-    def getGroupMemberIds():
-        """ Return a list of the user ids of the group."""
-
-    def getAllGroupMemberIds():
-        """ Return a list of the user ids of the group.
-        including transitive ones (ie. users or groups of a group in that
-        group)."""
-
-    def addMember(id):
-        """ Add the existing member with the given id to the group"""
-
-    def removeMember(id):
-        """ Remove the member with the provided id from the group """
-
-    def getGroup():
-        """ Returns the actual group implementation. Varies by group
-        implementation (GRUF/Nux/et al)."""

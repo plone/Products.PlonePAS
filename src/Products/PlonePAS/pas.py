@@ -10,7 +10,7 @@ from AccessControl.requestmethod import postonly
 from OFS.Folder import Folder
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.PlonePAS.interfaces.group import IGroupIntrospection
+from Products.PluggableAuthService.interfaces.plugins import IGroupIntrospection
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection

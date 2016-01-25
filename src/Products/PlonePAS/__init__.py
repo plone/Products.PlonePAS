@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from AccessControl.Permissions import add_user_folders
-from Products.CMFCore.utils import ToolInit
 from Products.PlonePAS.pas import patch_pas
 from Products.PlonePAS.plugins import autogroup
 from Products.PlonePAS.plugins import cookie_handler
@@ -12,10 +11,6 @@ from Products.PlonePAS.plugins import property
 from Products.PlonePAS.plugins import role
 from Products.PlonePAS.plugins import ufactory
 from Products.PlonePAS.plugins import user
-from Products.PlonePAS.tools.groupdata import GroupDataTool
-from Products.PlonePAS.tools.groups import GroupsTool
-from Products.PlonePAS.tools.memberdata import MemberDataTool
-from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PluggableAuthService import registerMultiPlugin
 
 ####################################
@@ -44,14 +39,6 @@ except RuntimeError:
 
 
 def initialize(context):
-
-    tools = (GroupsTool, GroupDataTool, MembershipTool, MemberDataTool)
-
-    ToolInit(
-        'PlonePAS Tool',
-        tools=tools,
-        icon='tool.gif',
-    ).initialize(context)
 
     context.registerClass(
         role.GroupAwareRoleManager,

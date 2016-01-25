@@ -1,31 +1,14 @@
 # -*- coding: utf-8 -*-
 from Products.PluggableAuthService.interfaces import plugins
 from Products.PluggableAuthService.interfaces.plugins import Interface
+from zope.deferredimport import deprecated
 
 
-class IUserIntrospection(Interface):
-    """
-    Introspect users in a user source, api users need to be careful as
-    all sources may or not support this interface.
-
-    Realistically this can only be done by authentication sources, or
-    plugins which have intimate knowledge of such.
-    """
-
-    def getUserIds():
-        """
-        Return a list of user ids
-        """
-
-    def getUserNames():
-        """
-        Return a list of usernames
-        """
-
-    def getUsers():
-        """
-        Return a list of users
-        """
+deprecated(
+    "Import from Products.PluggableAuthService.interfaces instead",
+    IUserIntrospection="Products.PluggableAuthService.interfaces.plugins:"
+                       "IUserIntrospection",
+)
 
 
 class ILocalRolesPlugin(Interface):
