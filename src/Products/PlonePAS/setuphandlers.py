@@ -3,7 +3,7 @@ from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PlonePAS.interfaces.plugins import IUserIntrospection
+from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PluggableAuthService.Extensions.upgrade import replace_acl_users
 from Products.PluggableAuthService.interfaces.authservice \
