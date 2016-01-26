@@ -48,8 +48,8 @@ deprecated(
 )
 
 deprecated(
-    "Import from Products.CMFPlone.interfaces.pas instead",
-    IGroupTool="Products.CMFPlone.interfaces.pas:IGroupTool",
+    "Import from Products.CMFPlone.interfaces.groups instead",
+    IGroupTool="Products.CMFPlone.interfaces.groups:IGroupTool",
 )
 
 deprecated(
@@ -58,11 +58,12 @@ deprecated(
                "IGroupData",
 )
 
+deprecated(
+    "Import from Products.CMFPlone.interfaces.membership instead",
+    IMembershipTool="Products.CMFPlone.interfaces.membership:IMembershipTool",
+)
 
-class IGroupDataTool(Interface):
-
-    def wrapGroup(group):
-        """
-        decorate a group with property management capabilities if needed
-        """
-
+deprecated(
+    "Import from Products.CMFPlone.interfaces.groups instead",
+    IGroupDataTool="Products.CMFPlone.interfaces.groups:IGroupDataTool",
+)
