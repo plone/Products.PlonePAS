@@ -32,6 +32,7 @@ from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
     IUserEnumerationPlugin
+from zope.deprecation import deprecate
 from zope.event import notify
 import logging
 
@@ -217,21 +218,7 @@ def getGroupIds(self):
     return gtool.getGroupIds()
 
 
-def getGroup(self, group_id):
-    """Like getGroupById in groups tool, but doesn't wrap.
-    """
-    group = None
-    introspectors = self.plugins.listPlugins(IGroupIntrospection)
-
-    if not introspectors:
-        raise ValueError('No plugins allow for group management')
-    for iid, introspector in introspectors:
-        group = introspector.getGroupById(group_id)
-        if group is not None:
-            break
-    return group
-
-
+@deprecate('Use getGroup instead')
 def getGroupByName(self, name, default=None):
     ret = self.getGroup(name)
     if ret is None:
@@ -284,6 +271,8 @@ def _getLocalRolesForDisplay(self, object):
     return tuple(result)
 
 
+@deprecate('Do not use this method anymore, it is slow for many users and '
+           'old GRUF API.')
 def getUsers(self):
     """
     Return a list of all users from plugins that implement the user
@@ -320,6 +309,7 @@ def canListAllGroups(self):
     return num_enumeration_plugins == num_introspection_plugins
 
 
+@deprecate('Do not use this method anymore, it is an old GRUF API.')
 def userSetPassword(self, userid, password):
     """Emulate GRUF 3 call for password set, for use with PwRT."""
     # used by _doChangeUser
@@ -359,24 +349,6 @@ def credentialsChanged(self, user, name, new_password):
     self.updateCredentials(request, response, login, new_password)
 
 
-# for ZopeVersionControl, we need to check 'plugins' for more than
-# existence, since it replaces objects (like 'plugins') with SimpleItems
-# and calls _delOb, which tries to use special methods of 'plugins'
-def _delOb(self, id):
-    #
-    #   Override ObjectManager's version to clean up any plugin
-    #   registrations for the deleted object
-    #
-    # XXX imo this is a evil one
-    #
-    plugins = self._getOb('plugins', None)
-
-    if getattr(plugins, 'removePluginById', None) is not None:
-        plugins.removePluginById(id)
-
-    Folder._delOb(self, id)
-
-
 def addRole(self, role):
     plugins = self._getOb('plugins')
     roles = plugins.listPlugins(IRoleAssignerPlugin)
@@ -411,6 +383,7 @@ def _getAllLocalRoles(self, context):
     return roles
 
 
+@deprecate('Do not use this method anymore, it is an old GRUF API.')
 def authenticate(self, name, password, request):
     """See AccessControl.User.BasicUserFolder.authenticate
 
@@ -454,6 +427,8 @@ def authenticate(self, name, password, request):
     return self._findUser(plugins, user_id, name, request)
 
 
+@deprecate('Do not use this method anymore, it is slow for many users and '
+           'old GRUF API.')
 def getUserIds(self):
     """method was used at GRUF and is here for bbb. Not good for many users!
     DEPRECATED
@@ -480,6 +455,8 @@ def getUserIds(self):
     return results
 
 
+@deprecate('Do not use this method anymore, it is slow for many users and '
+           'old GRUF API.')
 def getUserNames(self):
     """method was used at GRUF and is here for bbb. Not good for many users!
     DEPRECATED
@@ -506,11 +483,6 @@ def getUserNames(self):
 
 def patch_pas():
     # sort alphabetically by patched/added method name
-    wrap_method(
-        PluggableAuthService,
-        '_delOb',
-        _delOb
-    )
     wrap_method(
         PluggableAuthService,
         '_getAllLocalRoles',
@@ -611,13 +583,6 @@ def patch_pas():
         'getAllLocalRoles',
         getAllLocalRoles,
         add=True,
-    )
-    wrap_method(
-        PluggableAuthService,
-        'getGroup',
-        getGroup,
-        add=True,
-        roles=PermissionRole(ManageUsers, ('Manager',))
     )
     wrap_method(
         PluggableAuthService,
