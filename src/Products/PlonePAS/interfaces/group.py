@@ -5,8 +5,8 @@ from zope.deferredimport import deprecated
 
 deprecated(
     "Import from Products.PluggableAuthService.interfaces.plugins instead",
-    IGroupIntrospection="Products.PluggableAuthService.interfaces.plugins:"
-                        "IGroupManagement",
+    IGroupManagement="Products.PluggableAuthService.interfaces.plugins:"
+                     "IGroupManagement",
 )
 
 deprecated(
