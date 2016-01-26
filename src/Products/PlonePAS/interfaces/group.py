@@ -53,9 +53,8 @@ deprecated(
 )
 
 deprecated(
-    "Import from Products.PluggableAuthService.interfaces.group instead",
-    IGroupData="Products.PluggableAuthService.interfaces.group:"
-               "IGroupData",
+    "Import from Products.CMFPlone.interfaces.groups instead",
+    IGroupData="Products.CMFPlone.interfaces.groups:IGroupData",
 )
 
 deprecated(
