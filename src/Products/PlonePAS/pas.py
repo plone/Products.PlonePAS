@@ -9,9 +9,10 @@ from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
+from Products.PluggableAuthService.interfaces.plugins import IGroupIntrospection
+from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.patch import ORIG_NAME
 from Products.PlonePAS.patch import wrap_method

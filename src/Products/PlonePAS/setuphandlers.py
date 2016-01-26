@@ -2,7 +2,6 @@
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS import config
-from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
@@ -12,6 +11,10 @@ from Products.PluggableAuthService.interfaces.authservice \
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PluggableAuthService.interfaces.plugins \
     import ICredentialsResetPlugin
+from Products.PluggableAuthService.interfaces.plugins \
+    import IGroupIntrospection
+from Products.PluggableAuthService.interfaces.plugins \
+    import IGroupManagement
 from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin \
     import addRecursiveGroupsPlugin
 from plone.session.plugins.session import manage_addSessionPlugin
@@ -92,7 +95,7 @@ def registerPluginTypes(pas):
                         "of groups and member management")
     }
 
-    registerPluginType(pas, igroup.IGroupManagement, PluginInfo)
+    registerPluginType(pas, IGroupManagement, PluginInfo)
 
     PluginInfo = {
         'id': 'IGroupIntrospection',
@@ -101,7 +104,7 @@ def registerPluginTypes(pas):
                         "of groups and membership")
     }
 
-    registerPluginType(pas, igroup.IGroupIntrospection, PluginInfo)
+    registerPluginType(pas, IGroupIntrospection, PluginInfo)
 
     PluginInfo = {
         'id': 'ILocalRolesPlugin',
