@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
+from zope.deferredimport import deprecated
 
-
-class IUserInitialLoginInEvent(IUserLoggedInEvent):
-    """A user logs in for the first time in the portal.
-    """
+deprecated(
+    "Import from Products.CMFPlone.interfaces.events instead",
+    IUserInitialLoginInEvent="Products.CMFPlone.interfaces.events:"
+                        "IUserInitialLoginInEvent",
+)

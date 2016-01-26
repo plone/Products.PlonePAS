@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from Products.PlonePAS.interfaces.events import IUserInitialLoginInEvent
 from Products.PluggableAuthService.events import PASEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedOutEvent
+from zope.deferredimport import deprecated
 from zope.interface import implementer
 
 
@@ -14,12 +14,10 @@ class UserLoggedInEvent(PASEvent):
     """
 
 
-@implementer(IUserInitialLoginInEvent)
-class UserInitialLoginInEvent(UserLoggedInEvent):
-    """Implementation of the initial logged in event
-
-    Plone only event!
-    """
+deprecated(
+    "Import from Products.CMFPlone.events instead",
+    UserInitialLoginInEvent="Products.CMFPlone.events:UserInitialLoginInEvent,"
+    )
 
 
 @implementer(IUserLoggedOutEvent)
