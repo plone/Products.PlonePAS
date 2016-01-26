@@ -5,7 +5,6 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     xmlns:i18n="http://namespaces.zope.org/i18n">
 
-  <include package=".browser" />
   <include file="profiles.zcml" />
   <include file="exportimport.zcml" />
 
