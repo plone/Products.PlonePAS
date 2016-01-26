@@ -49,7 +49,7 @@ deprecated(
 
 deprecated(
     "Import from Products.CMFPlone.interfaces.pas instead",
-    IGrouptool="Products.CMFPlone.interfaces.pas:IGroupTool",
+    IGroupTool="Products.CMFPlone.interfaces.pas:IGroupTool",
 )
 
 deprecated(
