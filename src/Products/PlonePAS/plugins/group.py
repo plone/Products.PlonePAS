@@ -11,13 +11,14 @@ from BTrees.OOBTree import OOBTree
 from BTrees.OOBTree import OOSet
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
-from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PluggableAuthService.PluggableAuthService \
     import _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins \
     import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins \
     import IGroupIntrospection
+from Products.PluggableAuthService.interfaces.plugins \
+    import IGroupManagement
 from Products.PluggableAuthService.interfaces.plugins \
     import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
