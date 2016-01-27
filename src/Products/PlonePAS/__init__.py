@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from AccessControl.Permissions import add_user_folders
 from Products.PlonePAS.pas import patch_pas
-from Products.PlonePAS.plugins import autogroup
 from Products.PlonePAS.plugins import cookie_handler
 from Products.PlonePAS.plugins import crumbler
 from Products.PlonePAS.plugins import group
@@ -31,7 +30,6 @@ try:
     registerMultiPlugin(property.ZODBMutablePropertyProvider.meta_type)
     registerMultiPlugin(crumbler.CookieCrumblingPlugin.meta_type)
     registerMultiPlugin(cookie_handler.ExtendedCookieAuthHelper.meta_type)
-    registerMultiPlugin(autogroup.AutoGroup.meta_type)
     registerMultiPlugin(passwordpolicy.PasswordPolicyPlugin.meta_type)
 except RuntimeError:
     # make refresh users happy
@@ -110,15 +108,6 @@ def initialize(context):
         constructors=(
             cookie_handler.manage_addExtendedCookieAuthHelperForm,
             cookie_handler.manage_addExtendedCookieAuthHelper),
-        visibility=None
-    )
-
-    context.registerClass(
-        autogroup.AutoGroup,
-        permission=add_user_folders,
-        constructors=(
-            autogroup.manage_addAutoGroupForm,
-            autogroup.manage_addAutoGroup),
         visibility=None
     )
 

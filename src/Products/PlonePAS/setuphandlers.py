@@ -1,23 +1,18 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_parent
+from plone.session.plugins.session import manage_addSessionPlugin
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PluggableAuthService.Extensions.upgrade import replace_acl_users
-from Products.PluggableAuthService.interfaces.authservice \
-    import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService  # noqa
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import ICredentialsResetPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupIntrospection
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupManagement
-from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin \
-    import addRecursiveGroupsPlugin
-from plone.session.plugins.session import manage_addSessionPlugin
+from Products.PluggableAuthService.interfaces.plugins import ICredentialsResetPlugin  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IGroupIntrospection  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IGroupManagement  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
+from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin import addRecursiveGroupsPlugin  # noqa
 import logging
 
 logger = logging.getLogger('PlonePAS setup')
@@ -117,7 +112,7 @@ def registerPluginTypes(pas):
 
 def setupPlugins(portal):
     uf = portal.acl_users
-    logger.debug("\nPlugin setup")
+    logger.debug("\nPAS Plugin setup")
 
     pas = uf.manage_addProduct['PluggableAuthService']
     plone_pas = uf.manage_addProduct['PlonePAS']
@@ -162,7 +157,7 @@ def setupPlugins(portal):
 
     found = uf.objectIds(['Automatic Group Plugin'])
     if not found:
-        plone_pas.manage_addAutoGroup(
+        pas.manage_addAutoGroup(
             "auto_group", "Authenticated Users (Virtual Group)",
             "AuthenticatedUsers", "Automatic Group Provider")
         logger.debug("Added Automatic Group.")
