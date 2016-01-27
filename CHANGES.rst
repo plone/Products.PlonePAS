@@ -1,16 +1,25 @@
 Changelog
 =========
 
-5.0.8 (unreleased)
-------------------
+6.0 (unreleased)
+----------------
 
 New:
 
-- *add item here*
+- Moved tools to CMFPlone, deprecations in place.
+  [jensens, dataflake]
+
+- Moved AutoGroup plugin to PAS, deprecations in place.
+  [jensens, dataflake]
+
+- Moved events to PAS/CMFPlone, deprecations in place.
+  [jensens, dataflake]
 
 Fixes:
 
-- *add item here*
+- ``canListAllUsers`` and ``canListAllGroups`` (helpers) were always true
+  because of a broken refactoring
+  [jensens, dataflake]
 
 
 5.0.7 (2016-01-08)
