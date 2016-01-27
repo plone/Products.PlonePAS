@@ -6,7 +6,7 @@ also a property schema type registry which is extensible.
 
 """
 from Products.CMFCore.interfaces import ISiteRoot
-from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from Products.PluggableAuthService.interfaces.propertysheets import IMutablePropertySheet  # noqa
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from zope.component import getUtility
@@ -130,7 +130,3 @@ class MutablePropertySheet(UserPropertySheet):
         # root. This may not always be the case.
         portal = getUtility(ISiteRoot)
         return portal.acl_users._getOb(self._id)
-
-
-class SchemaMutablePropertySheet(MutablePropertySheet):
-    pass

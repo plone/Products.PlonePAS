@@ -1,22 +1,8 @@
 # -*- coding: utf-8 -*-
-from Products.PluggableAuthService.interfaces.propertysheets \
-    import IPropertySheet
+import zope.deprecation
 
 
-class IMutablePropertySheet(IPropertySheet):
-
-    def canWriteProperty(object, id):
-        """ Check if a property can be modified.
-        """
-
-    def setProperty(object, id, value):
-        """
-        """
-
-    def setProperties(object, mapping):
-        """
-        """
-
-
-class ISchemaMutablePropertySheet(IMutablePropertySheet):
-    pass
+zope.deprecation.moved(
+    'Products.PluggableAuthService.interfaces.propertysheets',
+    'Plone 6.0 and is moved to Products.PluggableAuthService'
+)
