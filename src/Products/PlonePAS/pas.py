@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pas alterations and monkies
-from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from AccessControl.PermissionRole import PermissionRole
 from AccessControl.Permissions import change_permissions
 from AccessControl.Permissions import manage_properties
@@ -9,33 +9,26 @@ from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
-from Products.PluggableAuthService.interfaces.plugins import IGroupIntrospection
-from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
-from Products.PluggableAuthService.interfaces.plugins import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.patch import ORIG_NAME
 from Products.PlonePAS.patch import wrap_method
-from Products.PluggableAuthService.PluggableAuthService import \
-    PluggableAuthService
-from Products.PluggableAuthService.PluggableAuthService import \
-    _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.events import PrincipalDeleted
-from Products.PluggableAuthService.interfaces.authservice import \
-    IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins import \
-    IAuthenticationPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupIntrospection
-from Products.PluggableAuthService.interfaces.plugins import \
-    IRoleAssignerPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IUserEnumerationPlugin
-from zope.deprecation import deprecate
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IGroupIntrospection  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IGroupManagement
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin  # noqa
+from Products.PluggableAuthService.interfaces.plugins import IUserIntrospection
+from Products.PluggableAuthService.PluggableAuthService import _SWALLOWABLE_PLUGIN_EXCEPTIONS  # noqa
+from Products.PluggableAuthService.PluggableAuthService import PluggableAuthService  # noqa
 from zope.event import notify
+from zope.deprecation import deprecate
+
 import logging
+import warnings
 
 logger = logging.getLogger('PlonePAS')
 
@@ -164,6 +157,10 @@ def _doChangeUser(self, principal_id, password, roles, domains=(), groups=None,
 
 def userFolderAddUser(self, login, password, roles, domains,
                       groups=None, REQUEST=None, **kw):
+    warnings.warn(
+        'Use "_doAddUser" instead of "userFolderAddUser"',
+        DeprecationWarning
+    )
     self._doAddUser(login, password, roles, domains, **kw)
     if groups is not None:
         _userSetGroups(self, login, groups)
@@ -310,10 +307,12 @@ def canListAllGroups(self):
     return num_enumeration_plugins == num_introspection_plugins
 
 
+# used here by _doChangeUser
+# used outside directly by
+# Products/PasswordResetTool/PasswordResetTool.py:189:190
 @deprecate('Do not use this method anymore, it is an old GRUF API.')
 def userSetPassword(self, userid, password):
     """Emulate GRUF 3 call for password set, for use with PwRT."""
-    # used by _doChangeUser
     plugins = self._getOb('plugins')
     managers = plugins.listPlugins(IUserManagement)
 
