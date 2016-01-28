@@ -5,7 +5,6 @@ from Products.PlonePAS.plugins import cookie_handler
 from Products.PlonePAS.plugins import crumbler
 from Products.PlonePAS.plugins import group
 from Products.PlonePAS.plugins import local_role
-from Products.PlonePAS.plugins import passwordpolicy
 from Products.PlonePAS.plugins import property
 from Products.PlonePAS.plugins import role
 from Products.PlonePAS.plugins import ufactory
@@ -30,7 +29,6 @@ try:
     registerMultiPlugin(property.ZODBMutablePropertyProvider.meta_type)
     registerMultiPlugin(crumbler.CookieCrumblingPlugin.meta_type)
     registerMultiPlugin(cookie_handler.ExtendedCookieAuthHelper.meta_type)
-    registerMultiPlugin(passwordpolicy.PasswordPolicyPlugin.meta_type)
 except RuntimeError:
     # make refresh users happy
     pass
@@ -108,15 +106,5 @@ def initialize(context):
         constructors=(
             cookie_handler.manage_addExtendedCookieAuthHelperForm,
             cookie_handler.manage_addExtendedCookieAuthHelper),
-        visibility=None
-    )
-
-    context.registerClass(
-        passwordpolicy.PasswordPolicyPlugin,
-        permission=add_user_folders,
-        constructors=(
-            passwordpolicy.manage_addPasswordPolicyForm,
-            passwordpolicy.manage_addPasswordPolicyPlugin
-        ),
         visibility=None
     )
