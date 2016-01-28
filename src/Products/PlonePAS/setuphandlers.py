@@ -385,14 +385,21 @@ def challenge_chooser_setup(self):
 
 def setupPasswordPolicyPlugin(portal):
     uf = portal.acl_users
-    plone_pas = uf.manage_addProduct['PlonePAS']
+    pas = uf.manage_addProduct['PluggableAuthService']
 
-    found = uf.objectIds(['Default Plone Password Policy'])
+    # The old plugin from PlonePAS
+    found_old = uf.objectIds(['Default Plone Password Policy'])
     logger.debug("\nDefault Password Ploicy Plugin setup")
-    if not found:
-        plone_pas.manage_addPasswordPolicyPlugin(
+
+    # The new plugin from PluggableAuthService
+    found_new = uf.objectIds(['Password Length Validator Plugin'])
+    logger.debug("\nPassword Length Validator Plugin setup")
+
+    if not (found_old or found_new):
+        pas.addPasswordLengthValidator(
             'password_policy',
-            title="Default Plone Password Policy"
+            title="Default Plone Password Policy",
+            pwlength=5
         )
         logger.debug("Added Default Plone Password Policy.")
         activatePluginInterfaces(portal, 'password_policy')

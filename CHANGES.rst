@@ -12,6 +12,9 @@ New:
 - Moved AutoGroup plugin to PAS, deprecations in place.
   [jensens, dataflake]
 
+- Moved the password policy plugin to PluggableAuthService
+  [dataflake]
+
 - Moved events to PAS/CMFPlone, deprecations in place.
   [jensens, dataflake]
 
