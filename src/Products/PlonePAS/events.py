@@ -16,5 +16,5 @@ deprecated(
 deprecated(
     "Import from Products.PluggableAuthService.events instead",
     UserLoggedOutEvent="Products.PluggableAuthService.events:"
-                      "UserLoggedOut",
+                       "UserLoggedOut",
     )

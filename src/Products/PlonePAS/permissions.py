@@ -4,5 +4,5 @@ import zope.deprecation
 
 zope.deprecation.moved(
     'Products.CMFPlone.permissions',
-        'Plone 6.0 and is moved to CMFPlone'
-        )
+    'Plone 6.0 and is moved to CMFPlone'
+)

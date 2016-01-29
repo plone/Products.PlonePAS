@@ -184,7 +184,7 @@ def safe_unicode(value, encoding='utf-8'):
 
 
 # Imported from Products.CMFCore.MemberdataTool as it has now been removed.
-class CleanupTemp:
+class CleanupTemp(object):
     """Used to cleanup _v_temps at the end of the request."""
 
     def __init__(self, tool):
