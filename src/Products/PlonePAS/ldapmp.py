@@ -2,6 +2,8 @@
 from Products.PlonePAS.patch import call
 from Products.PlonePAS.patch import wrap_method
 from Products.PlonePAS.plugins.group import PloneGroup
+from zope.deprecation import deprecate
+
 
 GROUP_PROPERTY_MAP = {
     # target property: (possible key, ...)
@@ -56,6 +58,7 @@ def getGroupsForPrincipal(self, user, request=None, attr=None):
     return ()
 
 
+@deprecate("patch_ldapmp is deprecated, move it over to the calling package")
 def patch_ldapmp():
     from Products.LDAPMultiPlugins.LDAPPluginBase import LDAPPluginBase
     wrap_method(
