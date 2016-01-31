@@ -10,17 +10,18 @@ longdescription += '\n'
 longdescription += open("CHANGES.rst").read()
 
 install_requires = [
-        'plone.i18n',
-        'plone.memoize',
-        'plone.protect',
-        'plone.session',
-        'Products.CMFCore',
-        'Products.GenericSetup',
-        'Products.PluggableAuthService',
-        'setuptools',
-        'zope.deprecation',
-        'Zope2 >=2.13.22',
-    ],
+    'plone.i18n',
+    'plone.memoize',
+    'plone.protect',
+    'plone.session',
+    'Products.CMFCore',
+    'Products.GenericSetup',
+    'Products.PluggableAuthService',
+    'setuptools',
+    'zope.deprecation',
+    'Zope2 >=2.13.22',
+]
+
 if sys.version_info < (2, 7):
     # python 2.6 has no collections.ordereddict so we need to use this package
     install_requires.append('ordereddict')
@@ -48,10 +49,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    extras_require=dict(
-        test=[
+    extras_require={
+        'test': [
             'plone.app.testing',
             'plone.testing',
-        ],
-    ),
+        ]
+    },
 )
