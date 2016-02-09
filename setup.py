@@ -40,7 +40,7 @@ setup(
     keywords='Zope CMF Plone PAS authentication',
     author='Kapil Thangavelu, Wichert Akkerman',
     author_email='plone-developers@lists.sourceforge.net',
-    url='http://pypi.python.org/pypi/Products.PlonePAS',
+    url='https://pypi.python.org/pypi/Products.PlonePAS',
     license='ZPL',
     packages=find_packages('src'),
     package_dir={'': 'src'},
