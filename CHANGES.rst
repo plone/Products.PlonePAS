@@ -10,7 +10,7 @@ New:
 
 Fixes:
 
-- *add item here*
+- Fixed AttributeError with Python 2.6 when reading setup.py.  [maurits]
 
 
 5.0.7 (2016-01-08)

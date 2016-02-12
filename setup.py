@@ -20,7 +20,7 @@ install_requires = [
         'setuptools',
         'zope.deprecation',
         'Zope2 >=2.13.22',
-    ],
+    ]
 if sys.version_info < (2, 7):
     # python 2.6 has no collections.ordereddict so we need to use this package
     install_requires.append('ordereddict')
