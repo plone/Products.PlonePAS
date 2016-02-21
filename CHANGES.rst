@@ -10,6 +10,8 @@ New:
 
 Fixes:
 
+- Let ``cleanId`` return a string when getting a unicode.  [maurits]
+
 - Fixed AttributeError with Python 2.6 when reading setup.py.  [maurits]
 
 

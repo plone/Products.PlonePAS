@@ -23,6 +23,8 @@ def cleanId(id):
     __traceback_info__ = (id,)
     if id:
         # note: we provide the 'safe' param to get '/' encoded
+        if isinstance(id, unicode):
+            id = id.encode('utf-8')
         return url_quote(id, '').replace('-', '--').replace('%', '-')
     return ''
 
