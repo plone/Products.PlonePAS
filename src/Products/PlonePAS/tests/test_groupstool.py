@@ -8,7 +8,11 @@ from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.plugins.group import PloneGroup
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tools.groupdata import GroupData
+from Products.PluggableAuthService.interfaces.events import \
+    IGroupDeletedEvent
 from plone.app.testing import TEST_USER_ID
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
 
 
 def sortTuple(t):
@@ -176,6 +180,21 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         self.groups.addGroup('foo', [], [])
         self.groups.removeGroups(['foo'])
         self.assertEqual(len(self.groups.listGroupIds()), 0)
+
+    def testRemoveGroupDelEvent(self):
+        eventsFired = []
+
+        @adapter(IGroupDeletedEvent)
+        def gotDeletion(event):
+            eventsFired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(gotDeletion)
+        self.groups.addGroup('foo', [], [])
+        self.groups.removeGroups(['foo'])
+        self.assertEqual(len(eventsFired), 1)
+        self.assertEqual(eventsFired[0].principal, 'foo')
+        gsm.unregisterHandler(gotDeletion)
 
     def testListGroupIds(self):
         self.groups.addGroup('foo', [], [])
