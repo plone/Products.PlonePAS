@@ -114,6 +114,10 @@ class MembershipToolTest(base.TestCase):
         ac = zip(a, c)
         for aa, cc in ac:
             self.assertTrue(aa == cc)
+        cleaned = cleanId(u'abc')
+        self.assertEqual(cleaned, 'abc')
+        self.assertTrue(isinstance(cleaned, str))
+        self.assertFalse(isinstance(cleaned, unicode))
 
 
 class MemberAreaTest(base.TestCase):
