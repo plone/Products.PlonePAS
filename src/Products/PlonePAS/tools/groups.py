@@ -15,12 +15,14 @@ from Products.PlonePAS.permissions import ManageGroups
 from Products.PlonePAS.permissions import SetGroupOwnership
 from Products.PlonePAS.permissions import ViewGroups
 from Products.PlonePAS.utils import getGroupsForPrincipal
+from Products.PluggableAuthService.events import GroupDeleted
 from Products.PluggableAuthService.PluggableAuthService import \
     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
 from ZODB.POSException import ConflictError
 from zope.interface import implementer
+from zope.event import notify
 import logging
 
 logger = logging.getLogger('PluggableAuthService')
@@ -160,6 +162,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
         for mid, manager in managers:
             if manager.removeGroup(group_id):
+                notify(GroupDeleted(group_id))
                 retval = True
 
         return retval

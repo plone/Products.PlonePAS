@@ -6,7 +6,8 @@ Changelog
 
 New:
 
-- *add item here*
+- Notify new IGroupDeletedEvent when deleting a group.  
+  [DieKatze]
 
 Fixes:
 
