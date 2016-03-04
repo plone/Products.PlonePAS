@@ -1,17 +1,13 @@
 Changelog
 =========
 
-5.0.9 (unreleased)
+5.0.9 (2016-03-03)
 ------------------
 
 New:
 
 - Notify new IGroupDeletedEvent when deleting a group.  
   [DieKatze]
-
-Fixes:
-
-- *add item here*
 
 
 5.0.8 (2016-02-24)
