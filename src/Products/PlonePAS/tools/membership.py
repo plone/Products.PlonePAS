@@ -27,6 +27,7 @@ from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
+from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
 from ZODB.POSException import ConflictError
 from cStringIO import StringIO
@@ -53,7 +54,7 @@ def _unicodify_structure(value, charset=_marker):
         charset = ptool.getProperty('default_charset', None)
 
     if isinstance(value, str):
-        return charset and unicode(value, charset) or unicode(value)
+        return charset and safe_unicode(value, charset) or safe_unicode(value)
     if isinstance(value, list):
         return [_unicodify_structure(val, charset) for val in value]
     if isinstance(value, tuple):

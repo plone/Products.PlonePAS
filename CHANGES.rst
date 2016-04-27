@@ -14,7 +14,8 @@ New:
 
 Fixes:
 
-- *add item here*
+- Fix UnicodeDecodeError in searchForMembers by using safe_unicode.
+  [pbauer]
 
 
 5.0.9 (2016-03-03)
@@ -22,7 +23,7 @@ Fixes:
 
 New:
 
-- Notify new IGroupDeletedEvent when deleting a group.  
+- Notify new IGroupDeletedEvent when deleting a group.
   [DieKatze]
 
 

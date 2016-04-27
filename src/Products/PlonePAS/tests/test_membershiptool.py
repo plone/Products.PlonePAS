@@ -851,8 +851,11 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
                        'juergen@example.com', ['Member'],
                        '2014-02-03')
 
-        self.assertEqual(len(search(
-            REQUEST=dict(name=u'jürgen'))), 1)
+        self.assertEqual(
+            len(search(REQUEST=dict(name=u'jürgen'))), 1)
+
+        self.assertEqual(
+            len(search(REQUEST=dict(name='jürgen'))), 1)
 
     def beforeTearDown(self):
         self._free_warning_output()
