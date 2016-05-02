@@ -4,14 +4,6 @@ Changelog
 5.0.10 (unreleased)
 -------------------
 
-Incompatibilities:
-
-- *add item here*
-
-New:
-
-- *add item here*
-
 Fixes:
 
 - Fix UnicodeDecodeError in searchForMembers by using safe_unicode.
