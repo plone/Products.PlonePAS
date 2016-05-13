@@ -4,6 +4,7 @@ from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from App.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
+from Products.CMFCore.MemberDataTool import _marker
 from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
 from Products.CMFCore.permissions import ManagePortal
@@ -22,8 +23,6 @@ from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
 from zope.interface import implementer
-
-_marker = object()
 
 
 class MemberDataTool(BaseTool):

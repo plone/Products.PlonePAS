@@ -14,7 +14,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use the _marker from CMFCore for MemberDataTool.getProperty,
+  this makes sure that we never return the _marker from PlonePAS
+  but an error.
+  [pcdummy]
 
 
 5.0.10 (2016-05-02)
