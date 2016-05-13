@@ -301,7 +301,13 @@ class MemberData(BaseMemberData):
             # we won't always have PlonePAS users, due to acquisition,
             # nor are guaranteed property sheets
             if not sheets:
-                return BaseMemberData.getProperty(self, id, default)
+                try:
+                    return BaseMemberData.getProperty(self, id, default)
+                except ValueError:
+                    # Zope users don't have PropertySheets,
+                    # return an empty string for them if the property
+                    # doesn't exists.
+                    return ''
 
         # If we made this far, we found a PAS and some property sheets.
         for sheet in sheets:

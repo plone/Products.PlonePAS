@@ -19,6 +19,10 @@ Bug fixes:
   but an error.
   [pcdummy]
 
+- Don't raise an ValueError if a property doesn't exists for a ZOPE
+  user.
+  [pcdummy]
+
 
 5.0.10 (2016-05-02)
 -------------------
