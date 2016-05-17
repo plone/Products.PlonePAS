@@ -14,7 +14,14 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Use the _marker from CMFCore for MemberDataTool.getProperty,
+  this makes sure that we never return the _marker from PlonePAS
+  but an error.
+  [pcdummy]
+
+- Don't raise an ValueError if a property doesn't exists for a ZOPE
+  user.
+  [pcdummy]
 
 
 5.0.10 (2016-05-02)
