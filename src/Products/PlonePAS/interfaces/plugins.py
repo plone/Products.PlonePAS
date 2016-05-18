@@ -70,11 +70,11 @@ class IUserManagement(plugins.IUserAdderPlugin):
 deprecated(
     'IMutablePropertiesPlugin moved to PluggableAuthService',
     IMutablePropertiesPlugin='Products.PluggableAuthService.interfaces.'
-                             'plugins:IMutablePropertiesPlugin'
+                             'plugins.IMutablePropertiesPlugin'
 )
 
 deprecated(
     'ISchemaMutablePropertiesPlugin moved to PluggableAuthService',
     ISchemaMutablePropertiesPlugin='Products.PluggableAuthService.interfaces.'
-                                   'plugins:ISchemaMutablePropertiesPlugin'
+                                   'plugins.ISchemaMutablePropertiesPlugin'
 )
