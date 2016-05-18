@@ -46,30 +46,6 @@ class UserManager(BasePlugin):
     meta_type = 'User Manager'
     security = ClassSecurityInfo()
 
-    @security.protected(ManageUsers)
-    def addUser(self, user_id, login_name, password):
-        """Original ZODBUserManager.addUser, modified to check if
-        incoming password is already encypted.
-
-        This support clean migration from default user source.
-        Should go into PAS.
-        """
-        if self._user_passwords.get(user_id) is not None:
-            raise KeyError('Duplicate user ID: %s' % user_id)
-
-        if self._login_to_userid.get(login_name) is not None:
-            raise KeyError('Duplicate login name: %s' % login_name)
-
-        if not AuthEncoding.is_encrypted(password):
-            password = AuthEncoding.pw_encrypt(password)
-        self._user_passwords[user_id] = password
-        self._login_to_userid[login_name] = user_id
-        self._userid_to_login[user_id] = login_name
-
-        # enumerateUsers return value has changed
-        view_name = createViewName('enumerateUsers')
-        self.ZCacheable_invalidate(view_name=view_name)
-
     # User Management interface
 
     @security.private
