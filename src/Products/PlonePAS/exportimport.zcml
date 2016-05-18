@@ -14,12 +14,12 @@
   <!-- XXX This should point to an own export/import class! TitleOnly is far not enough -->
   <adapter
       factory="Products.PluggableAuthService.plugins.exportimport.TitleOnlyExportImport"
-      for="Products.PluggableAuthService.interfaces.plugins.IMutablePropertiesPlugin"
+      for="Products.PlonePAS.interfaces.plugins.IMutablePropertiesPlugin"
       provides="Products.GenericSetup.interfaces.IFilesystemExporter"
   />
   <adapter
       factory="Products.PluggableAuthService.plugins.exportimport.TitleOnlyExportImport"
-      for="Products.PluggableAuthService.interfaces.plugins.IMutablePropertiesPlugin"
+      for="Products.PlonePAS.interfaces.plugins.IMutablePropertiesPlugin"
       provides="Products.GenericSetup.interfaces.IFilesystemImporter"
   />
 

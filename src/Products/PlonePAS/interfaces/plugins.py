@@ -68,14 +68,43 @@ class IUserManagement(plugins.IUserAdderPlugin):
         """
 
 
-deprecated(
-    'IMutablePropertiesPlugin moved to PluggableAuthService',
-    IMutablePropertiesPlugin='Products.PluggableAuthService.interfaces.'
-                             'plugins.IMutablePropertiesPlugin'
-)
+class IMutablePropertiesPlugin(Interface):
+    """
+    Return a property set for a user. Property set can either an
+    object conforming to the IMutable property sheet interface or a
+    dictionary (in which case the properties are not persistently
+    mutable).
+    """
 
-deprecated(
-    'ISchemaMutablePropertiesPlugin moved to PluggableAuthService',
-    ISchemaMutablePropertiesPlugin='Products.PluggableAuthService.interfaces.'
-                                   'plugins.ISchemaMutablePropertiesPlugin'
-)
+    def getPropertiesForUser(user, request=None):
+        """
+        User -> IMutablePropertySheet || {}
+
+        o User will implement IPropertiedUser.
+
+        o Plugin may scribble on the user, if needed (but must still
+          return a mapping, even if empty).
+
+        o May assign properties based on values in the REQUEST object, if
+          present
+        """
+
+    def setPropertiesForUser(user, propertysheet):
+        """
+        Set modified properties on the user persistently.
+
+        Raise a ValueError if the property or property value is invalid
+        """
+
+    def deleteUser(user_id):
+        """
+        Remove properties stored for a user
+        """
+
+
+class ISchemaMutablePropertiesPlugin(Interface):
+
+    def addProperty(property_type, property_name, default=None):
+        """
+        Add a new property to a property provider.
+        """

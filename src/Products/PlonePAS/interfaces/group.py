@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from zope.interface import Interface
 from zope.deferredimport import deprecated
+
 
 deprecated(
     "Import from Products.PluggableAuthService.interfaces.plugins instead",
