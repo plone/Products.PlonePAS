@@ -4,14 +4,6 @@ Changelog
 5.0.11 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Use the _marker from CMFCore for MemberDataTool.getProperty,
