@@ -14,7 +14,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- In getMemberInfo, if a property is not present it now returns an
+  empty string, rather than raising an exception. This fixes login for
+  sites that have location removed.
+  [MatthewWilkes]
 
 
 5.0.12 (2016-09-09)

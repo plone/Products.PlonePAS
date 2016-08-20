@@ -557,6 +557,14 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
         info = self.membership.getMemberInfo('user2')
         self.assertEqual(info['fullname'], 'Second user')
 
+    def testGetMemberInfoWithMissingProperties(self):
+        self.membership.addMember('user3', 'secret', ['Member'], [],
+                                  properties={'fullname': 'Second user'})
+        self.membership.portal_memberdata._delProperty('location')
+        self.membership.portal_memberdata._delProperty('home_page')
+        info = self.membership.getMemberInfo('user3')
+        self.assertEqual(info['fullname'], 'Second user')
+
     def testGetCandidateLocalRolesIncludesLocalRolesOnObjectForManager(self):
         self.folder._addRole('my_test_role')
         self.folder.manage_setLocalRoles(TEST_USER_ID,
@@ -944,7 +952,7 @@ class TestMemberInfoView(base.TestCase):
         self.assertTrue(self.membership.isAnonymousUser())
         info = self.view.info()
         self.assertEqual(info['username'], 'Anonymous User')
-        self.assertEqual(info['fullname'], None)
+        self.assertEqual(info['fullname'], '')
         self.assertEqual(info['name_or_id'], 'Anonymous User')
 
     def testSetGroupsWithUserNameIdDifference(self):
