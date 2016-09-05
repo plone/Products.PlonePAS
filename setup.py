@@ -12,7 +12,7 @@ longdescription += open("CHANGES.rst").read()
 install_requires = [
         'plone.i18n',
         'plone.memoize',
-        'plone.protect',
+        'plone.protect>=2.0.3',
         'plone.session',
         'Products.CMFCore',
         'Products.GenericSetup',

@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Depend on plone.protect 2.0.3 or higher.
+  Fixes https://github.com/plone/Products.PlonePAS/issues/21
+  [maurits]
 
 
 5.0.11 (2016-05-20)
