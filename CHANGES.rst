@@ -4,14 +4,6 @@ Changelog
 5.0.12 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Depend on plone.protect 2.0.3 or higher.
