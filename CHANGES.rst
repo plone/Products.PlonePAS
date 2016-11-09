@@ -4,14 +4,6 @@ Changelog
 5.0.13 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - In getMemberInfo, if a property is not present it now returns an
