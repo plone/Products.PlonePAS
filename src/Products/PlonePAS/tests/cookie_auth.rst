@@ -33,7 +33,7 @@ Login to Plone Site using Basic Auth works.
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
   >>> browser.open('%s/manage' % portal.absolute_url())
   >>> print browser.headers
-  Status: 200 Ok...
+  Status: 200 ...
 
 Make sure cookie plugin is installed and activated.
 
@@ -86,7 +86,7 @@ Login directly to containing folder using Basic Auth works.
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (user_name, user_password,))
   >>> browser.open('%s/manage' % layer['app'].absolute_url())
   >>> print browser.headers
-  Status: 200 Ok...
+  Status: 200 ...
 
 Login to Plone Site using Basic Auth works.
 
@@ -94,5 +94,5 @@ Login to Plone Site using Basic Auth works.
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (user_name, user_password,))
   >>> browser.open('%s/manage' % portal.absolute_url())
   >>> print browser.headers
-  Status: 200 Ok...
+  Status: 200 ...
 
