@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from AccessControl import Permissions
 from AccessControl import Unauthorized
-from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.PlonePAS.tests import base
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -35,7 +34,7 @@ class TestGroupDataTool(base.TestCase):
                          'GroupManager')
 
 
-class TestGroupData(base.TestCase, WarningInterceptor):
+class TestGroupData(base.TestCase):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
@@ -49,7 +48,6 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         # MUST reset _v_ attributes!
         self.memberdata._v_temps = None
         self.groupdata._v_temps = None
-        self._trap_warning_output()
 
     def testGetGroup(self):
         g = self.groups.getGroupById('foo')
@@ -146,9 +144,6 @@ class TestGroupData(base.TestCase, WarningInterceptor):
         self.groups.editGroup(g.getId(), roles=['Member'])
         g = self.groups.getGroupById('foo')
         self.assertTrue(g.has_role('Member'))
-
-    def beforeTearDown(self):
-        self._free_warning_output()
 
 
 class TestMethodProtection(base.TestCase):

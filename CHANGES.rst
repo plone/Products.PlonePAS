@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Remove WarningInterceptor (CMFCore) - it is gone in newer versions.
+  [jensens]
 
 
 5.0.13 (2016-11-09)

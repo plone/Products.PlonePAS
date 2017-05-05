@@ -6,7 +6,6 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
-from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.browser.member import PASMemberView
 from Products.PlonePAS.interfaces.membership import IMembershipTool
@@ -164,12 +163,11 @@ class MemberAreaTest(base.TestCase):
         self.assertFalse('bar' in self.portal.Members)
 
 
-class TestMembershipTool(base.TestCase, WarningInterceptor):
+class TestMembershipTool(base.TestCase):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
         self.groups = self.portal.portal_groups
-        self._trap_warning_output()
 
     def test_interface(self):
         from zope.interface.verify import verifyClass
@@ -659,9 +657,6 @@ class TestMembershipTool(base.TestCase, WarningInterceptor):
                                              TEST_USER_ID)
         self.assertEqual(self.membership.getBadMembers(), [])
 
-    def beforeTearDown(self):
-        self._free_warning_output()
-
 
 class TestCreateMemberarea(base.TestCase):
 
@@ -786,7 +781,7 @@ class TestMemberareaSetup(base.TestCase):
             self.assertFalse('index_html' in self.home)
 
 
-class TestSearchForMembers(base.TestCase, WarningInterceptor):
+class TestSearchForMembers(base.TestCase):
 
     def afterSetUp(self):
         self.memberdata = self.portal.portal_memberdata
@@ -805,7 +800,6 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
                        '2003-12-31')
         # MUST reset this
         self.memberdata._v_temps = None
-        self._trap_warning_output()
 
     def addMember(self, username, fullname, email, roles, last_login_time):
         self.membership.addMember(username, 'secret', roles, [])
@@ -864,9 +858,6 @@ class TestSearchForMembers(base.TestCase, WarningInterceptor):
 
         self.assertEqual(
             len(search(REQUEST=dict(name='jürgen'))), 1)
-
-    def beforeTearDown(self):
-        self._free_warning_output()
 
 
 class TestDefaultUserAndPasswordNotChanged(base.TestCase):
