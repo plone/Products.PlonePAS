@@ -3,7 +3,6 @@ from AccessControl import Permissions
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from Products.CMFCore.tests.base.testcase import WarningInterceptor
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.plugins.group import PloneGroup
 from Products.PlonePAS.tests import base
@@ -124,13 +123,12 @@ class TestMethodProtection(base.TestCase):
         self.groupdata.removeMember(TEST_USER_ID)
 
 
-class TestGroupsTool(base.TestCase, WarningInterceptor):
+class TestGroupsTool(base.TestCase):
 
     def afterSetUp(self):
         self.membership = self.portal.portal_membership
         self.acl_users = self.portal.acl_users
         self.groups = self.portal.portal_groups
-        self._trap_warning_output()
 
         if 'auto_group' in self.acl_users:
             self.acl_users.manage_delObjects(['auto_group'])
@@ -273,5 +271,3 @@ class TestGroupsTool(base.TestCase, WarningInterceptor):
         info = self.groups.getGroupInfo('foo')
         self.assertEqual(info, None)
 
-    def beforeTearDown(self):
-        self._free_warning_output()
