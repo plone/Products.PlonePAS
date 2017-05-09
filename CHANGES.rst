@@ -4,14 +4,6 @@ Changelog
 5.0.14 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Remove WarningInterceptor (CMFCore) - it is gone in newer versions.
