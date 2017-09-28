@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
-from Acquisition import aq_base
 from App.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
+from Products.CMFCore.interfaces import IMember
 from Products.CMFCore.MemberDataTool import _marker
-from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
+from Products.CMFCore.MemberDataTool import MemberAdapter as BaseMemberAdapter
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
@@ -183,28 +183,13 @@ class MemberDataTool(BaseTool):
             pass
         return False
 
-    # an exact copy from the base, so that we pick up the new MemberData.
-    # wrapUser should have a MemberData factory method to over-ride (or even
-    # set at run-time!) so that we don't have to do this.
+    # FIXME: MemberData shoud probably be a more specific adapter.
     def wrapUser(self, u):
         '''
         If possible, returns the Member object that corresponds
         to the given User object.
-        We override this to ensure OUR MemberData class is used
         '''
-        user_id = u.getId()
-        members = self._members
-        if user_id not in members:
-            base = aq_base(self)
-            md = MemberData(base, user_id)
-            if self.canAddMemberData():
-                # XXX do not write on read
-                members[user_id] = md
-            return md.__of__(self).__of__(u)
-        else:
-            # Return a wrapper with self as containment and
-            # the user as context.
-            return members[user_id].__of__(self).__of__(u)
+        return MemberData(u, self)
 
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
@@ -238,10 +223,16 @@ class MemberDataTool(BaseTool):
 InitializeClass(MemberDataTool)
 
 
-@implementer(IManageCapabilities)
-class MemberData(BaseMemberData):
+# FIXME: MemberData should probably be a more specific adapter
+# instead of a subclass.
+@implementer(IManageCapabilities, IMember)
+class MemberData(BaseMemberAdapter):
 
     security = ClassSecurityInfo()
+
+    def __init__(self, user, tool):
+        BaseMemberAdapter.__init__(self, user, tool)
+        self.id = user.getId()
 
     # setProperties uses setMemberProperties. no need to override.
 
@@ -252,10 +243,10 @@ class MemberData(BaseMemberData):
         sheets = None
 
         # We could pay attention to force_local here...
-        if not IPluggableAuthService.providedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self._tool.acl_users):
             # Defer to base impl in absence of PAS, a PAS user, or
             # property sheets
-            return BaseMemberData.setMemberProperties(self, mapping)
+            return BaseMemberAdapter.setMemberProperties(self, mapping)
         else:
             # It's a PAS! Whee!
             user = self.getUser()
@@ -266,7 +257,7 @@ class MemberData(BaseMemberData):
             if not sheets:
                 # Defer to base impl if we have a PAS but no property
                 # sheets.
-                return BaseMemberData.setMemberProperties(self, mapping)
+                return BaseMemberAdapter.setMemberProperties(self, mapping)
 
         # If we got this far, we have a PAS and some property sheets.
         # XXX track values set to defer to default impl
@@ -291,8 +282,8 @@ class MemberData(BaseMemberData):
         through the ordered property sheets.
         """
         sheets = None
-        if not IPluggableAuthService.providedBy(self.acl_users):
-            return BaseMemberData.getProperty(self, id)
+        if not IPluggableAuthService.providedBy(self._tool.acl_users):
+            return BaseMemberAdapter.getProperty(self, id)
         else:
             # It's a PAS! Whee!
             user = self.getUser()
@@ -302,7 +293,7 @@ class MemberData(BaseMemberData):
             # nor are guaranteed property sheets
             if not sheets:
                 try:
-                    return BaseMemberData.getProperty(self, id, default)
+                    return BaseMemberAdapter.getProperty(self, id, default)
                 except ValueError:
                     # Zope users don't have PropertySheets,
                     # return an empty string for them if the property
@@ -325,7 +316,7 @@ class MemberData(BaseMemberData):
 
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.
-        return BaseMemberData.getProperty(self, id, default)
+        return BaseMemberAdapter.getProperty(self, id, default)
 
     def getPassword(self):
         """Returns None. Present to avoid NotImplementedError."""
@@ -373,7 +364,7 @@ class MemberData(BaseMemberData):
         """True iff the member/group property named in 'prop_name'
         can be changed.
         """
-        if not IPluggableAuthService.providedBy(self.acl_users):
+        if not IPluggableAuthService.providedBy(self._tool.acl_users):
             # not PAS; Memberdata is writable
             return self._memberdataHasProperty(prop_name)
         else:
@@ -444,11 +435,17 @@ class MemberData(BaseMemberData):
 
         u.userFolderEditUser(u.getUserId(), password, roles, domains)
 
-    # plugin getters
-
     @security.private
     def _getPlugins(self):
-        return self.acl_users.plugins
+        return self._tool._getPlugins()
+
+    @security.public
+    def has_permission(self, permission, object):
+        return self._user.has_permission(permission, object)
+
+    @security.public
+    def getGroups(self):
+        return self._user.getGroups()
 
 
 InitializeClass(MemberData)

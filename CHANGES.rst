@@ -6,7 +6,9 @@ Changelog
 
 Breaking changes:
 
-- *add item here*
+- Adapt to changes of MemberData in CMFCore.
+  Fixes https://github.com/plone/Products.PlonePAS/issues/24
+  [pbauer]
 
 New features:
 
