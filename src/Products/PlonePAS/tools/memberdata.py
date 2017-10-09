@@ -183,7 +183,6 @@ class MemberDataTool(BaseTool):
             pass
         return False
 
-    # FIXME: MemberData shoud probably be a more specific adapter.
     def wrapUser(self, u):
         '''
         If possible, returns the Member object that corresponds
@@ -223,8 +222,6 @@ class MemberDataTool(BaseTool):
 InitializeClass(MemberDataTool)
 
 
-# FIXME: MemberData should probably be a more specific adapter
-# instead of a subclass.
 @implementer(IManageCapabilities, IMember)
 class MemberData(BaseMemberAdapter):
 
