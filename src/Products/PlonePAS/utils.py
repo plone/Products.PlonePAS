@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from cStringIO import StringIO
+from plone.dexterity._compat import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 

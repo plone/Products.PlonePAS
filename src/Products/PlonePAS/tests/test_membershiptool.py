@@ -15,7 +15,7 @@ from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
-from cStringIO import StringIO
+from plone.dexterity._compat import StringIO
 from plone.app.testing import PLONE_SITE_ID
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import TEST_USER_ID
