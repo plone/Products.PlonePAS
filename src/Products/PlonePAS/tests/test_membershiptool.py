@@ -53,12 +53,14 @@ class MembershipToolTest(base.TestCase):
         self.assertTrue(isinstance(member, PloneUser))
 
     def test_get_member_by_id(self):
+        from Products.PluggableAuthService.PluggableAuthService import (
+            PluggableAuthService)
         # Use tool way of getting member by id. This returns a
-        # MemberData object wrapped by the member
+        # MemberData object wrapped by PAS (used to be wrapped by member).
         member = self.mt.getMemberById(self.member_id)
         self.assertFalse(member is None)
         self.assertTrue(isinstance(member, MemberData))
-        self.assertTrue(isinstance(aq_parent(member), PloneUser))
+        self.assertTrue(isinstance(aq_parent(member), PluggableAuthService))
 
     def test_id_clean(self):
         from Products.PlonePAS.utils import cleanId, decleanId
@@ -441,7 +443,8 @@ class TestMembershipTool(base.TestCase):
         member = self.membership.getMemberById(TEST_USER_ID)
         self.assertNotEqual(member, None)
         self.assertEqual(member.__class__.__name__, 'MemberData')
-        self.assertEqual(aq_parent(member).__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(member).__class__.__name__,
+                         'PluggableAuthService')
 
     def testGetAuthenticatedMember(self):
         member = self.membership.getAuthenticatedMember()
@@ -451,7 +454,8 @@ class TestMembershipTool(base.TestCase):
         member = self.membership.getAuthenticatedMember()
         self.assertEqual(member.getUserName(), TEST_USER_NAME)
         self.assertEqual(member.__class__.__name__, 'MemberData')
-        self.assertEqual(aq_parent(member).__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(member).__class__.__name__,
+                         'PluggableAuthService')
 
     def testGetAuthenticatedMemberIfAnonymous(self):
         self.logout()
@@ -472,23 +476,19 @@ class TestMembershipTool(base.TestCase):
 
     def testWrapUserWrapsBareUser(self):
         user = self.portal.acl_users.getUserById(TEST_USER_ID)
-        # TODO: GRUF users are wrapped
         self.assertTrue(hasattr(user, 'aq_base'))
         user = aq_base(user)
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'MemberData')
-        self.assertEqual(aq_parent(user).__class__.__name__, 'PloneUser')
-        self.assertEqual(aq_parent(aq_parent(user)).__class__.__name__,
+        self.assertEqual(aq_parent(user).__class__.__name__,
                          'PluggableAuthService')
 
     def testWrapUserWrapsWrappedUser(self):
         user = self.portal.acl_users.getUserById(TEST_USER_ID)
-        # TODO: GRUF users are wrapped
         self.assertTrue(hasattr(user, 'aq_base'))
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'MemberData')
-        self.assertEqual(aq_parent(user).__class__.__name__, 'PloneUser')
-        self.assertEqual(aq_parent(aq_parent(user)).__class__.__name__,
+        self.assertEqual(aq_parent(user).__class__.__name__,
                          'PluggableAuthService')
 
     def testWrapUserDoesntWrapMemberData(self):
@@ -505,8 +505,7 @@ class TestMembershipTool(base.TestCase):
         self.assertFalse(hasattr(nobody, 'aq_base'))
         user = self.membership.wrapUser(nobody, wrap_anon=1)
         self.assertEqual(user.__class__.__name__, 'MemberData')
-        self.assertEqual(aq_parent(user).__class__.__name__, 'SpecialUser')
-        self.assertEqual(aq_parent(aq_parent(user)).__class__.__name__,
+        self.assertEqual(aq_parent(user).__class__.__name__,
                          'PluggableAuthService')
 
     def testGetCandidateLocalRoles(self):

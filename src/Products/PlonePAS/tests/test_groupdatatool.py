@@ -70,9 +70,7 @@ class TestGroupData(base.TestCase):
         self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
         ms = g.getGroupMembers()
         self.assertEqual(ms[0].__class__.__name__, 'MemberData')
-        self.assertEqual(aq_parent(ms[0]).__class__.__name__, 'PloneUser')
-        self.assertEqual(aq_parent(aq_parent(ms[0])).__class__.__name__,
-                         'PluggableAuthService')
+        self.assertEqual(aq_parent(ms[0]).__class__.__name__, 'PluggableAuthService')
 
     def testAddMember(self):
         self.setPermissions([Permissions.manage_users])
