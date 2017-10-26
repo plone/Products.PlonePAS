@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from OFS.SimpleItem import SimpleItem
+from StringIO import StringIO
 from ZPublisher.HTTPRequest import FileUpload
 
 TEXT = 'file data'
@@ -31,6 +32,7 @@ class File(FileUpload):
             self.data = data
         if headers is not None:
             self.headers = headers
+        self.file = StringIO(self.data)
 
     def seek(self, *args):
         pass
