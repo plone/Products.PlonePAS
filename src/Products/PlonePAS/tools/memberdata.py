@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
+from Acquisition import Implicit
 from App.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.interfaces import IMember
@@ -188,7 +189,7 @@ class MemberDataTool(BaseTool):
         If possible, returns the Member object that corresponds
         to the given User object.
         '''
-        return MemberData(u, self)
+        return MemberData(u, self).__of__(u)
 
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
@@ -223,7 +224,7 @@ InitializeClass(MemberDataTool)
 
 
 @implementer(IManageCapabilities, IMember)
-class MemberData(BaseMemberAdapter):
+class MemberData(Implicit, BaseMemberAdapter):
 
     security = ClassSecurityInfo()
 
@@ -443,10 +444,6 @@ class MemberData(BaseMemberAdapter):
     @security.public
     def getGroups(self):
         return self._user.getGroups()
-
-    @security.public
-    def getUserId(self):
-        return self.id
 
 
 InitializeClass(MemberData)
