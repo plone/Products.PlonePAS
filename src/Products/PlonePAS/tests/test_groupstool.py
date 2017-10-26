@@ -154,8 +154,8 @@ class TestGroupsTool(base.TestCase):
         self.groups.addGroup('foo', [], [])
         g = self.groups.getGroupById('foo')
         self.assertEqual(g.__class__.__name__, 'GroupData')
-        self.assertEqual(g.aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(g).__class__.__name__, 'PloneGroup')
+        self.assertEqual(aq_parent(aq_parent(g)).__class__.__name__,
                          'GroupManager')
 
     def testEditGroup(self):
@@ -212,8 +212,8 @@ class TestGroupsTool(base.TestCase):
         self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
         gs = self.groups.getGroupsByUserId(TEST_USER_ID)
         self.assertEqual(gs[0].__class__.__name__, 'GroupData')
-        self.assertEqual(gs[0].aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(gs[0]).__class__.__name__, 'PloneGroup')
+        self.assertEqual(aq_parent(aq_parent(gs[0])).__class__.__name__,
                          'GroupManager')
 
     def testListGroups(self):
@@ -227,8 +227,8 @@ class TestGroupsTool(base.TestCase):
         self.groups.addGroup('foo', [], [])
         gs = self.groups.listGroups()
         self.assertEqual(gs[0].__class__.__name__, 'GroupData')
-        self.assertEqual(gs[0].aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(gs[0].aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(gs[0]).__class__.__name__, 'PloneGroup')
+        self.assertEqual(aq_parent(aq_parent(gs[0])).__class__.__name__,
                          'GroupManager')
 
     def testSetGroupOwnership(self):
@@ -248,8 +248,8 @@ class TestGroupsTool(base.TestCase):
         self.assertEqual(g.__class__.__name__, 'PloneGroup')
         g = self.groups.wrapGroup(g)
         self.assertEqual(g.__class__.__name__, 'GroupData')
-        self.assertEqual(g.aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(g).__class__.__name__, 'PloneGroup')
+        self.assertEqual(aq_parent(aq_parent(g)).__class__.__name__,
                          'GroupManager')
 
     def testGetGroupInfo(self):
@@ -270,4 +270,3 @@ class TestGroupsTool(base.TestCase):
     def testGetBadGroupInfo(self):
         info = self.groups.getGroupInfo('foo')
         self.assertEqual(info, None)
-

@@ -441,7 +441,7 @@ class TestMembershipTool(base.TestCase):
         member = self.membership.getMemberById(TEST_USER_ID)
         self.assertNotEqual(member, None)
         self.assertEqual(member.__class__.__name__, 'MemberData')
-        self.assertEqual(member.aq_parent.__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(member).__class__.__name__, 'PloneUser')
 
     def testGetAuthenticatedMember(self):
         member = self.membership.getAuthenticatedMember()
@@ -451,7 +451,7 @@ class TestMembershipTool(base.TestCase):
         member = self.membership.getAuthenticatedMember()
         self.assertEqual(member.getUserName(), TEST_USER_NAME)
         self.assertEqual(member.__class__.__name__, 'MemberData')
-        self.assertEqual(member.aq_parent.__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(member).__class__.__name__, 'PloneUser')
 
     def testGetAuthenticatedMemberIfAnonymous(self):
         self.logout()
@@ -477,8 +477,8 @@ class TestMembershipTool(base.TestCase):
         user = aq_base(user)
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'MemberData')
-        self.assertEqual(user.aq_parent.__class__.__name__, 'PloneUser')
-        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(user).__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(aq_parent(user)).__class__.__name__,
                          'PluggableAuthService')
 
     def testWrapUserWrapsWrappedUser(self):
@@ -487,8 +487,8 @@ class TestMembershipTool(base.TestCase):
         self.assertTrue(hasattr(user, 'aq_base'))
         user = self.membership.wrapUser(user)
         self.assertEqual(user.__class__.__name__, 'MemberData')
-        self.assertEqual(user.aq_parent.__class__.__name__, 'PloneUser')
-        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(user).__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(aq_parent(user)).__class__.__name__,
                          'PluggableAuthService')
 
     def testWrapUserDoesntWrapMemberData(self):
@@ -505,8 +505,8 @@ class TestMembershipTool(base.TestCase):
         self.assertFalse(hasattr(nobody, 'aq_base'))
         user = self.membership.wrapUser(nobody, wrap_anon=1)
         self.assertEqual(user.__class__.__name__, 'MemberData')
-        self.assertEqual(user.aq_parent.__class__.__name__, 'SpecialUser')
-        self.assertEqual(user.aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(user).__class__.__name__, 'SpecialUser')
+        self.assertEqual(aq_parent(aq_parent(user)).__class__.__name__,
                          'PluggableAuthService')
 
     def testGetCandidateLocalRoles(self):

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Acquisition import aq_base
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS import config
@@ -404,7 +405,7 @@ def setLoginFormInCookieAuth(context):
     """Makes sure the cookie auth redirects to 'require_login' instead
        of 'login_form'."""
     uf = getattr(context, 'acl_users', None)
-    if uf is None or getattr(uf.aq_base, '_getOb', None) is None:
+    if uf is None or getattr(aq_base(uf), '_getOb', None) is None:
         # we have no user folder or it's not a PAS folder, do nothing
         return
     cookie_auth = uf._getOb('credentials_cookie_auth', None)

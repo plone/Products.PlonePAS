@@ -560,7 +560,7 @@ class MembershipTool(BaseTool):
         while parent:
             if acl_users.aq_explicit.getUserById(userid, None) is not None:
                 break
-            parent = aq_parent(aq_inner(parent)).aq_parent
+            parent = aq_parent(aq_parent(aq_inner(parent)))
             acl_users = getattr(parent, 'acl_users')
         if parent:
             return acl_users

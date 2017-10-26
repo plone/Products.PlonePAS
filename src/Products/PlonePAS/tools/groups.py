@@ -3,6 +3,8 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.User import nobody
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
+from Acquisition import aq_inner
+from Acquisition import aq_parent
 from App.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.utils import UniqueObject
@@ -424,7 +426,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             # member data tool at least partially.
             return g
 
-        parent = self.aq_inner.aq_parent
+        parent = aq_parent(aq_inner(self))
         base = getattr(parent, 'aq_base', None)
         if hasattr(base, 'portal_groupdata'):
             # Get portal_groupdata to do the wrapping.

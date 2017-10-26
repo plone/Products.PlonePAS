@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl import Permissions
 from AccessControl import Unauthorized
+from Acquisition import aq_parent
 from Products.PlonePAS.tests import base
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
@@ -29,8 +30,8 @@ class TestGroupDataTool(base.TestCase):
         self.assertEqual(g.__class__.__name__, 'PloneGroup')
         g = self.groupdata.wrapGroup(g)
         self.assertEqual(g.__class__.__name__, 'GroupData')
-        self.assertEqual(g.aq_parent.__class__.__name__, 'PloneGroup')
-        self.assertEqual(g.aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(g).__class__.__name__, 'PloneGroup')
+        self.assertEqual(aq_parent(aq_parent(g)).__class__.__name__,
                          'GroupManager')
 
 
@@ -69,8 +70,8 @@ class TestGroupData(base.TestCase):
         self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
         ms = g.getGroupMembers()
         self.assertEqual(ms[0].__class__.__name__, 'MemberData')
-        self.assertEqual(ms[0].aq_parent.__class__.__name__, 'PloneUser')
-        self.assertEqual(ms[0].aq_parent.aq_parent.__class__.__name__,
+        self.assertEqual(aq_parent(ms[0]).__class__.__name__, 'PloneUser')
+        self.assertEqual(aq_parent(aq_parent(ms[0])).__class__.__name__,
                          'PluggableAuthService')
 
     def testAddMember(self):
