@@ -13,6 +13,7 @@ class FieldStorage(object):
             headers = {}
         self.headers = headers
         self.filename = filename
+        self.name = filename
 
 
 class File(FileUpload):
