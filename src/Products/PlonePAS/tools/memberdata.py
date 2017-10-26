@@ -315,6 +315,17 @@ class MemberData(BaseMemberAdapter):
         # delegate back to the base implementation.
         return BaseMemberAdapter.getProperty(self, id, default)
 
+    @security.public
+    def hasProperty(self, propname):
+        """Does the member have the given property?
+        """
+        # Unfortunately, checking for a marker value does not work well:
+        # You get a ValueError when the property does not exist.
+        try:
+            return self.getProperty(propname, _marker) != _marker
+        except ValueError:
+            return 0
+
     def getPassword(self):
         """Returns None. Present to avoid NotImplementedError."""
         return None
