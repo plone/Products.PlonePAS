@@ -12,7 +12,8 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Make imports work with python 3
+  [pbauer]
 
 Bug fixes:
 

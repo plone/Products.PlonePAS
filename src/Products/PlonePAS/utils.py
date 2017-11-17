@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from cStringIO import StringIO
+from six import StringIO
 from urllib import quote as url_quote
 from urllib import unquote as url_unquote
 
@@ -43,7 +43,7 @@ def scale_image(image_file, max_size=None, default_format=None):
 
         >>> from Products.PlonePAS import config
         >>> import os
-        >>> from StringIO import StringIO
+        >>> from six import StringIO
         >>> from Products.PlonePAS.utils import scale_image
         >>> from PIL import Image
 

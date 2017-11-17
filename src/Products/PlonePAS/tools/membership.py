@@ -30,13 +30,14 @@ from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
 from ZODB.POSException import ConflictError
-from cStringIO import StringIO
 from plone.protect.interfaces import IDisableCSRFProtection
+from six import StringIO
 from zExceptions import BadRequest
 from zope import event
 from zope.component import getUtility
 from zope.interface import alsoProvides
 from zope.interface import implementer
+
 import logging
 import transaction
 

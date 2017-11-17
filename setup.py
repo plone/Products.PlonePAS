@@ -18,6 +18,7 @@ install_requires = [
         'Products.GenericSetup',
         'Products.PluggableAuthService',
         'setuptools',
+        'six',
         'zope.deprecation',
         'Zope2 >=2.13.22',
     ]

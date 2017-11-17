@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from OFS.SimpleItem import SimpleItem
-from StringIO import StringIO
+from six import StringIO
 from ZPublisher.HTTPRequest import FileUpload
 
 TEXT = 'file data'
