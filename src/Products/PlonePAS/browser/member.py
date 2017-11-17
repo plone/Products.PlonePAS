@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+from plone.memoize.instance import memoize
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces.browser import IPASMemberView
-from plone.memoize.instance import memoize
 from zope.interface import implementer
 from zope.publisher.browser import BrowserView
 

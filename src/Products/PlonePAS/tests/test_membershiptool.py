@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
-from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from AccessControl.User import nobody
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
+from plone.app.testing import PLONE_SITE_ID
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.browser.member import PASMemberView
 from Products.PlonePAS.interfaces.membership import IMembershipTool
@@ -15,13 +20,9 @@ from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
-from plone.dexterity._compat import StringIO
-from plone.app.testing import PLONE_SITE_ID
-from plone.app.testing import SITE_OWNER_NAME
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import TEST_USER_PASSWORD
+from six import StringIO
 from zExceptions import BadRequest
+
 import os
 
 
