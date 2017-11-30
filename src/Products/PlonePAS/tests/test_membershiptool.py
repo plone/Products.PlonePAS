@@ -563,6 +563,30 @@ class TestMembershipTool(base.TestCase):
         info = self.membership.getMemberInfo('user3')
         self.assertEqual(info['fullname'], 'Second user')
 
+    def testGetMemberInfoHomePage(self):
+        self.membership.addMember(
+            'user4', 'secret', ['Member'], [],
+            properties={})
+        # empty home_page
+        member = self.membership.getMemberById('user4')
+        info = self.membership.getMemberInfo('user4')
+        self.assertEqual(info.get('home_page'), '')
+
+        # regular external home_page
+        member.setMemberProperties({'home_page': 'http://maurits.vanrees.org'})
+        info = self.membership.getMemberInfo('user4')
+        self.assertEqual(info.get('home_page'), 'http://maurits.vanrees.org')
+
+        # internal home_page
+        member.setMemberProperties({'home_page': 'internal_page'})
+        info = self.membership.getMemberInfo('user4')
+        self.assertEqual(info.get('home_page'), 'internal_page')
+
+        # bad home_page
+        member.setMemberProperties({'home_page': 'javascript:alert("hello")'})
+        info = self.membership.getMemberInfo('user4')
+        self.assertEqual(info.get('home_page'), '')
+
     def testGetCandidateLocalRolesIncludesLocalRolesOnObjectForManager(self):
         self.folder._addRole('my_test_role')
         self.folder.manage_setLocalRoles(TEST_USER_ID,
@@ -921,12 +945,15 @@ class TestMemberInfoView(base.TestCase):
         self.assertEqual(info['name_or_id'], 'Test user')
 
     def testGetMemberInfoViewForMember(self):
-        self.membership.addMember('user2', 'secret', ['Member'], [],
-                                  properties={'fullname': 'Second user'})
+        self.membership.addMember(
+            'user2', 'secret', ['Member'], [],
+            properties={'fullname': 'Second user',
+                        'home_page': 'http://maurits.vanrees.org'})
         info = self.view.info('user2')
         self.assertEqual(info['username'], 'user2')
         self.assertEqual(info['fullname'], 'Second user')
         self.assertEqual(info['name_or_id'], 'Second user')
+        self.assertEqual(info['home_page'], 'http://maurits.vanrees.org')
 
     def testGetMemberInfoViewForNonMember(self):
         # When content is owned by a user who has meanwhile been
@@ -945,6 +972,20 @@ class TestMemberInfoView(base.TestCase):
         self.assertEqual(info['username'], 'Anonymous User')
         self.assertEqual(info['fullname'], '')
         self.assertEqual(info['name_or_id'], 'Anonymous User')
+
+    def testGetMemberInfoViewHomePageInternal(self):
+        self.membership.addMember(
+            'user4', 'secret', ['Member'], [],
+            properties={'home_page': 'internal_page'})
+        info = self.view.info('user4')
+        self.assertEqual(info.get('home_page'), 'internal_page')
+
+    def testGetMemberInfoViewHomePageBad(self):
+        self.membership.addMember(
+            'user4', 'secret', ['Member'], [],
+            properties={'home_page': 'javascript:alert("hello")'})
+        info = self.view.info('user4')
+        self.assertEqual(info.get('home_page'), '')
 
     def testSetGroupsWithUserNameIdDifference(self):
         pas = self.portal['acl_users']
