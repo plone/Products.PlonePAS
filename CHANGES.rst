@@ -14,7 +14,10 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Report home_page as empty when it is suspicious.
+  It may for example contain javascript.
+  Part of PloneHotfix20171128.
+  [maurits]
 
 
 5.0.14 (2017-05-09)
