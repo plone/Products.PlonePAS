@@ -4,14 +4,6 @@ Changelog
 5.0.15 (unreleased)
 -------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Report home_page as empty when it is suspicious.
