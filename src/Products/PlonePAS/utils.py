@@ -34,7 +34,7 @@ def decleanId(id):
     """Reverse cleanId."""
     if id:
         id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
-        return urllib.unquote(id)
+        return urllib.parse.unquote(id)
     return ''
 
 
