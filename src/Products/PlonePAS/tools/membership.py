@@ -31,6 +31,7 @@ from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
 from ZODB.POSException import ConflictError
 from plone.protect.interfaces import IDisableCSRFProtection
+import six
 from six import StringIO
 from zExceptions import BadRequest
 from zope import event
@@ -273,7 +274,7 @@ class MembershipTool(BaseTool):
             if last_login_time:
                 last_login = member.getProperty('last_login_time', '')
 
-                if isinstance(last_login, basestring):
+                if isinstance(last_login, six.string_types):
                     # value is a string when member hasn't yet logged in
                     last_login = DateTime(last_login or '2000/01/01')
 
@@ -389,7 +390,7 @@ class MembershipTool(BaseTool):
 
         # Special handling to avoid bad home_pages, like javascript.
         home_page = member.getProperty('home_page', '')
-        if isinstance(home_page, basestring):
+        if isinstance(home_page, six.string_types):
             if (not home_page.startswith('https://') and
                     not home_page.startswith('http://')):
                 # Suspicious.  But if it is internal, it is fine.

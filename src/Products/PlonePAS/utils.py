@@ -2,8 +2,9 @@
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from six import StringIO
-from urllib import quote as url_quote
-from urllib import unquote as url_unquote
+from six.moves import urllib
+
+import six
 
 
 def unique(iterable):
@@ -23,9 +24,9 @@ def cleanId(id):
     __traceback_info__ = (id,)
     if id:
         # note: we provide the 'safe' param to get '/' encoded
-        if isinstance(id, unicode):
+        if isinstance(id, six.text_type):
             id = id.encode('utf-8')
-        return url_quote(id, '').replace('-', '--').replace('%', '-')
+        return urllib.parse.quote(id, '').replace('-', '--').replace('%', '-')
     return ''
 
 
@@ -33,7 +34,7 @@ def decleanId(id):
     """Reverse cleanId."""
     if id:
         id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
-        return url_unquote(id)
+        return urllib.unquote(id)
     return ''
 
 
@@ -175,11 +176,11 @@ def getGroupsForPrincipal(principal, plugins, request=None):
 def safe_unicode(value, encoding='utf-8'):
     """Converts a value to unicode, even it is already a unicode string.
     """
-    if isinstance(value, unicode):
+    if isinstance(value, six.text_type):
         return value
-    elif isinstance(value, basestring):
+    elif isinstance(value, six.string_types):
         try:
-            value = unicode(value, encoding)
+            value = six.text_type(value, encoding)
         except UnicodeDecodeError:
             value = value.decode('utf-8', 'replace')
     return value

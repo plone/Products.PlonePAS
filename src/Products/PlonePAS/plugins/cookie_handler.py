@@ -12,6 +12,7 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from App.class_init import InitializeClass
 from App.special_dtml import DTMLFile
+from base64 import encodestring
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins \
@@ -24,8 +25,7 @@ from Products.PluggableAuthService.interfaces.plugins \
     import ILoginPasswordHostExtractionPlugin
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
-from base64 import encodestring
-from urllib import quote
+from six.moves.urllib.parse import quote
 from zope.interface import implementer
 
 
