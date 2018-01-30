@@ -35,6 +35,10 @@ logger = logging.getLogger('PlonePAS')
 _marker = object()
 
 
+class GroupDataError(Exception):
+    pass
+
+
 @implementer(IGroupDataTool)
 class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
     """This tool wraps group objects, allowing transparent access to
@@ -132,7 +136,7 @@ class GroupData(SimpleItem):
         bcontext = aq_base(parent)
         bcontainer = aq_base(aq_parent(aq_inner(self)))
         if bcontext is bcontainer or not hasattr(bcontext, 'getUserName'):
-            raise 'GroupDataError'("Can't find group data")
+            raise GroupDataError("Can't find group data")
         # Return the user object, which is our context.
         return parent
 
