@@ -22,9 +22,6 @@ install_requires = [
         'zope.deprecation',
         'Zope2 >=2.13.22',
     ]
-if sys.version_info < (2, 7):
-    # python 2.6 has no collections.ordereddict so we need to use this package
-    install_requires.append('ordereddict')
 
 setup(
     name='Products.PlonePAS',
@@ -33,13 +30,10 @@ setup(
     long_description=longdescription,
     classifiers=[
         "Framework :: Plone",
-        "Framework :: Plone :: 4.3",
-        "Framework :: Plone :: 5.0",
-        "Framework :: Plone :: 5.1",
+        "Framework :: Plone :: 5.2",
         "Framework :: Zope2",
         "License :: OSI Approved :: Zope Public License",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
     ],
     keywords='Zope CMF Plone PAS authentication',
