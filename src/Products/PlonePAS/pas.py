@@ -21,6 +21,7 @@ from Products.PluggableAuthService.PluggableAuthService import \
     PluggableAuthService
 from Products.PluggableAuthService.PluggableAuthService import \
     _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.events import PrincipalBeforeDeleted
 from Products.PluggableAuthService.events import PrincipalDeleted
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
@@ -124,6 +125,8 @@ def _doDelUser(self, id):
         )
 
     for userdeleter_id, userdeleter in userdeleters:
+        notify(PrincipalBeforeDeleted(id))
+
         try:
             userdeleter.doDeleteUser(id)
         except _SWALLOWABLE_PLUGIN_EXCEPTIONS:

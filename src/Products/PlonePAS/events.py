@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from Products.PlonePAS.interfaces.events import IPrincipalBeforeDeletedEvent
 from Products.PlonePAS.interfaces.events import IUserInitialLoginInEvent
 from Products.PluggableAuthService.events import PASEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent
@@ -25,6 +26,14 @@ class UserInitialLoginInEvent(UserLoggedInEvent):
 @implementer(IUserLoggedOutEvent)
 class UserLoggedOutEvent(PASEvent):
     """Plone Implementation of the logged out event
+
+    PAS Event
+    """
+
+
+@implementer(IPrincipalBeforeDeletedEvent)
+class PrincipalBeforeDeleted(PASEvent):
+    """ Plone Implementation for an account marked to be deleted event
 
     PAS Event
     """
