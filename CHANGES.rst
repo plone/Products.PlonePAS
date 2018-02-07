@@ -17,6 +17,9 @@ New features:
 
 Bug fixes:
 
+- Removed ``Extensions/Install.py`` which had only backwards compatibility imports.
+  [maurits]
+
 - Report home_page as empty when it is suspicious.
   It may for example contain javascript.
   Part of PloneHotfix20171128.
