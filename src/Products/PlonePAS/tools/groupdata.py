@@ -514,9 +514,9 @@ class GroupData(SimpleItem):
                     break  # shadowed by read-only
         return 0
 
-    canAddToGroup = MemberData.canAddToGroup
-    canRemoveFromGroup = MemberData.canRemoveFromGroup
-    canAssignRole = MemberData.canAssignRole
+    canAddToGroup = MemberData.canAddToGroup.__func__
+    canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
+    canAssignRole = MemberData.canAssignRole.__func__
 
     # plugin getters
 
