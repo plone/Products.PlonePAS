@@ -514,15 +514,9 @@ class GroupData(SimpleItem):
                     break  # shadowed by read-only
         return 0
 
-<<<<<<< HEAD
     canAddToGroup = MemberData.canAddToGroup.__func__
     canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
     canAssignRole = MemberData.canAssignRole.__func__
-=======
-    canAddToGroup = MemberData.canAddToGroup
-    canRemoveFromGroup = MemberData.canRemoveFromGroup
-    canAssignRole = MemberData.canAssignRole
->>>>>>> fix startup in python3
 
     # plugin getters
 
