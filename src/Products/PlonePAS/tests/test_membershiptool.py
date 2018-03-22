@@ -20,6 +20,7 @@ from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
+import six
 from six import StringIO
 from zExceptions import BadRequest
 
@@ -119,7 +120,7 @@ class MembershipToolTest(base.TestCase):
         cleaned = cleanId(u'abc')
         self.assertEqual(cleaned, 'abc')
         self.assertTrue(isinstance(cleaned, str))
-        self.assertFalse(isinstance(cleaned, unicode))
+        self.assertFalse(isinstance(cleaned, six.text_type))
 
 
 class MemberAreaTest(base.TestCase):

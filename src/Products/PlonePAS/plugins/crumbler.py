@@ -65,7 +65,7 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
         try:
             self._getCC().modifyRequest(request, request.RESPONSE)
 
-        except Exception, e:
+        except Exception as e:
             logger.error("PlonePAS error: %s", e, exc_info=1)
 
         return {}

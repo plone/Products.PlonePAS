@@ -8,9 +8,10 @@ also a property schema type registry which is extensible.
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
-from Products.PluggableAuthService.UserPropertySheet import _SequenceTypes
 from zope.component import getUtility
 from zope.interface import implementer
+
+import six
 
 
 class PropertyValueError(ValueError):
@@ -44,11 +45,11 @@ class PropertySchemaTypeMap(object):
 PropertySchema = PropertySchemaTypeMap()
 PropertySchema.addType(
     'string',
-    lambda x: x is None or isinstance(x, basestring)
+    lambda x: x is None or isinstance(x, six.string_types)
 )
 PropertySchema.addType(
     'text',
-    lambda x: x is None or isinstance(x, basestring)
+    lambda x: x is None or isinstance(x, six.string_types)
 )
 PropertySchema.addType(
     'boolean',
@@ -68,15 +69,15 @@ PropertySchema.addType(
 )
 PropertySchema.addType(
     'lines',
-    lambda x: x is None or isinstance(x, _SequenceTypes)
+    lambda x: x is None or isinstance(x, (tuple, list))
 )
 PropertySchema.addType(
     'selection',
-    lambda x: x is None or isinstance(x, basestring)
+    lambda x: x is None or isinstance(x, six.string_types)
 )
 PropertySchema.addType(
     'multiple selection',
-    lambda x: x is None or isinstance(x, _SequenceTypes)
+    lambda x: x is None or isinstance(x, (tuple, list))
 )
 PropertySchema.addType(
     'date',

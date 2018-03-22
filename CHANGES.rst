@@ -12,7 +12,7 @@ Breaking changes:
 
 New features:
 
-- Make imports work with python 3
+- Make imports work with python 3. Fix startup.
   [pbauer]
 
 Bug fixes:

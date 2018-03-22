@@ -22,7 +22,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.plugins.ZODBGroupManager \
     import ZODBGroupManager
-from ufactory import PloneUser
+from .ufactory import PloneUser
 from zope.interface import implementer
 import logging
 

@@ -14,6 +14,8 @@ from Products.PluggableAuthService.interfaces.propertysheets \
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from zope.interface import implementer
 
+import six
+
 try:
     from collections import OrderedDict
 except ImportError:
@@ -225,7 +227,7 @@ class PloneUser(PropertiedUser):
         for sheet in self.getOrderedPropertySheets():
             if sheet.hasProperty(id):
                 value = sheet.getProperty(id)
-                if isinstance(value, unicode):
+                if isinstance(value, six.text_type):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be

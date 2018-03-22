@@ -24,6 +24,8 @@ from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
 from zope.interface import implementer
 
+import six
+
 
 class MemberDataTool(BaseTool):
     """PAS-specific implementation of memberdata tool.
@@ -302,7 +304,7 @@ class MemberData(BaseMemberAdapter):
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
                 value = sheet.getProperty(id)
-                if isinstance(value, unicode):
+                if isinstance(value, six.text_type):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be
