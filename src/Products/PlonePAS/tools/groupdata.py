@@ -30,6 +30,7 @@ from ZPublisher.Converters import type_converters
 from zope.interface import implementer
 
 import logging
+import six
 
 logger = logging.getLogger('PlonePAS')
 _marker = object()
@@ -514,9 +515,15 @@ class GroupData(SimpleItem):
                     break  # shadowed by read-only
         return 0
 
-    canAddToGroup = MemberData.canAddToGroup.__func__
-    canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
-    canAssignRole = MemberData.canAssignRole.__func__
+    if six.PY3:
+        canAddToGroup = MemberData.canAddToGroup
+        canRemoveFromGroup = MemberData.canRemoveFromGroup
+        canAssignRole = MemberData.canAssignRole
+    else:
+        # in PY2 this is a unbound method
+        canAddToGroup = MemberData.canAddToGroup.__func__
+        canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
+        canAssignRole = MemberData.canAssignRole.__func__
 
     # plugin getters
 
