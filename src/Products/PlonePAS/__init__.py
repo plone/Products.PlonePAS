@@ -3,8 +3,6 @@ from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.utils import ToolInit
 from Products.PlonePAS.pas import patch_pas
 from Products.PlonePAS.plugins import autogroup
-from Products.PlonePAS.plugins import cookie_handler
-from Products.PlonePAS.plugins import crumbler
 from Products.PlonePAS.plugins import group
 from Products.PlonePAS.plugins import local_role
 from Products.PlonePAS.plugins import passwordpolicy
@@ -34,8 +32,6 @@ try:
     registerMultiPlugin(local_role.LocalRolesManager.meta_type)
     registerMultiPlugin(ufactory.PloneUserFactory.meta_type)
     registerMultiPlugin(property.ZODBMutablePropertyProvider.meta_type)
-    registerMultiPlugin(crumbler.CookieCrumblingPlugin.meta_type)
-    registerMultiPlugin(cookie_handler.ExtendedCookieAuthHelper.meta_type)
     registerMultiPlugin(autogroup.AutoGroup.meta_type)
     registerMultiPlugin(passwordpolicy.PasswordPolicyPlugin.meta_type)
 except RuntimeError:
@@ -105,24 +101,6 @@ def initialize(context):
         constructors=(
             property.manage_addZODBMutablePropertyProviderForm,
             property.manage_addZODBMutablePropertyProvider),
-        visibility=None
-    )
-
-    context.registerClass(
-        crumbler.CookieCrumblingPlugin,
-        permission=add_user_folders,
-        constructors=(
-            crumbler.manage_addCookieCrumblingPluginForm,
-            crumbler.manage_addCookieCrumblingPlugin),
-        visibility=None
-    )
-
-    context.registerClass(
-        cookie_handler.ExtendedCookieAuthHelper,
-        permission=add_user_folders,
-        constructors=(
-            cookie_handler.manage_addExtendedCookieAuthHelperForm,
-            cookie_handler.manage_addExtendedCookieAuthHelper),
         visibility=None
     )
 

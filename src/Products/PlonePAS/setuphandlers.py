@@ -186,43 +186,16 @@ def setupAuthPlugins(portal, pas, plone_pas,
                      deactivate_basic_reset=True,
                      deactivate_cookie_challenge=False):
     uf = portal.acl_users
-    logger.debug("Cookie plugin setup")
 
-    login_path = 'login_form'
-    cookie_name = '__ac'
-
-    crumbler = getToolByName(portal, 'cookie_authentication', None)
-    if crumbler is not None:
-        login_path = crumbler.auto_login_page
-        cookie_name = crumbler.auth_cookie
-
-    found = uf.objectIds(['Extended Cookie Auth Helper'])
-    if not found:
-        plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
-                                                     cookie_name=cookie_name)
-    logger.debug("Added Extended Cookie Auth Helper.")
-    if deactivate_basic_reset:
-        disable = ['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
-    else:
-        disable = []
-    activatePluginInterfaces(
-        portal,
-        'credentials_cookie_auth',
-        disable=disable
-    )
-
-    credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
-    if 'login_form' in credentials_cookie_auth:
-        credentials_cookie_auth.manage_delObjects(ids=['login_form'])
-        logger.debug("Removed default login_form from credentials cookie "
-                     "auth.")
-    credentials_cookie_auth.cookie_name = cookie_name
-    credentials_cookie_auth.login_path = login_path
+    # remove credentials_cookie_auth
+    if 'credentials_cookie_auth' in portal:
+        portal.manage_delObjects(['credentials_cookie_auth'])
+        logger.debug("Removed old Credential Cookie Auth")
 
     # remove cookie crumbler(s)
     if 'cookie_authentication' in portal:
         portal.manage_delObjects(['cookie_authentication'])
-    logger.debug("Removed old Cookie Crumbler")
+        logger.debug("Removed old Cookie Crumbler")
 
     found = uf.objectIds(['HTTP Basic Auth Helper'])
     if not found:
@@ -230,18 +203,13 @@ def setupAuthPlugins(portal, pas, plone_pas,
             'credentials_basic_auth',
             title="HTTP Basic Auth"
         )
-    logger.debug("Added Basic Auth Helper.")
+        logger.debug("Added Basic Auth Helper.")
     activatePluginInterfaces(portal, 'credentials_basic_auth')
 
     if deactivate_basic_reset:
         uf.plugins.deactivatePlugin(
             ICredentialsResetPlugin,
             'credentials_basic_auth'
-        )
-    if deactivate_cookie_challenge:
-        uf.plugins.deactivatePlugin(
-            IChallengePlugin,
-            'credentials_cookie_auth'
         )
 
 

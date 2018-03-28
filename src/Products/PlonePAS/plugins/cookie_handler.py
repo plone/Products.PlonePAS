@@ -28,6 +28,17 @@ from base64 import encodestring
 from urllib import quote
 from zope.interface import implementer
 
+import warnings
+
+warnings.warn(
+    'The whole ExtendedCookieAuthHelper is deprecated. It was replaced by '
+    'plone.session and its advanced cookie management. It will be removed in '
+    'Products.PlonePAS 7.0. '
+    'If you use this if this module by code, please refactor it.'
+    'Delete \'credentials_cookie_auth\' from all acl_users.',
+    DeprecationWarning
+)
+
 
 def manage_addExtendedCookieAuthHelper(self, id, title='',
                                        RESPONSE=None, **kw):
@@ -42,6 +53,7 @@ def manage_addExtendedCookieAuthHelper(self, id, title='',
 
     if RESPONSE is not None:
         RESPONSE.redirect('manage_workspace')
+
 
 manage_addExtendedCookieAuthHelperForm = DTMLFile(
     "../zmi/ExtendedCookieAuthHelperForm",

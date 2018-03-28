@@ -14,9 +14,19 @@ from Products.CMFCore.CookieCrumbler import manage_addCC
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from zope.interface import implementer
+
 import logging
+import warnings
 
 logger = logging.getLogger('PlonePAS')
+
+warnings.warn(
+    'The whole CookieCrumblingPlugin is deprecated. It will be removed in '
+    'Products.PlonePAS 7.0. '
+    'If you use this if this module by code, please refactor it.'
+    'Delete \'credentials_cookie_auth\' from all acl_users.',
+    DeprecationWarning
+)
 
 CC_ID = 'cookie_auth'
 
