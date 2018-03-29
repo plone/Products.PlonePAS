@@ -17,11 +17,13 @@ from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
+from Products.PluggableAuthService.events import PropertiesUpdated
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
+from zope.event import notify
 from zope.interface import implementer
 
 
@@ -285,6 +287,11 @@ class MemberData(BaseMemberData):
                     break
         if modified:
             self.notifyModified()
+
+        # Trigger PropertiesUpdated event when member properties are updated,
+        # excluding user login events
+        if set(mapping.keys()) != set(('login_time', 'last_login_time')):
+            notify(PropertiesUpdated(self, mapping))
 
     def getProperty(self, id, default=_marker):
         """PAS-specific method to fetch a user's properties. Looks
