@@ -123,7 +123,7 @@ class TestMemberDataTool(unittest.TestCase):
 
         # Test that notify(PropertiesUpdated) isn't called on user login.
         self._properties_updated_handler_called = False
-        login(self.portal, username)
+
         # Imitate a login as the plone.app.testing login method doesn't seem to
         # set these member properties.
         member.setMemberProperties({
