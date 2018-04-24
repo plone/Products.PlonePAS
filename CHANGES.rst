@@ -7,9 +7,6 @@ Changelog
 - Notify PropertiesUpdated event when member properties are changed
   [ezvirtual]
 
-- Add simple test for PropertiesUpdated event
-  [ezvirtual]
-
 
 5.0.15 (2017-12-11)
 -------------------
