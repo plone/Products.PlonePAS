@@ -104,6 +104,41 @@ class TestMemberDataTool(unittest.TestCase):
                             (IMemberData, IPropertiesUpdatedEvent))
 
         self._properties_updated_handler_called = False
-        self.addMember('ez', 'Ez Zy', 'ez@ezmail.net',
-                       ['Member'], '2018-01-01')
+
+        username = 'ez'
+        roles = ['Member']
+        fullname = 'Ez Zy'
+        email = 'ez@ezmail.net'
+
+        self.membership.addMember(username, 'secret', roles, [])
+        member = self.membership.getMemberById(username)
+
+        self.assertFalse(self._properties_updated_handler_called)
+
+        member.setMemberProperties({
+            'fullname': fullname,
+            'email': email})
+
         self.assertTrue(self._properties_updated_handler_called)
+
+        # Test that notify(PropertiesUpdated) isn't called on user login.
+        self._properties_updated_handler_called = False
+        login(self.portal, username)
+        # Imitate a login as the plone.app.testing login method doesn't seem to
+        # set these member properties.
+        member.setMemberProperties({
+            'login_time': DateTime('2018-02-15'),
+            'last_login_time': DateTime('2018-02-15')})
+
+        self.assertFalse(self._properties_updated_handler_called)
+
+        # Test notify(PropertiesUpdated) isn't called when login_time is
+        # present as we're assuming this should only be changed on login.
+        self._properties_updated_handler_called = False
+        member.setMemberProperties({
+            'login_time': DateTime('2018-02-15'),
+            'fullname': 'Bed Rock'})
+
+        self.assertFalse(self._properties_updated_handler_called)
+        gsm.unregisterHandler(event_handler,
+                              (IMemberData, IPropertiesUpdatedEvent))
