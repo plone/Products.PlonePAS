@@ -278,7 +278,7 @@ class MemberData(BaseMemberAdapter):
 
         # Trigger PropertiesUpdated event when member properties are updated,
         # excluding user login events
-        if set(mapping.keys()) != set(('login_time', 'last_login_time')):
+        if not set(mapping.keys()) & set(('login_time', 'last_login_time')):
             notify(PropertiesUpdated(self, mapping))
 
     def getProperty(self, id, default=_marker):
