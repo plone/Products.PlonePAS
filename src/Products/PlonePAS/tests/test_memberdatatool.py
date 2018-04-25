@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from DateTime import DateTime
 from OFS.Image import Image
+from Products.CMFCore.interfaces import IMemberData
 from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
+from Products.PluggableAuthService.interfaces.events import \
+        IPropertiesUpdatedEvent
 from plone.app.testing import TEST_USER_ID as default_user
+import zope.component
 
 
 class TestMemberDataTool(base.TestCase):
@@ -68,3 +72,52 @@ class TestMemberDataTool(base.TestCase):
         self.assertEqual(len(search('bambam.net')), 1)
         self.assertEqual(len(search('bedrock.com')), 2)
         self.assertEqual(len(search('brubble')), 1)
+
+    def testPropertiesUpdatedEvent(self):
+
+        def event_handler(context, event):
+            self._properties_updated_handler_called = True
+
+        gsm = zope.component.getGlobalSiteManager()
+        gsm.registerHandler(event_handler,
+                            (IMemberData, IPropertiesUpdatedEvent))
+
+        self._properties_updated_handler_called = False
+
+        username = 'ez'
+        roles = ['Member']
+        fullname = 'Ez Zy'
+        email = 'ez@ezmail.net'
+
+        self.membership.addMember(username, 'secret', roles, [])
+        member = self.membership.getMemberById(username)
+
+        self.assertFalse(self._properties_updated_handler_called)
+
+        member.setMemberProperties({
+            'fullname': fullname,
+            'email': email})
+
+        self.assertTrue(self._properties_updated_handler_called)
+
+        # Test that notify(PropertiesUpdated) isn't called on user login.
+        self._properties_updated_handler_called = False
+
+        # Imitate a login as the plone.app.testing login method doesn't seem to
+        # set these member properties.
+        member.setMemberProperties({
+            'login_time': DateTime('2018-02-15'),
+            'last_login_time': DateTime('2018-02-15')})
+
+        self.assertFalse(self._properties_updated_handler_called)
+
+        # Test notify(PropertiesUpdated) isn't called when login_time is
+        # present as we're assuming this should only be changed on login.
+        self._properties_updated_handler_called = False
+        member.setMemberProperties({
+            'login_time': DateTime('2018-02-15'),
+            'fullname': 'Bed Rock'})
+
+        self.assertFalse(self._properties_updated_handler_called)
+        gsm.unregisterHandler(event_handler,
+                              (IMemberData, IPropertiesUpdatedEvent))
