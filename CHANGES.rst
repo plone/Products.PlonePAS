@@ -4,6 +4,8 @@ Changelog
 5.0.16 (unreleased)
 -------------------
 
+New features:
+
 - Notify PropertiesUpdated event when member properties are changed
   [ezvirtual]
 
