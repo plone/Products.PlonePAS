@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from six import StringIO
+from six import BytesIO
 from six.moves import urllib
 
 import six
@@ -159,7 +159,7 @@ def scale_image(image_file, max_size=None, default_format=None):
     if original_mode == 'P' and format in ('GIF', 'PNG'):
         image = image.convert('P')
     # Save
-    new_file = StringIO()
+    new_file = BytesIO()
     image.save(new_file, format, quality=IMAGE_SCALE_PARAMS['quality'])
     new_file.seek(0)
     # Return the file data and the new mimetype
