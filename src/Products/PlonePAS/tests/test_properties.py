@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import login
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
-from Products.PlonePAS.tests import base
 from Products.PluggableAuthService.interfaces.plugins import \
     IUserEnumerationPlugin
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+import unittest
 
 
-class PropertiesTest(base.TestCase):
+class PropertiesTest(unittest.TestCase):
+
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
 
     def test_user_properties(self):
         mt = getToolByName(self.portal, 'portal_membership')
@@ -37,7 +47,7 @@ class PropertiesTest(base.TestCase):
         member = mt.getMemberById('user1')
 
         # Set some member properties. Needs to be logged in as the user.
-        self.login('user1')
+        login(self.portal, 'user1')
         member.setMemberProperties({'age': 30, 'fullname': 'User #1 Is Cool',
                                     'email': 'user1@anotherhost.qa'})
 
@@ -81,7 +91,7 @@ class PropertiesTest(base.TestCase):
         gt = getToolByName(self.portal, 'portal_groups')
         gd = getToolByName(self.portal, 'portal_groupdata')
 
-        self.loginAsPortalOwner()
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
 
         # Create a new Group
         gt.addGroup(
@@ -185,9 +195,12 @@ class PropertiesTest(base.TestCase):
         self.assertEqual(sheet.getProperty('addresses'), ('Here', 'There'))
 
 
-class PropertySearchTest(base.TestCase):
+class PropertySearchTest(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.mt = getToolByName(self.portal, 'portal_membership')
         self.md = getToolByName(self.portal, 'portal_memberdata')
         self.gt = getToolByName(self.portal, 'portal_groups')

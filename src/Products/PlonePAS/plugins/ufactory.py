@@ -215,7 +215,7 @@ class PloneUser(PropertiedUser):
                 continue
 
             update = {}
-            for (key, value) in properties.items():
+            for (key, value) in list(properties.items()):
                 if sheet.hasProperty(key):
                     update[key] = value
                     del properties[key]

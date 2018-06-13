@@ -2,13 +2,18 @@
 from DateTime import DateTime
 from OFS.Image import Image
 from plone.app.testing import TEST_USER_ID as default_user
-from Products.PlonePAS.tests import base
 from Products.PlonePAS.tests import dummy
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+import unittest
 
 
-class TestMemberDataTool(base.TestCase):
+class TestMemberDataTool(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.memberdata = self.portal.portal_memberdata
         self.membership = self.portal.portal_membership
         self.membership.memberareaCreationFlag = 0

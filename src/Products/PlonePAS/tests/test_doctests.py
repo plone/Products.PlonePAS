@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.testing.bbb import PTC_FUNCTIONAL_TESTING
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
 from plone.testing import layered
 import doctest
 import unittest
@@ -14,7 +14,7 @@ def test_suite():
                 package='Products.PlonePAS.tests',
                 optionflags=doctest.ELLIPSIS
             ),
-            layer=PTC_FUNCTIONAL_TESTING
+            layer=PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
         )
     )
     suite.addTest(
