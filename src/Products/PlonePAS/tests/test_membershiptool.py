@@ -694,7 +694,7 @@ class TestMembershipTool(unittest.TestCase):
         # Try an empty image
         empty_file = Image(id=TEST_USER_ID, title='', file=BytesIO(b''))
         self.portal.portal_memberdata._setPortrait(empty_file, TEST_USER_ID)
-        self.assertEqual(self.membership.getBadMembers(), [TEST_USER_ID])
+        self.assertEqual(self.membership.getBadMembers(), [])
         # And a good image
         self.membership.changeMemberPortrait(self.makeRealImage(),
                                              TEST_USER_ID)

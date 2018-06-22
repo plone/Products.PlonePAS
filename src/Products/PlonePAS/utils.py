@@ -69,11 +69,11 @@ def scale_image(image_file, max_size=None, default_format=None):
         >>> scale_image(invalid, (50, 50))
         Traceback (most recent call last):
         ...
-        IOError: cannot identify image file...
+        OSError: cannot identify image file...
         >>> scale_image(sneaky, (50, 50))
         Traceback (most recent call last):
         ...
-        IOError: cannot identify image file...
+        OSError: cannot identify image file...
 
     Now that that's out of the way we check on our real images to make
     sure the format and mode are preserved, that they are scaled, and that they
@@ -112,13 +112,13 @@ def scale_image(image_file, max_size=None, default_format=None):
     width only unless told not to (we need to reset out files before
     trying again though::
 
-        >>> orig_jpg.seek(0)
+        >>> _ = orig_jpg.seek(0)
         >>> new_jpg, mimetype = scale_image(orig_jpg, (70, 100))
         >>> img = Image.open(new_jpg)
         >>> img.size
         (70, 70)
 
-        >>> orig_jpg.seek(0)
+        >>> _ = orig_jpg.seek(0)
         >>> new_jpg, mimetype = scale_image(orig_jpg, (70, 50))
         >>> img = Image.open(new_jpg)
         >>> img.size

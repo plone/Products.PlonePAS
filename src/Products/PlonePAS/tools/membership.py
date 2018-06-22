@@ -765,7 +765,7 @@ class MembershipTool(BaseTool):
             portrait_data = portrait.data
             if six.PY2:
                 portrait_data = str(portrait.data)
-            if portrait_data == '':
+            if not portrait_data:
                 continue
             if not HAS_PIL:
                 raise RuntimeError(

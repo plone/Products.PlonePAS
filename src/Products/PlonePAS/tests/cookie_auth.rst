@@ -53,13 +53,13 @@ Make sure cookie plugin is installed and activated.
   ...       pass
 
   >>> for active, iface in actives:
-  ...     print(iface,)
+  ...     print(iface)
   ...     for id, plugin in active:
   ...         if id == 'credentials_cookie_auth':
   ...            print(True)
-  <...IExtraction...> True
-  <...IChallenge...> True
-  <...ICredentialsUpdate...> <...ICredentialsReset...>
+  <...IExtraction...>...True
+  <...IChallenge...>...True
+  <...ICredentialsUpdate...>...<...ICredentialsReset...>
 
 User in parent folder
 ---------------------
