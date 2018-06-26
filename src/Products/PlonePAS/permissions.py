@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.permissions import setDefaultRoles
+from AccessControl.Permission import addPermission
 
 AddGroups = 'Add Groups'
-setDefaultRoles(AddGroups, ('Manager',))
+addPermission(AddGroups, default_roles=('Manager',))
 
 ManageGroups = 'Manage Groups'
-setDefaultRoles(ManageGroups, ('Manager',))
+addPermission(ManageGroups, default_roles=('Manager',))
 
 ViewGroups = 'View Groups'
-setDefaultRoles(ViewGroups, ('Manager', 'Owner', 'Member'))
+addPermission(ViewGroups, default_roles=('Manager', 'Owner', 'Member'))
 
 DeleteGroups = 'Delete Groups'
-setDefaultRoles(DeleteGroups, ('Manager', ))
+addPermission(DeleteGroups, default_roles=('Manager', ))
 
 SetGroupOwnership = 'Set Group Ownership'
-setDefaultRoles(SetGroupOwnership, ('Manager', 'Owner'))
+addPermission(SetGroupOwnership, default_roles=('Manager', 'Owner'))
