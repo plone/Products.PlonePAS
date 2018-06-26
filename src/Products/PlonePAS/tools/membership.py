@@ -7,7 +7,7 @@ from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from DateTime import DateTime
 from OFS.Image import Image
