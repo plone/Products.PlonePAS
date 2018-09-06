@@ -5,11 +5,6 @@ Changelog
 ------------------
 
 Breaking changes:
-- Notify PropertiesUpdated event when member properties are changed
-  [ezvirtual]
-
-- Add simple test for PropertiesUpdated event
-  [ezvirtual]
 
 - Adapt to changes of MemberData in CMFCore.
   Fixes https://github.com/plone/Products.PlonePAS/issues/24
@@ -19,6 +14,9 @@ New features:
 
 - Make imports work with python 3
   [pbauer]
+
+- Notify PropertiesUpdated event when member properties are changed
+  [ezvirtual]
 
 Bug fixes:
 
