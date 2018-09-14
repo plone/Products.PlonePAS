@@ -5,7 +5,7 @@ ZODB based user manager with introspection and management interfaces.
 from AccessControl import AuthEncoding
 from AccessControl import ClassSecurityInfo
 from AccessControl.Permissions import manage_users as ManageUsers
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability

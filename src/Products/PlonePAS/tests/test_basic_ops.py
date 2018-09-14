@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
-from Products.PlonePAS.tests import base
-from Products.PluggableAuthService.PluggableAuthService import \
-    _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.authservice import \
-    IPluggableAuthService
-from Products.PluggableAuthService.interfaces.events import \
-    IPrincipalDeletedEvent
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
+from Products.PluggableAuthService.PluggableAuthService import  _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 
+import unittest
 
-class BasicOpsTestCase(base.TestCase):
 
-    def afterSetUp(self):
-        self.loginAsPortalOwner()
+class BasicOpsTestCase(unittest.TestCase):
+
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.acl_users = self.portal.acl_users
 
     def compareRoles(self, target, user, roles):
@@ -32,11 +36,9 @@ class BasicOpsTestCase(base.TestCase):
             user_roles = list(u.getRoles())
         else:
             user_roles = list(u.getRolesInContext(target))
-        actual_roles = filter(lambda x: x not in non_roles, user_roles)
-        actual_roles.sort()
+        actual_roles = list(filter(lambda x: x not in non_roles, user_roles))
         wished_roles = list(roles)
-        wished_roles.sort()
-        if actual_roles == wished_roles:
+        if sorted(actual_roles) == sorted(wished_roles):
             return 1
         raise RuntimeError("User %s: Whished roles: %s BUT current "
                            "roles: %s" % (user, wished_roles, actual_roles))

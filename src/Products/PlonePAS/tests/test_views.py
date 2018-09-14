@@ -1,10 +1,15 @@
 # -*- encoding: utf-8 -*-
-from Products.PlonePAS.tests import base
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+import unittest
 
 
-class TestPASSearchView(base.TestCase):
+class TestPASSearchView(unittest.TestCase):
+
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def test_sort(self):
+        self.portal = self.layer['portal']
         pas_search = self.portal.restrictedTraverse('@@pas_search')
         values = [{'title': u'Sociologie'}, {'title': u'Économie'},
                   {'title': u'anthropologie'}]

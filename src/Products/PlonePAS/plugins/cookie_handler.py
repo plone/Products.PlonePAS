@@ -10,7 +10,7 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from base64 import encodestring
 from Products.PluggableAuthService.interfaces.authservice import \
@@ -70,7 +70,11 @@ class ExtendedCookieAuthHelper(BasePlugin):
 
         setAuthCookie = getattr(self, 'setAuthCookie', None)
         if setAuthCookie:
-            cookie_val = encodestring('%s:%s' % (login, new_password))
+            cookie_str = b':'.join([
+                login.encode('utf-8'),
+                new_password.encode('utf-8'),
+            ])
+            cookie_val = encodestring(cookie_str)
             cookie_val = cookie_val.rstrip()
             setAuthCookie(response, self.cookie_name, quote(cookie_val))
         else:

@@ -2,7 +2,6 @@
 # $Id$
 """Tests for Products.PlonePAS.plugins.role.GroupAwareRoleManager"""
 
-from Products.PlonePAS.tests import base
 from Products.PluggableAuthService.PluggableAuthService import \
     _PLUGIN_TYPE_INFO
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
@@ -13,6 +12,9 @@ from Products.PluggableAuthService.plugins.tests.helpers import \
     makeRequestAndResponse
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
 from zope.interface import implementer
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+import unittest
 
 
 @implementer(IGroupsPlugin)
@@ -22,8 +24,10 @@ class FauxGroupsPlugin(BasePlugin):
         return principal._groups
 
 
-class GroupAwareRoleManagerTests(base.TestCase):
+class GroupAwareRoleManagerTests(unittest.TestCase):
     """Roles manager that takes care of goup of principal"""
+
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def _getTargetClass(self):
 

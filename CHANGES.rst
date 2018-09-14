@@ -12,10 +12,25 @@ Breaking changes:
 
 New features:
 
-- Make imports work with python 3. Fix startup.
+- Make it work in Python 3:
+  Make imports work. 
+  Fix startup.
+  Fix setting the auth-cookie.
+  Fix assignment of MemberData-functions during startup.
+  User properties are text.
+  Fix scaling user profile.
+  Migrate all tests away from PloneTestCasei. 
+  Fix other tests. 
   [pbauer]
 
 Bug fixes:
+
+- InitializeClass was moved to AccessControl.class_init
+  [jensens]
+
+- setDefaultRoles is deprecated. 
+  addPermission from AccessControl.Permission is used.
+  [jensens]
 
 - Removed ``Extensions/Install.py`` which had only backwards compatibility imports.
   [maurits]

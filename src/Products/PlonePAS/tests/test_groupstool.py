@@ -3,15 +3,19 @@ from AccessControl import Permissions
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_parent
+from plone.app.testing import setRoles
+from plone.app.testing import logout
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_ID
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.plugins.group import PloneGroup
-from Products.PlonePAS.tests import base
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 from Products.PlonePAS.tools.groupdata import GroupData
-from Products.PluggableAuthService.interfaces.events import \
-    IGroupDeletedEvent
-from plone.app.testing import TEST_USER_ID
+from Products.PluggableAuthService.interfaces.events import IGroupDeletedEvent
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
+
+import unittest
 
 
 def sortTuple(t):
@@ -20,15 +24,18 @@ def sortTuple(t):
     return tuple(l)
 
 
-class GroupsToolTest(base.TestCase):
+class TestGroupsTool(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.gt = getToolByName(self.portal, 'portal_groups')
         self.gd = getToolByName(self.portal, 'portal_groupdata')
 
         self.group_id = 'group1'
         # Create a new Group
-        self.loginAsPortalOwner()
+        setRoles(self.portal, TEST_USER_ID, ['Manager'])
         self.gt.addGroup(
             self.group_id,
             ['Reviewer'],
@@ -89,20 +96,23 @@ class GroupsToolTest(base.TestCase):
         self.assertTrue('Reviewers' in group.getGroups())
 
 
-class TestMethodProtection(base.TestCase):
+class TestMethodProtection(unittest.TestCase):
     # GroupData has wrong security declarations
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.groups = self.portal.portal_groups
         self.groups.addGroup('foo')
         self.groupdata = self.groups.getGroupById('foo')
 
     def testAnonAddMember(self):
-        self.logout()
+        logout()
         self.assertRaises(Unauthorized, self.groupdata.addMember, TEST_USER_ID)
 
     def testAnonRemoveMember(self):
-        self.logout()
+        logout()
         self.assertRaises(Unauthorized, self.groupdata.removeMember,
                           TEST_USER_ID)
 
@@ -114,21 +124,25 @@ class TestMethodProtection(base.TestCase):
                           TEST_USER_ID)
 
     def testManagerAddMember(self):
-        self.setPermissions([Permissions.manage_users])
+        self.portal.manage_role('Member', [Permissions.manage_users])
         self.groupdata.addMember(TEST_USER_ID)
 
     def testManagerRemoveMember(self):
-        self.setPermissions([Permissions.manage_users])
+        self.portal.manage_role('Member', [Permissions.manage_users])
         self.groupdata.addMember(TEST_USER_ID)
         self.groupdata.removeMember(TEST_USER_ID)
 
 
-class TestGroupsTool(base.TestCase):
+class TestGroupsTool(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.membership = self.portal.portal_membership
         self.acl_users = self.portal.acl_users
         self.groups = self.portal.portal_groups
+        self.folder = self.portal['folder']
 
         if 'auto_group' in self.acl_users:
             self.acl_users.manage_delObjects(['auto_group'])
@@ -262,7 +276,7 @@ class TestGroupsTool(base.TestCase):
 
     def testGetGroupInfoAsAnonymous(self):
         self.groups.addGroup('foo', title='Foo', description='Bar')
-        self.logout()
+        logout()
         info = self.groups.restrictedTraverse('getGroupInfo')('foo')
         self.assertEqual(info.get('title'), 'Foo')
         self.assertEqual(info.get('description'), 'Bar')

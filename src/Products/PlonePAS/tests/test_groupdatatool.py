@@ -2,9 +2,12 @@
 from AccessControl import Permissions
 from AccessControl import Unauthorized
 from Acquisition import aq_parent
-from Products.PlonePAS.tests import base
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import logout
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+import unittest
 
 
 def sortTuple(t):
@@ -13,9 +16,12 @@ def sortTuple(t):
     return tuple(l)
 
 
-class TestGroupDataTool(base.TestCase):
+class TestGroupDataTool(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.acl_users = self.portal.acl_users
         self.groups = self.portal.portal_groups
         self.groupdata = self.portal.portal_groupdata
@@ -35,9 +41,12 @@ class TestGroupDataTool(base.TestCase):
                          'GroupManager')
 
 
-class TestGroupData(base.TestCase):
+class TestGroupData(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.membership = self.portal.portal_membership
         self.memberdata = self.portal.portal_memberdata
         self.acl_users = self.portal.acl_users
@@ -73,13 +82,13 @@ class TestGroupData(base.TestCase):
         self.assertEqual(aq_parent(ms[0]).__class__.__name__, 'PluggableAuthService')
 
     def testAddMember(self):
-        self.setPermissions([Permissions.manage_users])
+        self.portal.manage_role('Member', [Permissions.manage_users])
         g = self.groups.getGroupById('foo')
         g.addMember(TEST_USER_ID)
         self.assertEqual(g.getGroupMembers()[0].getId(), TEST_USER_ID)
 
     def testRemoveMember(self):
-        self.setPermissions([Permissions.manage_users])
+        self.portal.manage_role('Member', [Permissions.manage_users])
         g = self.groups.getGroupById('foo')
         g.addMember(TEST_USER_ID)
         g.removeMember(TEST_USER_ID)
@@ -121,6 +130,7 @@ class TestGroupData(base.TestCase):
                          ('Authenticated', 'Member'))
 
     def testGetRolesInContext(self):
+        self.folder = self.portal['folder']
         g = self.groups.getGroupById('foo')
         self.acl_users.userSetGroups(TEST_USER_ID, groupnames=['foo'])
         user = self.acl_users.getUser(TEST_USER_NAME)
@@ -145,19 +155,22 @@ class TestGroupData(base.TestCase):
         self.assertTrue(g.has_role('Member'))
 
 
-class TestMethodProtection(base.TestCase):
+class TestMethodProtection(unittest.TestCase):
 
-    def afterSetUp(self):
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.groups = self.portal.portal_groups
         self.groups.addGroup('foo')
         self.groupdata = self.groups.getGroupById('foo')
 
     def testAnonAddMember(self):
-        self.logout()
+        logout()
         self.assertRaises(Unauthorized, self.groupdata.addMember, TEST_USER_ID)
 
     def testAnonRemoveMember(self):
-        self.logout()
+        logout()
         self.assertRaises(Unauthorized, self.groupdata.removeMember,
                           TEST_USER_ID)
 
@@ -169,10 +182,10 @@ class TestMethodProtection(base.TestCase):
                           TEST_USER_ID)
 
     def testManagerAddMember(self):
-        self.setPermissions([Permissions.manage_users])
+        self.portal.manage_role('Member', [Permissions.manage_users])
         self.groupdata.addMember(TEST_USER_ID)
 
     def testManagerRemoveMember(self):
-        self.setPermissions([Permissions.manage_users])
+        self.portal.manage_role('Member', [Permissions.manage_users])
         self.groupdata.addMember(TEST_USER_ID)
         self.groupdata.removeMember(TEST_USER_ID)

@@ -5,7 +5,7 @@ from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
 from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.utils import getToolByName

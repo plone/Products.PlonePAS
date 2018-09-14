@@ -7,7 +7,7 @@ from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from DateTime import DateTime
 from OFS.Image import Image
@@ -32,7 +32,7 @@ from Products.PlonePAS.utils import scale_image
 from ZODB.POSException import ConflictError
 from plone.protect.interfaces import IDisableCSRFProtection
 import six
-from six import StringIO
+from six import BytesIO
 from zExceptions import BadRequest
 from zope import event
 from zope.component import getUtility
@@ -762,8 +762,10 @@ class MembershipTool(BaseTool):
         counter = 1
         for member_id in tuple(portraits.keys()):
             portrait = portraits[member_id]
-            portrait_data = str(portrait.data)
-            if portrait_data == '':
+            portrait_data = portrait.data
+            if six.PY2:
+                portrait_data = str(portrait.data)
+            if not portrait_data:
                 continue
             if not HAS_PIL:
                 raise RuntimeError(
@@ -772,7 +774,7 @@ class MembershipTool(BaseTool):
                 )
             try:
                 import PIL
-                PIL.Image.open(StringIO(portrait_data))
+                PIL.Image.open(BytesIO(portrait_data))
             except ConflictError:
                 pass
             except:

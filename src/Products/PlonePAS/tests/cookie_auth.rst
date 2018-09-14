@@ -11,13 +11,13 @@ User in Plone Site
 Plone Site has PAS installed
 
   >>> portal = layer['portal']
-  >>> print portal.acl_users.meta_type
+  >>> print(portal.acl_users.meta_type)
   Pluggable Auth Service
 
 User exists in the user folder inside the Plone Site.
 
   >>> uf = portal.acl_users
-  >>> print uf.meta_type
+  >>> print(uf.meta_type)
   Pluggable Auth Service
 
   >>> user_name, user_password, user_role = ('foo', 'bar', 'Manager')
@@ -32,7 +32,7 @@ Login to Plone Site using Basic Auth works.
   >>> browser = Browser(layer['app'])
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
   >>> browser.open('%s/manage' % portal.absolute_url())
-  >>> print browser.headers
+  >>> print(browser.headers)
   Status: 200 ...
 
 Make sure cookie plugin is installed and activated.
@@ -53,13 +53,13 @@ Make sure cookie plugin is installed and activated.
   ...       pass
 
   >>> for active, iface in actives:
-  ...     print iface,
+  ...     print(iface)
   ...     for id, plugin in active:
   ...         if id == 'credentials_cookie_auth':
-  ...            print True
-  <...IExtraction...> True
-  <...IChallenge...> True
-  <...ICredentialsUpdate...> <...ICredentialsReset...>
+  ...            print(True)
+  <...IExtraction...>...True
+  <...IChallenge...>...True
+  <...ICredentialsUpdate...>...<...ICredentialsReset...>
 
 User in parent folder
 ---------------------
@@ -68,7 +68,7 @@ User Exists on the folder containing the Plone Site, which should be a
 Pluggable Auth Service too.
 
   >>> uf = layer['app'].acl_users
-  >>> print uf.meta_type
+  >>> print(uf.meta_type)
   Pluggable Auth Service
 
   >>> user_name, user_password, user_role = ('baz', 'bar', 'Manager')
@@ -85,7 +85,7 @@ Login directly to containing folder using Basic Auth works.
   >>> browser = Browser(layer['app'])
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (user_name, user_password,))
   >>> browser.open('%s/manage' % layer['app'].absolute_url())
-  >>> print browser.headers
+  >>> print(browser.headers)
   Status: 200 ...
 
 Login to Plone Site using Basic Auth works.
@@ -93,6 +93,6 @@ Login to Plone Site using Basic Auth works.
   >>> browser = Browser(layer['app'])
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (user_name, user_password,))
   >>> browser.open('%s/manage' % portal.absolute_url())
-  >>> print browser.headers
+  >>> print(browser.headers)
   Status: 200 ...
 
