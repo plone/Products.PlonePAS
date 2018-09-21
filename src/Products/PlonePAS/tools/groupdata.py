@@ -149,14 +149,14 @@ class GroupData(SimpleItem):
         """
         Return a list of group member ids
         """
-        return map(lambda x: x.getMemberId(), self.getGroupMembers())
+        return [member.getMemberId() for member in self.getGroupMembers()]
 
     @security.public
     def getAllGroupMemberIds(self):
         """
         Return a list of group member ids
         """
-        return map(lambda x: x.getMemberId(), self.getAllGroupMembers())
+        return [member.getMemberId() for member in self.getAllGroupMembers()]
 
     @security.public
     def getGroupMembers(self):
