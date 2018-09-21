@@ -104,7 +104,7 @@ class GroupManager(ZODBGroupManager):
         return self._findGroup(plugins, group_id, title)
 
     def getGroups(self):
-        return map(self.getGroupById, self.getGroupIds())
+        return [self.getGroupById(group_id) for group_id in self.getGroupIds()]
 
     def getGroupIds(self):
         return self.listGroupIds()
