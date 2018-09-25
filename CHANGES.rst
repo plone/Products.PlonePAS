@@ -10,12 +10,19 @@ Breaking changes:
 
 New features:
 
-- *add item here*
+- Notify PropertiesUpdated event when group properties are changed
+  [ezvirtual]
+
+- Notify PrincipalAddedToGroup and PrincipalRemovedFromGroup events
+  [ezvirtual]
+
+- Notify CredentialsUpdated event when password is changed
+  [ezvirtual]
 
 Bug fixes:
 
-- *add item here*
-
+- PropertiesUpdated event - triggered when member properties are changed - now includes user object instead of id
+  [ezvirtual]
 
 5.1.0 (2018-05-01)
 ------------------
