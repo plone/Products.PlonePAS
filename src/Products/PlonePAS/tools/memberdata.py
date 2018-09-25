@@ -273,7 +273,7 @@ class MemberData(BaseMemberData):
         # If we got this far, we have a PAS and some property sheets.
         # XXX track values set to defer to default impl
         # property routing?
-        modified = False
+        modified = {}
         for k, v in mapping.items():
             if v is None and not force_empty:
                 continue
@@ -282,16 +282,16 @@ class MemberData(BaseMemberData):
                     continue
                 if IMutablePropertySheet.providedBy(sheet):
                     sheet.setProperty(user, k, v)
-                    modified = True
+                    modified[k] = v
                 else:
                     break
         if modified:
             self.notifyModified()
-
-        # Trigger PropertiesUpdated event when member properties are updated,
-        # excluding user login events
-        if not set(mapping.keys()) & set(('login_time', 'last_login_time')):
-            notify(PropertiesUpdated(self, mapping))
+            # Trigger PropertiesUpdated event when member properties are
+            # updated, excluding user login events
+            if not set(mapping.keys()) & set((
+                    'login_time', 'last_login_time')):
+                notify(PropertiesUpdated(self, modified))
 
     def getProperty(self, id, default=_marker):
         """PAS-specific method to fetch a user's properties. Looks

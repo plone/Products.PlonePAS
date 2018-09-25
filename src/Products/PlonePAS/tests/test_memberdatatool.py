@@ -7,7 +7,8 @@ from Products.PlonePAS.tests import dummy
 from Products.PluggableAuthService.interfaces.events import \
         IPropertiesUpdatedEvent
 from plone.app.testing import TEST_USER_ID as default_user
-import zope.component
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
 
 
 class TestMemberDataTool(base.TestCase):
@@ -73,14 +74,16 @@ class TestMemberDataTool(base.TestCase):
         self.assertEqual(len(search('bedrock.com')), 2)
         self.assertEqual(len(search('brubble')), 1)
 
-    def testPropertiesUpdatedEvent(self):
+    def test_member_properties_updated_event(self):
+        events_fired = []
 
-        def event_handler(context, event):
+        @adapter(IPropertiesUpdatedEvent)
+        def got_properties_updated_event(event):
+            events_fired.append(event)
             self._properties_updated_handler_called = True
 
-        gsm = zope.component.getGlobalSiteManager()
-        gsm.registerHandler(event_handler,
-                            (IMemberData, IPropertiesUpdatedEvent))
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_properties_updated_event)
 
         self._properties_updated_handler_called = False
 
@@ -94,11 +97,11 @@ class TestMemberDataTool(base.TestCase):
 
         self.assertFalse(self._properties_updated_handler_called)
 
-        member.setMemberProperties({
-            'fullname': fullname,
-            'email': email})
+        properties = {'fullname': fullname, 'email': email}
+        member.setMemberProperties(properties)
 
         self.assertTrue(self._properties_updated_handler_called)
+        self.assertEqual(events_fired[0].properties, properties)
 
         # Test that notify(PropertiesUpdated) isn't called on user login.
         self._properties_updated_handler_called = False
@@ -119,5 +122,4 @@ class TestMemberDataTool(base.TestCase):
             'fullname': 'Bed Rock'})
 
         self.assertFalse(self._properties_updated_handler_called)
-        gsm.unregisterHandler(event_handler,
-                              (IMemberData, IPropertiesUpdatedEvent))
+        gsm.unregisterHandler(got_properties_updated_event)
