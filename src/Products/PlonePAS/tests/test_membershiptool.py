@@ -15,12 +15,16 @@ from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
+from Products.PluggableAuthService.interfaces.events import \
+    ICredentialsUpdatedEvent
 from cStringIO import StringIO
 from plone.app.testing import PLONE_SITE_ID
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
 from zExceptions import BadRequest
 import os
 
@@ -680,6 +684,27 @@ class TestMembershipTool(base.TestCase):
         self.membership.changeMemberPortrait(self.makeRealImage(),
                                              TEST_USER_ID)
         self.assertEqual(self.membership.getBadMembers(), [])
+
+    def test_credentials_updated_event(self):
+        events_fired = []
+
+        @adapter(ICredentialsUpdatedEvent)
+        def got_credentials_updated_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_credentials_updated_event)
+
+        self.assertTrue(self.membership.testCurrentPassword('secret'))
+        self.assertFalse(self.membership.testCurrentPassword('whoknows'))
+        self.loginAsPortalOwner()
+        self.login(TEST_USER_NAME)
+        self.membership.setPassword('guessagain')
+        self.assertEqual(len(events_fired), 1)
+        self.assertEqual(events_fired[0].principal, TEST_USER_ID)
+        self.assertEqual(events_fired[0].password, 'guessagain')
+
+        gsm.unregisterHandler(got_credentials_updated_event)
 
 
 class TestCreateMemberarea(base.TestCase):
