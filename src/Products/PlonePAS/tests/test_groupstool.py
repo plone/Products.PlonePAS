@@ -9,6 +9,12 @@ from Products.PlonePAS.tests import base
 from Products.PlonePAS.tools.groupdata import GroupData
 from Products.PluggableAuthService.interfaces.events import \
     IGroupDeletedEvent
+from Products.PluggableAuthService.interfaces.events import \
+    IPrincipalAddedToGroupEvent
+from Products.PluggableAuthService.interfaces.events import \
+    IPrincipalRemovedFromGroupEvent
+from Products.PluggableAuthService.interfaces.events import \
+    IPropertiesUpdatedEvent
 from plone.app.testing import TEST_USER_ID
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
@@ -271,3 +277,129 @@ class TestGroupsTool(base.TestCase):
         info = self.groups.getGroupInfo('foo')
         self.assertEqual(info, None)
 
+    def test_user_added_to_group_event(self):
+        events_fired = []
+
+        @adapter(IPrincipalAddedToGroupEvent)
+        def got_added_to_group_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_added_to_group_event)
+
+        self.groups.addGroup('pirate', title='Pirate', description='Arrgh')
+        self.setPermissions([Permissions.manage_users])
+        pirate_group = self.groups.getGroupById('pirate')
+        pirate_group.addMember(TEST_USER_ID)
+        self.assertEqual(len(events_fired), 1)
+        self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
+        self.assertEqual(events_fired[0].group, pirate_group)
+
+        gsm.unregisterHandler(got_added_to_group_event)
+
+    def test_user_removed_from_group_event(self):
+        events_fired = []
+
+        @adapter(IPrincipalRemovedFromGroupEvent)
+        def got_removed_from_group_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_removed_from_group_event)
+
+        self.groups.addGroup('knight', title='Knight', description='Sir')
+        self.setPermissions([Permissions.manage_users])
+        knight_group = self.groups.getGroupById('knight')
+        knight_group.addMember(TEST_USER_ID)
+        self.assertEqual(len(events_fired), 0)
+
+        knight_group.removeMember(TEST_USER_ID)
+        self.assertEqual(len(events_fired), 1)
+        self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
+        self.assertEqual(events_fired[0].group, knight_group)
+
+        gsm.unregisterHandler(got_removed_from_group_event)
+
+    def test_principal_added_to_group_event(self):
+        events_fired = []
+
+        @adapter(IPrincipalAddedToGroupEvent)
+        def got_added_to_group_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_added_to_group_event)
+
+        self.groups.addGroup('ninja', title='Ninja', description='Stealth')
+        self.setPermissions([Permissions.manage_users])
+        ninja_group = self.groups.getGroupById('ninja')
+
+        self.groups.addPrincipalToGroup(TEST_USER_ID, 'ninja')
+        self.assertEqual(len(events_fired), 1)
+        self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
+        self.assertEqual(events_fired[0].group, ninja_group)
+
+        gsm.unregisterHandler(got_added_to_group_event)
+
+    def test_principal_removed_from_group_event(self):
+        events_fired = []
+
+        @adapter(IPrincipalRemovedFromGroupEvent)
+        def got_removed_from_group_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_removed_from_group_event)
+
+        self.groups.addGroup('viking', title='Viking', description='Thirsty')
+        self.setPermissions([Permissions.manage_users])
+        viking_group = self.groups.getGroupById('viking')
+
+        self.groups.addPrincipalToGroup(TEST_USER_ID, 'viking')
+        # Adding user to group shouldn't fire removed event
+        self.assertEqual(len(events_fired), 0)
+
+        self.groups.removePrincipalFromGroup(TEST_USER_ID, 'viking')
+        self.assertEqual(len(events_fired), 1)
+        self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
+        self.assertEqual(events_fired[0].group, viking_group)
+
+        gsm.unregisterHandler(got_removed_from_group_event)
+
+    def test_group_added_removed_from_group_events(self):
+        events_fired = []
+
+        @adapter(IPrincipalAddedToGroupEvent)
+        def got_added_to_group_event(event):
+            events_fired.append(event)
+
+        @adapter(IPrincipalRemovedFromGroupEvent)
+        def got_removed_from_group_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_added_to_group_event)
+        gsm.registerHandler(got_removed_from_group_event)
+
+        self.groups.addGroup('mushroom', title='Mushroom',
+                             description='Fun guy')
+        self.groups.addGroup('pizza', title='Pizza', description='Cheesy guy')
+        self.setPermissions([Permissions.manage_users])
+        mushroom_group = self.groups.getGroupById('mushroom')
+        pizza_group = self.groups.getGroupById('pizza')
+
+        self.assertEqual(len(events_fired), 0)
+
+        self.groups.addPrincipalToGroup('mushroom', 'pizza')
+        self.assertEqual(len(events_fired), 1)
+
+        self.assertEqual(events_fired[0].principal, mushroom_group)
+        self.assertEqual(events_fired[0].group, pizza_group)
+
+        self.groups.removePrincipalFromGroup('mushroom', 'pizza')
+        self.assertEqual(len(events_fired), 2)
+        self.assertEqual(events_fired[1].principal, mushroom_group)
+        self.assertEqual(events_fired[1].group, pizza_group)
+
+        gsm.unregisterHandler(got_added_to_group_event)
+        gsm.unregisterHandler(got_removed_from_group_event)

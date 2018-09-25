@@ -16,6 +16,8 @@ from Products.PlonePAS.permissions import SetGroupOwnership
 from Products.PlonePAS.permissions import ViewGroups
 from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PluggableAuthService.events import GroupDeleted
+from Products.PluggableAuthService.events import PrincipalAddedToGroup
+from Products.PluggableAuthService.events import PrincipalRemovedFromGroup
 from Products.PluggableAuthService.PluggableAuthService import \
     _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.interfaces.plugins import \
@@ -198,6 +200,14 @@ class GroupsTool(UniqueObject, SimpleItem):
             raise NotSupported('No plugins allow for group management')
         for mid, manager in managers:
             if manager.addPrincipalToGroup(principal_id, group_id):
+                # As we don't know if principal is user or group at this point
+                # try to get user object first
+                obj = self.acl_users.getUserById(principal_id)
+                # Otherwise get group object
+                if not obj:
+                    obj = self.getGroupById(principal_id)
+                # Notify event
+                notify(PrincipalAddedToGroup(obj, self.getGroupById(group_id)))
                 return True
         return False
 
@@ -209,6 +219,15 @@ class GroupsTool(UniqueObject, SimpleItem):
             raise NotSupported('No plugins allow for group management')
         for mid, manager in managers:
             if manager.removePrincipalFromGroup(principal_id, group_id):
+                # As we don't know if principal is user or group at this point
+                # try to get user object first
+                obj = self.acl_users.getUserById(principal_id)
+                # Otherwise get group object
+                if not obj:
+                    obj = self.getGroupById(principal_id)
+                # Notify event
+                notify(PrincipalRemovedFromGroup(obj,
+                                                 self.getGroupById(group_id)))
                 return True
         return False
 

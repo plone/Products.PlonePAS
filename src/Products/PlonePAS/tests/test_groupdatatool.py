@@ -4,6 +4,10 @@ from AccessControl import Unauthorized
 from Products.PlonePAS.tests import base
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
+from Products.PluggableAuthService.interfaces.events import \
+    IPropertiesUpdatedEvent
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
 
 
 def sortTuple(t):
@@ -144,6 +148,75 @@ class TestGroupData(base.TestCase):
         self.groups.editGroup(g.getId(), roles=['Member'])
         g = self.groups.getGroupById('foo')
         self.assertTrue(g.has_role('Member'))
+
+    def test_group_properties_updated_event(self):
+        events_fired = []
+        self.group_id = 'champion'
+
+        @adapter(IPropertiesUpdatedEvent)
+        def got_properties_updated_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_properties_updated_event)
+
+        self.assertEqual(len(events_fired), 0)
+
+        self.groups.addGroup(
+            self.group_id,
+            roles=['Manager'],
+            title='Groupies'
+        )
+
+        # When this is called from here it triggers an event for the title
+        # being set in the property sheet.
+        self.assertEqual(len(events_fired), 1)
+        self.assertTrue(events_fired[0].principal.isGroup())
+        self.assertEqual(events_fired[0].principal.getId(), self.group_id)
+        self.assertEqual(events_fired[0].properties, {'title': 'Groupies'})
+
+        properties = {
+            'email': 'somedude@amazingmagicalmailland.nz',
+            'title': 'The new and improved Group title',
+            'description': 'Adding a new description'
+        }
+        self.groups.editGroup(
+            self.group_id,
+            roles=['Manager'],
+            **properties
+        )
+
+        self.assertEqual(len(events_fired), 2)
+        self.assertTrue(events_fired[1].principal.isGroup())
+        self.assertEqual(events_fired[1].principal.getId(), self.group_id)
+        self.assertEqual(events_fired[1].properties, properties)
+
+        # Check that changing roles doesn't trigger PropertiesUpdated event
+        # notify.
+        self.groups.editGroup(
+            self.group_id,
+            roles=['Manager', 'SiteAdministrator'],
+        )
+
+        self.assertEqual(len(events_fired), 2)
+
+        properties = {
+            'title': 'title 3.0',
+            'description': 'just another group description'
+        }
+
+        self.groups.editGroup(
+            self.group_id,
+            roles=['Manager', 'SiteAdminstrator'],
+            **properties
+        )
+
+        self.assertEqual(len(events_fired), 3)
+        self.assertTrue(events_fired[2].principal.isGroup())
+        self.assertEqual(events_fired[2].principal.getId(), self.group_id)
+        self.assertEqual(events_fired[2].properties, properties)
+
+        gsm.unregisterHandler(got_properties_updated_event)
 
 
 class TestMethodProtection(base.TestCase):

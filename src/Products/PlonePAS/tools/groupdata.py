@@ -22,11 +22,15 @@ from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.utils import CleanupTemp
+from Products.PluggableAuthService.events import PropertiesUpdated
 from Products.PluggableAuthService.PluggableAuthService import \
     _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.events import PrincipalAddedToGroup
+from Products.PluggableAuthService.events import PrincipalRemovedFromGroup
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from ZPublisher.Converters import type_converters
+from zope.event import notify
 from zope.interface import implementer
 
 import logging
@@ -253,6 +257,7 @@ class GroupData(SimpleItem):
         for mid, manager in managers:
             try:
                 if manager.addPrincipalToGroup(id, self.getId()):
+                    notify(PrincipalAddedToGroup(self.getUserById(id), self))
                     break
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
@@ -270,6 +275,8 @@ class GroupData(SimpleItem):
         for mid, manager in managers:
             try:
                 if manager.removePrincipalFromGroup(id, self.getId()):
+                    notify(PrincipalRemovedFromGroup(self.getUserById(id),
+                                                     self))
                     break
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
@@ -309,25 +316,28 @@ class GroupData(SimpleItem):
         # If we got this far, we have a PAS and some property sheets.
         # XXX track values set to defer to default impl
         # property routing?
-        modified = False
+        modified = {}
         for k, v in mapping.items():
             for sheet in sheets:
                 if not sheet.hasProperty(k):
                     continue
                 if IMutablePropertySheet.providedBy(sheet):
-                    sheet.setProperty(group, k, v)
-                    modified = True
+                    if v != sheet.getProperty(k):
+                        sheet.setProperty(group, k, v)
+                        modified[k] = v
                 else:
                     raise RuntimeError("Mutable property provider "
                                        "shadowed by read only provider")
         if modified:
             self.notifyModified()
+            notify(PropertiesUpdated(self, modified))
 
     def _gruf_setGroupProperties(self, mapping):
         '''Sets the properties of the member.
         '''
         # Sets the properties given in the MemberDataTool.
         tool = self.getTool()
+        modified = {}
         for id in tool.propertyIds():
             if id in mapping:
                 if id not in self.__class__.__dict__:
@@ -336,10 +346,15 @@ class GroupData(SimpleItem):
                         proptype = tool.getPropertyType(id) or 'string'
                         if proptype in type_converters:
                             value = type_converters[proptype](value)
-                    setattr(self, id, value)
+                    if value != getattr(self, id):
+                        setattr(self, id, value)
+                        modified[id] = value
 
         # Hopefully we can later make notifyModified() implicit.
         self.notifyModified()
+
+        if modified:
+            notify(PropertiesUpdated(self, modified))
 
     @security.public
     def getProperties(self):
