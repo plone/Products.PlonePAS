@@ -25,8 +25,6 @@ from Products.PlonePAS.utils import CleanupTemp
 from Products.PluggableAuthService.events import PropertiesUpdated
 from Products.PluggableAuthService.PluggableAuthService import \
     _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.events import PrincipalAddedToGroup
-from Products.PluggableAuthService.events import PrincipalRemovedFromGroup
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from ZPublisher.Converters import type_converters
@@ -257,7 +255,6 @@ class GroupData(SimpleItem):
         for mid, manager in managers:
             try:
                 if manager.addPrincipalToGroup(id, self.getId()):
-                    notify(PrincipalAddedToGroup(self.getUserById(id), self))
                     break
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
@@ -275,8 +272,6 @@ class GroupData(SimpleItem):
         for mid, manager in managers:
             try:
                 if manager.removePrincipalFromGroup(id, self.getId()):
-                    notify(PrincipalRemovedFromGroup(self.getUserById(id),
-                                                     self))
                     break
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
