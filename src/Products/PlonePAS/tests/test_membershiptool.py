@@ -701,7 +701,7 @@ class TestMembershipTool(base.TestCase):
         self.login(TEST_USER_NAME)
         self.membership.setPassword('guessagain')
         self.assertEqual(len(events_fired), 1)
-        self.assertEqual(events_fired[0].principal, TEST_USER_ID)
+        self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
         self.assertEqual(events_fired[0].password, 'guessagain')
 
         gsm.unregisterHandler(got_credentials_updated_event)

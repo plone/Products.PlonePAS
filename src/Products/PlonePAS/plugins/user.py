@@ -87,7 +87,7 @@ class UserManager(BasePlugin):
         if self._user_passwords.get(principal_id) is None:
             raise RuntimeError("User does not exist: %s" % principal_id)
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
-        notify(CredentialsUpdated(principal_id, password))
+        notify(CredentialsUpdated(self.getUserById(principal_id), password))
 
     # implement interfaces IDeleteCapability, IPasswordSetCapability
 
