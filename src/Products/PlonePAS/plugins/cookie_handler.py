@@ -12,8 +12,7 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
-from DateTime import DateTime
-from plone.registry.interfaces import IRegistry
+from base64 import encodestring
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins \
@@ -28,7 +27,6 @@ from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
 from six.moves.urllib.parse import quote
 from zope.interface import implementer
-from zope.component import getUtility
 
 
 def manage_addExtendedCookieAuthHelper(self, id, title='',
@@ -69,16 +67,19 @@ class ExtendedCookieAuthHelper(BasePlugin):
     def updateCredentials(self, request, response, login, new_password):
         """Override standard updateCredentials method
         """
-        cookie_val = self.get_cookie_value(login, new_password)
-        registry = getUtility(IRegistry)
-        length = registry.get('plone.auth_cookie_length', '0')
-        try:
-            length = int(length)
-        except ValueError:
-            length = 0
-        expires = (DateTime() + length).toZone('GMT').rfc822()
-        response.setCookie(
-            self.cookie_name, quote(cookie_val), path='/', expires=expires)
+
+        setAuthCookie = getattr(self, 'setAuthCookie', None)
+        if setAuthCookie:
+            cookie_str = b':'.join([
+                login.encode('utf-8'),
+                new_password.encode('utf-8'),
+            ])
+            cookie_val = encodestring(cookie_str)
+            cookie_val = cookie_val.rstrip()
+            setAuthCookie(response, self.cookie_name, quote(cookie_val))
+        else:
+            BasePlugin.updateCredentials(self, request, response, login,
+                                         new_password)
 
     @security.public
     def login(self):
