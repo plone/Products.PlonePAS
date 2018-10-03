@@ -40,6 +40,11 @@ Bug fixes:
   Part of PloneHotfix20171128.
   [maurits]
 
+- Remove setAuthCookie script. #1801
+  This used to be a hook to allow overriding the credentials update. The
+  default override has been used as the new implementation.
+  [tlotze]
+
 
 5.0.14 (2017-05-09)
 -------------------
