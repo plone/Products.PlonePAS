@@ -70,15 +70,17 @@ class ExtendedCookieAuthHelper(BasePlugin):
         """Override standard updateCredentials method
         """
         cookie_val = self.get_cookie_value(login, new_password)
+        kw = {}
         registry = getUtility(IRegistry)
         length = registry.get('plone.auth_cookie_length', '0')
         try:
             length = int(length)
         except ValueError:
             length = 0
-        expires = (DateTime() + length).toZone('GMT').rfc822()
+        if length:
+            kw.update(expires=(DateTime() + length).toZone('GMT').rfc822())
         response.setCookie(
-            self.cookie_name, quote(cookie_val), path='/', expires=expires)
+            self.cookie_name, quote(cookie_val), path='/', **kw)
 
     @security.public
     def login(self):
