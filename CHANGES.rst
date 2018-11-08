@@ -1,20 +1,12 @@
 Changelog
 =========
 
-6.0.1 (unreleased)
-------------------
+.. You should *NOT* be adding new change log entries to this file.
+   You should create a file in the news directory instead.
+   For helpful instructions, please see:
+   https://github.com/plone/plone.releaser/blob/master/ADD-A-NEWS-ITEM.rst
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
-Bug fixes:
-
-- *add item here*
+.. towncrier release notes start
 
 
 6.0.0 (2018-11-05)
@@ -29,14 +21,14 @@ Breaking changes:
 New features:
 
 - Make it work in Python 3:
-  Make imports work. 
+  Make imports work.
   Fix startup.
   Fix setting the auth-cookie.
   Fix assignment of MemberData-functions during startup.
   User properties are text.
   Fix scaling user profile.
-  Migrate all tests away from PloneTestCasei. 
-  Fix other tests. 
+  Migrate all tests away from PloneTestCasei.
+  Fix other tests.
   [pbauer]
 
 Bug fixes:
@@ -44,7 +36,7 @@ Bug fixes:
 - InitializeClass was moved to AccessControl.class_init
   [jensens]
 
-- setDefaultRoles is deprecated. 
+- setDefaultRoles is deprecated.
   addPermission from AccessControl.Permission is used.
   [jensens]
 
