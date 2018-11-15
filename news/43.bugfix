@@ -1,0 +1,2 @@
+Check for both `__self__` and `im_self` for Python 3 compatibility
+[vangheem]
