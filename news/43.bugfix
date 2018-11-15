@@ -1,2 +1,2 @@
-Check for both `__self__` and `im_self` for Python 3 compatibility
+Change `im_self` to `__self__`
 [vangheem]

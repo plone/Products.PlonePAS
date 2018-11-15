@@ -78,8 +78,7 @@ class LocalRolesManager(LocalRolePlugin):
                 object = parent
                 continue
 
-            new = (getattr(object, 'im_self', None) or
-                   getattr(object, '__self__', None))
+            new = getattr(object, '__self__', None)
 
             if new is not None:
                 object = aq_inner(new)
@@ -135,8 +134,7 @@ class LocalRolesManager(LocalRolePlugin):
                 inner_obj = parent
                 continue
 
-            new = (getattr(inner_obj, 'im_self', None) or
-                   getattr(inner_obj, '__self__', None))
+            new = getattr(inner_obj, '__self__', None)
 
             if new is not None:
                 inner_obj = aq_inner(new)
@@ -177,8 +175,7 @@ class LocalRolesManager(LocalRolePlugin):
                 object = parent
                 continue
 
-            new = (getattr(object, 'im_self', None) or
-                   getattr(object, '__self__', None))
+            new = getattr(object, '__self__', None)
 
             if new is not None:
                 object = aq_inner(new)
