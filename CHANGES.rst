@@ -8,6 +8,14 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.1 (2018-12-11)
+------------------
+
+Bug fixes:
+
+
+- Change `im_self` to `__self__` [vangheem] (#43)
+
 
 6.0.0 (2018-11-05)
 ------------------
