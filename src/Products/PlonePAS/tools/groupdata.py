@@ -20,7 +20,7 @@ from Products.PlonePAS.interfaces.group import IGroupData
 from Products.PlonePAS.interfaces.group import IGroupDataTool
 from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-from Products.PlonePAS.tools.memberdata import MemberData
+from Products.PlonePAS.tools.memberdata import MemberDataAdapter
 from Products.PlonePAS.utils import CleanupTemp
 from Products.PluggableAuthService.PluggableAuthService import \
     _SWALLOWABLE_PLUGIN_EXCEPTIONS
@@ -516,14 +516,14 @@ class GroupData(SimpleItem):
         return 0
 
     if six.PY3:
-        canAddToGroup = MemberData.canAddToGroup
-        canRemoveFromGroup = MemberData.canRemoveFromGroup
-        canAssignRole = MemberData.canAssignRole
+        canAddToGroup = MemberDataAdapter.canAddToGroup
+        canRemoveFromGroup = MemberDataAdapter.canRemoveFromGroup
+        canAssignRole = MemberDataAdapter.canAssignRole
     else:
         # in PY2 this is a unbound method
-        canAddToGroup = MemberData.canAddToGroup.__func__
-        canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
-        canAssignRole = MemberData.canAssignRole.__func__
+        canAddToGroup = MemberDataAdapter.canAddToGroup.__func__
+        canRemoveFromGroup = MemberDataAdapter.canRemoveFromGroup.__func__
+        canAssignRole = MemberDataAdapter.canAssignRole.__func__
 
     # plugin getters
 

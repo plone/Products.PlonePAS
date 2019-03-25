@@ -6,6 +6,7 @@ from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.interfaces import IMember
 from Products.CMFCore.MemberDataTool import _marker
 from Products.CMFCore.MemberDataTool import MemberAdapter as BaseMemberAdapter
+from Products.CMFCore.MemberDataTool import MemberData as BaseMemberData
 from Products.CMFCore.MemberDataTool import MemberDataTool as BaseTool
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
@@ -224,8 +225,17 @@ class MemberDataTool(BaseTool):
 InitializeClass(MemberDataTool)
 
 
+# b/w compat import for persistent data
+MemberData = BaseMemberData
+
+
 @implementer(IManageCapabilities, IMember)
-class MemberData(BaseMemberAdapter):
+class MemberDataAdapter(BaseMemberAdapter):
+    '''
+    Make sure `MemberDataAdapter` name does not match
+    previous persistent class `MemberData` for existing
+    objects stored in zodb
+    '''
 
     security = ClassSecurityInfo()
 

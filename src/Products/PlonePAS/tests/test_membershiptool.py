@@ -20,7 +20,7 @@ from Products.PlonePAS.interfaces.membership import IMembershipTool
 from Products.PlonePAS.plugins.ufactory import PloneUser
 from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 from Products.PlonePAS.tests import dummy
-from Products.PlonePAS.tools.memberdata import MemberData
+from Products.PlonePAS.tools.memberdata import MemberDataAdapter
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
 from six import BytesIO
@@ -70,7 +70,7 @@ class MembershipToolTest(unittest.TestCase):
         # MemberData object wrapped by PAS (used to be wrapped by member).
         member = self.mt.getMemberById(self.member_id)
         self.assertFalse(member is None)
-        self.assertTrue(isinstance(member, MemberData))
+        self.assertTrue(isinstance(member, MemberDataAdapter))
         self.assertTrue(isinstance(aq_parent(member), PluggableAuthService))
 
     def test_id_clean(self):
@@ -462,7 +462,7 @@ class TestMembershipTool(unittest.TestCase):
     def testGetMemberByIdIsWrapped(self):
         member = self.membership.getMemberById(TEST_USER_ID)
         self.assertNotEqual(member, None)
-        self.assertEqual(member.__class__.__name__, 'MemberData')
+        self.assertEqual(member.__class__.__name__, 'MemberDataAdapter')
         self.assertEqual(aq_parent(member).__class__.__name__,
                          'PluggableAuthService')
 
@@ -473,7 +473,7 @@ class TestMembershipTool(unittest.TestCase):
     def testGetAuthenticatedMemberIsWrapped(self):
         member = self.membership.getAuthenticatedMember()
         self.assertEqual(member.getUserName(), TEST_USER_NAME)
-        self.assertEqual(member.__class__.__name__, 'MemberData')
+        self.assertEqual(member.__class__.__name__, 'MemberDataAdapter')
         self.assertEqual(aq_parent(member).__class__.__name__,
                          'PluggableAuthService')
 
@@ -486,7 +486,7 @@ class TestMembershipTool(unittest.TestCase):
         # Also see http://dev.plone.org/plone/ticket/1851
         logout()
         member = self.membership.getAuthenticatedMember()
-        self.assertNotEqual(member.__class__.__name__, 'MemberData')
+        self.assertNotEqual(member.__class__.__name__, 'MemberDataAdapter')
         self.assertEqual(member.__class__.__name__, 'SpecialUser')
 
     def testIsAnonymousUser(self):
@@ -499,7 +499,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertTrue(hasattr(user, 'aq_base'))
         user = aq_base(user)
         user = self.membership.wrapUser(user)
-        self.assertEqual(user.__class__.__name__, 'MemberData')
+        self.assertEqual(user.__class__.__name__, 'MemberDataAdapter')
         self.assertEqual(aq_parent(user).__class__.__name__,
                          'PluggableAuthService')
 
@@ -507,7 +507,7 @@ class TestMembershipTool(unittest.TestCase):
         user = self.portal.acl_users.getUserById(TEST_USER_ID)
         self.assertTrue(hasattr(user, 'aq_base'))
         user = self.membership.wrapUser(user)
-        self.assertEqual(user.__class__.__name__, 'MemberData')
+        self.assertEqual(user.__class__.__name__, 'MemberDataAdapter')
         self.assertEqual(aq_parent(user).__class__.__name__,
                          'PluggableAuthService')
 
@@ -524,7 +524,7 @@ class TestMembershipTool(unittest.TestCase):
     def testWrapUserWrapsAnonymous(self):
         self.assertFalse(hasattr(nobody, 'aq_base'))
         user = self.membership.wrapUser(nobody, wrap_anon=1)
-        self.assertEqual(user.__class__.__name__, 'MemberData')
+        self.assertEqual(user.__class__.__name__, 'MemberDataAdapter')
         self.assertEqual(aq_parent(user).__class__.__name__,
                          'PluggableAuthService')
 
