@@ -124,6 +124,10 @@ def scale_image(image_file, max_size=None, default_format=None):
         >>> img.size
         (50, 50)
 
+        orig_jpg.close()
+        orig_png.close()
+        orig_gif.close()
+
     """
     from PIL import Image
 
