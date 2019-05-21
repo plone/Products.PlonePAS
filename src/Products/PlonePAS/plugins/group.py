@@ -5,7 +5,7 @@ management (ie. rw) capabilities.
 
 """
 from AccessControl import ClassSecurityInfo
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOBTree
 from BTrees.OOBTree import OOSet
@@ -22,7 +22,7 @@ from Products.PluggableAuthService.interfaces.plugins \
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
 from Products.PluggableAuthService.plugins.ZODBGroupManager \
     import ZODBGroupManager
-from ufactory import PloneUser
+from .ufactory import PloneUser
 from zope.interface import implementer
 import logging
 
@@ -104,7 +104,7 @@ class GroupManager(ZODBGroupManager):
         return self._findGroup(plugins, group_id, title)
 
     def getGroups(self):
-        return map(self.getGroupById, self.getGroupIds())
+        return [self.getGroupById(group_id) for group_id in self.getGroupIds()]
 
     def getGroupIds(self):
         return self.listGroupIds()

@@ -7,12 +7,19 @@ from Products.PlonePAS.tests import dummy
 from Products.PluggableAuthService.interfaces.events import \
         IPropertiesUpdatedEvent
 from plone.app.testing import TEST_USER_ID as default_user
+from Products.PlonePAS.tests import dummy
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 import zope.component
 
+import unittest
 
-class TestMemberDataTool(base.TestCase):
 
-    def afterSetUp(self):
+class TestMemberDataTool(unittest.TestCase):
+
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
         self.memberdata = self.portal.portal_memberdata
         self.membership = self.portal.portal_membership
         self.membership.memberareaCreationFlag = 0

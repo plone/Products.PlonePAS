@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.requestmethod import postonly
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.interfaces import IMember
 from Products.CMFCore.MemberDataTool import _marker
@@ -25,6 +25,8 @@ from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
 from zope.event import notify
 from zope.interface import implementer
+
+import six
 
 
 class MemberDataTool(BaseTool):
@@ -309,7 +311,7 @@ class MemberData(BaseMemberAdapter):
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
                 value = sheet.getProperty(id)
-                if isinstance(value, unicode):
+                if six.PY2 and isinstance(value, six.text_type):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be

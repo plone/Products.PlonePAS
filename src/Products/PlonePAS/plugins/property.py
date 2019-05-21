@@ -3,7 +3,7 @@
 Mutable Property Provider
 """
 from AccessControl import ClassSecurityInfo
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOBTree
 from Products.CMFCore.utils import getToolByName
@@ -19,7 +19,9 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from ZODB.PersistentMapping import PersistentMapping
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
+
 import copy
+import six
 
 _ = MessageFactory('plone')
 
@@ -40,7 +42,7 @@ manage_addZODBMutablePropertyProviderForm = DTMLFile(
 
 
 def isStringType(data):
-    return isinstance(data, str) or isinstance(data, unicode)
+    return isinstance(data, str) or isinstance(data, six.text_type)
 
 
 @implementer(

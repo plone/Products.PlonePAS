@@ -10,8 +10,10 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
+from DateTime import DateTime
+from plone.registry.interfaces import IRegistry
 from Products.PluggableAuthService.interfaces.authservice import \
     IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins \
@@ -24,9 +26,9 @@ from Products.PluggableAuthService.interfaces.plugins \
     import ILoginPasswordHostExtractionPlugin
 from Products.PluggableAuthService.plugins.CookieAuthHelper \
     import CookieAuthHelper as BasePlugin
-from base64 import encodestring
-from urllib import quote
+from six.moves.urllib.parse import quote
 from zope.interface import implementer
+from zope.component import getUtility
 
 
 def manage_addExtendedCookieAuthHelper(self, id, title='',
@@ -67,15 +69,18 @@ class ExtendedCookieAuthHelper(BasePlugin):
     def updateCredentials(self, request, response, login, new_password):
         """Override standard updateCredentials method
         """
-
-        setAuthCookie = getattr(self, 'setAuthCookie', None)
-        if setAuthCookie:
-            cookie_val = encodestring('%s:%s' % (login, new_password))
-            cookie_val = cookie_val.rstrip()
-            setAuthCookie(response, self.cookie_name, quote(cookie_val))
-        else:
-            BasePlugin.updateCredentials(self, request, response, login,
-                                         new_password)
+        cookie_val = self.get_cookie_value(login, new_password)
+        kw = {}
+        registry = getUtility(IRegistry)
+        length = registry.get('plone.auth_cookie_length', '0')
+        try:
+            length = int(length)
+        except ValueError:
+            length = 0
+        if length:
+            kw.update(expires=(DateTime() + length).toZone('GMT').rfc822())
+        response.setCookie(
+            self.cookie_name, quote(cookie_val), path='/', **kw)
 
     @security.public
     def login(self):

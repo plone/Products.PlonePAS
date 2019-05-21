@@ -7,7 +7,7 @@ This allows form logins to fall through to parent user folders.
 """
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from OFS.Folder import Folder
 from Products.CMFCore.CookieCrumbler import manage_addCC
@@ -65,7 +65,7 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
         try:
             self._getCC().modifyRequest(request, request.RESPONSE)
 
-        except Exception, e:
+        except Exception as e:
             logger.error("PlonePAS error: %s", e, exc_info=1)
 
         return {}

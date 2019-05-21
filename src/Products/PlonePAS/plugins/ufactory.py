@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.PermissionRole import _what_not_even_god_should_do
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
@@ -13,6 +13,8 @@ from Products.PluggableAuthService.interfaces.propertysheets \
     import IPropertySheet
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from zope.interface import implementer
+
+import six
 
 try:
     from collections import OrderedDict
@@ -213,7 +215,7 @@ class PloneUser(PropertiedUser):
                 continue
 
             update = {}
-            for (key, value) in properties.items():
+            for (key, value) in list(properties.items()):
                 if sheet.hasProperty(key):
                     update[key] = value
                     del properties[key]
@@ -225,7 +227,7 @@ class PloneUser(PropertiedUser):
         for sheet in self.getOrderedPropertySheets():
             if sheet.hasProperty(id):
                 value = sheet.getProperty(id)
-                if isinstance(value, unicode):
+                if six.PY2 and isinstance(value, six.text_type):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be

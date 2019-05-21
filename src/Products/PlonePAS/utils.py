@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from six import StringIO
-from urllib import quote as url_quote
-from urllib import unquote as url_unquote
+from six import BytesIO
+from six.moves import urllib
+
+import six
 
 
 def unique(iterable):
@@ -23,9 +24,9 @@ def cleanId(id):
     __traceback_info__ = (id,)
     if id:
         # note: we provide the 'safe' param to get '/' encoded
-        if isinstance(id, unicode):
+        if isinstance(id, six.text_type):
             id = id.encode('utf-8')
-        return url_quote(id, '').replace('-', '--').replace('%', '-')
+        return urllib.parse.quote(id, '').replace('-', '--').replace('%', '-')
     return ''
 
 
@@ -33,7 +34,7 @@ def decleanId(id):
     """Reverse cleanId."""
     if id:
         id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
-        return url_unquote(id)
+        return urllib.parse.unquote(id)
     return ''
 
 
@@ -68,11 +69,11 @@ def scale_image(image_file, max_size=None, default_format=None):
         >>> scale_image(invalid, (50, 50))
         Traceback (most recent call last):
         ...
-        IOError: cannot identify image file...
+        OSError: cannot identify image file...
         >>> scale_image(sneaky, (50, 50))
         Traceback (most recent call last):
         ...
-        IOError: cannot identify image file...
+        OSError: cannot identify image file...
 
     Now that that's out of the way we check on our real images to make
     sure the format and mode are preserved, that they are scaled, and that they
@@ -111,17 +112,21 @@ def scale_image(image_file, max_size=None, default_format=None):
     width only unless told not to (we need to reset out files before
     trying again though::
 
-        >>> orig_jpg.seek(0)
+        >>> _ = orig_jpg.seek(0)
         >>> new_jpg, mimetype = scale_image(orig_jpg, (70, 100))
         >>> img = Image.open(new_jpg)
         >>> img.size
         (70, 70)
 
-        >>> orig_jpg.seek(0)
+        >>> _ = orig_jpg.seek(0)
         >>> new_jpg, mimetype = scale_image(orig_jpg, (70, 50))
         >>> img = Image.open(new_jpg)
         >>> img.size
         (50, 50)
+
+        orig_jpg.close()
+        orig_png.close()
+        orig_gif.close()
 
     """
     from PIL import Image
@@ -158,7 +163,7 @@ def scale_image(image_file, max_size=None, default_format=None):
     if original_mode == 'P' and format in ('GIF', 'PNG'):
         image = image.convert('P')
     # Save
-    new_file = StringIO()
+    new_file = BytesIO()
     image.save(new_file, format, quality=IMAGE_SCALE_PARAMS['quality'])
     new_file.seek(0)
     # Return the file data and the new mimetype
@@ -175,11 +180,11 @@ def getGroupsForPrincipal(principal, plugins, request=None):
 def safe_unicode(value, encoding='utf-8'):
     """Converts a value to unicode, even it is already a unicode string.
     """
-    if isinstance(value, unicode):
+    if isinstance(value, six.text_type):
         return value
-    elif isinstance(value, basestring):
+    elif isinstance(value, six.string_types):
         try:
-            value = unicode(value, encoding)
+            value = six.text_type(value, encoding)
         except UnicodeDecodeError:
             value = value.decode('utf-8', 'replace')
     return value

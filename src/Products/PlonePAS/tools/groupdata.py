@@ -7,7 +7,7 @@ from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from App.class_init import InitializeClass
+from AccessControl.class_init import InitializeClass
 from BTrees.OOBTree import OOBTree
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
@@ -30,9 +30,14 @@ from ZPublisher.Converters import type_converters
 from zope.interface import implementer
 
 import logging
+import six
 
 logger = logging.getLogger('PlonePAS')
 _marker = object()
+
+
+class GroupDataError(Exception):
+    pass
 
 
 @implementer(IGroupDataTool)
@@ -132,7 +137,7 @@ class GroupData(SimpleItem):
         bcontext = aq_base(parent)
         bcontainer = aq_base(aq_parent(aq_inner(self)))
         if bcontext is bcontainer or not hasattr(bcontext, 'getUserName'):
-            raise 'GroupDataError', "Can't find group data"
+            raise GroupDataError("Can't find group data")
         # Return the user object, which is our context.
         return parent
 
@@ -144,14 +149,14 @@ class GroupData(SimpleItem):
         """
         Return a list of group member ids
         """
-        return map(lambda x: x.getMemberId(), self.getGroupMembers())
+        return [member.getMemberId() for member in self.getGroupMembers()]
 
     @security.public
     def getAllGroupMemberIds(self):
         """
         Return a list of group member ids
         """
-        return map(lambda x: x.getMemberId(), self.getAllGroupMembers())
+        return [member.getMemberId() for member in self.getAllGroupMembers()]
 
     @security.public
     def getGroupMembers(self):
@@ -510,9 +515,15 @@ class GroupData(SimpleItem):
                     break  # shadowed by read-only
         return 0
 
-    canAddToGroup = MemberData.canAddToGroup.im_func
-    canRemoveFromGroup = MemberData.canRemoveFromGroup.im_func
-    canAssignRole = MemberData.canAssignRole.im_func
+    if six.PY3:
+        canAddToGroup = MemberData.canAddToGroup
+        canRemoveFromGroup = MemberData.canRemoveFromGroup
+        canAssignRole = MemberData.canAssignRole
+    else:
+        # in PY2 this is a unbound method
+        canAddToGroup = MemberData.canAddToGroup.__func__
+        canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
+        canAssignRole = MemberData.canAssignRole.__func__
 
     # plugin getters
 

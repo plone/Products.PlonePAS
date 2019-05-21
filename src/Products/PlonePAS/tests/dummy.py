@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from OFS.SimpleItem import SimpleItem
-from six import StringIO
+from six import BytesIO
 from ZPublisher.HTTPRequest import FileUpload
 
-TEXT = 'file data'
+TEXT = b'file data'
 
 
 class FieldStorage(object):
@@ -33,7 +33,7 @@ class File(FileUpload):
             self.data = data
         if headers is not None:
             self.headers = headers
-        self.file = StringIO(self.data)
+        self.file = BytesIO(self.data)
 
     def seek(self, *args):
         pass

@@ -1,7 +1,33 @@
 Changelog
 =========
 
-6.0.0 (unreleased)
+.. You should *NOT* be adding new change log entries to this file.
+   You should create a file in the news directory instead.
+   For helpful instructions, please see:
+   https://github.com/plone/plone.releaser/blob/master/ADD-A-NEWS-ITEM.rst
+
+.. towncrier release notes start
+
+6.0.2 (2019-04-29)
+------------------
+
+Bug fixes:
+
+
+- Avoid ResourceWarning messages.
+  [gforcada] (#47)
+
+
+6.0.1 (2018-12-11)
+------------------
+
+Bug fixes:
+
+
+- Change `im_self` to `__self__` [vangheem] (#43)
+
+
+6.0.0 (2018-11-05)
 ------------------
 
 Breaking changes:
@@ -12,13 +38,28 @@ Breaking changes:
 
 New features:
 
-- Make imports work with python 3
+- Make it work in Python 3:
+  Make imports work.
+  Fix startup.
+  Fix setting the auth-cookie.
+  Fix assignment of MemberData-functions during startup.
+  User properties are text.
+  Fix scaling user profile.
+  Migrate all tests away from PloneTestCasei.
+  Fix other tests.
   [pbauer]
 
 - Notify PropertiesUpdated event when member properties are changed
   [ezvirtual]
 
 Bug fixes:
+
+- InitializeClass was moved to AccessControl.class_init
+  [jensens]
+
+- setDefaultRoles is deprecated.
+  addPermission from AccessControl.Permission is used.
+  [jensens]
 
 - Removed ``Extensions/Install.py`` which had only backwards compatibility imports.
   [maurits]
@@ -27,6 +68,11 @@ Bug fixes:
   It may for example contain javascript.
   Part of PloneHotfix20171128.
   [maurits]
+
+- Remove setAuthCookie script. #1801
+  This used to be a hook to allow overriding the credentials update. The
+  default override has been used as the new implementation.
+  [tlotze]
 
 
 5.0.14 (2017-05-09)
