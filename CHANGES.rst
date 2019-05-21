@@ -8,6 +8,14 @@ Changelog
 
 .. towncrier release notes start
 
+5.1.1 (2019-05-21)
+------------------
+
+Bug fixes:
+
+
+- old-style exception fixed in groupdata.py (#44)
+
 
 5.1.0 (2018-05-01)
 ------------------
