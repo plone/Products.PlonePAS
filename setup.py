@@ -32,6 +32,7 @@ setup(
     description="PlonePAS modifies the PluggableAuthService for use by Plone.",
     long_description=longdescription,
     classifiers=[
+        "Development Status :: 5 - Production/Stable",
         "Framework :: Plone",
         "Framework :: Plone :: 5.2",
         "Framework :: Zope2",
