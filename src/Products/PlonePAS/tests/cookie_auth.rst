@@ -28,7 +28,7 @@ User exists in the user folder inside the Plone Site.
 
 Login to Plone Site using Basic Auth works.
 
-  >>> from plone.testing.z2 import Browser
+  >>> from plone.testing.zope import Browser
   >>> browser = Browser(layer['app'])
   >>> browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD,))
   >>> browser.open('%s/manage' % portal.absolute_url())

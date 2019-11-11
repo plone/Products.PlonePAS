@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import applyProfile
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PloneSandboxLayer
-from plone.testing import z2
+from plone.testing import zope as zope_testing
 
 import Products.PlonePAS
 
@@ -20,7 +19,7 @@ class ProductsPlonepasLayer(PloneSandboxLayer):
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
         self.loadZCML(package=Products.PlonePAS)
-        z2.installProduct(app, 'Products.PlonePAS')
+        zope_testing.installProduct(app, 'Products.PlonePAS')
 
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'Products.PlonePAS:PlonePAS')
