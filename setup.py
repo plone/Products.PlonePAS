@@ -58,6 +58,7 @@ setup(
         test=[
             'plone.app.testing',
             'plone.testing',
+            'plone.app.robotframework',
         ],
     ),
 )
