@@ -705,10 +705,8 @@ class MembershipTool(BaseTool):
             pas = getToolByName(self, 'acl_users')
             try:
                 pas.logout(REQUEST)
-            except:
-                # XXX Bare except copied from logout.cpy. This should be
-                # changed in the next Plone release.
-                pass
+            except Exception as e:
+                logger.error('Error in PAS logout()', exc_info=True)
 
             # Expire the skin cookie if it is not configured to persist
             st = getToolByName(self, "portal_skins")
