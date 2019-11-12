@@ -4,6 +4,8 @@ from OFS.Image import Image
 from plone.app.testing import TEST_USER_ID as default_user
 from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+from zope.component import getMultiAdapter
+from Products.CMFCore.interfaces import IMember
 
 import unittest
 
@@ -73,3 +75,16 @@ class TestMemberDataTool(unittest.TestCase):
         self.assertEqual(len(search('bambam.net')), 1)
         self.assertEqual(len(search('bedrock.com')), 2)
         self.assertEqual(len(search('brubble')), 1)
+
+    def testMemberDataAdapter(self):
+        """Test, if the PlonePAS MemberData adapter is used instead of the
+        default one from Products.CMFCore.MemberDataTool
+        """
+        from Products.PlonePAS.tools.memberdata import MemberData
+        member = self.membership.getMemberById('fred')
+
+        adapter = getMultiAdapter((member, self.memberdata), IMember)
+        self.assertEqual(adapter.__class__, MemberData)
+
+        wrapped_user = self.memberdata.wrapUser(member)
+        self.assertEqual(wrapped_user.__class__, MemberData)
