@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
+from AccessControl.interfaces import IUser
 from AccessControl.requestmethod import postonly
 from AccessControl.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
@@ -15,6 +16,7 @@ from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
 from Products.PlonePAS.interfaces.group import IGroupManagement
+from Products.PlonePAS.interfaces.memberdata import IMemberDataTool
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.interfaces.authservice import \
@@ -22,11 +24,13 @@ from Products.PluggableAuthService.interfaces.authservice import \
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import \
     IRoleAssignerPlugin
+from zope.component import adapter
 from zope.interface import implementer
 
 import six
 
 
+@implementer(IMemberDataTool)
 class MemberDataTool(BaseTool):
     """PAS-specific implementation of memberdata tool.
     """
@@ -185,13 +189,6 @@ class MemberDataTool(BaseTool):
             pass
         return False
 
-    def wrapUser(self, u):
-        '''
-        If possible, returns the Member object that corresponds
-        to the given User object.
-        '''
-        return MemberData(u, self)
-
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
         """ Delete member data of specified member.
@@ -221,10 +218,12 @@ class MemberDataTool(BaseTool):
     def _getPlugins(self):
         return self.acl_users.plugins
 
+
 InitializeClass(MemberDataTool)
 
 
 @implementer(IManageCapabilities, IMember)
+@adapter(IUser, IMemberDataTool)
 class MemberData(BaseMemberAdapter):
 
     security = ClassSecurityInfo()
