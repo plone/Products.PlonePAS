@@ -99,7 +99,7 @@ class TestMemberDataTool(unittest.TestCase):
         def event_handler(context, event):
             self._properties_updated_handler_called = True
 
-        gsm = zope.component.getGlobalSiteManager()
+        gsm = getGlobalSiteManager()
         gsm.registerHandler(event_handler,
                             (IMemberData, IPropertiesUpdatedEvent))
 
