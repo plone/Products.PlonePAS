@@ -1,3 +1,0 @@
-Create the MemberData object from an adapter instead of directly instantiating it, as intended in Products.CMFCore.MemberDataTool.
-This allows for better extensibility.
-[thet]
