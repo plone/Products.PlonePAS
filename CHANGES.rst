@@ -8,6 +8,21 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.3 (2019-11-25)
+------------------
+
+Bug fixes:
+
+
+- Log exception from PAS logout() instead of swallowing them
+  [ajung] (#50)
+- Fix deprecated imports.
+  Fix buildout infrastructure for Plone 5.2.
+  [thet] (#51)
+- Create the MemberData object from an adapter instead of directly instantiating it, as intended in Products.CMFCore.MemberDataTool.
+  This allows for better extensibility.
+  [thet] (#52)
+
 
 6.0.2 (2019-04-29)
 ------------------
