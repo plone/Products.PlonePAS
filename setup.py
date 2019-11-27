@@ -5,6 +5,7 @@ import sys
 
 version = '6.0.4.dev0'
 
+
 longdescription = open("README.rst").read()
 longdescription += '\n'
 longdescription += open("CHANGES.rst").read()
