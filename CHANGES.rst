@@ -8,6 +8,19 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.4 (2019-12-02)
+------------------
+
+Bug fixes:
+
+
+- - Notify PropertiesUpdated event when member properties are changed
+    [ezvirtual]
+
+  - Add simple test for PropertiesUpdated event
+    [ezvirtual] (#27)
+
+
 6.0.3 (2019-11-25)
 ------------------
 

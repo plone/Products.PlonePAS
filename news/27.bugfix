@@ -1,5 +1,0 @@
-- Notify PropertiesUpdated event when member properties are changed
-  [ezvirtual]
-
-- Add simple test for PropertiesUpdated event
-  [ezvirtual]
