@@ -11,9 +11,11 @@ from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IPasswordSetCapability
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PluggableAuthService.events import CredentialsUpdated
 from Products.PluggableAuthService.plugins.ZODBUserManager \
     import ZODBUserManager as BasePlugin
 from Products.PluggableAuthService.utils import createViewName
+from zope.event import notify
 from zope.interface import implementer
 
 manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm', globals())
@@ -85,6 +87,7 @@ class UserManager(BasePlugin):
         if self._user_passwords.get(principal_id) is None:
             raise RuntimeError("User does not exist: %s" % principal_id)
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
+        notify(CredentialsUpdated(self.getUserById(principal_id), password))
 
     # implement interfaces IDeleteCapability, IPasswordSetCapability
 

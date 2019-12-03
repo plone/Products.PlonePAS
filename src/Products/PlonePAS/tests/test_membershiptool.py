@@ -23,7 +23,11 @@ from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
+from Products.PluggableAuthService.interfaces.events import \
+    ICredentialsUpdatedEvent
 from six import BytesIO
+from zope.component import adapter
+from zope.component import getGlobalSiteManager
 from zExceptions import BadRequest
 from plone.app.testing import TEST_USER_ID
 
@@ -699,6 +703,24 @@ class TestMembershipTool(unittest.TestCase):
         self.membership.changeMemberPortrait(self.makeRealImage(),
                                              TEST_USER_ID)
         self.assertEqual(self.membership.getBadMembers(), [])
+
+    def test_credentials_updated_event(self):
+        events_fired = []
+
+        @adapter(ICredentialsUpdatedEvent)
+        def got_credentials_updated_event(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(got_credentials_updated_event)
+
+        self.assertTrue(self.membership.testCurrentPassword('secret'))
+        self.assertFalse(self.membership.testCurrentPassword('whoknows'))
+        login(self.portal, TEST_USER_NAME)  # Back to normal
+        self.membership.setPassword('guessagain')
+        self.assertEqual(len(events_fired), 1)
+        self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
+        self.assertEqual(events_fired[0].password, 'guessagain')
 
 
 class TestCreateMemberarea(unittest.TestCase):
