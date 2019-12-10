@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.5 (2019-12-10)
+------------------
+
+Bug fixes:
+
+
+- - Notify CredentialsUpdated event when password is changed
+    [ezvirtual] (#33)
+
+
 6.0.4 (2019-12-02)
 ------------------
 
