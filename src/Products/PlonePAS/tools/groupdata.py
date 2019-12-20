@@ -68,18 +68,8 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
         if gid not in members:
             # Get a temporary member that might be
             # registered later via registerMemberData().
-            temps = self._v_temps
-            if temps is not None and gid in temps:
-                portal_group = temps[gid]
-            else:
-                base = aq_base(self)
-                portal_group = GroupData(base, gid)
-                if temps is None:
-                    self._v_temps = {gid: portal_group}
-                    if hasattr(self, 'REQUEST'):
-                        self.REQUEST._hold(CleanupTemp(self))
-                else:
-                    temps[gid] = portal_group
+            base = aq_base(self)
+            portal_group = GroupData(base, gid)
         else:
             portal_group = members[gid]
         # Return a wrapper with self as containment and
