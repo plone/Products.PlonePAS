@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
-from AccessControl.User import nobody
+from AccessControl.users import nobody
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Acquisition import aq_inner
