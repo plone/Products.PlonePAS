@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.7 (2021-02-16)
+------------------
+
+Bug fixes:
+
+
+- Fixes deprection message: `AccessControl.User has moved to AccessControl.users`.
+  [jensens] (#59)
+
+
 6.0.6 (2020-04-23)
 ------------------
 
