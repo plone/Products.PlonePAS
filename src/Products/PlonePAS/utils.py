@@ -44,7 +44,7 @@ def scale_image(image_file, max_size=None, default_format=None):
 
         >>> from Products.PlonePAS import config
         >>> import os
-        >>> from six import StringIO
+        >>> from six import BytesIO
         >>> from Products.PlonePAS.utils import scale_image
         >>> from PIL import Image
 
@@ -61,19 +61,22 @@ def scale_image(image_file, max_size=None, default_format=None):
     We'll also make some evil non-images, including one which
     masquerades as a jpeg (which would trick OFS.Image)::
 
-        >>> invalid = StringIO('<div>Evil!!!</div>')
-        >>> sneaky = StringIO('\377\330<div>Evil!!!</div>')
+        >>> invalid = BytesIO('<div>Evil!!!</div>'.encode("utf-8"))
+        >>> sneaky = BytesIO('\377\330<div>Evil!!!</div>'.encode("utf-8"))
 
     OK, let's get to it, first check that our bad images fail:
 
-        >>> scale_image(invalid, (50, 50))
-        Traceback (most recent call last):
-        ...
-        OSError: cannot identify image file...
-        >>> scale_image(sneaky, (50, 50))
-        Traceback (most recent call last):
-        ...
-        OSError: cannot identify image file...
+        >>> try:
+        ...     scale_image(invalid, (50, 50))
+        ... except Exception as e:
+        ...     print(e)
+        cannot identify image file...
+
+        >>> try:
+        ...     scale_image(sneaky, (50, 50))
+        ... except Exception as e:
+        ...     print(e)
+        cannot identify image file...
 
     Now that that's out of the way we check on our real images to make
     sure the format and mode are preserved, that they are scaled, and that they
