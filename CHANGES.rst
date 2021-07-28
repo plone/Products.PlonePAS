@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+6.0.8 (2021-07-28)
+------------------
+
+Bug fixes:
+
+
+- Fixed tests for cookie auth to also work with `zope.interface` 5.3.0.
+  This uses simpler representations for interfaces.
+  Tests now pass with earlier and later versions.
+  [maurits] (#237)
+
+
 6.0.7 (2021-02-16)
 ------------------
 
