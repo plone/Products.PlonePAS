@@ -8,6 +8,26 @@ Changelog
 
 .. towncrier release notes start
 
+7.0.0a1 (2021-07-28)
+--------------------
+
+Breaking changes:
+
+
+- Drop support for Plone 5.2 and Python 2.7.
+  [maurits] (#61)
+
+
+Bug fixes:
+
+
+- Support for Pillow 8. [jensens] (#61)
+- Fixed tests for cookie auth to also work with `zope.interface` 5.3.0.
+  This uses simpler representations for interfaces.
+  Tests now pass with earlier and later versions.
+  [maurits] (#237)
+
+
 6.0.7 (2021-02-16)
 ------------------
 
