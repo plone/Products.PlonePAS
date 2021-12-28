@@ -324,9 +324,14 @@ def migrate_root_uf(self):
     pas = uf.manage_addProduct['PluggableAuthService']
     plone_pas = uf.manage_addProduct['PlonePAS']
     # Setup authentication plugins
-    setupAuthPlugins(parent, pas, plone_pas,
-                     deactivate_basic_reset=False,
-                     deactivate_cookie_challenge=True)
+    setupAuthPlugins(
+        parent,
+        pas,
+        plone_pas,
+        deactivate_basic_reset=False,
+        # Switch from HTTP `Authorization: Basic ...` to cookie login form
+        deactivate_cookie_challenge=False,
+    )
 
     # Activate *all* interfaces for user manager. IUserAdder is not
     # activated for some reason by default.
