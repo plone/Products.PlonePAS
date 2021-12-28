@@ -2,7 +2,9 @@
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import interfaces as plone_ifaces
 from Products.PlonePAS import config
+from Products.PlonePAS.plugins import cookie_handler
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
@@ -13,9 +15,11 @@ from Products.PluggableAuthService.interfaces.authservice \
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
 from Products.PluggableAuthService.interfaces.plugins \
     import ICredentialsResetPlugin
+from Products.PluggableAuthService.plugins import CookieAuthHelper
 from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin \
     import addRecursiveGroupsPlugin
 from plone.session.plugins.session import manage_addSessionPlugin
+from zope import component
 import logging
 
 logger = logging.getLogger('PlonePAS setup')
@@ -196,11 +200,25 @@ def setupAuthPlugins(portal, pas, plone_pas,
         login_path = crumbler.auto_login_page
         cookie_name = crumbler.auth_cookie
 
-    found = uf.objectIds(['Extended Cookie Auth Helper'])
-    if not found:
-        plone_pas.manage_addExtendedCookieAuthHelper('credentials_cookie_auth',
-                                                     cookie_name=cookie_name)
-    logger.debug("Added Extended Cookie Auth Helper.")
+    is_plone_site = plone_ifaces.IPloneSiteRoot.providedBy(portal)
+    if is_plone_site:
+        cookie_meta_type = cookie_handler.ExtendedCookieAuthHelper.meta_type
+        add_cookie_plugin = plone_pas.manage_addExtendedCookieAuthHelper
+    else:
+        # Can't use the `ExtendedCookieAuthHelper` outside of a Plone portal.
+        cookie_meta_type = CookieAuthHelper.CookieAuthHelper.meta_type
+        add_cookie_plugin = pas.addCookieAuthHelper
+    cookie_auth_ids = uf.objectIds(cookie_meta_type)
+    if not cookie_auth_ids:
+        add_cookie_plugin(
+            "credentials_cookie_auth",
+            cookie_name=cookie_name,
+        )
+        logger.debug(
+            "Added %r: %r",
+            cookie_meta_type,
+            "/".join(uf.credentials_cookie_auth.getPhysicalPath()),
+        )
     if deactivate_basic_reset:
         disable = ['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
     else:
@@ -212,7 +230,7 @@ def setupAuthPlugins(portal, pas, plone_pas,
     )
 
     credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
-    if 'login_form' in credentials_cookie_auth:
+    if is_plone_site and 'login_form' in credentials_cookie_auth:
         credentials_cookie_auth.manage_delObjects(ids=['login_form'])
         logger.debug("Removed default login_form from credentials cookie "
                      "auth.")
