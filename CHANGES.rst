@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+7.0.0a2 (2021-12-29)
+--------------------
+
+Bug fixes:
+
+
+- Fixed deprecation warning for ``AccessControl.AuthEncoding``.
+  [maurits] (#64)
+- Fix broken Zope root `/acl_users` cookie plugin on `PlonePAS` install.
+  [rpatterson] (#65)
+
+
 7.0.0a1 (2021-07-28)
 --------------------
 

@@ -1,2 +1,0 @@
-Fix broken Zope root `/acl_users` cookie plugin on `PlonePAS` install.
-[rpatterson]
