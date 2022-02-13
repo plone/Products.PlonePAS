@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Test set up specific to Plone through thea GenericSetup profile installation.
+"""
+
 from plone.app import testing as pa_testing
 from plone.testing import zope
 from zope.component import hooks
@@ -13,6 +17,9 @@ import urllib.parse
 
 
 class PortalSetupTest(unittest.TestCase):
+    """
+    Test set up specific to Plone through thea GenericSetup profile installation.
+    """
 
     layer = testing.PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
 
@@ -116,7 +123,9 @@ class PortalSetupTest(unittest.TestCase):
         # Submit the login form in the browser
         login_form = browser.getForm()
         login_form.getControl(name="__ac_name").value = pa_testing.SITE_OWNER_NAME
-        login_form.getControl(name="__ac_password").value = pa_testing.TEST_USER_PASSWORD
+        login_form.getControl(
+            name="__ac_password"
+        ).value = pa_testing.TEST_USER_PASSWORD
         login_form.controls[-1].click()
         self.assertEqual(
             browser.headers["Status"].lower(),

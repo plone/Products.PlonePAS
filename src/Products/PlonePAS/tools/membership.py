@@ -45,7 +45,7 @@ import transaction
 default_portrait = 'defaultUser.png'
 logger = logging.getLogger('PlonePAS')
 
-_marker = dict()
+_marker = dict()  # type: ignore
 
 
 def _unicodify_structure(value, charset=_marker):

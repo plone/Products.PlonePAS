@@ -7,4 +7,4 @@ class IMemberDataTool(interfaces.IMemberDataTool):
     """
 
 
-__all__ = (IMemberDataTool,)
+__all__ = ("IMemberDataTool", )

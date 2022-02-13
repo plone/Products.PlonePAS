@@ -9,4 +9,4 @@ class IMembershipTool(interfaces.IMembershipTool):
         location, etc
         """
 
-__all__ = (IMembershipTool, )
+__all__ = ("IMembershipTool", )
