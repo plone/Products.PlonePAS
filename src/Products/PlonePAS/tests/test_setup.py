@@ -29,12 +29,13 @@ class PortalSetupTest(unittest.TestCase):
         """
         self.app = self.layer["app"]
         self.root_acl_users = self.app.acl_users
+        self.portal = self.layer["portal"]
 
-    def test_zope_root_basic_challenge(self):
+    def test_zope_root_default_challenge(self):
         """
-        The Zope root `/acl_users` basic challenge plugin works.
+        The Zope root `/acl_users` default challenge plugin works.
         """
-        # Make the basic plugin the default auth challenge
+        # Check the Zope root PAS plugin configuration
         self.assertIn(
             "credentials_basic_auth",
             self.root_acl_users.objectIds(),
@@ -46,11 +47,6 @@ class PortalSetupTest(unittest.TestCase):
             HTTPBasicAuthHelper.HTTPBasicAuthHelper,
             "Wrong Zope root `/acl_users` basic auth plugin type",
         )
-        self.root_acl_users.plugins.movePluginsTop(
-            plugins_ifaces.IChallengePlugin,
-            [basic_plugin.id],
-        )
-        transaction.commit()
         challenge_plugins = self.root_acl_users.plugins.listPlugins(
             plugins_ifaces.IChallengePlugin,
         )
@@ -68,14 +64,18 @@ class PortalSetupTest(unittest.TestCase):
         self.assertEqual(
             browser.headers["Status"].lower(),
             "401 unauthorized",
-            "Wrong Zope root `/acl_users` basic challenge response status",
+            "Wrong Zope root `/acl_users` default challenge response status",
         )
 
-    def test_zope_root_default_login(self):
+    def test_zope_root_cookie_login(self):
         """
-        The Zope root `/acl_users` default login works.
+        The Zope root `/acl_users` cookie login works.
         """
-        # Check the Zope root PAS plugin configuration
+        # Install the GenericSetup profile that performs the actual switch
+        pa_testing.applyProfile(self.portal, 'Products.PlonePAS:root-cookie')
+        transaction.commit()
+
+        # Make the cookie plugin the default auth challenge
         self.assertIn(
             "credentials_cookie_auth",
             self.root_acl_users.objectIds(),

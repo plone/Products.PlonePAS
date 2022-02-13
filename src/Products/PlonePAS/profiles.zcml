@@ -21,4 +21,20 @@
     <depends name="rolemap" />
   </genericsetup:importStep>
 
+  <genericsetup:registerProfile
+      name="root-cookie"
+      title="Zope Root Cookie Login"
+      description="Change the Zope root `/acl_users` to use a simple cookie login form
+		   instead of HTTP `Basic ...` for authentication."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <genericsetup:importStep
+      name="zope-root-auth-cookie"
+      title="Zope Root Cookie Login"
+      description="Change the Zope root `/acl_users` to use a simple cookie login form
+		   instead of HTTP `Basic ...` for authentication."
+      handler=".setuphandlers.set_up_zope_root_cookie_auth">
+    <depends name="plonepas" />
+  </genericsetup:importStep>
+
 </configure>
