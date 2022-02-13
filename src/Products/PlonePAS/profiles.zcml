@@ -10,5 +10,15 @@
       description="Extension profile for default PlonePAS setup."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+  <genericsetup:importStep
+      description="Configure PlonePas"
+      handler="Products.PlonePAS.setuphandlers.setupPlonePAS"
+      name="plonepas"
+      title="PlonePAS setup">
+    <depends name="componentregistry" />
+    <depends name="controlpanel" />
+    <depends name="memberdata-properties" />
+    <depends name="rolemap" />
+  </genericsetup:importStep>
 
 </configure>
