@@ -523,10 +523,7 @@ def set_up_zope_root_cookie_auth(context):
     """
     Change the Zope root `/acl_users` to use a simple cookie login form.
     """
-    # Only run step if a flag file is present, IOW not for every profile
-    if context.readDataFile("plone-pas-zope-root-cookie.txt") is None:
-        return
-    portal = context.getSite()
+    portal = aq_parent(context)
     root = portal.getPhysicalRoot()
     root_acl_users = getToolByName(root, "acl_users")
 
