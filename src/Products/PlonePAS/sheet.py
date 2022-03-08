@@ -8,7 +8,6 @@ also a property schema type registry which is extensible.
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
-from past.builtins import long
 from zope.component import getUtility
 from zope.interface import implementer
 
