@@ -42,6 +42,7 @@ class PropertySchemaTypeMap(object):
         inspector = self.tmap[property_type]
         return inspector(value)
 
+
 PropertySchema = PropertySchemaTypeMap()
 PropertySchema.addType(
     'string',

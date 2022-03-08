@@ -10,5 +10,29 @@
       description="Extension profile for default PlonePAS setup."
       provides="Products.GenericSetup.interfaces.EXTENSION"
       />
+  <genericsetup:importStep
+      description="Configure PlonePas"
+      handler="Products.PlonePAS.setuphandlers.setupPlonePAS"
+      name="plonepas"
+      title="PlonePAS setup">
+    <depends name="componentregistry" />
+    <depends name="controlpanel" />
+    <depends name="memberdata-properties" />
+    <depends name="rolemap" />
+  </genericsetup:importStep>
+  <genericsetup:upgradeStep
+      title="Fix existing broken Zope root `/acl_users` plugins"
+      profile="Products.PlonePAS:PlonePAS"
+      source="4"
+      destination="5"
+      handler=".upgrades.from4to5_fix_zope_root" />
+
+  <genericsetup:registerProfile
+      name="root-cookie"
+      title="Zope Root Cookie Login"
+      description="Change the Zope root `/acl_users` to use a simple cookie login form
+		   instead of HTTP `Basic ...` for authentication."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      post_handler=".setuphandlers.set_up_zope_root_cookie_auth" />
 
 </configure>

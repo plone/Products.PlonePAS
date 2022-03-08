@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Custom GenericSetup import steps for PAS in Plone.
+"""
+
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from Products.CMFCore.utils import getToolByName
@@ -513,3 +517,39 @@ def setupPlonePAS(context):
         addRolesToPlugIn(site)
         setupGroups(site)
         setLoginFormInCookieAuth(site)
+
+
+def set_up_zope_root_cookie_auth(context):
+    """
+    Change the Zope root `/acl_users` to use a simple cookie login form.
+    """
+    portal = aq_parent(context)
+    root = portal.getPhysicalRoot()
+    root_acl_users = getToolByName(root, "acl_users")
+
+    # Enable the cookie plugin for all interfaces
+    activatePluginInterfaces(root, "credentials_cookie_auth")
+    # Ensure that the cookie login form is used to challenge for authentication
+    credentials_cookie_auth = root_acl_users._getOb(  # pylint: disable=protected-access
+        "credentials_cookie_auth",
+    )
+    root_acl_users.plugins.movePluginsTop(
+        IChallengePlugin,
+        [credentials_cookie_auth.id],
+    )
+    # Disable the HTTP `Basic ...` authentication plugin
+    for plugin_iface in (
+        IChallengePlugin,
+        # Apparently, the `HTTPBasicAuthHelper` plugin"s `ICredentialsResetPlugin`
+        # implementation interferes with deleting/expiring cookies, specifically the
+        # `__ac` cookie in this case.  I first tried moving that plugin to the top and
+        # bottom for that interface, but the cookies still remained after logout.  Only
+        # deactivating it worked.
+        ICredentialsResetPlugin,
+    ):
+        activated_plugin_ids = root_acl_users.plugins.listPluginIds(plugin_iface)
+        if "credentials_basic_auth" in activated_plugin_ids:
+            root_acl_users.plugins.deactivatePlugin(
+                plugin_iface,
+                "credentials_basic_auth",
+            )

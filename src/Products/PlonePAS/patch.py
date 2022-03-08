@@ -15,7 +15,7 @@ WRAPPER = '__PlonePAS_is_wrapper_method__'
 ADDED = '__PlonePAS_is_added_method__'
 ORIG_NAME = '__PlonePAS_original_method_name__'
 
-_marker = dict()
+_marker = dict()  # type: ignore
 
 
 def isWrapperMethod(meth):

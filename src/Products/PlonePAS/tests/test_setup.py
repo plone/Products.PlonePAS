@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+Test set up specific to Plone through thea GenericSetup profile installation.
+"""
+
 from plone.app import testing as pa_testing
 from plone.testing import zope
 from zope.component import hooks
@@ -13,6 +17,9 @@ import urllib.parse
 
 
 class PortalSetupTest(unittest.TestCase):
+    """
+    Test set up specific to Plone through thea GenericSetup profile installation.
+    """
 
     layer = testing.PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
 
@@ -22,6 +29,7 @@ class PortalSetupTest(unittest.TestCase):
         """
         self.app = self.layer["app"]
         self.root_acl_users = self.app.acl_users
+        self.portal = self.layer["portal"]
 
     def test_zope_root_default_challenge(self):
         """
@@ -63,6 +71,10 @@ class PortalSetupTest(unittest.TestCase):
         """
         The Zope root `/acl_users` cookie login works.
         """
+        # Install the GenericSetup profile that performs the actual switch
+        pa_testing.applyProfile(self.portal, 'Products.PlonePAS:root-cookie')
+        transaction.commit()
+
         # Make the cookie plugin the default auth challenge
         self.assertIn(
             "credentials_cookie_auth",
@@ -75,15 +87,6 @@ class PortalSetupTest(unittest.TestCase):
             CookieAuthHelper.CookieAuthHelper,
             "Wrong Zope root `/acl_users` cookie auth plugin type",
         )
-        self.root_acl_users.plugins.activatePlugin(
-            plugins_ifaces.IChallengePlugin,
-            cookie_plugin.id,
-        )
-        self.root_acl_users.plugins.movePluginsTop(
-            plugins_ifaces.IChallengePlugin,
-            [cookie_plugin.id],
-        )
-        transaction.commit()
         challenge_plugins = self.root_acl_users.plugins.listPlugins(
             plugins_ifaces.IChallengePlugin,
         )
@@ -120,7 +123,9 @@ class PortalSetupTest(unittest.TestCase):
         # Submit the login form in the browser
         login_form = browser.getForm()
         login_form.getControl(name="__ac_name").value = pa_testing.SITE_OWNER_NAME
-        login_form.getControl(name="__ac_password").value = pa_testing.TEST_USER_PASSWORD
+        login_form.getControl(
+            name="__ac_password"
+        ).value = pa_testing.TEST_USER_PASSWORD
         login_form.controls[-1].click()
         self.assertEqual(
             browser.headers["Status"].lower(),
