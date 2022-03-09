@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+7.0.0a3 (2022-03-09)
+--------------------
+
+New features:
+
+
+- Add separate `GenericSetup` profile to switch the Zope root `/acl_users` to use a simple
+  cookie login form.  Useful when Zope root login and logout need to synchronize
+  authentication state between multiple plugins, which is not possible with HTTP `Basic
+  ...` authentication. [rpatterson] (#65) (zope-root-cookie)
+
+
 7.0.0a2 (2021-12-29)
 --------------------
 
