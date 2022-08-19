@@ -2,7 +2,7 @@ from io import BytesIO
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 
-import urrlib
+import urllib
 
 
 def unique(iterable):

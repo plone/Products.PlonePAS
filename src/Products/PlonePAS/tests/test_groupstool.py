@@ -118,7 +118,7 @@ class TestMethodProtection(unittest.TestCase):
         self.groupdata.removeMember(TEST_USER_ID)
 
 
-class TestGroupsTool(unittest.TestCase):
+class TestGroupsToolIntegration(unittest.TestCase):
 
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 

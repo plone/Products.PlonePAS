@@ -2,6 +2,7 @@ from io import BytesIO
 from OFS.SimpleItem import SimpleItem
 from ZPublisher.HTTPRequest import FileUpload
 
+import typing
 
 TEXT = b"file data"
 
@@ -24,7 +25,7 @@ class File(FileUpload):
     __allow_access_to_unprotected_subobjects__ = 1
     filename = "dummy.txt"
     data = TEXT
-    headers = {}
+    headers: typing.Dict = {}
 
     def __init__(self, filename=None, data=None, headers=None):
         if filename is not None:

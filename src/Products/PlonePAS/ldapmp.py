@@ -14,11 +14,10 @@ GROUP_PROPERTY_MAP = {
     "email": ("mail",),
 }
 
-KNOWN_ATTRS = []
+KNOWN_ATTRS = set()
 for attrs in GROUP_PROPERTY_MAP.values():
     for attr in attrs:
-        KNOWN_ATTRS.append(attr)
-KNOWN_ATTRS = set(KNOWN_ATTRS)
+        KNOWN_ATTRS.add(attr)
 
 
 def getPropertiesForUser(self, user, request=None):
