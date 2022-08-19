@@ -22,7 +22,6 @@ from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.permissions import View
 from Products.CMFCore.utils import _checkPermission
 from Products.CMFCore.utils import getToolByName
-from Products.PlonePAS.config import HAS_PIL
 from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
@@ -38,6 +37,7 @@ from zope.interface import alsoProvides
 from zope.interface import implementer
 
 import logging
+import PIL
 import transaction
 
 
@@ -764,14 +764,7 @@ class MembershipTool(BaseTool):
             portrait_data = portrait.data
             if not portrait_data:
                 continue
-            if not HAS_PIL:
-                raise RuntimeError(
-                    "No Python Imaging Libraries (PIL) found. "
-                    "Unable to validate profile image. "
-                )
             try:
-                import PIL
-
                 PIL.Image.open(BytesIO(portrait_data))
             except ConflictError:
                 pass

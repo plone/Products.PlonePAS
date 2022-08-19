@@ -1,3 +1,6 @@
+from PIL import Image
+
+
 PROJECTNAME = "PlonePAS"
 GLOBALS = globals()
 
@@ -9,15 +12,8 @@ DEFAULT_PROTO_MAPPING = {
 }
 
 # Settings for member image resize quality
-HAS_PIL = True
-try:
-    from PIL import Image
-
-    PIL_SCALING_ALGO = Image.ANTIALIAS
-except ImportError:
-    PIL_SCALING_ALGO = None
-    HAS_PIL = False
-
+HAS_PIL = True  # remove in Version 8
+PIL_SCALING_ALGO = Image.Resampling.LANCZOS
 PIL_QUALITY = 88
 MEMBER_IMAGE_SCALE = (75, 100)
 IMAGE_SCALE_PARAMS = {
