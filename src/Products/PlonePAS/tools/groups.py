@@ -29,7 +29,7 @@ from zope.interface import implementer
 import logging
 
 
-logger = logging.getLogger('PluggableAuthService')
+logger = logging.getLogger("PluggableAuthService")
 
 
 class NotSupported(Exception):
@@ -38,16 +38,16 @@ class NotSupported(Exception):
 
 @implementer(igroup.IGroupTool)
 class GroupsTool(UniqueObject, SimpleItem):
-    """ This tool accesses group data through a acl_users object.
+    """This tool accesses group data through a acl_users object.
 
     It can be replaced with something that groups member data in a
     different way.
     """
 
-    id = 'portal_groups'
-    meta_type = 'PlonePAS Groups Tool'
+    id = "portal_groups"
+    meta_type = "PlonePAS Groups Tool"
     security = ClassSecurityInfo()
-    toolicon = 'tool.gif'
+    toolicon = "tool.gif"
 
     ##
     # basic group mgmt
@@ -55,8 +55,9 @@ class GroupsTool(UniqueObject, SimpleItem):
 
     @security.protected(AddGroups)
     @postonly
-    def addGroup(self, id, roles=[], groups=[], properties=None,
-                 REQUEST=None, *args, **kw):
+    def addGroup(
+        self, id, roles=[], groups=[], properties=None, REQUEST=None, *args, **kw
+    ):
         """Create a group, with the supplied id, roles, and domains.
 
         Underlying user folder must support adding users via the usual
@@ -76,10 +77,11 @@ class GroupsTool(UniqueObject, SimpleItem):
             return 0
 
         if not managers:
-            raise NotSupported('No plugins allow for group management')
+            raise NotSupported("No plugins allow for group management")
         for mid, manager in managers:
-            success = manager.addGroup(id, title=kw.get('title', id),
-                                       description=kw.get('description', ''))
+            success = manager.addGroup(
+                id, title=kw.get("title", id), description=kw.get("description", "")
+            )
             if success:
                 self.setRolesForGroup(id, roles)
                 for g in groups:
@@ -94,8 +96,7 @@ class GroupsTool(UniqueObject, SimpleItem):
 
     @security.protected(ManageGroups)
     @postonly
-    def editGroup(self, id, roles=None, groups=None, REQUEST=None,
-                  *args, **kw):
+    def editGroup(self, id, roles=None, groups=None, REQUEST=None, *args, **kw):
         """Edit the given group with the supplied roles.
 
         Passwords for groups seem to be irrelevant.
@@ -105,20 +106,19 @@ class GroupsTool(UniqueObject, SimpleItem):
         """
         g = self.getGroupById(id)
         if not g:
-            raise KeyError('Trying to edit a non-existing group: %s' % id)
+            raise KeyError("Trying to edit a non-existing group: %s" % id)
 
         # Update title/description properties of original group
         gTools = self._getGroupTools()
         if not gTools:
-            raise NotSupported('No plugins allow for both group management '
-                               'and introspection')
+            raise NotSupported(
+                "No plugins allow for both group management " "and introspection"
+            )
 
         for tid, tool in gTools:
             if id in tool.getGroupIds():
                 tool.updateGroup(
-                    id,
-                    title=kw.get('title'),
-                    description=kw.get('description')
+                    id, title=kw.get("title"), description=kw.get("description")
                 )
                 break
 
@@ -132,7 +132,7 @@ class GroupsTool(UniqueObject, SimpleItem):
             p_groups = set(self.getGroupsForPrincipal(g))
             rmgroups = p_groups - groupset
             for gid in rmgroups:
-                if gid != 'AuthenticatedUsers':
+                if gid != "AuthenticatedUsers":
                     self.removePrincipalFromGroup(g, gid)
 
             # add groups
@@ -141,7 +141,7 @@ class GroupsTool(UniqueObject, SimpleItem):
                     igroup.IGroupManagement
                 )
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                logger.exception('Plugin listing error')
+                logger.exception("Plugin listing error")
                 groupmanagers = ()
 
             for group in groups:
@@ -150,19 +150,16 @@ class GroupsTool(UniqueObject, SimpleItem):
                         if gm.addPrincipalToGroup(id, group):
                             break
                     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                        logger.exception(
-                            'AuthenticationPlugin {0} error'.format(gm_id)
-                        )
+                        logger.exception("AuthenticationPlugin {0} error".format(gm_id))
 
     @security.protected(DeleteGroups)
     @postonly
     def removeGroup(self, group_id, REQUEST=None):
-        """Remove a single group.
-        """
+        """Remove a single group."""
         retval = False
         managers = self._getGroupManagers()
         if not managers:
-            raise NotSupported('No plugins allow for group management')
+            raise NotSupported("No plugins allow for group management")
 
         for mid, manager in managers:
             if manager.removeGroup(group_id):
@@ -174,8 +171,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     @security.protected(DeleteGroups)
     @postonly
     def removeGroups(self, ids, REQUEST=None):
-        """Remove the group in the provided list (if possible).
-        """
+        """Remove the group in the provided list (if possible)."""
         for gid in ids:
             self.removeGroup(gid)
 
@@ -185,7 +181,7 @@ class GroupsTool(UniqueObject, SimpleItem):
         rmanagers = self._getPlugins().listPlugins(IRoleAssignerPlugin)
         if not (rmanagers):
             raise NotImplementedError(
-                'There is no plugin that can assign roles to groups'
+                "There is no plugin that can assign roles to groups"
             )
         for rid, rmanager in rmanagers:
             rmanager.assignRolesToPrincipal(roles, group_id)
@@ -199,7 +195,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     def addPrincipalToGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
         if not managers:
-            raise NotSupported('No plugins allow for group management')
+            raise NotSupported("No plugins allow for group management")
         for mid, manager in managers:
             if manager.addPrincipalToGroup(principal_id, group_id):
                 return True
@@ -210,7 +206,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     def removePrincipalFromGroup(self, principal_id, group_id, REQUEST=None):
         managers = self._getGroupManagers()
         if not managers:
-            raise NotSupported('No plugins allow for group management')
+            raise NotSupported("No plugins allow for group management")
         for mid, manager in managers:
             if manager.removePrincipalFromGroup(principal_id, group_id):
                 return True
@@ -254,8 +250,8 @@ class GroupsTool(UniqueObject, SimpleItem):
         else:
             dict = kw
 
-        name = dict.get('name', None)
-        title_or_name = dict.get('title_or_name', None)
+        name = dict.get("name", None)
+        title_or_name = dict.get("title_or_name", None)
         if name:
             name = name.strip().lower()
         if name is not None:
@@ -284,9 +280,9 @@ class GroupsTool(UniqueObject, SimpleItem):
             for groupid in md_groups:
                 groups.append(getGroupById(groupid))
             for group in uf_groups:
-                groupid = group['groupid']
+                groupid = group["groupid"]
                 if groupid in md_groups:
-                    continue             # Kill dupes
+                    continue  # Kill dupes
                 groups.append(getGroupById(groupid))
 
         return groups
@@ -333,23 +329,20 @@ class GroupsTool(UniqueObject, SimpleItem):
 
     @security.private
     def _getGroupManagers(self):
-        return self._getPlugins().listPlugins(
-            igroup.IGroupManagement
-        )
+        return self._getPlugins().listPlugins(igroup.IGroupManagement)
 
     @security.private
     def _getGroupIntrospectors(self):
-        return self._getPlugins().listPlugins(
-            igroup.IGroupIntrospection
-        )
+        return self._getPlugins().listPlugins(igroup.IGroupIntrospection)
 
     @security.private
     def _getGroupTools(self):
-        managers = self._getPlugins().listPlugins(
-            igroup.IGroupManagement
-        )
-        return [(id, manager) for (id, manager) in managers
-                if igroup.IGroupIntrospection.providedBy(manager)]
+        managers = self._getPlugins().listPlugins(igroup.IGroupManagement)
+        return [
+            (id, manager)
+            for (id, manager) in managers
+            if igroup.IGroupIntrospection.providedBy(manager)
+        ]
 
     ##
     # BBB
@@ -365,8 +358,10 @@ class GroupsTool(UniqueObject, SimpleItem):
         if group is None:
             return None
 
-        groupinfo = {'title': group.getProperty('title'),
-                     'description': group.getProperty('description')}
+        groupinfo = {
+            "title": group.getProperty("title"),
+            "description": group.getProperty("description"),
+        }
 
         return groupinfo
 
@@ -406,43 +401,43 @@ class GroupsTool(UniqueObject, SimpleItem):
         For GRUF this is easy. Others may have to re-implement."""
         user = group.getGroup()
         if user is None:
-            raise ValueError("Invalid group: '%s'." % (group, ))
+            raise ValueError("Invalid group: '%s'." % (group,))
         object.changeOwnership(user)
-        object.manage_setLocalRoles(user.getId(), ['Owner'])
+        object.manage_setLocalRoles(user.getId(), ["Owner"])
 
     @security.private
     def wrapGroup(self, g, wrap_anon=0):
-        ''' Sets up the correct acquisition wrappers for a group
+        """Sets up the correct acquisition wrappers for a group
         object and provides an opportunity for a portal_memberdata
         tool to retrieve and store member data independently of
         the user object.
-        '''
-        b = getattr(g, 'aq_base', None)
+        """
+        b = getattr(g, "aq_base", None)
         if b is None:
             # u isn't wrapped at all.  Wrap it in self.acl_users.
             b = g
             g = g.__of__(self.acl_users)
-        if (b is nobody and not wrap_anon) or hasattr(b, 'getMemberId'):
+        if (b is nobody and not wrap_anon) or hasattr(b, "getMemberId"):
             # This user is either not recognized by acl_users or it is
             # already registered with something that implements the
             # member data tool at least partially.
             return g
 
         parent = aq_parent(aq_inner(self))
-        base = getattr(parent, 'aq_base', None)
-        if hasattr(base, 'portal_groupdata'):
+        base = getattr(parent, "aq_base", None)
+        if hasattr(base, "portal_groupdata"):
             # Get portal_groupdata to do the wrapping.
-            gd = getToolByName(parent, 'portal_groupdata')
+            gd = getToolByName(parent, "portal_groupdata")
             try:
                 portal_group = gd.wrapGroup(g)
                 return portal_group
             except ConflictError:
                 raise
             except:
-                logger.exception('Error during wrapGroup')
+                logger.exception("Error during wrapGroup")
         # Failed.
         return g
 
 
 InitializeClass(GroupsTool)
-registerToolInterface('portal_groups', igroup.IGroupTool)
+registerToolInterface("portal_groups", igroup.IGroupTool)

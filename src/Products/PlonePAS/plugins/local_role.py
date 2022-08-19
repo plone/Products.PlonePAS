@@ -24,10 +24,10 @@ def manage_addLocalRolesManager(dispatcher, id, title=None, RESPONSE=None):
     dispatcher._setObject(lrm.getId(), lrm)
 
     if RESPONSE is not None:
-        RESPONSE.redirect('manage_workspace')
+        RESPONSE.redirect("manage_workspace")
 
-manage_addLocalRolesManagerForm = \
-    DTMLFile('../zmi/LocalRolesManagerForm', globals())
+
+manage_addLocalRolesManagerForm = DTMLFile("../zmi/LocalRolesManagerForm", globals())
 
 
 @implementer(ILocalRolesPlugin)
@@ -55,7 +55,7 @@ class LocalRolesManager(LocalRolePlugin):
         object = aq_inner(object)
 
         while 1:
-            local_roles = getattr(object, '__ac_local_roles__', None)
+            local_roles = getattr(object, "__ac_local_roles__", None)
 
             if local_roles and callable(local_roles):
                 local_roles = local_roles()
@@ -70,14 +70,14 @@ class LocalRolesManager(LocalRolePlugin):
             inner = aq_inner(object)
             parent = aq_parent(inner)
 
-            if getattr(object, '__ac_local_roles_block__', None):
+            if getattr(object, "__ac_local_roles_block__", None):
                 break
 
             if parent is not None:
                 object = parent
                 continue
 
-            new = getattr(object, '__self__', None)
+            new = getattr(object, "__self__", None)
 
             if new is not None:
                 object = aq_inner(new)
@@ -101,7 +101,7 @@ class LocalRolesManager(LocalRolePlugin):
 
         while 1:
 
-            local_roles = getattr(inner_obj, '__ac_local_roles__', None)
+            local_roles = getattr(inner_obj, "__ac_local_roles__", None)
 
             if local_roles and callable(local_roles):
                 local_roles = local_roles()
@@ -126,14 +126,14 @@ class LocalRolesManager(LocalRolePlugin):
             inner = aq_inner(inner_obj)
             parent = aq_parent(inner)
 
-            if getattr(inner_obj, '__ac_local_roles_block__', None):
+            if getattr(inner_obj, "__ac_local_roles_block__", None):
                 break
 
             if parent is not None:
                 inner_obj = parent
                 continue
 
-            new = getattr(inner_obj, '__self__', None)
+            new = getattr(inner_obj, "__self__", None)
 
             if new is not None:
                 inner_obj = aq_inner(new)
@@ -149,7 +149,7 @@ class LocalRolesManager(LocalRolePlugin):
 
         while True:
 
-            local_roles = getattr(object, '__ac_local_roles__', None)
+            local_roles = getattr(object, "__ac_local_roles__", None)
 
             if local_roles and callable(local_roles):
                 local_roles = local_roles()
@@ -167,14 +167,14 @@ class LocalRolesManager(LocalRolePlugin):
             inner = aq_inner(object)
             parent = aq_parent(inner)
 
-            if getattr(object, '__ac_local_roles_block__', None):
+            if getattr(object, "__ac_local_roles_block__", None):
                 break
 
             if parent is not None:
                 object = parent
                 continue
 
-            new = getattr(object, '__self__', None)
+            new = getattr(object, "__self__", None)
 
             if new is not None:
                 object = aq_inner(new)
@@ -183,5 +183,6 @@ class LocalRolesManager(LocalRolePlugin):
             break
 
         return roles
+
 
 InitializeClass(LocalRolesManager)

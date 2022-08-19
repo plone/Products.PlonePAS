@@ -3,8 +3,7 @@ from Products.CMFCore import interfaces
 
 
 class IMemberDataTool(interfaces.IMemberDataTool):
-    """More specific PlonePAS MemberDataTool interface.
-    """
+    """More specific PlonePAS MemberDataTool interface."""
 
 
-__all__ = ("IMemberDataTool", )
+__all__ = ("IMemberDataTool",)

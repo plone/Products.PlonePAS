@@ -17,7 +17,6 @@ import unittest
 
 @implementer(IGroupsPlugin)
 class FauxGroupsPlugin(BasePlugin):
-
     def getGroupsForPrincipal(self, principal, request=None):
         return principal._groups
 
@@ -30,14 +29,15 @@ class GroupAwareRoleManagerTests(unittest.TestCase):
     def _getTargetClass(self):
 
         from Products.PlonePAS.plugins.role import GroupAwareRoleManager
+
         return GroupAwareRoleManager
 
-    def _makeOne(self, id='test', *args, **kw):
+    def _makeOne(self, id="test", *args, **kw):
 
         plugin = self._getTargetClass()(id=id, *args, **kw)
         # We need to bind a fake request to this plugin
         request, dummy_response = makeRequestAndResponse()
-        setattr(plugin, 'REQUEST', request)
+        setattr(plugin, "REQUEST", request)
         return plugin
 
     def test_roles_for_control_panel(self):
@@ -52,37 +52,37 @@ class GroupAwareRoleManagerTests(unittest.TestCase):
 
         # Add a minimal PluginRegistry with a mock IGroupsPlugin, because the
         # roles plugin depends on it:
-        root._setObject('plugins', PluginRegistry(_PLUGIN_TYPE_INFO))
-        root._setObject('groups', FauxGroupsPlugin())
-        root['plugins'].activatePlugin(IGroupsPlugin, 'groups')
+        root._setObject("plugins", PluginRegistry(_PLUGIN_TYPE_INFO))
+        root._setObject("groups", FauxGroupsPlugin())
+        root["plugins"].activatePlugin(IGroupsPlugin, "groups")
 
-        garm = self._makeOne('garm').__of__(root)
+        garm = self._makeOne("garm").__of__(root)
 
         # 2 roles
-        garm.addRole('foo_role')
-        garm.addRole('bar_role')
+        garm.addRole("foo_role")
+        garm.addRole("bar_role")
 
         # Group 'somegroup' has 'bar_role'
-        garm.assignRoleToPrincipal('bar_role', 'somegroup')
+        garm.assignRoleToPrincipal("bar_role", "somegroup")
 
         # 'johndoe' has 'foo_role'
-        johndoe = DummyUser('johndoe', ('somegroup',))
-        garm.assignRoleToPrincipal('foo_role', 'johndoe')
+        johndoe = DummyUser("johndoe", ("somegroup",))
+        garm.assignRoleToPrincipal("foo_role", "johndoe")
 
         # 'johndoe' should have 'foo_role' and 'bar_roles'
         got = garm.getRolesForPrincipal(johndoe)
-        expected = ['foo_role', 'bar_role']
+        expected = ["foo_role", "bar_role"]
         self.assertEqual(set(got), set(expected))
 
         # For the users control panel, johndoe has only the 'foo_role'
-        garm.REQUEST.set('__ignore_group_roles__', True)
+        garm.REQUEST.set("__ignore_group_roles__", True)
         got = garm.getRolesForPrincipal(johndoe)
-        self.assertEqual(got, ('foo_role',))
+        self.assertEqual(got, ("foo_role",))
 
         # Confirm we can get only the inherited roles
-        garm.REQUEST.set('__ignore_group_roles__', False)
-        garm.REQUEST.set('__ignore_direct_roles__', True)
+        garm.REQUEST.set("__ignore_group_roles__", False)
+        garm.REQUEST.set("__ignore_direct_roles__", True)
         got = garm.getRolesForPrincipal(johndoe)
-        self.assertEqual(got, ('bar_role',))
+        self.assertEqual(got, ("bar_role",))
 
         return

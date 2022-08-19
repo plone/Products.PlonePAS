@@ -19,8 +19,8 @@ class BasicOpsTestCase(unittest.TestCase):
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
-        self.portal = self.layer['portal']
-        setRoles(self.portal, TEST_USER_ID, ['Manager'])
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.acl_users = self.portal.acl_users
 
     def compareRoles(self, target, user, roles):
@@ -33,7 +33,7 @@ class BasicOpsTestCase(unittest.TestCase):
         u = self.acl_users.getUser(user)
         if not u:
             raise RuntimeError("compareRoles: Invalid user: '%s'" % user)
-        non_roles = ('Authenticated', 'Anonymous', '')
+        non_roles = ("Authenticated", "Anonymous", "")
         if target is None:
             user_roles = list(u.getRoles())
         else:
@@ -42,13 +42,21 @@ class BasicOpsTestCase(unittest.TestCase):
         wished_roles = list(roles)
         if sorted(actual_roles) == sorted(wished_roles):
             return 1
-        raise RuntimeError("User %s: Whished roles: %s BUT current "
-                           "roles: %s" % (user, wished_roles, actual_roles))
+        raise RuntimeError(
+            "User %s: Whished roles: %s BUT current "
+            "roles: %s" % (user, wished_roles, actual_roles)
+        )
 
-    def createUser(self, login="created_user", password="secret",
-                   roles=[], groups=[], domains=()):
+    def createUser(
+        self, login="created_user", password="secret", roles=[], groups=[], domains=()
+    ):
         self.acl_users.userFolderAddUser(
-            login, password, roles=roles, groups=groups, domains=domains,)
+            login,
+            password,
+            roles=roles,
+            groups=groups,
+            domains=domains,
+        )
 
     def test_installed(self):
         self.assertTrue(IPluggableAuthService.providedBy(self.acl_users))
@@ -67,14 +75,15 @@ class BasicOpsTestCase(unittest.TestCase):
             "secret2",  # password
             roles=["Member"],
             groups=["g1"],
-            domains=(),)
-        self.compareRoles(None, "created_user", ['Member'])
+            domains=(),
+        )
+        self.compareRoles(None, "created_user", ["Member"])
 
     def test_edit_userDefinedRole(self):
         roleplugins = self.acl_users.plugins.listPlugins(IRolesPlugin)
         for id, plugin in roleplugins:
             try:
-                plugin.addRole('r1')
+                plugin.addRole("r1")
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 pass
             else:
@@ -87,13 +96,14 @@ class BasicOpsTestCase(unittest.TestCase):
             "secret2",  # password
             roles=["r1"],
             groups=["g1"],
-            domains=(),)
-        self.compareRoles(None, "created_user", ['r1'])
+            domains=(),
+        )
+        self.compareRoles(None, "created_user", ["r1"])
 
     def test_del(self):
         self.createUser()
         self.assertTrue(self.acl_users.getUser("created_user"))
-        self.acl_users.userFolderDelUsers(['created_user'])
+        self.acl_users.userFolderDelUsers(["created_user"])
         self.assertFalse(self.acl_users.getUser("created_user"))
 
     def test_principal_del_event(self):
@@ -106,9 +116,9 @@ class BasicOpsTestCase(unittest.TestCase):
         gsm = getGlobalSiteManager()
         gsm.registerHandler(gotDeletion)
         self.createUser()
-        self.acl_users.userFolderDelUsers(['created_user'])
+        self.acl_users.userFolderDelUsers(["created_user"])
         self.assertEqual(len(eventsFired), 1)
-        self.assertEqual(eventsFired[0].principal, 'created_user')
+        self.assertEqual(eventsFired[0].principal, "created_user")
         gsm.unregisterHandler(gotDeletion)
 
     def test_search(self):
@@ -118,8 +128,9 @@ class BasicOpsTestCase(unittest.TestCase):
         retlist = mt.searchForMembers(REQUEST=None, login="created_user1")
         usernames = [user.getUserName() for user in retlist]
         self.assertEqual(len(usernames), 1)
-        self.assertTrue("created_user1" in usernames,
-                        "'created_user1' not in %s" % usernames)
+        self.assertTrue(
+            "created_user1" in usernames, "'created_user1' not in %s" % usernames
+        )
 
     def test_setpw(self):
         # there is more than one place where one can set the password.
@@ -127,15 +138,16 @@ class BasicOpsTestCase(unittest.TestCase):
         # here its checked in the general setup using ZODBUserManager.
         self.createUser()
         uf = self.acl_users
-        new_secret = 'new_secret'
-        uf.userSetPassword('created_user', new_secret)
+        new_secret = "new_secret"
+        uf.userSetPassword("created_user", new_secret)
 
         # possible to authenticate with new password?
         from Products.PluggableAuthService.interfaces.plugins import (
             IAuthenticationPlugin,
         )
+
         authenticators = uf.plugins.listPlugins(IAuthenticationPlugin)
-        credentials = {'login': 'created_user', 'password': new_secret}
+        credentials = {"login": "created_user", "password": new_secret}
         result = None
         for aid, authenticator in authenticators:
             result = authenticator.authenticateCredentials(credentials)
@@ -145,13 +157,13 @@ class BasicOpsTestCase(unittest.TestCase):
 
     def test_setProperties(self):
         self.createUser()
-        user = self.acl_users.getUser('created_user')
-        user.setProperties(fullname='Test User', email='test@example.org')
-        self.assertEqual(user.getProperty('fullname'), 'Test User')
-        self.assertEqual(user.getProperty('email'), 'test@example.org')
+        user = self.acl_users.getUser("created_user")
+        user.setProperties(fullname="Test User", email="test@example.org")
+        self.assertEqual(user.getProperty("fullname"), "Test User")
+        self.assertEqual(user.getProperty("email"), "test@example.org")
 
         user.setProperties(
-            properties={'fullname': 'Test User2', 'email': 'test2@example.org'}
+            properties={"fullname": "Test User2", "email": "test2@example.org"}
         )
-        self.assertEqual(user.getProperty('fullname'), 'Test User2')
-        self.assertEqual(user.getProperty('email'), 'test2@example.org')
+        self.assertEqual(user.getProperty("fullname"), "Test User2")
+        self.assertEqual(user.getProperty("email"), "test2@example.org")

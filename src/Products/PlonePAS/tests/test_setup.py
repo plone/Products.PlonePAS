@@ -72,7 +72,7 @@ class PortalSetupTest(unittest.TestCase):
         The Zope root `/acl_users` cookie login works.
         """
         # Install the GenericSetup profile that performs the actual switch
-        pa_testing.applyProfile(self.portal, 'Products.PlonePAS:root-cookie')
+        pa_testing.applyProfile(self.portal, "Products.PlonePAS:root-cookie")
         transaction.commit()
 
         # Make the cookie plugin the default auth challenge

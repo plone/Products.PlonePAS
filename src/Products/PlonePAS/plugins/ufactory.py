@@ -21,13 +21,12 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
-manage_addPloneUserFactoryForm = DTMLFile('../zmi/PloneUserFactoryForm',
-                                          globals())
+manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals())
 
 _marker = object()
 
 
-def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
+def manage_addPloneUserFactory(self, id, title="", RESPONSE=None):
     """
     Add a plone user factory
     """
@@ -36,16 +35,16 @@ def manage_addPloneUserFactory(self, id, title='', RESPONSE=None):
     self._setObject(puf.getId(), puf)
 
     if RESPONSE is not None:
-        return RESPONSE.redirect('manage_workspace')
+        return RESPONSE.redirect("manage_workspace")
 
 
 @implementer(IUserFactoryPlugin)
 class PloneUserFactory(BasePlugin):
 
     security = ClassSecurityInfo()
-    meta_type = 'Plone User Factory'
+    meta_type = "Plone User Factory"
 
-    def __init__(self, id, title=''):
+    def __init__(self, id, title=""):
         self.id = id
         self.title = title or self.meta_type
 
@@ -101,7 +100,7 @@ class PloneUser(PropertiedUser):
         """Return ids of this user's groups. GRUF compat."""
         return self.getGroups()
 
-    security.declarePublic('getGroupIds')
+    security.declarePublic("getGroupIds")
     getGroupIds = getGroupNames
 
     #################################
@@ -109,8 +108,7 @@ class PloneUser(PropertiedUser):
 
     @security.public
     def getPropertysheet(self, id):
-        """ -> propertysheet (wrapped if supported)
-        """
+        """-> propertysheet (wrapped if supported)"""
         sheet = self._propertysheets[id]
         try:
             return sheet.__of__(self)
@@ -119,7 +117,7 @@ class PloneUser(PropertiedUser):
 
     @security.private
     def addPropertysheet(self, id, data):
-        """ -> add a prop sheet, given data which is either
+        """-> add a prop sheet, given data which is either
         a property sheet or a raw mapping.
         """
         if IPropertySheet.providedBy(data):
@@ -128,7 +126,7 @@ class PloneUser(PropertiedUser):
             sheet = UserPropertySheet(id, **data)
 
         if self._propertysheets.get(id) is not None:
-            raise KeyError('Duplicate property sheet: %s' % id)
+            raise KeyError("Duplicate property sheet: %s" % id)
 
         self._propertysheets[id] = sheet
 
@@ -158,21 +156,20 @@ class PloneUser(PropertiedUser):
             return 0
 
         # Short-circuit the common case of anonymous access.
-        if object_roles is None or 'Anonymous' in object_roles:
+        if object_roles is None or "Anonymous" in object_roles:
             return 1
 
         # Provide short-cut access if object is protected by 'Authenticated'
         # role and user is not nobody
-        if 'Authenticated' in object_roles \
-           and self.getUserName() != 'Anonymous User':
+        if "Authenticated" in object_roles and self.getUserName() != "Anonymous User":
             return 1
 
         # Check for ancient role data up front, convert if found.
         # This should almost never happen, and should probably be
         # deprecated at some point.
-        if 'Shared' in object_roles:
+        if "Shared" in object_roles:
             object_roles = self._shared_roles(object)
-            if object_roles is None or 'Anonymous' in object_roles:
+            if object_roles is None or "Anonymous" in object_roles:
                 return 1
 
         # Check for a role match with the normal roles given to
@@ -201,7 +198,7 @@ class PloneUser(PropertiedUser):
         return None
 
     def setProperties(self, properties=None, **kw):
-        """ Set properties on a given user.
+        """Set properties on a given user.
 
         Accepts either keyword arguments or a mapping for the ``properties``
         argument. The ``properties`` argument will take precedence over
@@ -233,9 +230,10 @@ class PloneUser(PropertiedUser):
                     # unicode. This is sub-optimal and should be
                     # dealed with at the property sheets level by
                     # using Zope's converters.
-                    return value.encode('utf-8')
+                    return value.encode("utf-8")
                 return value
 
         return default
+
 
 InitializeClass(PloneUser)

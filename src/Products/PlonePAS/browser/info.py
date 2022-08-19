@@ -13,7 +13,6 @@ from zope.interface import implementer
 
 @implementer(IPASInfoView)
 class PASInfoView(BrowserView):
-
     def checkExtractorForInterface(self, interface):
         acl = getToolByName(aq_inner(self.context), "acl_users")
         plugins = acl.plugins.listPlugins(IExtractionPlugin)

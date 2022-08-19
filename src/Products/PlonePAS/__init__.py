@@ -49,9 +49,9 @@ def initialize(context):
     tools = (GroupsTool, GroupDataTool, MembershipTool, MemberDataTool)
 
     ToolInit(
-        'PlonePAS Tool',
+        "PlonePAS Tool",
         tools=tools,
-        icon='tool.gif',
+        icon="tool.gif",
     ).initialize(context)
 
     context.registerClass(
@@ -59,27 +59,23 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             role.manage_addGroupAwareRoleManagerForm,
-            role.manage_addGroupAwareRoleManager),
-        visibility=None
+            role.manage_addGroupAwareRoleManager,
+        ),
+        visibility=None,
     )
 
     context.registerClass(
         user.UserManager,
         permission=add_user_folders,
-        constructors=(
-            user.manage_addUserManagerForm,
-            user.manage_addUserManager),
-        visibility=None
+        constructors=(user.manage_addUserManagerForm, user.manage_addUserManager),
+        visibility=None,
     )
 
     context.registerClass(
         group.GroupManager,
         permission=add_user_folders,
-        constructors=(
-            group.manage_addGroupManagerForm,
-            group.manage_addGroupManager
-        ),
-        visibility=None
+        constructors=(group.manage_addGroupManagerForm, group.manage_addGroupManager),
+        visibility=None,
     )
 
     context.registerClass(
@@ -87,8 +83,9 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             ufactory.manage_addPloneUserFactoryForm,
-            ufactory.manage_addPloneUserFactory),
-        visibility=None
+            ufactory.manage_addPloneUserFactory,
+        ),
+        visibility=None,
     )
 
     context.registerClass(
@@ -96,8 +93,9 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             local_role.manage_addLocalRolesManagerForm,
-            local_role.manage_addLocalRolesManager),
-        visibility=None
+            local_role.manage_addLocalRolesManager,
+        ),
+        visibility=None,
     )
 
     context.registerClass(
@@ -105,8 +103,9 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             property.manage_addZODBMutablePropertyProviderForm,
-            property.manage_addZODBMutablePropertyProvider),
-        visibility=None
+            property.manage_addZODBMutablePropertyProvider,
+        ),
+        visibility=None,
     )
 
     context.registerClass(
@@ -114,8 +113,9 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             crumbler.manage_addCookieCrumblingPluginForm,
-            crumbler.manage_addCookieCrumblingPlugin),
-        visibility=None
+            crumbler.manage_addCookieCrumblingPlugin,
+        ),
+        visibility=None,
     )
 
     context.registerClass(
@@ -123,17 +123,16 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             cookie_handler.manage_addExtendedCookieAuthHelperForm,
-            cookie_handler.manage_addExtendedCookieAuthHelper),
-        visibility=None
+            cookie_handler.manage_addExtendedCookieAuthHelper,
+        ),
+        visibility=None,
     )
 
     context.registerClass(
         autogroup.AutoGroup,
         permission=add_user_folders,
-        constructors=(
-            autogroup.manage_addAutoGroupForm,
-            autogroup.manage_addAutoGroup),
-        visibility=None
+        constructors=(autogroup.manage_addAutoGroupForm, autogroup.manage_addAutoGroup),
+        visibility=None,
     )
 
     context.registerClass(
@@ -141,7 +140,7 @@ def initialize(context):
         permission=add_user_folders,
         constructors=(
             passwordpolicy.manage_addPasswordPolicyForm,
-            passwordpolicy.manage_addPasswordPolicyPlugin
+            passwordpolicy.manage_addPasswordPolicyPlugin,
         ),
-        visibility=None
+        visibility=None,
     )

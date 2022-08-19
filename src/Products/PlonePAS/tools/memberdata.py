@@ -32,41 +32,40 @@ import six
 
 @implementer(IMemberDataTool)
 class MemberDataTool(BaseTool):
-    """PAS-specific implementation of memberdata tool.
-    """
+    """PAS-specific implementation of memberdata tool."""
 
     meta_type = "PlonePAS MemberData Tool"
     security = ClassSecurityInfo()
-    toolicon = 'tool.gif'
+    toolicon = "tool.gif"
 
     def __init__(self):
         BaseTool.__init__(self)
-        self.portraits = BTreeFolder2(id='portraits')
+        self.portraits = BTreeFolder2(id="portraits")
 
     def _getPortrait(self, member_id):
-        "return member_id's portrait if you can "
+        "return member_id's portrait if you can"
         return self.portraits.get(member_id, None)
 
     def _setPortrait(self, portrait, member_id):
-        " store portrait which must be a raw image in _portrais "
+        "store portrait which must be a raw image in _portrais"
         if member_id in self.portraits:
             self.portraits._delObject(member_id)
         self.portraits._setObject(id=member_id, object=portrait)
 
     def _deletePortrait(self, member_id):
-        " remove member_id's portrait "
+        "remove member_id's portrait"
         if member_id in self.portraits:
             self.portraits._delObject(member_id)
 
     @security.private
     def pruneMemberDataContents(self):
-        '''
+        """
         Compare the user IDs stored in the member data
         tool with the list in the actual underlying acl_users
         and delete anything not in acl_users
-        '''
+        """
         BaseTool.pruneMemberDataContents(self)
-        membertool = getToolByName(self, 'portal_membership')
+        membertool = getToolByName(self, "portal_membership")
         portraits = self.portraits
         user_list = membertool.listMemberIds()
 
@@ -77,10 +76,10 @@ class MemberDataTool(BaseTool):
 
     @security.protected(ManagePortal)
     def purgeMemberDataContents(self):
-        '''
+        """
         Delete ALL MemberData information. This is required for us as we change
         the MemberData class.
-        '''
+        """
         members = self._members
 
         for tuple in members.items():
@@ -90,9 +89,10 @@ class MemberDataTool(BaseTool):
         return "Done."
 
     @security.private
-    def updateMemberDataContents(self,):
-        """Update former MemberData objects to new MemberData objects
-        """
+    def updateMemberDataContents(
+        self,
+    ):
+        """Update former MemberData objects to new MemberData objects"""
         count = 0
         members = self._members
         properties = self.propertyIds()
@@ -101,7 +101,7 @@ class MemberDataTool(BaseTool):
         for member_name, member_obj in members.items():
             values = {}
             if getattr(member_obj, "_is_new_kind", None):
-                continue        # Do not have to upgrade that object
+                continue  # Do not have to upgrade that object
 
             # Have to upgrade. Create the values mapping.
             for pty_name in properties:
@@ -112,7 +112,7 @@ class MemberDataTool(BaseTool):
             # Wrap a new user object of the RIGHT class
             u = self.acl_users.getUserById(member_name, None)
             if not u:
-                continue                # User is not in main acl_users anymore
+                continue  # User is not in main acl_users anymore
             self.wrapUser(u)
 
             # Set its properties
@@ -136,10 +136,10 @@ class MemberDataTool(BaseTool):
 
         search_term = search_term.strip().lower()
 
-        if search_param == 'username':
-            search_param = 'id'
+        if search_param == "username":
+            search_param = "id"
 
-        mtool = getToolByName(self, 'portal_membership')
+        mtool = getToolByName(self, "portal_membership")
 
         for member_id in self._members.keys():
             user_wrapper = mtool.getMemberById(member_id)
@@ -151,8 +151,12 @@ class MemberDataTool(BaseTool):
                 if searched is not None:
                     if searched.strip().lower().find(search_term) != -1:
 
-                        res.append({'username': memberProperty('id'),
-                                    'email': memberProperty('email', '')})
+                        res.append(
+                            {
+                                "username": memberProperty("id"),
+                                "email": memberProperty("email", ""),
+                            }
+                        )
         return res
 
     @security.public
@@ -164,14 +168,16 @@ class MemberDataTool(BaseTool):
         # Search for members which do have string 's' in name, email or full
         # name (if defined).  This is mainly used for the localrole form.
         s = s.strip().lower()
-        mu = getToolByName(self, 'portal_membership')
+        mu = getToolByName(self, "portal_membership")
 
         res = []
         for member in mu.listMembers():
             u = member.getUser()
-            if u.getUserName().lower().find(s) != -1 \
-               or member.getProperty('fullname').lower().find(s) != -1 \
-               or member.getProperty('email').lower().find(s) != -1:
+            if (
+                u.getUserName().lower().find(s) != -1
+                or member.getProperty("fullname").lower().find(s) != -1
+                or member.getProperty("email").lower().find(s) != -1
+            ):
                 res.append(member)
         return res
 
@@ -179,10 +185,12 @@ class MemberDataTool(BaseTool):
     # so we do not write on read
     def canAddMemberData(self):
         try:
-            if self.REQUEST.REQUEST_METHOD != 'POST':
+            if self.REQUEST.REQUEST_METHOD != "POST":
                 return False
-            if getattr(self, '_p_jar', None) and \
-                    len(self._p_jar._registered_objects) > 0:
+            if (
+                getattr(self, "_p_jar", None)
+                and len(self._p_jar._registered_objects) > 0
+            ):
                 # XXX do not write on read
                 return True
         except AttributeError:
@@ -191,8 +199,7 @@ class MemberDataTool(BaseTool):
 
     @postonly
     def deleteMemberData(self, member_id, REQUEST=None):
-        """ Delete member data of specified member.
-        """
+        """Delete member data of specified member."""
         if IPluggableAuthService.providedBy(self.acl_users):
             # It's a PAS! Whee!
             # XXX: can we safely assume that user name == member_id
@@ -248,7 +255,7 @@ class MemberData(BaseMemberAdapter):
         else:
             # It's a PAS! Whee!
             user = self.getUser()
-            sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
+            sheets = getattr(user, "getOrderedPropertySheets", lambda: None)()
 
             # We won't always have PlonePAS users, due to acquisition,
             # nor are guaranteed property sheets
@@ -277,7 +284,7 @@ class MemberData(BaseMemberAdapter):
 
         # Trigger PropertiesUpdated event when member properties are updated,
         # excluding user login events
-        if not set(mapping.keys()) & set(('login_time', 'last_login_time')):
+        if not set(mapping.keys()) & set(("login_time", "last_login_time")):
             notify(PropertiesUpdated(self, mapping))
 
     def getProperty(self, id, default=_marker):
@@ -290,7 +297,7 @@ class MemberData(BaseMemberAdapter):
         else:
             # It's a PAS! Whee!
             user = self.getUser()
-            sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
+            sheets = getattr(user, "getOrderedPropertySheets", lambda: None)()
 
             # we won't always have PlonePAS users, due to acquisition,
             # nor are guaranteed property sheets
@@ -301,7 +308,7 @@ class MemberData(BaseMemberAdapter):
                     # Zope users don't have PropertySheets,
                     # return an empty string for them if the property
                     # doesn't exists.
-                    return ''
+                    return ""
 
         # If we made this far, we found a PAS and some property sheets.
         for sheet in sheets:
@@ -314,7 +321,7 @@ class MemberData(BaseMemberAdapter):
                     # unicode. This is sub-optimal and should be
                     # dealed with at the property sheets level by
                     # using Zope's converters.
-                    return value.encode('utf-8')
+                    return value.encode("utf-8")
                 return value
 
         # Couldn't find the property in the property sheets. Try to
@@ -323,8 +330,7 @@ class MemberData(BaseMemberAdapter):
 
     @security.public
     def hasProperty(self, propname):
-        """Does the member have the given property?
-        """
+        """Does the member have the given property?"""
         # Unfortunately, checking for a marker value does not work well:
         # You get a ValueError when the property does not exist.
         try:
@@ -344,8 +350,9 @@ class MemberData(BaseMemberAdapter):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IUserManagement)
         for mid, manager in managers:
-            if (IDeleteCapability.providedBy(manager) and
-                    manager.allowDeletePrincipal(self.getId())):
+            if IDeleteCapability.providedBy(manager) and manager.allowDeletePrincipal(
+                self.getId()
+            ):
                 return True
         return False
 
@@ -355,8 +362,9 @@ class MemberData(BaseMemberAdapter):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IUserManagement)
         for mid, manager in managers:
-            if (IPasswordSetCapability.providedBy(manager) and
-                    manager.allowPasswordSet(self.getId())):
+            if IPasswordSetCapability.providedBy(manager) and manager.allowPasswordSet(
+                self.getId()
+            ):
                 return True
         return False
 
@@ -369,7 +377,7 @@ class MemberData(BaseMemberAdapter):
         return 0
 
     def _memberdataHasProperty(self, prop_name):
-        mdata = getToolByName(self, 'portal_memberdata', None)
+        mdata = getToolByName(self, "portal_memberdata", None)
         if mdata:
             return mdata.hasProperty(prop_name)
         return 0
@@ -384,7 +392,7 @@ class MemberData(BaseMemberAdapter):
         else:
             # it's PAS
             user = self.getUser()
-            sheets = getattr(user, 'getOrderedPropertySheets', lambda: None)()
+            sheets = getattr(user, "getOrderedPropertySheets", lambda: None)()
             if not sheets:
                 return self._memberdataHasProperty(prop_name)
 
@@ -394,7 +402,7 @@ class MemberData(BaseMemberAdapter):
                 if IMutablePropertySheet.providedBy(sheet):
                     # BBB for plugins implementing an older version of
                     # IMutablePropertySheet
-                    if hasattr(sheet, 'canWriteProperty'):
+                    if hasattr(sheet, "canWriteProperty"):
                         return sheet.canWriteProperty(user, prop_name)
                     return True
                 else:
@@ -407,8 +415,9 @@ class MemberData(BaseMemberAdapter):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
         for mid, manager in managers:
-            if (IGroupCapability.providedBy(manager) and
-                    manager.allowGroupAdd(self.getId(), group_id)):
+            if IGroupCapability.providedBy(manager) and manager.allowGroupAdd(
+                self.getId(), group_id
+            ):
                 return True
         return False
 
@@ -418,8 +427,9 @@ class MemberData(BaseMemberAdapter):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
         for mid, manager in managers:
-            if (IGroupCapability.providedBy(manager) and
-                    manager.allowGroupRemove(self.getId(), group_id)):
+            if IGroupCapability.providedBy(manager) and manager.allowGroupRemove(
+                self.getId(), group_id
+            ):
                 return True
         return False
 
@@ -429,8 +439,9 @@ class MemberData(BaseMemberAdapter):
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IRoleAssignerPlugin)
         for mid, manager in managers:
-            if (IAssignRoleCapability.providedBy(manager) and
-                    manager.allowRoleAssign(self.getId(), role_id)):
+            if IAssignRoleCapability.providedBy(manager) and manager.allowRoleAssign(
+                self.getId(), role_id
+            ):
                 return True
         return False
 
@@ -442,8 +453,8 @@ class MemberData(BaseMemberAdapter):
         # The Zope User API is stupid, it should check for None.
         if roles is None:
             roles = list(u.getRoles())
-            if 'Authenticated' in roles:
-                roles.remove('Authenticated')
+            if "Authenticated" in roles:
+                roles.remove("Authenticated")
         if domains is None:
             domains = u.getDomains()
 

@@ -27,10 +27,10 @@ import logging
 
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
-logger = logging.getLogger('PlonePAS')
+logger = logging.getLogger("PlonePAS")
 
 
-def manage_addGroupManager(self, id, title='', RESPONSE=None):
+def manage_addGroupManager(self, id, title="", RESPONSE=None):
     """
     Add a zodb group manager with management and introspection
     capabilities to pas.
@@ -40,15 +40,10 @@ def manage_addGroupManager(self, id, title='', RESPONSE=None):
     self._setObject(grum.getId(), grum)
 
     if RESPONSE is not None:
-        return RESPONSE.redirect('manage_workspace')
+        return RESPONSE.redirect("manage_workspace")
 
 
-@implementer(
-    IGroupManagement,
-    IGroupIntrospection,
-    IGroupCapability,
-    IDeleteCapability
-)
+@implementer(IGroupManagement, IGroupIntrospection, IGroupCapability, IDeleteCapability)
 class GroupManager(ZODBGroupManager):
 
     meta_type = "Group Manager"
@@ -78,8 +73,9 @@ class GroupManager(ZODBGroupManager):
         return True
 
     def removePrincipalFromGroup(self, principal_id, group_id):
-        already = ZODBGroupManager.removePrincipalFromGroup(self, principal_id,
-                                                            group_id)
+        already = ZODBGroupManager.removePrincipalFromGroup(
+            self, principal_id, group_id
+        )
         if already:
             self._group_principal_map[group_id].remove(principal_id)
         return True
@@ -88,15 +84,16 @@ class GroupManager(ZODBGroupManager):
     # overrides for api matching/massage
 
     def updateGroup(self, group_id, title=None, description=None):
-        ZODBGroupManager.updateGroup(self, group_id, title=title,
-                                     description=description)
+        ZODBGroupManager.updateGroup(
+            self, group_id, title=title, description=description
+        )
         return True
 
     #################################
     # introspection interface
 
     def getGroupById(self, group_id, default=None):
-        plugins = self._getPAS()._getOb('plugins')
+        plugins = self._getPAS()._getOb("plugins")
         title = None
         if group_id not in self.getGroupIds():
             return default
@@ -158,7 +155,7 @@ class GroupManager(ZODBGroupManager):
 
     @security.private
     def _createGroup(self, plugins, group_id, name):
-        """ Create group object. For users, this can be done with a
+        """Create group object. For users, this can be done with a
         plugin, but I don't care to define one for that now. Just uses
         PloneGroup.  But, the code's still here, just commented out.
         This method based on PluggableAuthervice._createUser
@@ -167,7 +164,7 @@ class GroupManager(ZODBGroupManager):
 
     @security.private
     def _findGroup(self, plugins, group_id, title=None, request=None):
-        """ group_id -> decorated_group
+        """group_id -> decorated_group
         This method based on PluggableAuthService._findGroup
         """
         group = self._createGroup(plugins, group_id, title)
@@ -179,8 +176,7 @@ class GroupManager(ZODBGroupManager):
             if data:
                 group.addPropertysheet(propfinder_id, data)
 
-        groups = self._getPAS()._getGroupsForPrincipal(group, request,
-                                                       plugins=plugins)
+        groups = self._getPAS()._getGroupsForPrincipal(group, request, plugins=plugins)
         group._addGroups(groups)
 
         rolemakers = plugins.listPlugins(IRolesPlugin)
@@ -190,24 +186,24 @@ class GroupManager(ZODBGroupManager):
             if roles:
                 group._addRoles(roles)
 
-        group._addRoles(['Authenticated'])
+        group._addRoles(["Authenticated"])
 
         return group.__of__(self)
 
     @security.private
     def _verifyGroup(self, plugins, group_id=None, title=None):
 
-        """ group_id -> boolean
+        """group_id -> boolean
         This method based on PluggableAuthService._verifyUser
         """
         criteria = {}
 
         if group_id is not None:
-            criteria['id'] = group_id
-            criteria['exact_match'] = True
+            criteria["id"] = group_id
+            criteria["exact_match"] = True
 
         if title is not None:
-            criteria['title'] = title
+            criteria["title"] = title
 
         if criteria:
             enumerators = plugins.listPlugins(IGroupEnumerationPlugin)
@@ -217,14 +213,13 @@ class GroupManager(ZODBGroupManager):
                     info = enumerator.enumerateGroups(**criteria)
 
                     if info:
-                        return info[0]['id']
+                        return info[0]["id"]
 
                 except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                     logger.info(
-                        'PluggableAuthService: GroupEnumerationPlugin %s '
-                        'error',
+                        "PluggableAuthService: GroupEnumerationPlugin %s " "error",
                         enumerator_id,
-                        exc_info=1
+                        exc_info=1,
                     )
 
         return 0
@@ -242,7 +237,7 @@ class PloneGroup(PloneUser):
     _isGroup = True
 
     def getId(self, unprefixed=None):
-        """ -> user ID
+        """-> user ID
         Modified to accept silly GRUF param.
         """
         return self._id
@@ -258,37 +253,33 @@ class PloneGroup(PloneUser):
         members = []
         for iid, introspector in introspectors:
             try:
-                members.extend(
-                    list(introspector.getGroupMembers(self.getId())))
+                members.extend(list(introspector.getGroupMembers(self.getId())))
             except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
                 logger.info(
-                    'PluggableAuthService: getGroupMembers %s error',
-                    iid, exc_info=1)
+                    "PluggableAuthService: getGroupMembers %s error", iid, exc_info=1
+                )
 
         return members
 
     @security.public
     def addMember(self, id):
-        """Add the existing member with the given id to the group
-        """
+        """Add the existing member with the given id to the group"""
         self.addPrincipalToGroup(id, self.getId())
 
     @security.public
     def removeMember(self, id):
-        """Remove the member with the provided id from the group.
-        """
+        """Remove the member with the provided id from the group."""
         self.removePrincipalFromGroup(id, self.getId())
 
     @security.public
     def getRolesInContext(self, object):
-        """Since groups can't actually log in, do nothing.
-        """
+        """Since groups can't actually log in, do nothing."""
         return []
 
     @security.public
     def allowed(self, object, object_roles=None):
-        """Since groups can't actually log in, do nothing.
-        """
+        """Since groups can't actually log in, do nothing."""
         return 0
+
 
 InitializeClass(PloneGroup)

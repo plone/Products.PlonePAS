@@ -19,7 +19,6 @@ class PropertyValueError(ValueError):
 
 
 class PropertySchemaTypeMap(object):
-
     def __init__(self):
         self.tmap = {}
         self.tmap_order = []
@@ -36,7 +35,7 @@ class PropertySchemaTypeMap(object):
         for ptype, inspector in ptypes:
             if inspector(value):
                 return ptype
-        raise TypeError('Invalid property type: %s' % type(value))
+        raise TypeError("Invalid property type: %s" % type(value))
 
     def validate(self, property_type, value):
         inspector = self.tmap[property_type]
@@ -44,61 +43,34 @@ class PropertySchemaTypeMap(object):
 
 
 PropertySchema = PropertySchemaTypeMap()
+PropertySchema.addType("string", lambda x: x is None or isinstance(x, six.string_types))
+PropertySchema.addType("text", lambda x: x is None or isinstance(x, six.string_types))
+PropertySchema.addType("boolean", lambda x: 1)  # anything can be boolean
+PropertySchema.addType("int", lambda x: x is None or isinstance(x, int))
+PropertySchema.addType("long", lambda x: x is None or isinstance(x, long))
+PropertySchema.addType("float", lambda x: x is None or isinstance(x, float))
+PropertySchema.addType("lines", lambda x: x is None or isinstance(x, (tuple, list)))
 PropertySchema.addType(
-    'string',
-    lambda x: x is None or isinstance(x, six.string_types)
+    "selection", lambda x: x is None or isinstance(x, six.string_types)
 )
 PropertySchema.addType(
-    'text',
-    lambda x: x is None or isinstance(x, six.string_types)
+    "multiple selection", lambda x: x is None or isinstance(x, (tuple, list))
 )
-PropertySchema.addType(
-    'boolean',
-    lambda x: 1  # anything can be boolean
-)
-PropertySchema.addType(
-    'int',
-    lambda x: x is None or isinstance(x, int)
-)
-PropertySchema.addType(
-    'long',
-    lambda x: x is None or isinstance(x, long)
-)
-PropertySchema.addType(
-    'float',
-    lambda x: x is None or isinstance(x, float)
-)
-PropertySchema.addType(
-    'lines',
-    lambda x: x is None or isinstance(x, (tuple, list))
-)
-PropertySchema.addType(
-    'selection',
-    lambda x: x is None or isinstance(x, six.string_types)
-)
-PropertySchema.addType(
-    'multiple selection',
-    lambda x: x is None or isinstance(x, (tuple, list))
-)
-PropertySchema.addType(
-    'date',
-    lambda x: 1
-)
+PropertySchema.addType("date", lambda x: 1)
 validateValue = PropertySchema.validate
 
 
 @implementer(IMutablePropertySheet)
 class MutablePropertySheet(UserPropertySheet):
-
     def validateProperty(self, id, value):
         if id not in self._properties:
-            raise PropertyValueError('No such property found on this schema')
+            raise PropertyValueError("No such property found on this schema")
 
         proptype = self.getPropertyType(id)
         if not validateValue(proptype, value):
             raise PropertyValueError(
-                "Invalid value (%s) for property '%s' of type %s" %
-                (value, id, proptype)
+                "Invalid value (%s) for property '%s' of type %s"
+                % (value, id, proptype)
             )
 
     def setProperty(self, user, id, value):

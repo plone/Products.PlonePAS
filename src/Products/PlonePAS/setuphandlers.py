@@ -27,7 +27,7 @@ from zope import component
 import logging
 
 
-logger = logging.getLogger('PlonePAS setup')
+logger = logging.getLogger("PlonePAS setup")
 
 
 def activatePluginInterfaces(portal, plugin, disable=None):
@@ -39,23 +39,23 @@ def activatePluginInterfaces(portal, plugin, disable=None):
     activatable = []
 
     for info in plugin_obj.plugins.listPluginTypeInfo():
-        interface = info['interface']
-        interface_name = info['id']
+        interface = info["interface"]
+        interface_name = info["id"]
         if plugin_obj.testImplements(interface):
             if interface_name in disable:
                 disable.append(interface_name)
-                logger.debug("Disabling: " + info['title'])
+                logger.debug("Disabling: " + info["title"])
             else:
                 activatable.append(interface_name)
-                logger.debug("Activating: " + info['title'])
+                logger.debug("Activating: " + info["title"])
     plugin_obj.manage_activateInterfaces(activatable)
     logger.debug(plugin + " activated.")
 
 
 def setupRoles(portal):
     rmanager = portal.acl_users.role_manager
-    rmanager.addRole('Member', title="Portal Member")
-    rmanager.addRole('Reviewer', title="Content Reviewer")
+    rmanager.addRole("Member", title="Portal Member")
+    rmanager.addRole("Reviewer", title="Content Reviewer")
 
 
 def registerPluginType(pas, plugin_type, plugin_info):
@@ -78,45 +78,52 @@ def registerPluginType(pas, plugin_type, plugin_info):
 def registerPluginTypes(pas):
 
     PluginInfo = {
-        'id': 'IUserManagement',
-        'title': 'user_management',
-        'description': ("The User Management plugins allow the "
-                        "Pluggable Auth Service to add/delete/modify users")
+        "id": "IUserManagement",
+        "title": "user_management",
+        "description": (
+            "The User Management plugins allow the "
+            "Pluggable Auth Service to add/delete/modify users"
+        ),
     }
 
     registerPluginType(pas, IUserManagement, PluginInfo)
 
     PluginInfo = {
-        'id': 'IUserIntrospection',
-        'title': 'user_introspection',
-        'description': ("The User Introspection plugins allow the "
-                        "Pluggable Auth Service to provide lists of users")
+        "id": "IUserIntrospection",
+        "title": "user_introspection",
+        "description": (
+            "The User Introspection plugins allow the "
+            "Pluggable Auth Service to provide lists of users"
+        ),
     }
 
     registerPluginType(pas, IUserIntrospection, PluginInfo)
 
     PluginInfo = {
-        'id': 'IGroupManagement',
-        'title': 'group_management',
-        'description': ("Group Management provides add/write/deletion "
-                        "of groups and member management")
+        "id": "IGroupManagement",
+        "title": "group_management",
+        "description": (
+            "Group Management provides add/write/deletion "
+            "of groups and member management"
+        ),
     }
 
     registerPluginType(pas, igroup.IGroupManagement, PluginInfo)
 
     PluginInfo = {
-        'id': 'IGroupIntrospection',
-        'title': 'group_introspection',
-        'description': ("Group Introspection provides listings "
-                        "of groups and membership")
+        "id": "IGroupIntrospection",
+        "title": "group_introspection",
+        "description": (
+            "Group Introspection provides listings " "of groups and membership"
+        ),
     }
 
     registerPluginType(pas, igroup.IGroupIntrospection, PluginInfo)
 
     PluginInfo = {
-        'id': 'ILocalRolesPlugin',
-        'title': 'local_roles',
-        'description': "Defines Policy for getting Local Roles"
+        "id": "ILocalRolesPlugin",
+        "title": "local_roles",
+        "description": "Defines Policy for getting Local Roles",
     }
 
     registerPluginType(pas, ILocalRolesPlugin, PluginInfo)
@@ -126,81 +133,89 @@ def setupPlugins(portal):
     uf = portal.acl_users
     logger.debug("\nPlugin setup")
 
-    pas = uf.manage_addProduct['PluggableAuthService']
-    plone_pas = uf.manage_addProduct['PlonePAS']
+    pas = uf.manage_addProduct["PluggableAuthService"]
+    plone_pas = uf.manage_addProduct["PlonePAS"]
 
     setupAuthPlugins(portal, pas, plone_pas)
 
-    found = uf.objectIds(['User Manager'])
+    found = uf.objectIds(["User Manager"])
     if not found:
-        plone_pas.manage_addUserManager('source_users')
+        plone_pas.manage_addUserManager("source_users")
         logger.debug("Added User Manager.")
-    activatePluginInterfaces(portal, 'source_users')
+    activatePluginInterfaces(portal, "source_users")
 
-    found = uf.objectIds(['Group Aware Role Manager'])
+    found = uf.objectIds(["Group Aware Role Manager"])
     if not found:
-        plone_pas.manage_addGroupAwareRoleManager('portal_role_manager')
+        plone_pas.manage_addGroupAwareRoleManager("portal_role_manager")
         logger.debug("Added Group Aware Role Manager.")
-        activatePluginInterfaces(portal, 'portal_role_manager')
+        activatePluginInterfaces(portal, "portal_role_manager")
 
-    found = uf.objectIds(['Local Roles Manager'])
+    found = uf.objectIds(["Local Roles Manager"])
     if not found:
-        plone_pas.manage_addLocalRolesManager('local_roles')
+        plone_pas.manage_addLocalRolesManager("local_roles")
         logger.debug("Added Group Aware Role Manager.")
-        activatePluginInterfaces(portal, 'local_roles')
+        activatePluginInterfaces(portal, "local_roles")
 
-    found = uf.objectIds(['Group Manager'])
+    found = uf.objectIds(["Group Manager"])
     if not found:
-        plone_pas.manage_addGroupManager('source_groups')
+        plone_pas.manage_addGroupManager("source_groups")
         logger.debug("Added ZODB Group Manager.")
-        activatePluginInterfaces(portal, 'source_groups')
+        activatePluginInterfaces(portal, "source_groups")
 
-    found = uf.objectIds(['Plone User Factory'])
+    found = uf.objectIds(["Plone User Factory"])
     if not found:
-        plone_pas.manage_addPloneUserFactory('user_factory')
+        plone_pas.manage_addPloneUserFactory("user_factory")
         logger.debug("Added Plone User Factory.")
         activatePluginInterfaces(portal, "user_factory")
 
-    found = uf.objectIds(['ZODB Mutable Property Provider'])
+    found = uf.objectIds(["ZODB Mutable Property Provider"])
     if not found:
-        plone_pas.manage_addZODBMutablePropertyProvider('mutable_properties')
+        plone_pas.manage_addZODBMutablePropertyProvider("mutable_properties")
         logger.debug("Added Mutable Property Manager.")
         activatePluginInterfaces(portal, "mutable_properties")
 
-    found = uf.objectIds(['Automatic Group Plugin'])
+    found = uf.objectIds(["Automatic Group Plugin"])
     if not found:
         plone_pas.manage_addAutoGroup(
-            "auto_group", "Authenticated Users (Virtual Group)",
-            "AuthenticatedUsers", "Automatic Group Provider")
+            "auto_group",
+            "Authenticated Users (Virtual Group)",
+            "AuthenticatedUsers",
+            "Automatic Group Provider",
+        )
         logger.debug("Added Automatic Group.")
         activatePluginInterfaces(portal, "auto_group")
 
-    found = uf.objectIds(['Plone Session Plugin'])
+    found = uf.objectIds(["Plone Session Plugin"])
     if not found:
-        manage_addSessionPlugin(plone_pas, 'session')
+        manage_addSessionPlugin(plone_pas, "session")
         logger.debug("Added Plone Session Plugin.")
         activatePluginInterfaces(portal, "session")
 
-    found = uf.objectIds(['Recursive Groups Plugin'])
+    found = uf.objectIds(["Recursive Groups Plugin"])
     if not found:
-        addRecursiveGroupsPlugin(plone_pas, 'recursive_groups',
-                                 "Recursive Groups Plugin")
-        activatePluginInterfaces(portal, 'recursive_groups')
+        addRecursiveGroupsPlugin(
+            plone_pas, "recursive_groups", "Recursive Groups Plugin"
+        )
+        activatePluginInterfaces(portal, "recursive_groups")
         logger.debug("Added Recursive Groups plugin.")
 
     setupPasswordPolicyPlugin(portal)
 
 
-def setupAuthPlugins(portal, pas, plone_pas,
-                     deactivate_basic_reset=True,
-                     deactivate_cookie_challenge=False):
+def setupAuthPlugins(
+    portal,
+    pas,
+    plone_pas,
+    deactivate_basic_reset=True,
+    deactivate_cookie_challenge=False,
+):
     uf = portal.acl_users
     logger.debug("Cookie plugin setup")
 
-    login_path = 'login_form'
-    cookie_name = '__ac'
+    login_path = "login_form"
+    cookie_name = "__ac"
 
-    crumbler = getToolByName(portal, 'cookie_authentication', None)
+    crumbler = getToolByName(portal, "cookie_authentication", None)
     if crumbler is not None:
         login_path = crumbler.auto_login_page
         cookie_name = crumbler.auth_cookie
@@ -225,55 +240,41 @@ def setupAuthPlugins(portal, pas, plone_pas,
             "/".join(uf.credentials_cookie_auth.getPhysicalPath()),
         )
     if deactivate_basic_reset:
-        disable = ['ICredentialsResetPlugin', 'ICredentialsUpdatePlugin']
+        disable = ["ICredentialsResetPlugin", "ICredentialsUpdatePlugin"]
     else:
         disable = []
-    activatePluginInterfaces(
-        portal,
-        'credentials_cookie_auth',
-        disable=disable
-    )
+    activatePluginInterfaces(portal, "credentials_cookie_auth", disable=disable)
 
-    credentials_cookie_auth = uf._getOb('credentials_cookie_auth')
-    if is_plone_site and 'login_form' in credentials_cookie_auth:
-        credentials_cookie_auth.manage_delObjects(ids=['login_form'])
-        logger.debug("Removed default login_form from credentials cookie "
-                     "auth.")
+    credentials_cookie_auth = uf._getOb("credentials_cookie_auth")
+    if is_plone_site and "login_form" in credentials_cookie_auth:
+        credentials_cookie_auth.manage_delObjects(ids=["login_form"])
+        logger.debug("Removed default login_form from credentials cookie " "auth.")
     credentials_cookie_auth.cookie_name = cookie_name
     credentials_cookie_auth.login_path = login_path
 
     # remove cookie crumbler(s)
-    if 'cookie_authentication' in portal:
-        portal.manage_delObjects(['cookie_authentication'])
+    if "cookie_authentication" in portal:
+        portal.manage_delObjects(["cookie_authentication"])
     logger.debug("Removed old Cookie Crumbler")
 
-    found = uf.objectIds(['HTTP Basic Auth Helper'])
+    found = uf.objectIds(["HTTP Basic Auth Helper"])
     if not found:
-        pas.addHTTPBasicAuthHelper(
-            'credentials_basic_auth',
-            title="HTTP Basic Auth"
-        )
+        pas.addHTTPBasicAuthHelper("credentials_basic_auth", title="HTTP Basic Auth")
     logger.debug("Added Basic Auth Helper.")
-    activatePluginInterfaces(portal, 'credentials_basic_auth')
+    activatePluginInterfaces(portal, "credentials_basic_auth")
 
     if deactivate_basic_reset:
-        uf.plugins.deactivatePlugin(
-            ICredentialsResetPlugin,
-            'credentials_basic_auth'
-        )
+        uf.plugins.deactivatePlugin(ICredentialsResetPlugin, "credentials_basic_auth")
     if deactivate_cookie_challenge:
-        uf.plugins.deactivatePlugin(
-            IChallengePlugin,
-            'credentials_cookie_auth'
-        )
+        uf.plugins.deactivatePlugin(IChallengePlugin, "credentials_cookie_auth")
 
 
 def updateProperties(tool, properties):
-    dependency_keys = ('selection', 'multiple selection')
-    propsWithNoDeps = [prop for prop in properties
-                       if prop['type'] not in dependency_keys]
-    propsWithDeps = [prop for prop in properties
-                     if prop['type'] in dependency_keys]
+    dependency_keys = ("selection", "multiple selection")
+    propsWithNoDeps = [
+        prop for prop in properties if prop["type"] not in dependency_keys
+    ]
+    propsWithDeps = [prop for prop in properties if prop["type"] in dependency_keys]
     for prop in propsWithNoDeps:
         updateProp(tool, prop)
     for prop in propsWithDeps:
@@ -286,28 +287,28 @@ def updateProp(prop_manager, prop_dict):
 
     Doesn't deal with existing properties changing type.
     """
-    id = prop_dict['id']
-    value = prop_dict['value']
-    type = prop_dict['type']
-    if type in ('selection', 'multiple selection'):
-        value = prop_dict['select_variable']
+    id = prop_dict["id"]
+    value = prop_dict["value"]
+    type = prop_dict["type"]
+    if type in ("selection", "multiple selection"):
+        value = prop_dict["select_variable"]
     if prop_manager.hasProperty(id):
         prop_manager._updateProperty(id, value)
     else:
         prop_manager._setProperty(id, value, type)
-    if type in ('selection', 'multiple selection'):
-        prop_manager._updateProperty(id, prop_dict['value'])
+    if type in ("selection", "multiple selection"):
+        prop_manager._updateProperty(id, prop_dict["value"])
 
 
 def addPAS(portal):
     logger.debug("Adding PAS user folder")
-    portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+    portal.manage_addProduct["PluggableAuthService"].addPluggableAuthService()
 
 
 def migrate_root_uf(self):
     # Acquire parent user folder.
     parent = self.getPhysicalRoot()
-    uf = getToolByName(parent, 'acl_users')
+    uf = getToolByName(parent, "acl_users")
     if IPluggableAuthService.providedBy(uf):
         # It's a PAS already, fixup if needed.
         pas_fixup(parent)
@@ -316,7 +317,7 @@ def migrate_root_uf(self):
         challenge_chooser_setup(parent)
         return
 
-    if not uf.meta_type == 'User Folder':
+    if not uf.meta_type == "User Folder":
         # It's not a standard User Folder at the root. Nothing we can do.
         return
 
@@ -324,18 +325,22 @@ def migrate_root_uf(self):
     replace_acl_users(parent)
 
     # Get the new uf
-    uf = getToolByName(parent, 'acl_users')
+    uf = getToolByName(parent, "acl_users")
 
-    pas = uf.manage_addProduct['PluggableAuthService']
-    plone_pas = uf.manage_addProduct['PlonePAS']
+    pas = uf.manage_addProduct["PluggableAuthService"]
+    plone_pas = uf.manage_addProduct["PlonePAS"]
     # Setup authentication plugins
-    setupAuthPlugins(parent, pas, plone_pas,
-                     deactivate_basic_reset=False,
-                     deactivate_cookie_challenge=True)
+    setupAuthPlugins(
+        parent,
+        pas,
+        plone_pas,
+        deactivate_basic_reset=False,
+        deactivate_cookie_challenge=True,
+    )
 
     # Activate *all* interfaces for user manager. IUserAdder is not
     # activated for some reason by default.
-    activatePluginInterfaces(parent, 'users')
+    activatePluginInterfaces(parent, "users")
 
     # Configure Challenge Chooser plugin if available
     challenge_chooser_setup(parent)
@@ -344,12 +349,12 @@ def migrate_root_uf(self):
 def pas_fixup(self):
     from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
 
-    pas = getToolByName(self, 'acl_users')
+    pas = getToolByName(self, "acl_users")
     if not IPluggableAuthService.providedBy(pas):
-        logger.debug('PAS UF not found, skipping PAS fixup.')
+        logger.debug("PAS UF not found, skipping PAS fixup.")
         return
 
-    plugins = pas['plugins']
+    plugins = pas["plugins"]
 
     plugin_types = list(set(plugins._plugin_types))
     for key, id, title, description in _PLUGIN_TYPE_INFO:
@@ -359,9 +364,9 @@ def pas_fixup(self):
         logger.debug("Plugin type '%s' was not registered." % id)
         plugin_types.append(key)
         plugins._plugin_type_info[key] = {
-            'id': id,
-            'title': title,
-            'description': description,
+            "id": id,
+            "title": title,
+            "description": description,
         }
     # Make it ordered
     plugin_types.sort()
@@ -371,74 +376,71 @@ def pas_fixup(self):
 
 
 def challenge_chooser_setup(self):
-    uf = getToolByName(self, 'acl_users')
-    pas = uf.manage_addProduct['PluggableAuthService']
+    uf = getToolByName(self, "acl_users")
+    pas = uf.manage_addProduct["PluggableAuthService"]
 
     # Only install plugins if available
-    req = ('addChallengeProtocolChooserPlugin',
-           'addRequestTypeSnifferPlugin')
+    req = ("addChallengeProtocolChooserPlugin", "addRequestTypeSnifferPlugin")
     for m in req:
         if getattr(pas, m, None) is None:
-            logger.debug('Needed plugins have not been found, ignoring')
+            logger.debug("Needed plugins have not been found, ignoring")
             return
 
-    found = uf.objectIds(['Challenge Protocol Chooser Plugin'])
+    found = uf.objectIds(["Challenge Protocol Chooser Plugin"])
     if not found:
-        logger.debug('Adding Challenge Protocol Chooser Plugin.')
+        logger.debug("Adding Challenge Protocol Chooser Plugin.")
         pas.addChallengeProtocolChooserPlugin(
-            'chooser',
-            mapping=config.DEFAULT_PROTO_MAPPING)
-        activatePluginInterfaces(self, 'chooser')
+            "chooser", mapping=config.DEFAULT_PROTO_MAPPING
+        )
+        activatePluginInterfaces(self, "chooser")
     else:
-        assert len(found) == 1, 'Found extra plugins %s' % found
-        logger.debug('Found existing Challenge Protocol Chooser Plugin.')
+        assert len(found) == 1, "Found extra plugins %s" % found
+        logger.debug("Found existing Challenge Protocol Chooser Plugin.")
         plugin = uf[found[0]]
-        plugin.manage_updateProtocolMapping(
-            mapping=config.DEFAULT_PROTO_MAPPING)
+        plugin.manage_updateProtocolMapping(mapping=config.DEFAULT_PROTO_MAPPING)
         activatePluginInterfaces(self, found[0])
 
-    found = uf.objectIds(['Request Type Sniffer Plugin'])
+    found = uf.objectIds(["Request Type Sniffer Plugin"])
     if not found:
-        logger.debug('Adding Request Type Sniffer Plugin.')
-        pas.addRequestTypeSnifferPlugin('sniffer')
-        activatePluginInterfaces(self, 'sniffer')
+        logger.debug("Adding Request Type Sniffer Plugin.")
+        pas.addRequestTypeSnifferPlugin("sniffer")
+        activatePluginInterfaces(self, "sniffer")
     else:
-        assert len(found) == 1, 'Found extra plugins %s' % found
-        logger.debug('Found existing Request Type Sniffer Plugin.')
+        assert len(found) == 1, "Found extra plugins %s" % found
+        logger.debug("Found existing Request Type Sniffer Plugin.")
         activatePluginInterfaces(self, found[0])
 
 
 def setupPasswordPolicyPlugin(portal):
     uf = portal.acl_users
-    plone_pas = uf.manage_addProduct['PlonePAS']
+    plone_pas = uf.manage_addProduct["PlonePAS"]
 
-    found = uf.objectIds(['Default Plone Password Policy'])
+    found = uf.objectIds(["Default Plone Password Policy"])
     logger.debug("\nDefault Password Ploicy Plugin setup")
     if not found:
         plone_pas.manage_addPasswordPolicyPlugin(
-            'password_policy',
-            title="Default Plone Password Policy"
+            "password_policy", title="Default Plone Password Policy"
         )
         logger.debug("Added Default Plone Password Policy.")
-        activatePluginInterfaces(portal, 'password_policy')
+        activatePluginInterfaces(portal, "password_policy")
 
 
 def setLoginFormInCookieAuth(context):
     """Makes sure the cookie auth redirects to 'require_login' instead
-       of 'login_form'."""
-    uf = getattr(context, 'acl_users', None)
-    if uf is None or getattr(aq_base(uf), '_getOb', None) is None:
+    of 'login_form'."""
+    uf = getattr(context, "acl_users", None)
+    if uf is None or getattr(aq_base(uf), "_getOb", None) is None:
         # we have no user folder or it's not a PAS folder, do nothing
         return
-    cookie_auth = uf._getOb('credentials_cookie_auth', None)
+    cookie_auth = uf._getOb("credentials_cookie_auth", None)
     if cookie_auth is None:
         # there's no cookie auth object, do nothing
         return
-    current_login_form = cookie_auth.getProperty('login_path')
-    if current_login_form != 'login_form':
+    current_login_form = cookie_auth.getProperty("login_path")
+    if current_login_form != "login_form":
         # it's customized already, do nothing
         return
-    cookie_auth.manage_changeProperties(login_path='require_login')
+    cookie_auth.manage_changeProperties(login_path="require_login")
 
 
 def addRolesToPlugIn(p):
@@ -449,9 +451,9 @@ def addRolesToPlugIn(p):
     Have to manually register the roles from the 'rolemap' step
     with the roles plug-in.
     """
-    uf = getToolByName(p, 'acl_users')
+    uf = getToolByName(p, "acl_users")
     rmanager = uf.portal_role_manager
-    roles = ('Reviewer', 'Member')
+    roles = ("Reviewer", "Member")
     existing = rmanager.listRoleIds()
     for role in roles:
         if role not in existing:
@@ -462,29 +464,25 @@ def setupGroups(site):
     """
     Create Plone's default set of groups.
     """
-    uf = getToolByName(site, 'acl_users')
-    gtool = getToolByName(site, 'portal_groups')
-    if not uf.searchGroups(id='Administrators'):
+    uf = getToolByName(site, "acl_users")
+    gtool = getToolByName(site, "portal_groups")
+    if not uf.searchGroups(id="Administrators"):
+        gtool.addGroup("Administrators", title="Administrators", roles=["Manager"])
+
+    if not uf.searchGroups(id="Site Administrators"):
         gtool.addGroup(
-            'Administrators',
-            title='Administrators',
-            roles=['Manager']
+            "Site Administrators",
+            title="Site Administrators",
+            roles=["Site Administrator"],
         )
 
-    if not uf.searchGroups(id='Site Administrators'):
-        gtool.addGroup(
-            'Site Administrators',
-            title='Site Administrators',
-            roles=['Site Administrator']
-        )
-
-    if not uf.searchGroups(id='Reviewers'):
-        gtool.addGroup('Reviewers', title='Reviewers', roles=['Reviewer'])
+    if not uf.searchGroups(id="Reviewers"):
+        gtool.addGroup("Reviewers", title="Reviewers", roles=["Reviewer"])
 
 
 def installPAS(portal):
     # Add user folder
-    portal.manage_addProduct['PluggableAuthService'].addPluggableAuthService()
+    portal.manage_addProduct["PluggableAuthService"].addPluggableAuthService()
 
     # Configure Challenge Chooser plugin if available
     challenge_chooser_setup(portal)
@@ -509,10 +507,10 @@ def setupPlonePAS(context):
     Setup PlonePAS step.
     """
     # Only run step if a flag file is present (e.g. not an extension profile)
-    if context.readDataFile('plone-pas.txt') is None:
+    if context.readDataFile("plone-pas.txt") is None:
         return
     site = context.getSite()
-    if 'acl_users' not in site:
+    if "acl_users" not in site:
         installPAS(site)
         addRolesToPlugIn(site)
         setupGroups(site)

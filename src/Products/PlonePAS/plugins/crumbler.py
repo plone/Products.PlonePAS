@@ -18,13 +18,12 @@ from zope.interface import implementer
 import logging
 
 
-logger = logging.getLogger('PlonePAS')
+logger = logging.getLogger("PlonePAS")
 
-CC_ID = 'cookie_auth'
+CC_ID = "cookie_auth"
 
 
-def manage_addCookieCrumblingPlugin(self, id, title='',
-                                    RESPONSE=None, **kw):
+def manage_addCookieCrumblingPlugin(self, id, title="", RESPONSE=None, **kw):
     """
     Create an instance of a cookie crumbling plugin.
     """
@@ -37,10 +36,12 @@ def manage_addCookieCrumblingPlugin(self, id, title='',
     manage_addCC(o, CC_ID)
 
     if RESPONSE is not None:
-        RESPONSE.redirect('manage_workspace')
+        RESPONSE.redirect("manage_workspace")
 
-manage_addCookieCrumblingPluginForm = \
-    DTMLFile("../zmi/CookieCrumblingPluginForm", globals())
+
+manage_addCookieCrumblingPluginForm = DTMLFile(
+    "../zmi/CookieCrumblingPluginForm", globals()
+)
 
 
 @implementer(IExtractionPlugin)
@@ -48,7 +49,8 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
     """Multi-plugin for injecting HTTP Basic Authentication
     credentials from form credentials.
     """
-    meta_type = 'Cookie Crumbling Plugin'
+
+    meta_type = "Cookie Crumbling Plugin"
 
     security = ClassSecurityInfo()
 
@@ -61,8 +63,7 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
 
     @security.private
     def extractCredentials(self, request):
-        """ Extract basic auth credentials from 'request'.
-        """
+        """Extract basic auth credentials from 'request'."""
 
         try:
             self._getCC().modifyRequest(request, request.RESPONSE)
@@ -71,5 +72,6 @@ class CookieCrumblingPlugin(Folder, BasePlugin):
             logger.error("PlonePAS error: %s", e, exc_info=1)
 
         return {}
+
 
 InitializeClass(CookieCrumblingPlugin)

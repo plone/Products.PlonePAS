@@ -20,34 +20,30 @@ from zope.event import notify
 from zope.interface import implementer
 
 
-manage_addUserManagerForm = DTMLFile('../zmi/UserManagerForm', globals())
+manage_addUserManagerForm = DTMLFile("../zmi/UserManagerForm", globals())
 
 
 def manage_addUserManager(dispatcher, id, title=None, REQUEST=None):
-    """ Add a UserManager to a Pluggable Auth Service. """
+    """Add a UserManager to a Pluggable Auth Service."""
 
     pum = UserManager(id, title)
     dispatcher._setObject(pum.getId(), pum)
 
     if REQUEST is not None:
-        REQUEST['RESPONSE'].redirect(
-            '%s/manage_workspace'
-            '?manage_tabs_message='
-            'UserManager+added.'
-            % dispatcher.absolute_url())
+        REQUEST["RESPONSE"].redirect(
+            "%s/manage_workspace"
+            "?manage_tabs_message="
+            "UserManager+added." % dispatcher.absolute_url()
+        )
 
 
 @implementer(
-    IUserManagement,
-    IUserIntrospection,
-    IDeleteCapability,
-    IPasswordSetCapability
+    IUserManagement, IUserIntrospection, IDeleteCapability, IPasswordSetCapability
 )
 class UserManager(BasePlugin):
-    """PAS plugin for managing users. (adds write API)
-    """
+    """PAS plugin for managing users. (adds write API)"""
 
-    meta_type = 'User Manager'
+    meta_type = "User Manager"
     security = ClassSecurityInfo()
 
     @security.protected(ManageUsers)
@@ -59,10 +55,10 @@ class UserManager(BasePlugin):
         Should go into PAS.
         """
         if self._user_passwords.get(user_id) is not None:
-            raise KeyError('Duplicate user ID: %s' % user_id)
+            raise KeyError("Duplicate user ID: %s" % user_id)
 
         if self._login_to_userid.get(login_name) is not None:
-            raise KeyError('Duplicate login name: %s' % login_name)
+            raise KeyError("Duplicate login name: %s" % login_name)
 
         if not AuthEncoding.is_encrypted(password):
             password = AuthEncoding.pw_encrypt(password)
@@ -71,21 +67,19 @@ class UserManager(BasePlugin):
         self._userid_to_login[user_id] = login_name
 
         # enumerateUsers return value has changed
-        view_name = createViewName('enumerateUsers')
+        view_name = createViewName("enumerateUsers")
         self.ZCacheable_invalidate(view_name=view_name)
 
     # User Management interface
 
     @security.private
     def doDeleteUser(self, userid):
-        """Given a user id, delete that user
-        """
+        """Given a user id, delete that user"""
         return self.removeUser(userid)
 
     @security.private
     def doChangeUser(self, principal_id, password):
-        """Change a user's password
-        """
+        """Change a user's password"""
         if self._user_passwords.get(principal_id) is None:
             raise RuntimeError("User does not exist: %s" % principal_id)
         self._user_passwords[principal_id] = AuthEncoding.pw_encrypt(password)
@@ -123,7 +117,7 @@ class UserManager(BasePlugin):
         """
         Return a list of usernames
         """
-        return [x['login_name'] for x in self.listUserInfo()]
+        return [x["login_name"] for x in self.listUserInfo()]
 
     @security.protected(ManageUsers)
     def getUsers(self):

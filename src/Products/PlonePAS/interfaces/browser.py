@@ -3,7 +3,6 @@ from zope.interface import Interface
 
 
 class IPASInfoView(Interface):
-
     def hasLoginPasswordExtractor():
         """Check if a login & password extraction plugin is active.
 
@@ -13,8 +12,7 @@ class IPASInfoView(Interface):
         """
 
     def hasOpenIDExtractor():
-        """Check if an OpenID extraction plugin is active.
-        """
+        """Check if an OpenID extraction plugin is active."""
 
     def hasOpenIDdExtractor():
         """Check if an OpenID extraction plugin is active.
@@ -24,7 +22,6 @@ class IPASInfoView(Interface):
 
 
 class IPASMemberView(Interface):
-
     def info(userid=None):
         """Return 'harmless' member info of any user, such as full name,
         location, etc.
@@ -32,7 +29,6 @@ class IPASMemberView(Interface):
 
 
 class IPASSearchView(Interface):
-
     def searchUsers(sort_by=None, any_field=None, **criteria):
         """Search for users matching a set of criteria.
 

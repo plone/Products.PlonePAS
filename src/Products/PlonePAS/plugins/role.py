@@ -19,7 +19,7 @@ from Products.PluggableAuthService.plugins.ZODBRoleManager import ZODBRoleManage
 from zope.interface import implementer
 
 
-def manage_addGroupAwareRoleManager(self, id, title='', RESPONSE=None):
+def manage_addGroupAwareRoleManager(self, id, title="", RESPONSE=None):
     """
     this is a doc string
     """
@@ -27,10 +27,12 @@ def manage_addGroupAwareRoleManager(self, id, title='', RESPONSE=None):
     self._setObject(garm.getId(), garm)
 
     if RESPONSE is not None:
-        RESPONSE.redirect('manage_workspace')
+        RESPONSE.redirect("manage_workspace")
+
 
 manage_addGroupAwareRoleManagerForm = DTMLFile(
-    '../zmi/GroupAwareRoleManagerForm', globals())
+    "../zmi/GroupAwareRoleManagerForm", globals()
+)
 
 
 @implementer(IAssignRoleCapability)
@@ -41,9 +43,8 @@ class GroupAwareRoleManager(ZODBRoleManager):
 
     def updateRolesList(self):
         role_holder = aq_parent(aq_inner(self._getPAS()))
-        for role in getattr(role_holder, '__ac_roles__', ()):
-            if role not in ('Anonymous', 'Authenticated') and \
-                    role not in self._roles:
+        for role in getattr(role_holder, "__ac_roles__", ()):
+            if role not in ("Anonymous", "Authenticated") and role not in self._roles:
                 try:
                     self.addRole(role)
                 except KeyError:
@@ -52,7 +53,7 @@ class GroupAwareRoleManager(ZODBRoleManager):
     # don't blow up if manager already exists; mostly for ZopeVersionControl
     def manage_afterAdd(self, item, container):
         try:
-            self.addRole('Manager')
+            self.addRole("Manager")
         except KeyError:
             pass
 
@@ -62,23 +63,15 @@ class GroupAwareRoleManager(ZODBRoleManager):
     @security.protected(ManageUsers)
     def assignRoleToPrincipal(self, role_id, principal_id, REQUEST=None):
         try:
-            return ZODBRoleManager.assignRoleToPrincipal(
-                self,
-                role_id,
-                principal_id
-            )
+            return ZODBRoleManager.assignRoleToPrincipal(self, role_id, principal_id)
         except KeyError:
             # Lazily update our roles list and try again
             self.updateRolesList()
-            return ZODBRoleManager.assignRoleToPrincipal(
-                self,
-                role_id,
-                principal_id
-            )
+            return ZODBRoleManager.assignRoleToPrincipal(self, role_id, principal_id)
 
     @security.protected(ManageUsers)
     def assignRolesToPrincipal(self, roles, principal_id, REQUEST=None):
-        """ Assign a specific set of roles, and only those roles, to a
+        """Assign a specific set of roles, and only those roles, to a
         principal.
 
         o no return value
@@ -86,7 +79,7 @@ class GroupAwareRoleManager(ZODBRoleManager):
         o Raise KeyError if a role_id is unknown.
         """
         for role_id in roles:
-            if role_id not in ('Authenticated', 'Anonymous', 'Owner'):
+            if role_id not in ("Authenticated", "Anonymous", "Owner"):
                 try:
                     # raise KeyError if unknown!
                     self._roles[role_id]
@@ -104,28 +97,23 @@ class GroupAwareRoleManager(ZODBRoleManager):
 
     @security.private
     def getRolesForPrincipal(self, principal, request=None):
-        """ See IRolesPlugin.
-        """
+        """See IRolesPlugin."""
         roles = set([])
         principal_ids = set([])
         # Some services need to determine the roles obtained from groups
         # while excluding the directly assigned roles.  In this case
         # '__ignore_direct_roles__' = True should be pushed in the request.
-        request = aq_get(self, 'REQUEST', None)
-        if request is None \
-           or not request.get('__ignore_direct_roles__', False):
+        request = aq_get(self, "REQUEST", None)
+        if request is None or not request.get("__ignore_direct_roles__", False):
             principal_ids.add(principal.getId())
 
         # Some services may need the real roles of an user but **not**
         # the ones he got through his groups. In this case, the
         # '__ignore_group_roles__'= True should be previously pushed
         # in the request.
-        plugins = self._getPAS()['plugins']
-        if request is None \
-           or not request.get('__ignore_group_roles__', False):
-            principal_ids.update(
-                getGroupsForPrincipal(principal, plugins, request)
-            )
+        plugins = self._getPAS()["plugins"]
+        if request is None or not request.get("__ignore_group_roles__", False):
+            principal_ids.update(getGroupsForPrincipal(principal, plugins, request))
         for pid in principal_ids:
             roles.update(self._principal_roles.get(pid, ()))
         return tuple(roles)

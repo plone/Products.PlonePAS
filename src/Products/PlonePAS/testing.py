@@ -19,13 +19,14 @@ class ProductsPlonepasLayer(PloneSandboxLayer):
         # The z3c.autoinclude feature is disabled in the Plone fixture base
         # layer.
         self.loadZCML(package=Products.PlonePAS)
-        zope_testing.installProduct(app, 'Products.PlonePAS')
+        zope_testing.installProduct(app, "Products.PlonePAS")
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'Products.PlonePAS:PlonePAS')
+        applyProfile(portal, "Products.PlonePAS:PlonePAS")
         # setRoles(portal, TEST_USER_ID, ['Manager'])
         from Products.CMFPlone.utils import _createObjectByType
-        _createObjectByType('Folder', portal, id='Members')
+
+        _createObjectByType("Folder", portal, id="Members")
         mtool = portal.portal_membership
         if not mtool.getMemberareaCreationFlag():
             mtool.setMemberareaCreationFlag()
@@ -33,7 +34,7 @@ class ProductsPlonepasLayer(PloneSandboxLayer):
         if mtool.getMemberareaCreationFlag():
             mtool.setMemberareaCreationFlag()
 
-        _createObjectByType('Folder', portal, id='folder')
+        _createObjectByType("Folder", portal, id="folder")
 
 
 PRODUCTS_PLONEPAS_FIXTURE = ProductsPlonepasLayer()
@@ -41,11 +42,11 @@ PRODUCTS_PLONEPAS_FIXTURE = ProductsPlonepasLayer()
 
 PRODUCTS_PLONEPAS_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PRODUCTS_PLONEPAS_FIXTURE,),
-    name='ProductsPlonepasLayer:IntegrationTesting',
+    name="ProductsPlonepasLayer:IntegrationTesting",
 )
 
 
 PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PRODUCTS_PLONEPAS_FIXTURE,),
-    name='ProductsPlonepasLayer:FunctionalTesting',
+    name="ProductsPlonepasLayer:FunctionalTesting",
 )

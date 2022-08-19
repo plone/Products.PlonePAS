@@ -33,7 +33,7 @@ import logging
 import six
 
 
-logger = logging.getLogger('PlonePAS')
+logger = logging.getLogger("PlonePAS")
 _marker = object()
 
 
@@ -47,19 +47,19 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
     properties.
     """
 
-    id = 'portal_groupdata'
+    id = "portal_groupdata"
     meta_type = "PlonePAS GroupData Tool"
-    toolicon = 'tool.gif'
+    toolicon = "tool.gif"
 
     _v_temps = None
-    _properties = ({'id': 'title', 'type': 'string', 'mode': 'wd'},)
+    _properties = ({"id": "title", "type": "string", "mode": "wd"},)
     security = ClassSecurityInfo()
 
     def __init__(self):
         self._members = OOBTree()
         # Create the default properties.
-        self._setProperty('description', '', 'text')
-        self._setProperty('email', '', 'string')
+        self._setProperty("description", "", "text")
+        self._setProperty("email", "", "string")
 
     def wrapGroup(self, g):
         """Returns an object implementing the GroupData interface."""
@@ -77,7 +77,7 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
                 portal_group = GroupData(base, gid)
                 if temps is None:
                     self._v_temps = {gid: portal_group}
-                    if hasattr(self, 'REQUEST'):
+                    if hasattr(self, "REQUEST"):
                         self.REQUEST._hold(CleanupTemp(self))
                 else:
                     temps[gid] = portal_group
@@ -89,17 +89,17 @@ class GroupDataTool(UniqueObject, SimpleItem, PropertyManager):
 
     @security.private
     def registerGroupData(self, g, id):
-        '''
+        """
         Adds the given member data to the _members dict.
         This is done as late as possible to avoid side effect
         transactions and to reduce the necessary number of
         entries.
-        '''
+        """
         self._members[id] = aq_base(g)
 
 
 InitializeClass(GroupDataTool)
-registerToolInterface('portal_groupdata', IGroupDataTool)
+registerToolInterface("portal_groupdata", IGroupDataTool)
 
 
 @implementer(IGroupData, IManageCapabilities)
@@ -116,20 +116,22 @@ class GroupData(SimpleItem):
         # The reference will be removed by notifyModified().
         self._tool = tool
 
-    def _getGRUF(self,):
+    def _getGRUF(
+        self,
+    ):
         return self.acl_users
 
     @security.private
     def notifyModified(self):
         # Links self to parent for full persistence.
-        tool = getattr(self, '_tool', None)
+        tool = getattr(self, "_tool", None)
         if tool is not None:
             del self._tool
             tool.registerGroupData(self, self.getId())
 
     @security.public
     def getGroup(self):
-        """ Returns the actual group implementation. Varies by group
+        """Returns the actual group implementation. Varies by group
         implementation (GRUF/Nux/et al). In GRUF this is a user object."""
         # The user object is our context, but it's possible for
         # restricted code to strip context while retaining
@@ -137,7 +139,7 @@ class GroupData(SimpleItem):
         parent = aq_parent(self)
         bcontext = aq_base(parent)
         bcontainer = aq_base(aq_parent(aq_inner(self)))
-        if bcontext is bcontainer or not hasattr(bcontext, 'getUserName'):
+        if bcontext is bcontainer or not hasattr(bcontext, "getUserName"):
             raise GroupDataError("Can't find group data")
         # Return the user object, which is our context.
         return parent
@@ -222,14 +224,14 @@ class GroupData(SimpleItem):
         """
         user = getSecurityManager().getUser()
         tool = self.getTool()
-        portal = getToolByName(tool, 'portal_url').getPortalObject()
+        portal = getToolByName(tool, "portal_url").getPortalObject()
 
         # Has manager users pemission?
         if user.has_permission(Permissions.manage_users, portal):
             return True
 
         # Is explicitly mentioned as a group administrator?
-        managers = self.getProperty('delegated_group_member_managers', ())
+        managers = self.getProperty("delegated_group_member_managers", ())
         if user.getId() in managers:
             return True
 
@@ -250,7 +252,7 @@ class GroupData(SimpleItem):
     @security.public
     @postonly
     def addMember(self, id, REQUEST=None):
-        """ Add the existing member with the given id to the group"""
+        """Add the existing member with the given id to the group"""
         if not self.canAdministrateGroup():
             raise Unauthorized("You cannot add a member to the group.")
 
@@ -266,8 +268,7 @@ class GroupData(SimpleItem):
     @security.public
     @postonly
     def removeMember(self, id, REQUEST=None):
-        """Remove the member with the provided id from the group.
-        """
+        """Remove the member with the provided id from the group."""
         if not self.canAdministrateGroup():
             raise Unauthorized("You cannot remove a member from the group.")
 
@@ -292,8 +293,7 @@ class GroupData(SimpleItem):
 
     @security.protected(Permissions.manage_users)
     def setGroupProperties(self, mapping):
-        """PAS-specific method to set the properties of a group.
-        """
+        """PAS-specific method to set the properties of a group."""
         sheets = None
 
         if not IPluggableAuthService.providedBy(self.acl_users):
@@ -303,7 +303,7 @@ class GroupData(SimpleItem):
         else:
             # It's a PAS! Whee!
             group = self.getGroup()
-            sheets = getattr(group, 'getOrderedPropertySheets', lambda: [])()
+            sheets = getattr(group, "getOrderedPropertySheets", lambda: [])()
 
             # We won't always have PlonePAS groups, due to acquisition,
             # nor are guaranteed property sheets
@@ -324,14 +324,14 @@ class GroupData(SimpleItem):
                     sheet.setProperty(group, k, v)
                     modified = True
                 else:
-                    raise RuntimeError("Mutable property provider "
-                                       "shadowed by read only provider")
+                    raise RuntimeError(
+                        "Mutable property provider " "shadowed by read only provider"
+                    )
         if modified:
             self.notifyModified()
 
     def _gruf_setGroupProperties(self, mapping):
-        '''Sets the properties of the member.
-        '''
+        """Sets the properties of the member."""
         # Sets the properties given in the MemberDataTool.
         tool = self.getTool()
         for id in tool.propertyIds():
@@ -339,7 +339,7 @@ class GroupData(SimpleItem):
                 if id not in self.__class__.__dict__:
                     value = mapping[id]
                     if isinstance(value, str):
-                        proptype = tool.getPropertyType(id) or 'string'
+                        proptype = tool.getPropertyType(id) or "string"
                         if proptype in type_converters:
                             value = type_converters[proptype](value)
                     setattr(self, id, value)
@@ -349,8 +349,8 @@ class GroupData(SimpleItem):
 
     @security.public
     def getProperties(self):
-        """ Return the properties of this group. Properties are as usual
-            in Zope.
+        """Return the properties of this group. Properties are as usual
+        in Zope.
         """
         tool = self.getTool()
         ret = {}
@@ -368,7 +368,7 @@ class GroupData(SimpleItem):
         through the ordered property sheets.
         """
         group = self.getGroup()
-        sheets = getattr(group, 'getOrderedPropertySheets', lambda: [])()
+        sheets = getattr(group, "getOrderedPropertySheets", lambda: [])()
 
         # If we made this far, we found a PAS and some property sheets.
         for sheet in sheets:
@@ -425,14 +425,13 @@ class GroupData(SimpleItem):
 
     def getGroupTitleOrName(self):
         """Get the Title property of the group. If there is none
-        then return the name """
-        title = self.getProperty('title', None)
+        then return the name"""
+        title = self.getProperty("title", None)
         return title or self.getGroupName()
 
     @security.public
     def getMemberId(self):
-        """This exists only for a basic user/group API compatibility
-        """
+        """This exists only for a basic user/group API compatibility"""
         return self.getGroupId()
 
     @security.public
@@ -460,25 +459,25 @@ class GroupData(SimpleItem):
 
     def getUserName(self):
         return self.getName()
+
     getUserNameWithoutGroupPrefix = getUserName
 
     # IManageCapabilities methods
     def canDelete(self):
-        """True iff user can be removed from the Plone UI.
-        """
+        """True iff user can be removed from the Plone UI."""
         # IGroupManagement provides removeGroup
         plugins = self._getPlugins()
         managers = plugins.listPlugins(IGroupManagement)
         if managers:
             for mid, manager in managers:
-                if (IDeleteCapability.providedBy(manager) and
-                        manager.allowDeletePrincipal(self.getId())):
+                if IDeleteCapability.providedBy(
+                    manager
+                ) and manager.allowDeletePrincipal(self.getId()):
                     return True
         return False
 
     def canPasswordSet(self):
-        """Always false for groups, which have no password.
-        """
+        """Always false for groups, which have no password."""
         return False
 
     def passwordInClear(self):
@@ -490,7 +489,7 @@ class GroupData(SimpleItem):
         return False
 
     def _groupdataHasProperty(self, prop_name):
-        gdata = getToolByName(self, 'portal_groupdata', None)
+        gdata = getToolByName(self, "portal_groupdata", None)
         if gdata:
             return gdata.hasProperty(prop_name)
         return 0
@@ -506,7 +505,7 @@ class GroupData(SimpleItem):
         else:
             # it's PAS
             group = self.getGroup()
-            sheets = getattr(group, 'getOrderedPropertySheets', lambda: [])()
+            sheets = getattr(group, "getOrderedPropertySheets", lambda: [])()
             for sheet in sheets:
                 if not sheet.hasProperty(prop_name):
                     continue
@@ -531,5 +530,6 @@ class GroupData(SimpleItem):
     @security.private
     def _getPlugins(self):
         return self.acl_users.plugins
+
 
 InitializeClass(GroupData)

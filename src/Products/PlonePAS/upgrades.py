@@ -16,7 +16,7 @@ def from4to5_fix_zope_root(context):
     Fix broken Zope root `/acl_users/` plugins.
     """
     root = context.getPhysicalRoot()
-    pas = root.acl_users.manage_addProduct['PluggableAuthService']
+    pas = root.acl_users.manage_addProduct["PluggableAuthService"]
     # Identify which interfaces should be considered PAS plugin interfaces
     plugin_ifaces = [
         plugin_type_info["interface"]

@@ -4,11 +4,11 @@ from six import BytesIO
 from ZPublisher.HTTPRequest import FileUpload
 
 
-TEXT = b'file data'
+TEXT = b"file data"
 
 
 class FieldStorage(object):
-    def __init__(self, file, filename='testfile', headers=None):
+    def __init__(self, file, filename="testfile", headers=None):
         self.file = file
         if headers is None:
             headers = {}
@@ -18,12 +18,12 @@ class FieldStorage(object):
 
 
 class File(FileUpload):
-    '''Dummy upload object
-       Used to fake uploaded files.
-    '''
+    """Dummy upload object
+    Used to fake uploaded files.
+    """
 
     __allow_access_to_unprotected_subobjects__ = 1
-    filename = 'dummy.txt'
+    filename = "dummy.txt"
     data = TEXT
     headers = {}
 
@@ -47,11 +47,11 @@ class File(FileUpload):
 
 
 class Error(Exception):
-    '''Dummy exception'''
+    """Dummy exception"""
 
 
 class Raiser(SimpleItem):
-    '''Raises the stored exception when called'''
+    """Raises the stored exception when called"""
 
     exception = Error
 

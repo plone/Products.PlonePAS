@@ -20,17 +20,17 @@ def test_suite():
     suite.addTest(
         layered(
             doctest.DocFileSuite(
-                'cookie_auth.rst',
-                package='Products.PlonePAS.tests',
+                "cookie_auth.rst",
+                package="Products.PlonePAS.tests",
                 optionflags=doctest.ELLIPSIS,
                 checker=Py23DocChecker(),
             ),
-            layer=PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
+            layer=PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING,
         )
     )
     suite.addTest(
         doctest.DocTestSuite(
-            'Products.PlonePAS.utils',
+            "Products.PlonePAS.utils",
             optionflags=doctest.ELLIPSIS,
             checker=Py23DocChecker(),
         )

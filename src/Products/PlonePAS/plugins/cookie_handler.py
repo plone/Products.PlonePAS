@@ -29,10 +29,8 @@ from zope.component import getUtility
 from zope.interface import implementer
 
 
-def manage_addExtendedCookieAuthHelper(self, id, title='',
-                                       RESPONSE=None, **kw):
-    """Create an instance of a extended cookie auth helper.
-    """
+def manage_addExtendedCookieAuthHelper(self, id, title="", RESPONSE=None, **kw):
+    """Create an instance of a extended cookie auth helper."""
 
     self = self.this()
 
@@ -41,11 +39,11 @@ def manage_addExtendedCookieAuthHelper(self, id, title='',
     o = getattr(aq_base(self), id)
 
     if RESPONSE is not None:
-        RESPONSE.redirect('manage_workspace')
+        RESPONSE.redirect("manage_workspace")
+
 
 manage_addExtendedCookieAuthHelperForm = DTMLFile(
-    "../zmi/ExtendedCookieAuthHelperForm",
-    globals()
+    "../zmi/ExtendedCookieAuthHelperForm", globals()
 )
 
 
@@ -53,32 +51,30 @@ manage_addExtendedCookieAuthHelperForm = DTMLFile(
     ILoginPasswordHostExtractionPlugin,
     IChallengePlugin,
     ICredentialsUpdatePlugin,
-    ICredentialsResetPlugin
+    ICredentialsResetPlugin,
 )
 class ExtendedCookieAuthHelper(BasePlugin):
     """Multi-plugin which adds ability to override the updating of cookie via
     a setAuthCookie method/script.
     """
 
-    meta_type = 'Extended Cookie Auth Helper'
+    meta_type = "Extended Cookie Auth Helper"
     security = ClassSecurityInfo()
 
     @security.private
     def updateCredentials(self, request, response, login, new_password):
-        """Override standard updateCredentials method
-        """
+        """Override standard updateCredentials method"""
         cookie_val = self.get_cookie_value(login, new_password)
         kw = {}
         registry = getUtility(IRegistry)
-        length = registry.get('plone.auth_cookie_length', '0')
+        length = registry.get("plone.auth_cookie_length", "0")
         try:
             length = int(length)
         except ValueError:
             length = 0
         if length:
-            kw.update(expires=(DateTime() + length).toZone('GMT').rfc822())
-        response.setCookie(
-            self.cookie_name, quote(cookie_val), path='/', **kw)
+            kw.update(expires=(DateTime() + length).toZone("GMT").rfc822())
+        response.setCookie(self.cookie_name, quote(cookie_val), path="/", **kw)
 
     @security.public
     def login(self):
@@ -91,9 +87,9 @@ class ExtendedCookieAuthHelper(BasePlugin):
         login_next.cpy script.
         """
         request = self.REQUEST
-        response = request['RESPONSE']
+        response = request["RESPONSE"]
 
-        password = request.get('__ac_password', '')
+        password = request.get("__ac_password", "")
 
         user = getSecurityManager().getUser()
         login = user.getUserName()
@@ -109,8 +105,7 @@ class ExtendedCookieAuthHelper(BasePlugin):
             # Folder!
             pas_instance = self._getPAS()
             if pas_instance is not None:
-                pas_instance.updateCredentials(request, response, login,
-                                               password)
+                pas_instance.updateCredentials(request, response, login, password)
 
 
 InitializeClass(ExtendedCookieAuthHelper)

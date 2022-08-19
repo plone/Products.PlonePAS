@@ -13,8 +13,7 @@ from zope.interface import implementer
 manage_addAutoGroupForm = PageTemplateFile("../zmi/AutoGroupForm", globals())
 
 
-def manage_addAutoGroup(self, id, title='', group='', description='',
-                        RESPONSE=None):
+def manage_addAutoGroup(self, id, title="", group="", description="", RESPONSE=None):
     """Add an Auto Group plugin."""
 
     plugin = AutoGroup(id, title, group, description)
@@ -23,11 +22,12 @@ def manage_addAutoGroup(self, id, title='', group='', description='',
     if RESPONSE is not None:
         return RESPONSE.redirect(
             "%s/manage_workspace?manage_tabs_message=AutoGroup+plugin+added"
-            % self.absolute_url())
+            % self.absolute_url()
+        )
 
 
 class VirtualGroup(PropertiedUser):
-    def __init__(self, id, title='', description=''):
+    def __init__(self, id, title="", description=""):
         super(VirtualGroup, self).__init__(id)
         self.id = id
         self.title = title
@@ -62,38 +62,27 @@ class VirtualGroup(PropertiedUser):
 
 
 @implementer(
-    IGroupEnumerationPlugin,
-    IGroupsPlugin,
-    IGroupIntrospection,
-    IPropertiesPlugin
+    IGroupEnumerationPlugin, IGroupsPlugin, IGroupIntrospection, IPropertiesPlugin
 )
 class AutoGroup(BasePlugin):
     meta_type = "Automatic Group Plugin"
 
     _properties = (
-        {'id': 'title',
-         'label': 'Title',
-         'type': 'string',
-         'mode': 'w'},
-        {'id': 'group',
-         'label': 'Group',
-         'type': 'string',
-         'mode': 'w'},
-        {'id': 'description',
-         'label': 'Description',
-         'type': 'string',
-         'mode': 'w'},
+        {"id": "title", "label": "Title", "type": "string", "mode": "w"},
+        {"id": "group", "label": "Group", "type": "string", "mode": "w"},
+        {"id": "description", "label": "Description", "type": "string", "mode": "w"},
     )
 
-    def __init__(self, id, title='', group=None, description=''):
+    def __init__(self, id, title="", group=None, description=""):
         self._setId(id)
         self.title = title
         self.group = group
         self.description = description
 
     # IGroupEnumerationPlugin implementation
-    def enumerateGroups(self, id=None, exact_match=False, sort_by=None,
-                        max_results=None, **kw):
+    def enumerateGroups(
+        self, id=None, exact_match=False, sort_by=None, max_results=None, **kw
+    ):
         if kw:
             return []
 
@@ -107,10 +96,14 @@ class AutoGroup(BasePlugin):
             if not exact_match and id not in mygroup:
                 return []
 
-        return [{'id': self.group,
-                 'groupid': self.group,
-                 'title': self.title,
-                 'pluginid': self.getId()}]
+        return [
+            {
+                "id": self.group,
+                "groupid": self.group,
+                "title": self.title,
+                "pluginid": self.getId(),
+            }
+        ]
 
     # IGroupsPlugin implementation
     def getGroupsForPrincipal(self, principal, request=None):
@@ -124,8 +117,7 @@ class AutoGroup(BasePlugin):
         if group_id != self.group:
             return None
 
-        return VirtualGroup(self.group, title=self.title,
-                            description=self.description)
+        return VirtualGroup(self.group, title=self.title, description=self.description)
 
     def getGroups(self):
         return [self.getGroupById(id) for id in self.getGroupIds()]
@@ -139,8 +131,7 @@ class AutoGroup(BasePlugin):
     # IPropertiesPlugin:
     def getPropertiesForUser(self, user, request=None):
         if user == self.group:
-            return {'title': self.title,
-                    'description': self.description}
+            return {"title": self.title, "description": self.description}
         else:
             return {}
 
