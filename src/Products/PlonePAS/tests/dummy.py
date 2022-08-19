@@ -1,5 +1,5 @@
-from OFS.SimpleItem import SimpleItem
 from io import BytesIO
+from OFS.SimpleItem import SimpleItem
 from ZPublisher.HTTPRequest import FileUpload
 
 

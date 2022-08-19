@@ -4,6 +4,7 @@ from AccessControl.User import nobody
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
+from io import BytesIO
 from OFS.Image import Image
 from plone.app.testing import login
 from plone.app.testing import logout
@@ -23,13 +24,11 @@ from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PluggableAuthService.interfaces.events import ICredentialsUpdatedEvent
-from io import BytesIO
 from zExceptions import BadRequest
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 
 import os
-import six
 import unittest
 
 
@@ -133,8 +132,6 @@ class MembershipToolTest(unittest.TestCase):
         cleaned = cleanId("abc")
         self.assertEqual(cleaned, "abc")
         self.assertTrue(isinstance(cleaned, str))
-        if six.PY2:
-            self.assertFalse(isinstance(cleaned, str))
 
 
 class MemberAreaTest(unittest.TestCase):

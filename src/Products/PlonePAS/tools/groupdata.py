@@ -29,7 +29,6 @@ from zope.interface import implementer
 from ZPublisher.Converters import type_converters
 
 import logging
-import six
 
 
 logger = logging.getLogger("PlonePAS")
@@ -179,9 +178,7 @@ class GroupData(SimpleItem):
                 # getGroupById from Products.PlonePAS.pas
                 # The returned object is already wrapped
                 if not usr:
-                    logger.debug(
-                        f"Group has a non-existing principal {u_name}"
-                    )
+                    logger.debug(f"Group has a non-existing principal {u_name}")
                     continue
                 ret.append(usr)
             else:
@@ -201,9 +198,7 @@ class GroupData(SimpleItem):
             if not usr:
                 usr = self._getGRUF().getGroupById(u_name)
                 if not usr:
-                    logger.debug(
-                        f"Group has a non-existing principal {u_name}"
-                    )
+                    logger.debug(f"Group has a non-existing principal {u_name}")
                     continue
                 ret.append(usr)
             else:

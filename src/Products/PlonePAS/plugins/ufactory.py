@@ -2,6 +2,7 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from AccessControl.PermissionRole import _what_not_even_god_should_do
 from App.special_dtml import DTMLFile
+from collections import OrderedDict
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
@@ -12,13 +13,6 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from zope.interface import implementer
 
-import six
-
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    from ordereddict import OrderedDict
 
 manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals())
 
@@ -222,16 +216,7 @@ class PloneUser(PropertiedUser):
     def getProperty(self, id, default=_marker):
         for sheet in self.getOrderedPropertySheets():
             if sheet.hasProperty(id):
-                value = sheet.getProperty(id)
-                if six.PY2 and isinstance(value, str):
-                    # XXX Temporarily work around the fact that
-                    # property sheets blindly store and return
-                    # unicode. This is sub-optimal and should be
-                    # dealed with at the property sheets level by
-                    # using Zope's converters.
-                    return value.encode("utf-8")
-                return value
-
+                return sheet.getProperty(id)
         return default
 
 

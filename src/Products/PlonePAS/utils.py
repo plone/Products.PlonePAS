@@ -1,9 +1,8 @@
+from io import BytesIO
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from io import BytesIO
-from six.moves import urllib
 
-import six
+import urrlib
 
 
 def unique(iterable):
@@ -43,7 +42,7 @@ def scale_image(image_file, max_size=None, default_format=None):
 
         >>> from Products.PlonePAS import config
         >>> import os
-        >>> from six import BytesIO
+        >>> from io import BytesIO
         >>> from Products.PlonePAS.utils import scale_image
         >>> from PIL import Image
 

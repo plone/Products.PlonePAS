@@ -19,7 +19,6 @@ from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 
 import copy
-import six
 
 
 _ = MessageFactory("plone")
@@ -180,7 +179,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 property_type, properties[name]
             ):
                 raise ValueError(
-                    "Invalid value: {} does not conform to {}".format(name, property_type)
+                    "Invalid value: {} does not conform to {}".format(
+                        name, property_type
+                    )
                 )
 
         allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]

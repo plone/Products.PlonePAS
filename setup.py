@@ -12,20 +12,14 @@ longdescription += "\n"
 longdescription += open("CHANGES.rst").read()
 
 install_requires = [
-    "DateTime",
+    "plone.base",
     "plone.i18n",
     "plone.memoize",
     "plone.protect>=2.0.3",
-    "plone.registry",
     "plone.session",
-    "Products.CMFCore",
     "Products.GenericSetup",
     "Products.PluggableAuthService>=2.0b2.dev0",
     "setuptools",
-    "six",
-    "zope.component",
-    "zope.deprecation",
-    "Zope",
 ]
 
 setup(

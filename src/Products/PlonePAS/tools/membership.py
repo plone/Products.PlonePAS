@@ -9,6 +9,7 @@ from Acquisition import aq_inner
 from Acquisition import aq_parent
 from App.special_dtml import DTMLFile
 from DateTime import DateTime
+from io import BytesIO
 from OFS.Image import Image
 from plone.protect.interfaces import IDisableCSRFProtection
 from Products.CMFCore.interfaces import IPropertiesTool
@@ -29,7 +30,6 @@ from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
-from io import BytesIO
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 from zope import event
@@ -38,7 +38,6 @@ from zope.interface import alsoProvides
 from zope.interface import implementer
 
 import logging
-import six
 import transaction
 
 
@@ -763,8 +762,6 @@ class MembershipTool(BaseTool):
         for member_id in tuple(portraits.keys()):
             portrait = portraits[member_id]
             portrait_data = portrait.data
-            if six.PY2:
-                portrait_data = str(portrait.data)
             if not portrait_data:
                 continue
             if not HAS_PIL:

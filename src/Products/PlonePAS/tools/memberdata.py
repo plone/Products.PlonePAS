@@ -26,8 +26,6 @@ from zope.component import adapter
 from zope.event import notify
 from zope.interface import implementer
 
-import six
-
 
 @implementer(IMemberDataTool)
 class MemberDataTool(BaseTool):
@@ -117,9 +115,7 @@ class MemberDataTool(BaseTool):
             # Set its properties
             mbr = self._members.get(member_name, None)
             if not mbr:
-                raise RuntimeError(
-                    f"Error while upgrading user '{member_name}'."
-                )
+                raise RuntimeError(f"Error while upgrading user '{member_name}'.")
             mbr.setProperties(values, force_local=1)
             count += 1
 
@@ -313,15 +309,7 @@ class MemberData(BaseMemberAdapter):
         for sheet in sheets:
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
-                value = sheet.getProperty(id)
-                if six.PY2 and isinstance(value, str):
-                    # XXX Temporarily work around the fact that
-                    # property sheets blindly store and return
-                    # unicode. This is sub-optimal and should be
-                    # dealed with at the property sheets level by
-                    # using Zope's converters.
-                    return value.encode("utf-8")
-                return value
+                return sheet.getProperty(id)
 
         # Couldn't find the property in the property sheets. Try to
         # delegate back to the base implementation.

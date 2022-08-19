@@ -10,8 +10,6 @@ from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from zope.component import getUtility
 from zope.interface import implementer
 
-import six
-
 
 class PropertyValueError(ValueError):
     pass
@@ -49,9 +47,7 @@ PropertySchema.addType("int", lambda x: x is None or isinstance(x, int))
 PropertySchema.addType("long", lambda x: x is None or isinstance(x, long))
 PropertySchema.addType("float", lambda x: x is None or isinstance(x, float))
 PropertySchema.addType("lines", lambda x: x is None or isinstance(x, (tuple, list)))
-PropertySchema.addType(
-    "selection", lambda x: x is None or isinstance(x, str)
-)
+PropertySchema.addType("selection", lambda x: x is None or isinstance(x, str))
 PropertySchema.addType(
     "multiple selection", lambda x: x is None or isinstance(x, (tuple, list))
 )
