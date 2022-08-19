@@ -1,15 +1,14 @@
-# -*- coding: utf-8 -*-
 """
 Test set up specific to Plone through thea GenericSetup profile installation.
 """
 
 from plone.app import testing as pa_testing
 from plone.testing import zope
-from zope.component import hooks
 from Products.PlonePAS import testing
 from Products.PluggableAuthService.interfaces import plugins as plugins_ifaces
 from Products.PluggableAuthService.plugins import CookieAuthHelper
 from Products.PluggableAuthService.plugins import HTTPBasicAuthHelper
+from zope.component import hooks
 
 import transaction
 import unittest
@@ -72,7 +71,7 @@ class PortalSetupTest(unittest.TestCase):
         The Zope root `/acl_users` cookie login works.
         """
         # Install the GenericSetup profile that performs the actual switch
-        pa_testing.applyProfile(self.portal, 'Products.PlonePAS:root-cookie')
+        pa_testing.applyProfile(self.portal, "Products.PlonePAS:root-cookie")
         transaction.commit()
 
         # Make the cookie plugin the default auth challenge

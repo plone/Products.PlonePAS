@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Mutable Property Provider
 """
@@ -11,23 +10,23 @@ from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 from Products.PlonePAS.sheet import MutablePropertySheet
 from Products.PlonePAS.sheet import validateValue
 from Products.PlonePAS.utils import safe_unicode
-from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from ZODB.PersistentMapping import PersistentMapping
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 
 import copy
-import six
-
-_ = MessageFactory('plone')
 
 
-def manage_addZODBMutablePropertyProvider(self, id, title='',
-                                          RESPONSE=None, schema=None, **kw):
+_ = MessageFactory("plone")
+
+
+def manage_addZODBMutablePropertyProvider(
+    self, id, title="", RESPONSE=None, schema=None, **kw
+):
     """
     Create an instance of a mutable property manager.
     """
@@ -35,32 +34,30 @@ def manage_addZODBMutablePropertyProvider(self, id, title='',
     self._setObject(o.getId(), o)
 
     if RESPONSE is not None:
-        RESPONSE.redirect('manage_workspace')
+        RESPONSE.redirect("manage_workspace")
+
 
 manage_addZODBMutablePropertyProviderForm = DTMLFile(
-    "../zmi/MutablePropertyProviderForm", globals())
+    "../zmi/MutablePropertyProviderForm", globals()
+)
 
 
 def isStringType(data):
-    return isinstance(data, str) or isinstance(data, six.text_type)
+    return isinstance(data, str) or isinstance(data, str)
 
 
-@implementer(
-    IPropertiesPlugin,
-    IUserEnumerationPlugin,
-    IMutablePropertiesPlugin
-)
+@implementer(IPropertiesPlugin, IUserEnumerationPlugin, IMutablePropertiesPlugin)
 class ZODBMutablePropertyProvider(BasePlugin):
     """Storage for mutable properties in the ZODB for users/groups.
 
     API sounds like it's only for users, but groups work as well.
     """
 
-    meta_type = 'ZODB Mutable Property Provider'
+    meta_type = "ZODB Mutable Property Provider"
 
     security = ClassSecurityInfo()
 
-    def __init__(self, id, title='', schema=None, **kw):
+    def __init__(self, id, title="", schema=None, **kw):
         """Create in-ZODB mutable property provider.
 
         Provide a schema either as a list of (name,type,value) tuples
@@ -106,7 +103,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
             # Don't fail badly if tool is not available.
             if mdtool is not None:
                 mdschema = mdtool.propertyMap()
-                schema = [(elt['id'], elt['type']) for elt in mdschema]
+                schema = [(elt["id"], elt["type"]) for elt in mdschema]
         return schema
 
     def _getDefaultValues(self, isgroup=None):
@@ -154,7 +151,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
         NOTE: Must always return something, or else the property sheet
         won't get created and this will screw up portal_memberdata.
         """
-        isGroup = getattr(user, 'isGroup', lambda: None)()
+        isGroup = getattr(user, "isGroup", lambda: None)()
 
         data = self._storage.get(user.getId())
         defaults = self._getDefaultValues(isGroup)
@@ -166,37 +163,36 @@ class ZODBMutablePropertyProvider(BasePlugin):
             if key not in data:
                 data[key] = val
 
-        return MutablePropertySheet(self.id,
-                                    schema=self._getSchema(isGroup), **data)
+        return MutablePropertySheet(self.id, schema=self._getSchema(isGroup), **data)
 
     @security.private
     def setPropertiesForUser(self, user, propertysheet):
         """Set the properties of a user or group based on the contents of a
         property sheet.
         """
-        isGroup = getattr(user, 'isGroup', lambda: None)()
+        isGroup = getattr(user, "isGroup", lambda: None)()
 
         properties = dict(propertysheet.propertyItems())
 
         for name, property_type in self._getSchema(isGroup) or ():
-            if (
-                name in properties and not
-                validateValue(property_type, properties[name])
+            if name in properties and not validateValue(
+                property_type, properties[name]
             ):
                 raise ValueError(
-                    'Invalid value: %s does not conform to %s' %
-                    (name, property_type)
+                    "Invalid value: {} does not conform to {}".format(
+                        name, property_type
+                    )
                 )
 
         allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]
         if allowed_prop_keys:
             prop_names = set(properties.keys()) - set(allowed_prop_keys)
             if prop_names:
-                raise ValueError('Unknown Properties: %r' % prop_names)
+                raise ValueError("Unknown Properties: %r" % prop_names)
 
         userid = user.getId()
         userprops = self._storage.get(userid)
-        properties.update({'isGroup': isGroup})
+        properties.update({"isGroup": isGroup})
         if userprops is not None:
             userprops.update(properties)
             # notify persistence machinery of change
@@ -206,8 +202,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
     @security.private
     def deleteUser(self, user_id):
-        """Delete all user properties
-        """
+        """Delete all user properties"""
         # Do nothing if an unknown user_id is given
         try:
             del self._storage[user_id]
@@ -216,8 +211,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
     @security.private
     def testMemberData(self, memberdata, criteria, exact_match=False):
-        """Test if a memberdata matches the search criteria.
-        """
+        """Test if a memberdata matches the search criteria."""
         for (key, value) in criteria.items():
             testvalue = memberdata.get(key, None)
             if testvalue is None:
@@ -244,10 +238,8 @@ class ZODBMutablePropertyProvider(BasePlugin):
         return True
 
     @security.private
-    def enumerateUsers(self, id=None, login=None,
-                       exact_match=False, **kw):
-        """ See IUserEnumerationPlugin.
-        """
+    def enumerateUsers(self, id=None, login=None, exact_match=False, **kw):
+        """See IUserEnumerationPlugin."""
         plugin_id = self.getId()
 
         # This plugin can't search for a user by id or login, because there is
@@ -258,21 +250,29 @@ class ZODBMutablePropertyProvider(BasePlugin):
 
         criteria = copy.copy(kw)
 
-        users = [(user, data) for (user, data) in self._storage.items()
-                 if self.testMemberData(data, criteria, exact_match)
-                 and not data.get('isGroup', False)]
+        users = [
+            (user, data)
+            for (user, data) in self._storage.items()
+            if self.testMemberData(data, criteria, exact_match)
+            and not data.get("isGroup", False)
+        ]
 
-        user_info = [{'id': self.prefix + user_id,
-                      'login': user_id,
-                      'title': data.get('fullname', user_id),
-                      'description': data.get('fullname', user_id),
-                      'email': data.get('email', ''),
-                      'pluginid': plugin_id} for (user_id, data) in users]
+        user_info = [
+            {
+                "id": self.prefix + user_id,
+                "login": user_id,
+                "title": data.get("fullname", user_id),
+                "description": data.get("fullname", user_id),
+                "email": data.get("email", ""),
+                "pluginid": plugin_id,
+            }
+            for (user_id, data) in users
+        ]
 
         return tuple(user_info)
 
     def updateUser(self, user_id, login_name):
-        """ Update the login name of the user with id user_id.
+        """Update the login name of the user with id user_id.
 
         This is a new part of the IUserEnumerationPlugin interface, but
         not interesting for us.

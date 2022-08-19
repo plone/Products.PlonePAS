@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
@@ -9,12 +8,11 @@ from zope.interface import implementer
 
 @implementer(IPASSearchView)
 class PASSearchView(BrowserView):
-
     @staticmethod
     def extractCriteriaFromRequest(request):
         criteria = request.form.copy()
 
-        for key in ["form.submitted", "submit", 'b_start', 'b_size']:
+        for key in ["form.submitted", "submit", "b_start", "b_size"]:
             if key in criteria:
                 del criteria[key]
 
@@ -43,6 +41,7 @@ class PASSearchView(BrowserView):
 
         def key_func(a):
             return idnormalizer.normalize(a.get(sort_key, a))
+
         return sorted(results, key=key_func)
 
     def searchUsers(self, sort_by=None, **criteria):

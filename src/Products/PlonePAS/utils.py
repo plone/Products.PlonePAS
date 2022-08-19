@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
+from io import BytesIO
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from six import BytesIO
-from six.moves import urllib
 
-import six
+import urllib
 
 
 def unique(iterable):
@@ -24,18 +22,18 @@ def cleanId(id):
     __traceback_info__ = (id,)
     if id:
         # note: we provide the 'safe' param to get '/' encoded
-        if isinstance(id, six.text_type):
-            id = id.encode('utf-8')
-        return urllib.parse.quote(id, '').replace('-', '--').replace('%', '-')
-    return ''
+        if isinstance(id, str):
+            id = id.encode("utf-8")
+        return urllib.parse.quote(id, "").replace("-", "--").replace("%", "-")
+    return ""
 
 
 def decleanId(id):
     """Reverse cleanId."""
     if id:
-        id = id.replace('--', '\x00').replace('-', '%').replace('\x00', '-')
+        id = id.replace("--", "\x00").replace("-", "%").replace("\x00", "-")
         return urllib.parse.unquote(id)
-    return ''
+    return ""
 
 
 def scale_image(image_file, max_size=None, default_format=None):
@@ -44,7 +42,7 @@ def scale_image(image_file, max_size=None, default_format=None):
 
         >>> from Products.PlonePAS import config
         >>> import os
-        >>> from six import BytesIO
+        >>> from io import BytesIO
         >>> from Products.PlonePAS.utils import scale_image
         >>> from PIL import Image
 
@@ -135,9 +133,9 @@ def scale_image(image_file, max_size=None, default_format=None):
     from PIL import Image
 
     if max_size is None:
-        max_size = IMAGE_SCALE_PARAMS['scale']
+        max_size = IMAGE_SCALE_PARAMS["scale"]
     if default_format is None:
-        default_format = IMAGE_SCALE_PARAMS['default_format']
+        default_format = IMAGE_SCALE_PARAMS["default_format"]
     # Make sure we have ints
     size = (int(max_size[0]), int(max_size[1]))
     # Load up the image, don't try to catch errors, we want to fail miserably
@@ -145,7 +143,7 @@ def scale_image(image_file, max_size=None, default_format=None):
     image = Image.open(image_file)
     # When might image.format not be true?
     format = image.format
-    mimetype = 'image/%s' % format.lower()
+    mimetype = "image/%s" % format.lower()
 
     # from Archetypes ImageField
     # consider image mode when scaling
@@ -155,19 +153,19 @@ def scale_image(image_file, max_size=None, default_format=None):
     # for palletted-only image formats, e.g. GIF
     # PNG compression is OK for RGBA thumbnails
     original_mode = image.mode
-    if original_mode == '1':
-        image = image.convert('L')
-    elif original_mode == 'P':
-        image = image.convert('RGBA')
+    if original_mode == "1":
+        image = image.convert("L")
+    elif original_mode == "P":
+        image = image.convert("RGBA")
     # Rescale in place with an method that will not alter the aspect ratio
     # and will only shrink the image not enlarge it.
-    image.thumbnail(size, resample=IMAGE_SCALE_PARAMS['algorithm'])
+    image.thumbnail(size, resample=IMAGE_SCALE_PARAMS["algorithm"])
     # preserve palletted mode for GIF and PNG
-    if original_mode == 'P' and format in ('GIF', 'PNG'):
-        image = image.convert('P')
+    if original_mode == "P" and format in ("GIF", "PNG"):
+        image = image.convert("P")
     # Save
     new_file = BytesIO()
-    image.save(new_file, format, quality=IMAGE_SCALE_PARAMS['quality'])
+    image.save(new_file, format, quality=IMAGE_SCALE_PARAMS["quality"])
     new_file.seek(0)
     # Return the file data and the new mimetype
     return new_file, mimetype
@@ -180,16 +178,15 @@ def getGroupsForPrincipal(principal, plugins, request=None):
     return list(groups)
 
 
-def safe_unicode(value, encoding='utf-8'):
-    """Converts a value to unicode, even it is already a unicode string.
-    """
-    if isinstance(value, six.text_type):
+def safe_unicode(value, encoding="utf-8"):
+    """Converts a value to unicode, even it is already a unicode string."""
+    if isinstance(value, str):
         return value
-    elif isinstance(value, six.string_types):
+    elif isinstance(value, str):
         try:
-            value = six.text_type(value, encoding)
+            value = str(value, encoding)
         except UnicodeDecodeError:
-            value = value.decode('utf-8', 'replace')
+            value = value.decode("utf-8", "replace")
     return value
 
 

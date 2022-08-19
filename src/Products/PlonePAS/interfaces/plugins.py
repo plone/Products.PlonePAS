@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.PluggableAuthService.interfaces import plugins
 from Products.PluggableAuthService.interfaces.plugins import Interface
 
@@ -120,7 +119,6 @@ class IMutablePropertiesPlugin(Interface):
 
 
 class ISchemaMutablePropertiesPlugin(Interface):
-
     def addProperty(property_type, property_name, default=None):
         """
         Add a new property to a property provider.

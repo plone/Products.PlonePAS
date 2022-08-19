@@ -1,17 +1,17 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from plone.memoize.instance import memoize
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PlonePAS.interfaces.browser import IPASInfoView
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
-from Products.PluggableAuthService.interfaces.plugins import ILoginPasswordExtractionPlugin  # noqa: E501
+from Products.PluggableAuthService.interfaces.plugins import (  # noqa: E501
+    ILoginPasswordExtractionPlugin,
+)
 from zope.interface import implementer
 
 
 @implementer(IPASInfoView)
 class PASInfoView(BrowserView):
-
     def checkExtractorForInterface(self, interface):
         acl = getToolByName(aq_inner(self.context), "acl_users")
         plugins = acl.plugins.listPlugins(IExtractionPlugin)
