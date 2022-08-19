@@ -11,17 +11,17 @@ from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 from Products.PlonePAS.sheet import MutablePropertySheet
 from Products.PlonePAS.sheet import validateValue
 from Products.PlonePAS.utils import safe_unicode
-from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.UserPropertySheet import _guessSchema
 from ZODB.PersistentMapping import PersistentMapping
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 
 import copy
 import six
+
 
 _ = MessageFactory('plone')
 

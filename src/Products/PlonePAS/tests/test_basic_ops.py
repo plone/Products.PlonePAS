@@ -5,7 +5,9 @@ from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
-from Products.PluggableAuthService.PluggableAuthService import  _SWALLOWABLE_PLUGIN_EXCEPTIONS
+from Products.PluggableAuthService.PluggableAuthService import (
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS,
+)
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 
@@ -129,8 +131,9 @@ class BasicOpsTestCase(unittest.TestCase):
         uf.userSetPassword('created_user', new_secret)
 
         # possible to authenticate with new password?
-        from Products.PluggableAuthService.interfaces.plugins \
-            import IAuthenticationPlugin
+        from Products.PluggableAuthService.interfaces.plugins import (
+            IAuthenticationPlugin,
+        )
         authenticators = uf.plugins.listPlugins(IAuthenticationPlugin)
         credentials = {'login': 'created_user', 'password': new_secret}
         result = None

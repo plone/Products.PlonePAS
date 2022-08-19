@@ -11,6 +11,7 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 
+
 _ = MessageFactory('plone')
 
 manage_addPasswordPolicyForm = PageTemplateFile(

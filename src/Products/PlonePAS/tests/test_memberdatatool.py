@@ -2,17 +2,15 @@
 from DateTime import DateTime
 from OFS.Image import Image
 from plone.app.testing import TEST_USER_ID as default_user
-from Products.PlonePAS.tests import dummy
-from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
-from zope.component import getGlobalSiteManager
-from zope.component import getMultiAdapter
 from Products.CMFCore.interfaces import IMember
 from Products.CMFCore.interfaces import IMemberData
-from Products.PluggableAuthService.interfaces.events import \
-        IPropertiesUpdatedEvent
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+from Products.PlonePAS.tests import dummy
+from Products.PluggableAuthService.interfaces.events import IPropertiesUpdatedEvent
+from zope.component import getGlobalSiteManager
+from zope.component import getMultiAdapter
 
 import unittest
-
 
 
 class TestMemberDataTool(unittest.TestCase):

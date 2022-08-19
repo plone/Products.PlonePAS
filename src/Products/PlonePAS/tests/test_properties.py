@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
+from plone.app.testing import login
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
-from plone.app.testing import login
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.plugins.property import ZODBMutablePropertyProvider
-from Products.PluggableAuthService.interfaces.plugins import \
-    IUserEnumerationPlugin
 from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 
 import unittest
 

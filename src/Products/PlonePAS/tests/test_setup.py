@@ -5,11 +5,11 @@ Test set up specific to Plone through thea GenericSetup profile installation.
 
 from plone.app import testing as pa_testing
 from plone.testing import zope
-from zope.component import hooks
 from Products.PlonePAS import testing
 from Products.PluggableAuthService.interfaces import plugins as plugins_ifaces
 from Products.PluggableAuthService.plugins import CookieAuthHelper
 from Products.PluggableAuthService.plugins import HTTPBasicAuthHelper
+from zope.component import hooks
 
 import transaction
 import unittest

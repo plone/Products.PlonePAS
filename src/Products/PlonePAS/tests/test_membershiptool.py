@@ -6,14 +6,14 @@ from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
 from OFS.Image import Image
+from plone.app.testing import login
+from plone.app.testing import logout
 from plone.app.testing import PLONE_SITE_ID
+from plone.app.testing import setRoles
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
-from plone.app.testing import login
-from plone.app.testing import logout
-from plone.app.testing import setRoles
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.browser.member import PASMemberView
 from Products.PlonePAS.interfaces.membership import IMembershipTool
@@ -23,14 +23,11 @@ from Products.PlonePAS.tests import dummy
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
-from Products.PluggableAuthService.interfaces.events import \
-    ICredentialsUpdatedEvent
+from Products.PluggableAuthService.interfaces.events import ICredentialsUpdatedEvent
 from six import BytesIO
+from zExceptions import BadRequest
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
-from zExceptions import BadRequest
-from plone.app.testing import TEST_USER_ID
-
 
 import os
 import six
@@ -69,7 +66,9 @@ class MembershipToolTest(unittest.TestCase):
 
     def test_get_member_by_id(self):
         from Products.PluggableAuthService.PluggableAuthService import (
-            PluggableAuthService)
+            PluggableAuthService,
+        )
+
         # Use tool way of getting member by id. This returns a
         # MemberData object wrapped by PAS (used to be wrapped by member).
         member = self.mt.getMemberById(self.member_id)
@@ -78,7 +77,8 @@ class MembershipToolTest(unittest.TestCase):
         self.assertTrue(isinstance(aq_parent(member), PluggableAuthService))
 
     def test_id_clean(self):
-        from Products.PlonePAS.utils import cleanId, decleanId
+        from Products.PlonePAS.utils import cleanId
+        from Products.PlonePAS.utils import decleanId
         a = [
             "asdfasdf",
             "asdf-asdf",

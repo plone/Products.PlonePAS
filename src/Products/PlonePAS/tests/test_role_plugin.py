@@ -2,17 +2,15 @@
 # $Id$
 """Tests for Products.PlonePAS.plugins.role.GroupAwareRoleManager"""
 
-from Products.PluggableAuthService.PluggableAuthService import \
-    _PLUGIN_TYPE_INFO
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
+from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.plugins.tests.helpers import DummyUser
 from Products.PluggableAuthService.plugins.tests.helpers import FauxPAS
-from Products.PluggableAuthService.plugins.tests.helpers import \
-    makeRequestAndResponse
+from Products.PluggableAuthService.plugins.tests.helpers import makeRequestAndResponse
 from Products.PluginRegistry.PluginRegistry import PluginRegistry
 from zope.interface import implementer
-from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
 import unittest
 

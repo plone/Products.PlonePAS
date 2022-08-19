@@ -3,9 +3,8 @@ from AccessControl import Permissions
 from AccessControl import Unauthorized
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from plone.app.testing import setRoles
 from plone.app.testing import logout
-from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.plugins.group import PloneGroup

@@ -5,7 +5,9 @@ from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PlonePAS.interfaces.browser import IPASInfoView
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
-from Products.PluggableAuthService.interfaces.plugins import ILoginPasswordExtractionPlugin  # noqa: E501
+from Products.PluggableAuthService.interfaces.plugins import (  # noqa: E501
+    ILoginPasswordExtractionPlugin,
+)
 from zope.interface import implementer
 
 

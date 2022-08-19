@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
+from AccessControl import getSecurityManager
 from AccessControl import Permissions
 from AccessControl import Unauthorized
-from AccessControl import getSecurityManager
+from AccessControl.class_init import InitializeClass
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from AccessControl.class_init import InitializeClass
 from BTrees.OOBTree import OOBTree
 from OFS.PropertyManager import PropertyManager
 from OFS.SimpleItem import SimpleItem
-from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import UniqueObject
 from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IManageCapabilities
 from Products.PlonePAS.interfaces.group import IGroupData
@@ -22,15 +22,16 @@ from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.utils import CleanupTemp
-from Products.PluggableAuthService.PluggableAuthService import \
-    _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.authservice import \
-    IPluggableAuthService
-from ZPublisher.Converters import type_converters
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.PluggableAuthService import (
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS,
+)
 from zope.interface import implementer
+from ZPublisher.Converters import type_converters
 
 import logging
 import six
+
 
 logger = logging.getLogger('PlonePAS')
 _marker = object()

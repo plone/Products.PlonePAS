@@ -5,16 +5,18 @@ Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
 
 """
+from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from OFS.Folder import Folder
 from Products.CMFCore.CookieCrumbler import manage_addCC
 from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from zope.interface import implementer
+
 import logging
+
 
 logger = logging.getLogger('PlonePAS')
 

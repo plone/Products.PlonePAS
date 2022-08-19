@@ -2,9 +2,9 @@
 from AccessControl import Permissions
 from AccessControl import Unauthorized
 from Acquisition import aq_parent
+from plone.app.testing import logout
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
-from plone.app.testing import logout
 from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
 import unittest

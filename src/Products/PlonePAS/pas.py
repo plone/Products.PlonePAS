@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # pas alterations and monkies
-from AccessControl import Unauthorized
 from AccessControl import getSecurityManager
+from AccessControl import Unauthorized
 from AccessControl.PermissionRole import PermissionRole
 from AccessControl.Permissions import change_permissions
 from AccessControl.Permissions import manage_properties
@@ -17,23 +17,20 @@ from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.patch import ORIG_NAME
 from Products.PlonePAS.patch import wrap_method
-from Products.PluggableAuthService.PluggableAuthService import \
-    PluggableAuthService
-from Products.PluggableAuthService.PluggableAuthService import \
-    _SWALLOWABLE_PLUGIN_EXCEPTIONS
 from Products.PluggableAuthService.events import PrincipalDeleted
-from Products.PluggableAuthService.interfaces.authservice import \
-    IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins import \
-    IAuthenticationPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IRoleAssignerPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IUserEnumerationPlugin
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.plugins import IAuthenticationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
+from Products.PluggableAuthService.PluggableAuthService import (
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS,
+)
+from Products.PluggableAuthService.PluggableAuthService import PluggableAuthService
 from zope.event import notify
+
 import logging
+
 
 logger = logging.getLogger('PlonePAS')
 

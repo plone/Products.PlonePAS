@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
+from AccessControl.class_init import InitializeClass
 from AccessControl.interfaces import IUser
 from AccessControl.requestmethod import postonly
-from AccessControl.class_init import InitializeClass
 from Products.BTreeFolder2.BTreeFolder2 import BTreeFolder2
 from Products.CMFCore.interfaces import IMember
 from Products.CMFCore.MemberDataTool import _marker
@@ -20,11 +20,9 @@ from Products.PlonePAS.interfaces.memberdata import IMemberDataTool
 from Products.PlonePAS.interfaces.plugins import IUserManagement
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.events import PropertiesUpdated
-from Products.PluggableAuthService.interfaces.authservice import \
-    IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
-from Products.PluggableAuthService.interfaces.plugins import \
-    IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
 from zope.component import adapter
 from zope.event import notify
 from zope.interface import implementer

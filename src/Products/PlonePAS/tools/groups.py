@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
-from AccessControl.users import nobody
+from AccessControl.class_init import InitializeClass
 from AccessControl.requestmethod import postonly
+from AccessControl.users import nobody
 from Acquisition import aq_base
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from AccessControl.class_init import InitializeClass
 from OFS.SimpleItem import SimpleItem
-from Products.CMFCore.utils import UniqueObject
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.utils import registerToolInterface
+from Products.CMFCore.utils import UniqueObject
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.permissions import AddGroups
 from Products.PlonePAS.permissions import DeleteGroups
@@ -18,14 +18,16 @@ from Products.PlonePAS.permissions import SetGroupOwnership
 from Products.PlonePAS.permissions import ViewGroups
 from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PluggableAuthService.events import GroupDeleted
-from Products.PluggableAuthService.PluggableAuthService import \
-    _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.plugins import \
-    IRoleAssignerPlugin
+from Products.PluggableAuthService.interfaces.plugins import IRoleAssignerPlugin
+from Products.PluggableAuthService.PluggableAuthService import (
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS,
+)
 from ZODB.POSException import ConflictError
-from zope.interface import implementer
 from zope.event import notify
+from zope.interface import implementer
+
 import logging
+
 
 logger = logging.getLogger('PluggableAuthService')
 

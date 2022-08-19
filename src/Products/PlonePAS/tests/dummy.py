@@ -3,6 +3,7 @@ from OFS.SimpleItem import SimpleItem
 from six import BytesIO
 from ZPublisher.HTTPRequest import FileUpload
 
+
 TEXT = b'file data'
 
 

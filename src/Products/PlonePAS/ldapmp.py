@@ -3,6 +3,7 @@ from Products.PlonePAS.patch import call
 from Products.PlonePAS.patch import wrap_method
 from Products.PlonePAS.plugins.group import PloneGroup
 
+
 GROUP_PROPERTY_MAP = {
     # target property: (possible key, ...)
     'title': ('name',

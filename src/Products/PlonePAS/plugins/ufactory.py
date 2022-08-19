@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
-from AccessControl.PermissionRole import _what_not_even_god_should_do
 from AccessControl.class_init import InitializeClass
+from AccessControl.PermissionRole import _what_not_even_god_should_do
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
-from Products.PluggableAuthService.PropertiedUser import PropertiedUser
-from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserFactoryPlugin
-from Products.PluggableAuthService.interfaces.propertysheets \
-    import IPropertySheet
+from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.PropertiedUser import PropertiedUser
+from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from zope.interface import implementer
 
 import six
+
 
 try:
     from collections import OrderedDict

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from zope.deprecation import deprecation
+
 import logging
+
 
 logger = logging.getLogger('PlonePAS')
 

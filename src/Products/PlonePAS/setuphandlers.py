@@ -5,26 +5,27 @@ Custom GenericSetup import steps for PAS in Plone.
 
 from Acquisition import aq_base
 from Acquisition import aq_parent
+from plone.session.plugins.session import manage_addSessionPlugin
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import interfaces as plone_ifaces
 from Products.PlonePAS import config
-from Products.PlonePAS.plugins import cookie_handler
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
 from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.interfaces.plugins import IUserManagement
+from Products.PlonePAS.plugins import cookie_handler
 from Products.PluggableAuthService.Extensions.upgrade import replace_acl_users
-from Products.PluggableAuthService.interfaces.authservice \
-    import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
 from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import ICredentialsResetPlugin
+from Products.PluggableAuthService.interfaces.plugins import ICredentialsResetPlugin
 from Products.PluggableAuthService.plugins import CookieAuthHelper
-from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin \
-    import addRecursiveGroupsPlugin
-from plone.session.plugins.session import manage_addSessionPlugin
+from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin import (
+    addRecursiveGroupsPlugin,
+)
 from zope import component
+
 import logging
+
 
 logger = logging.getLogger('PlonePAS setup')
 
@@ -341,8 +342,7 @@ def migrate_root_uf(self):
 
 
 def pas_fixup(self):
-    from Products.PluggableAuthService.PluggableAuthService \
-        import _PLUGIN_TYPE_INFO
+    from Products.PluggableAuthService.PluggableAuthService import _PLUGIN_TYPE_INFO
 
     pas = getToolByName(self, 'acl_users')
     if not IPluggableAuthService.providedBy(pas):

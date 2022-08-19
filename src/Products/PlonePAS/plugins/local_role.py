@@ -7,13 +7,12 @@ roles from their containment structure.
 
 """
 from AccessControl import ClassSecurityInfo
+from AccessControl.class_init import InitializeClass
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
-from Products.PluggableAuthService.plugins.LocalRolePlugin \
-    import LocalRolePlugin
+from Products.PluggableAuthService.plugins.LocalRolePlugin import LocalRolePlugin
 from zope.interface import implementer
 
 

@@ -4,6 +4,7 @@ ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
 """
+from .ufactory import PloneUser
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
@@ -13,18 +14,17 @@ from Products.PlonePAS.interfaces.capabilities import IDeleteCapability
 from Products.PlonePAS.interfaces.capabilities import IGroupCapability
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
 from Products.PlonePAS.interfaces.group import IGroupManagement
-from Products.PluggableAuthService.PluggableAuthService \
-    import _SWALLOWABLE_PLUGIN_EXCEPTIONS
-from Products.PluggableAuthService.interfaces.plugins \
-    import IGroupEnumerationPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IRolesPlugin
-from Products.PluggableAuthService.plugins.ZODBGroupManager \
-    import ZODBGroupManager
-from .ufactory import PloneUser
+from Products.PluggableAuthService.PluggableAuthService import (
+    _SWALLOWABLE_PLUGIN_EXCEPTIONS,
+)
+from Products.PluggableAuthService.plugins.ZODBGroupManager import ZODBGroupManager
 from zope.interface import implementer
+
 import logging
+
 
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
 logger = logging.getLogger('PlonePAS')

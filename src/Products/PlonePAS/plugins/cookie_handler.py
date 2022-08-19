@@ -6,29 +6,27 @@ PluggableAuthService but overrides the updateCookie mechanism to
 provide similar functionality as CookieCrumbler does... by giving
 the portal the ability to provide a setAuthCookie method.
 """
+from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager
 from Acquisition import aq_base
 from Acquisition import aq_parent
-from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from DateTime import DateTime
 from plone.registry.interfaces import IRegistry
-from Products.PluggableAuthService.interfaces.authservice import \
-    IPluggableAuthService
-from Products.PluggableAuthService.interfaces.plugins \
-    import IChallengePlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import ICredentialsResetPlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import ICredentialsUpdatePlugin
-from Products.PluggableAuthService.interfaces.plugins \
-    import ILoginPasswordHostExtractionPlugin
-from Products.PluggableAuthService.plugins.CookieAuthHelper \
-    import CookieAuthHelper as BasePlugin
+from Products.PluggableAuthService.interfaces.authservice import IPluggableAuthService
+from Products.PluggableAuthService.interfaces.plugins import IChallengePlugin
+from Products.PluggableAuthService.interfaces.plugins import ICredentialsResetPlugin
+from Products.PluggableAuthService.interfaces.plugins import ICredentialsUpdatePlugin
+from Products.PluggableAuthService.interfaces.plugins import (
+    ILoginPasswordHostExtractionPlugin,
+)
+from Products.PluggableAuthService.plugins.CookieAuthHelper import (
+    CookieAuthHelper as BasePlugin,
+)
 from six.moves.urllib.parse import quote
-from zope.interface import implementer
 from zope.component import getUtility
+from zope.interface import implementer
 
 
 def manage_addExtendedCookieAuthHelper(self, id, title='',

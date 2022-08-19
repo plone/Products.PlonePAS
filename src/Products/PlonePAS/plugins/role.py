@@ -6,17 +6,16 @@ to the principal.
 
 """
 from AccessControl import ClassSecurityInfo
+from AccessControl.class_init import InitializeClass
 from AccessControl.requestmethod import postonly
 from Acquisition import aq_get
 from Acquisition import aq_inner
 from Acquisition import aq_parent
-from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from Products.PlonePAS.interfaces.capabilities import IAssignRoleCapability
 from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PluggableAuthService.permissions import ManageUsers
-from Products.PluggableAuthService.plugins.ZODBRoleManager \
-    import ZODBRoleManager
+from Products.PluggableAuthService.plugins.ZODBRoleManager import ZODBRoleManager
 from zope.interface import implementer
 
 

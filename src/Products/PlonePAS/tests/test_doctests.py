@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
 from plone.testing import layered
+from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_FUNCTIONAL_TESTING
 
 import doctest
 import re

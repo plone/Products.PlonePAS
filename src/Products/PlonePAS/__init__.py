@@ -18,6 +18,7 @@ from Products.PlonePAS.tools.memberdata import MemberDataTool
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PluggableAuthService import registerMultiPlugin
 
+
 ####################################
 # monkey patch pas, the evil happens
 patch_pas()

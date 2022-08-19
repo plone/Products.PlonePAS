@@ -2,13 +2,13 @@
 from AccessControl.class_init import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
-from Products.PluggableAuthService.PropertiedUser import PropertiedUser
-from Products.PluggableAuthService.interfaces.plugins import \
-    IGroupEnumerationPlugin
+from Products.PluggableAuthService.interfaces.plugins import IGroupEnumerationPlugin
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from zope.interface import implementer
+
 
 manage_addAutoGroupForm = PageTemplateFile("../zmi/AutoGroupForm", globals())
 
