@@ -1,0 +1,4 @@
+Apply `isort`, `black`, `pyupgrade` and manual removal of six leftovers.
+Fix `PIL` deprecation warning, assume `PIL` is always there.
+Make `mypy` happy again.
+[jensens]
