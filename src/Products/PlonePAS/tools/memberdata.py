@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from AccessControl.interfaces import IUser
@@ -119,7 +118,7 @@ class MemberDataTool(BaseTool):
             mbr = self._members.get(member_name, None)
             if not mbr:
                 raise RuntimeError(
-                    "Error while upgrading user '{0}'.".format(member_name)
+                    f"Error while upgrading user '{member_name}'."
                 )
             mbr.setProperties(values, force_local=1)
             count += 1
@@ -284,7 +283,7 @@ class MemberData(BaseMemberAdapter):
 
         # Trigger PropertiesUpdated event when member properties are updated,
         # excluding user login events
-        if not set(mapping.keys()) & set(("login_time", "last_login_time")):
+        if not set(mapping.keys()) & {"login_time", "last_login_time"}:
             notify(PropertiesUpdated(self, mapping))
 
     def getProperty(self, id, default=_marker):
@@ -315,7 +314,7 @@ class MemberData(BaseMemberAdapter):
             if sheet.hasProperty(id):
                 # Return the first one that has the property.
                 value = sheet.getProperty(id)
-                if six.PY2 and isinstance(value, six.text_type):
+                if six.PY2 and isinstance(value, str):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be

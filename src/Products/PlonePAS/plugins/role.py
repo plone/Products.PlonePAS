@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 group aware role manager, returns roles assigned to group a principal
 is a member of, in addition to the explicit roles assigned directly
@@ -98,8 +97,8 @@ class GroupAwareRoleManager(ZODBRoleManager):
     @security.private
     def getRolesForPrincipal(self, principal, request=None):
         """See IRolesPlugin."""
-        roles = set([])
-        principal_ids = set([])
+        roles = set()
+        principal_ids = set()
         # Some services need to determine the roles obtained from groups
         # while excluding the directly assigned roles.  In this case
         # '__ignore_direct_roles__' = True should be pushed in the request.

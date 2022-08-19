@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.PluggableAuthService.interfaces import plugins
 from zope.interface import Interface
 

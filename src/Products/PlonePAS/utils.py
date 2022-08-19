@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
-from six import BytesIO
+from io import BytesIO
 from six.moves import urllib
 
 import six
@@ -24,7 +23,7 @@ def cleanId(id):
     __traceback_info__ = (id,)
     if id:
         # note: we provide the 'safe' param to get '/' encoded
-        if isinstance(id, six.text_type):
+        if isinstance(id, str):
             id = id.encode("utf-8")
         return urllib.parse.quote(id, "").replace("-", "--").replace("%", "-")
     return ""
@@ -182,11 +181,11 @@ def getGroupsForPrincipal(principal, plugins, request=None):
 
 def safe_unicode(value, encoding="utf-8"):
     """Converts a value to unicode, even it is already a unicode string."""
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         return value
-    elif isinstance(value, six.string_types):
+    elif isinstance(value, str):
         try:
-            value = six.text_type(value, encoding)
+            value = str(value, encoding)
         except UnicodeDecodeError:
             value = value.decode("utf-8", "replace")
     return value

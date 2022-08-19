@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # pas alterations and monkies
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized

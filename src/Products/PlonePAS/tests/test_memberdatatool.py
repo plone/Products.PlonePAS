@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from DateTime import DateTime
 from OFS.Image import Image
 from plone.app.testing import TEST_USER_ID as default_user

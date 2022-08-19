@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from zope.deprecation import deprecation
 
 import logging
@@ -34,7 +33,7 @@ def wrap_method(
         if isWrapperMethod(old_method):
             logger.warn(
                 "PlonePAS: *NOT* wrapping already wrapped method at "
-                "{0}.{1}".format(klass.__name__, name)
+                "{}.{}".format(klass.__name__, name)
             )
 
             return
@@ -54,9 +53,9 @@ def wrap_method(
         setattr(klass, name, method)
 
     if roles is not None:
-        roles_attr = "{0}__roles__".format(name)
+        roles_attr = f"{name}__roles__"
         logger.debug(
-            "PlonePAS: Setting new permission roles at {0}.{1}".format(
+            "PlonePAS: Setting new permission roles at {}.{}".format(
                 klass.__name__, name
             )
         )

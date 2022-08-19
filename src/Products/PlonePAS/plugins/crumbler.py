@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ Class: CookieCrumblingPlugin
 
 Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.

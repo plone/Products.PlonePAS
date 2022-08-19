@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from AccessControl.User import nobody
@@ -24,7 +23,7 @@ from Products.PlonePAS.tools.memberdata import MemberData
 from Products.PlonePAS.tools.membership import MembershipTool
 from Products.PlonePAS.utils import getGroupsForPrincipal
 from Products.PluggableAuthService.interfaces.events import ICredentialsUpdatedEvent
-from six import BytesIO
+from io import BytesIO
 from zExceptions import BadRequest
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
@@ -135,7 +134,7 @@ class MembershipToolTest(unittest.TestCase):
         self.assertEqual(cleaned, "abc")
         self.assertTrue(isinstance(cleaned, str))
         if six.PY2:
-            self.assertFalse(isinstance(cleaned, six.text_type))
+            self.assertFalse(isinstance(cleaned, str))
 
 
 class MemberAreaTest(unittest.TestCase):

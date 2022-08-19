@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from AccessControl.requestmethod import postonly
@@ -150,7 +149,7 @@ class GroupsTool(UniqueObject, SimpleItem):
                         if gm.addPrincipalToGroup(id, group):
                             break
                     except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-                        logger.exception("AuthenticationPlugin {0} error".format(gm_id))
+                        logger.exception(f"AuthenticationPlugin {gm_id} error")
 
     @security.protected(DeleteGroups)
     @postonly
@@ -401,7 +400,7 @@ class GroupsTool(UniqueObject, SimpleItem):
         For GRUF this is easy. Others may have to re-implement."""
         user = group.getGroup()
         if user is None:
-            raise ValueError("Invalid group: '%s'." % (group,))
+            raise ValueError("Invalid group: '{}'.".format(group))
         object.changeOwnership(user)
         object.manage_setLocalRoles(user.getId(), ["Owner"])
 

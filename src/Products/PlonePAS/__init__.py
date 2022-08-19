@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl.Permissions import add_user_folders
 from Products.CMFCore.utils import ToolInit
 from Products.PlonePAS.pas import patch_pas

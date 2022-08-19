@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
@@ -30,7 +29,7 @@ from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
-from six import BytesIO
+from io import BytesIO
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 from zope import event
@@ -60,7 +59,7 @@ def _unicodify_structure(value, charset=_marker):
     if isinstance(value, list):
         return [_unicodify_structure(val, charset) for val in value]
     if isinstance(value, tuple):
-        return tuple([_unicodify_structure(entry, charset) for entry in value])
+        return tuple(_unicodify_structure(entry, charset) for entry in value)
     if isinstance(value, dict):
         for key, val in value.items():
             value[key] = _unicodify_structure(val, charset)
@@ -274,7 +273,7 @@ class MembershipTool(BaseTool):
             if last_login_time:
                 last_login = member.getProperty("last_login_time", "")
 
-                if isinstance(last_login, six.string_types):
+                if isinstance(last_login, str):
                     # value is a string when member hasn't yet logged in
                     last_login = DateTime(last_login or "2000/01/01")
 
@@ -388,7 +387,7 @@ class MembershipTool(BaseTool):
 
         # Special handling to avoid bad home_pages, like javascript.
         home_page = member.getProperty("home_page", "")
-        if isinstance(home_page, six.string_types):
+        if isinstance(home_page, str):
             if not home_page.startswith("https://") and not home_page.startswith(
                 "http://"
             ):

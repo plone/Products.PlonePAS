@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Test set up specific to Plone through thea GenericSetup profile installation.
 """

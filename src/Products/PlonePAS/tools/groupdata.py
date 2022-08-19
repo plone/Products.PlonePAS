@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl import getSecurityManager
 from AccessControl import Permissions
@@ -181,7 +180,7 @@ class GroupData(SimpleItem):
                 # The returned object is already wrapped
                 if not usr:
                     logger.debug(
-                        "Group has a non-existing principal {0}".format(u_name)
+                        f"Group has a non-existing principal {u_name}"
                     )
                     continue
                 ret.append(usr)
@@ -203,7 +202,7 @@ class GroupData(SimpleItem):
                 usr = self._getGRUF().getGroupById(u_name)
                 if not usr:
                     logger.debug(
-                        "Group has a non-existing principal {0}".format(u_name)
+                        f"Group has a non-existing principal {u_name}"
                     )
                     continue
                 ret.append(usr)
@@ -515,15 +514,9 @@ class GroupData(SimpleItem):
                     break  # shadowed by read-only
         return 0
 
-    if six.PY3:
-        canAddToGroup = MemberData.canAddToGroup
-        canRemoveFromGroup = MemberData.canRemoveFromGroup
-        canAssignRole = MemberData.canAssignRole
-    else:
-        # in PY2 this is a unbound method
-        canAddToGroup = MemberData.canAddToGroup.__func__
-        canRemoveFromGroup = MemberData.canRemoveFromGroup.__func__
-        canAssignRole = MemberData.canAssignRole.__func__
+    canAddToGroup = MemberData.canAddToGroup
+    canRemoveFromGroup = MemberData.canRemoveFromGroup
+    canAssignRole = MemberData.canAssignRole
 
     # plugin getters
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 A Local Roles Plugin Implementation that respects Black Listing markers.
 

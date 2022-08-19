@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from AccessControl.PermissionRole import _what_not_even_god_should_do
@@ -65,7 +64,7 @@ class PloneUser(PropertiedUser):
     _isGroup = False
 
     def __init__(self, id, login=None):
-        super(PloneUser, self).__init__(id, login)
+        super().__init__(id, login)
         self._propertysheets = OrderedDict()
 
     def _getPAS(self):
@@ -145,7 +144,7 @@ class PloneUser(PropertiedUser):
 
     def getRolesInContext(self, object):
         lrmanagers = self._getLocalRolesPlugins()
-        roles = set([])
+        roles = set()
         for lrid, lrmanager in lrmanagers:
             roles.update(lrmanager.getRolesInContext(self, object))
         roles.update(self.getRoles())
@@ -224,7 +223,7 @@ class PloneUser(PropertiedUser):
         for sheet in self.getOrderedPropertySheets():
             if sheet.hasProperty(id):
                 value = sheet.getProperty(id)
-                if six.PY2 and isinstance(value, six.text_type):
+                if six.PY2 and isinstance(value, str):
                     # XXX Temporarily work around the fact that
                     # property sheets blindly store and return
                     # unicode. This is sub-optimal and should be

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.PlonePAS.patch import call
 from Products.PlonePAS.patch import wrap_method
 from Products.PlonePAS.plugins.group import PloneGroup

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # $Id$
 """Tests for Products.PlonePAS.plugins.role.GroupAwareRoleManager"""
 

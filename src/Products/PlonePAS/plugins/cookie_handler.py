@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """ Class: ExtendedCookieAuthHelper
 
 Simply extends the standard CookieAuthHelper provided via regular
@@ -24,7 +23,7 @@ from Products.PluggableAuthService.interfaces.plugins import (
 from Products.PluggableAuthService.plugins.CookieAuthHelper import (
     CookieAuthHelper as BasePlugin,
 )
-from six.moves.urllib.parse import quote
+from urllib.parse import quote
 from zope.component import getUtility
 from zope.interface import implementer
 

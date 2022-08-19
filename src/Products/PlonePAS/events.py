@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.PlonePAS.interfaces.events import IUserInitialLoginInEvent
 from Products.PluggableAuthService.events import PASEvent
 from Products.PluggableAuthService.interfaces.events import IUserLoggedInEvent

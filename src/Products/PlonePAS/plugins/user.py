@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 ZODB based user manager with introspection and management interfaces.
 """

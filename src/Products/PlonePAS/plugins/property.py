@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Mutable Property Provider
 """
@@ -45,7 +44,7 @@ manage_addZODBMutablePropertyProviderForm = DTMLFile(
 
 
 def isStringType(data):
-    return isinstance(data, str) or isinstance(data, six.text_type)
+    return isinstance(data, str) or isinstance(data, str)
 
 
 @implementer(IPropertiesPlugin, IUserEnumerationPlugin, IMutablePropertiesPlugin)
@@ -181,7 +180,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 property_type, properties[name]
             ):
                 raise ValueError(
-                    "Invalid value: %s does not conform to %s" % (name, property_type)
+                    "Invalid value: {} does not conform to {}".format(name, property_type)
                 )
 
         allowed_prop_keys = [pn for pn, pt in self._getSchema(isGroup) or ()]

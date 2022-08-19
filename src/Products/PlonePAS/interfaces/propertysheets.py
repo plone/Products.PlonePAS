@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.PluggableAuthService.interfaces.propertysheets import IPropertySheet
 
 

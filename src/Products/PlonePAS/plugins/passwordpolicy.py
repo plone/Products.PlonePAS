@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Password Validation plugin (IValidationPlugin)
 Mutable Property Provider

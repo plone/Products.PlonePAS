@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Custom GenericSetup import steps for PAS in Plone.
 """

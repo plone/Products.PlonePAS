@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 
@@ -18,7 +17,7 @@ class PropertyValueError(ValueError):
     pass
 
 
-class PropertySchemaTypeMap(object):
+class PropertySchemaTypeMap:
     def __init__(self):
         self.tmap = {}
         self.tmap_order = []
@@ -43,15 +42,15 @@ class PropertySchemaTypeMap(object):
 
 
 PropertySchema = PropertySchemaTypeMap()
-PropertySchema.addType("string", lambda x: x is None or isinstance(x, six.string_types))
-PropertySchema.addType("text", lambda x: x is None or isinstance(x, six.string_types))
+PropertySchema.addType("string", lambda x: x is None or isinstance(x, str))
+PropertySchema.addType("text", lambda x: x is None or isinstance(x, str))
 PropertySchema.addType("boolean", lambda x: 1)  # anything can be boolean
 PropertySchema.addType("int", lambda x: x is None or isinstance(x, int))
 PropertySchema.addType("long", lambda x: x is None or isinstance(x, long))
 PropertySchema.addType("float", lambda x: x is None or isinstance(x, float))
 PropertySchema.addType("lines", lambda x: x is None or isinstance(x, (tuple, list)))
 PropertySchema.addType(
-    "selection", lambda x: x is None or isinstance(x, six.string_types)
+    "selection", lambda x: x is None or isinstance(x, str)
 )
 PropertySchema.addType(
     "multiple selection", lambda x: x is None or isinstance(x, (tuple, list))

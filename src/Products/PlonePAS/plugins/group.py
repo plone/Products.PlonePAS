@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView

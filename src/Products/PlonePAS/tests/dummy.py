@@ -1,13 +1,12 @@
-# -*- coding: utf-8 -*-
 from OFS.SimpleItem import SimpleItem
-from six import BytesIO
+from io import BytesIO
 from ZPublisher.HTTPRequest import FileUpload
 
 
 TEXT = b"file data"
 
 
-class FieldStorage(object):
+class FieldStorage:
     def __init__(self, file, filename="testfile", headers=None):
         self.file = file
         if headers is None:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl.class_init import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PlonePAS.interfaces.group import IGroupIntrospection
@@ -28,7 +27,7 @@ def manage_addAutoGroup(self, id, title="", group="", description="", RESPONSE=N
 
 class VirtualGroup(PropertiedUser):
     def __init__(self, id, title="", description=""):
-        super(VirtualGroup, self).__init__(id)
+        super().__init__(id)
         self.id = id
         self.title = title
         self.description = description

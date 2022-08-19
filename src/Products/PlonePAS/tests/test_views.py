@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
 import unittest
