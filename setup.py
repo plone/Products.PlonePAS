@@ -39,6 +39,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
     ],
     keywords="Zope CMF Plone PAS authentication",
     author="Kapil Thangavelu, Wichert Akkerman",
