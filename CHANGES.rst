@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+7.0.0b1 (2022-08-31)
+--------------------
+
+Bug fixes:
+
+
+- Apply `isort`, `black`, `pyupgrade` and manual removal of six leftovers.
+  Fix `PIL` deprecation warning, assume `PIL` is always there.
+  Make `mypy` happy again.
+  [jensens] (#68)
+
+
 7.0.0a3 (2022-03-09)
 --------------------
 
