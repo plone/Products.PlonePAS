@@ -197,7 +197,7 @@ class TestMembershipTool(unittest.TestCase):
         verifyClass(IMembershipTool, MembershipTool)
 
     def addMember(self, username, fullname, email, roles, last_login_time):
-        self.membership.addMember(username, "secret", roles, [])
+        self.membership.addMember(username, TEST_USER_PASSWORD, roles, [])
         member = self.membership.getMemberById(username)
         member.setMemberProperties(
             {
@@ -273,7 +273,7 @@ class TestMembershipTool(unittest.TestCase):
         # another member.
         setRoles(self.portal, TEST_USER_ID, ["Member"])
         image = self.makeRealImage()
-        self.membership.addMember("joe", "secret", ["Member"], [])
+        self.membership.addMember("joe", TEST_USER_PASSWORD, ["Member"], [])
         self.assertRaises(
             Unauthorized, self.membership.changeMemberPortrait, image, "joe"
         )
@@ -282,7 +282,7 @@ class TestMembershipTool(unittest.TestCase):
         # Managers should be able to change the portrait of another
         # member.
         image = self.makeRealImage()
-        self.membership.addMember("joe", "secret", ["Member"], [])
+        self.membership.addMember("joe", TEST_USER_PASSWORD, ["Member"], [])
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         # This should not raise Unauthorized:
         self.membership.changeMemberPortrait(image, "joe")
@@ -305,7 +305,7 @@ class TestMembershipTool(unittest.TestCase):
         # A normal member should not be able to delete the portrait of
         # another member.
         image = self.makeRealImage()
-        self.membership.addMember("joe", "secret", ["Member"], [])
+        self.membership.addMember("joe", TEST_USER_PASSWORD, ["Member"], [])
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.membership.changeMemberPortrait(image, "joe")
         setRoles(self.portal, TEST_USER_ID, ["Member"])
@@ -315,7 +315,7 @@ class TestMembershipTool(unittest.TestCase):
         # Managers should be able to change the portrait of another
         # member.
         image = self.makeRealImage()
-        self.membership.addMember("joe", "secret", ["Member"], [])
+        self.membership.addMember("joe", TEST_USER_PASSWORD, ["Member"], [])
         setRoles(self.portal, TEST_USER_ID, ["Manager"])
         self.membership.changeMemberPortrait(image, "joe")
         self.membership.deletePersonalPortrait("joe")
@@ -337,7 +337,7 @@ class TestMembershipTool(unittest.TestCase):
         user_id = "bob-jones+test@example.org"
         safe_id = self.membership._getSafeMemberId(user_id)
         self.assertEqual(safe_id, "bob--jones-2Btest-40example.org")
-        self.membership.addMember(user_id, "secret", ["Member"], [])
+        self.membership.addMember(user_id, TEST_USER_PASSWORD, ["Member"], [])
         login(self.portal, user_id)
 
         # Should return the default portrait
@@ -410,28 +410,19 @@ class TestMembershipTool(unittest.TestCase):
 
     def testCurrentPassword(self):
         # Password checking should work
-        self.assertTrue(self.membership.testCurrentPassword("secret"))
-        self.assertFalse(self.membership.testCurrentPassword("geheim"))
+        self.assertTrue(self.membership.testCurrentPassword(TEST_USER_PASSWORD))
+        self.assertFalse(self.membership.testCurrentPassword("newpassword"))
 
     def testSetPassword(self):
         # Password should be changed
-        self.membership.setPassword("geheim")
-        self.assertTrue(self.membership.testCurrentPassword("geheim"))
+        self.membership.setPassword("newpassword")
+        self.assertTrue(self.membership.testCurrentPassword("newpassword"))
 
     def testSetPasswordIfAnonymous(self):
         # Anonymous should not be able to change password
         logout()
-        try:
-            self.membership.setPassword("geheim")
-        except BadRequest:
-            import sys
-
-            e, v, tb = sys.exc_info()
-            del tb
-            if str(v) == "Not logged in.":
-                pass
-            else:
-                raise
+        with self.assertRaises(BadRequest, msg="Not logged in."):
+            self.membership.setPassword("newpassword")
 
     def testSetPasswordAndKeepGroups(self):
         # Password should be changed and user must not change group membership
@@ -443,7 +434,7 @@ class TestMembershipTool(unittest.TestCase):
         group.addMember(TEST_USER_ID)
         login(self.portal, TEST_USER_NAME)  # Back to normal
         ugroups = self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
-        self.membership.setPassword("geheim")
+        self.membership.setPassword("newpassword")
         t_groups = self.portal.acl_users.getUserById(TEST_USER_ID).getGroups()
         self.assertTrue(t_groups == ugroups)
 
@@ -695,7 +686,7 @@ class TestMembershipTool(unittest.TestCase):
         gsm = getGlobalSiteManager()
         gsm.registerHandler(got_credentials_updated_event)
 
-        self.assertTrue(self.membership.testCurrentPassword("secret"))
+        self.assertTrue(self.membership.testCurrentPassword(TEST_USER_PASSWORD))
         self.assertFalse(self.membership.testCurrentPassword("whoknows"))
         login(self.portal, TEST_USER_NAME)  # Back to normal
         self.membership.setPassword("guessagain")

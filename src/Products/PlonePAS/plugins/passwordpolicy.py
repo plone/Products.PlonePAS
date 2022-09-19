@@ -35,14 +35,16 @@ def manage_addPasswordPolicyPlugin(
 
 @implementer(IValidationPlugin)
 class PasswordPolicyPlugin(BasePlugin):
-    """Simple Password Policy to ensure password is 5 chars long."""
+    """Simple Password Policy to enforce a minimum password length."""
 
     meta_type = "Default Plone Password Policy"
 
     security = ClassSecurityInfo()
 
+    min_chars = 8
+
     def __init__(self, id, title=""):
-        """Create a default plone password policy to ensure 5 char passwords"""
+        """Create a default plone password policy"""
         self.id = id
         self.title = title
 
@@ -56,12 +58,23 @@ class PasswordPolicyPlugin(BasePlugin):
         if password is None:
             return []
         elif password == "":
-            return [{"id": "password", "error": _("Minimum 5 characters.")}]
-        elif len(password) < 5:
             return [
                 {
                     "id": "password",
-                    "error": _("Your password must contain at least 5 characters."),
+                    "error": _(
+                        "Minimum ${min_chars} characters.",
+                        mapping={"min_chars": str(self.min_chars)},
+                    ),
+                }
+            ]
+        elif len(password) < self.min_chars:
+            return [
+                {
+                    "id": "password",
+                    "error": _(
+                        "Your password must contain at least ${min_chars} characters.",
+                        mapping={"min_chars": str(self.min_chars)},
+                    ),
                 }
             ]
         else:
