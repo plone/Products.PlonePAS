@@ -1,1 +1,1 @@
-- Increase the minimum password length to 8 characters. [davisagli]
+Increase the minimum password length to 8 characters. [davisagli]
