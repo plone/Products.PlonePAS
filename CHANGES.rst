@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+7.0.0b2 (2022-10-03)
+--------------------
+
+New features:
+
+
+- Increase the minimum password length to 8 characters. [davisagli] (#69)
+
+
 7.0.0b1 (2022-08-31)
 --------------------
 
