@@ -116,7 +116,7 @@ class PortalSetupTest(unittest.TestCase):
         hooks.setSite(None)
         zope.login(self.root_acl_users, pa_testing.SITE_OWNER_NAME)
         self.app.REQUEST.form["__ac_name"] = pa_testing.SITE_OWNER_NAME
-        self.app.REQUEST.form["__ac_password"] = pa_testing.TEST_USER_PASSWORD
+        self.app.REQUEST.form["__ac_password"] = pa_testing.SITE_OWNER_PASSWORD
         cookie_plugin.login()
 
         # Submit the login form in the browser
@@ -124,7 +124,7 @@ class PortalSetupTest(unittest.TestCase):
         login_form.getControl(name="__ac_name").value = pa_testing.SITE_OWNER_NAME
         login_form.getControl(
             name="__ac_password"
-        ).value = pa_testing.TEST_USER_PASSWORD
+        ).value = pa_testing.SITE_OWNER_PASSWORD
         login_form.controls[-1].click()
         self.assertEqual(
             browser.headers["Status"].lower(),
