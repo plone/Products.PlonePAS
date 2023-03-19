@@ -46,7 +46,7 @@ PropertySchema.addType("boolean", lambda x: 1)  # anything can be boolean
 PropertySchema.addType("int", lambda x: x is None or isinstance(x, int))
 PropertySchema.addType(
     "long", lambda x: x is None or isinstance(x, int)
-)  # theres is no long in Python 3
+)  # there's is no long in Python 3
 PropertySchema.addType("float", lambda x: x is None or isinstance(x, float))
 PropertySchema.addType("lines", lambda x: x is None or isinstance(x, (tuple, list)))
 PropertySchema.addType("selection", lambda x: x is None or isinstance(x, str))

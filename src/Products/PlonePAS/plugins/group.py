@@ -108,7 +108,7 @@ class GroupManager(ZODBGroupManager):
         return tuple(self._group_principal_map.get(group_id, ()))
 
     #################################
-    # capabilties interface impls.
+    # capabilities interface impls.
 
     @security.public
     def allowDeletePrincipal(self, principal_id):

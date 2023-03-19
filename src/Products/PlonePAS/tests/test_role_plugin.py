@@ -21,7 +21,7 @@ class FauxGroupsPlugin(BasePlugin):
 
 
 class GroupAwareRoleManagerTests(unittest.TestCase):
-    """Roles manager that takes care of goup of principal"""
+    """Roles manager that takes care of group of principal"""
 
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 

@@ -684,12 +684,12 @@ class TestMembershipTool(unittest.TestCase):
         gsm.registerHandler(got_credentials_updated_event)
 
         self.assertTrue(self.membership.testCurrentPassword(TEST_USER_PASSWORD))
-        self.assertFalse(self.membership.testCurrentPassword("whoknows"))
+        self.assertFalse(self.membership.testCurrentPassword("who-knows"))
         login(self.portal, TEST_USER_NAME)  # Back to normal
-        self.membership.setPassword("guessagain")
+        self.membership.setPassword("guess-again")
         self.assertEqual(len(events_fired), 1)
         self.assertEqual(events_fired[0].principal.getId(), TEST_USER_ID)
-        self.assertEqual(events_fired[0].password, "guessagain")
+        self.assertEqual(events_fired[0].password, "guess-again")
 
 
 class TestCreateMemberarea(unittest.TestCase):

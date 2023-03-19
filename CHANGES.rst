@@ -345,14 +345,14 @@ Fixes:
   structure expected by ``buildout.plonetest``'s ``qa.cfg``.
   [jensens]
 
-- Make patching of LDAPMultiPlugin explizit. Code using those must call
+- Make patching of LDAPMultiPlugin explicit. Code using those must call
   ``Products.PlonePAS.ldapmp.patch_ldapmp`` with no parameters in order
   to activate the patches.
   [jensens]
 
 - Removed (optional) Archetypes Storage (used in past with CMFMember, which
-  itself was long time ago superseeded by Membrane). Probably dead code. If
-  theres someone out there needing it in Plone 5 please copy the code from
+  itself was long time ago superseded by Membrane). Probably dead code. If
+  there's someone out there needing it in Plone 5 please copy the code from
   git/Plone4 in your addon/project.
   [jensens]
 
@@ -607,7 +607,7 @@ Fixes:
 4.0.1 - 2010-07-31
 ------------------
 
-- Clean up some unused imports and variable assigments.
+- Clean up some unused imports and variable assignments.
   [esteele]
 
 - Stop looking to GRUF to check if group properties can be edited.
@@ -1230,7 +1230,7 @@ Fixes:
   types.
   [reinout]
 
-- Correct creation of groups wich default group managers.
+- Correct creation of groups which default group managers.
   [dreamcatcher]
 
 - Fix migration from GRUF sites: also include the member properties in the

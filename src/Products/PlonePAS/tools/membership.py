@@ -476,7 +476,7 @@ class MembershipTool(BaseTool):
 
     @security.public
     def getPersonalPortrait(self, id=None, verifyPermission=0):
-        """Return a members personal portait.
+        """Return a members personal portrait.
 
         Modified from CMFPlone version to URL-quote the member id.
         """
@@ -499,7 +499,7 @@ class MembershipTool(BaseTool):
 
     @security.protected(SetOwnProperties)
     def deletePersonalPortrait(self, id=None):
-        """deletes the Portait of a member."""
+        """deletes the Portrait of a member."""
         authenticated_id = self.getAuthenticatedMember().getId()
         if not id:
             id = authenticated_id
@@ -512,7 +512,7 @@ class MembershipTool(BaseTool):
 
     @security.protected(SetOwnProperties)
     def changeMemberPortrait(self, portrait, id=None):
-        """update the portait of a member.
+        """update the portrait of a member.
 
         We URL-quote the member id if needed.
 
@@ -598,7 +598,7 @@ class MembershipTool(BaseTool):
             if domains is None:
                 domains = []
             user = acl_users.getUserById(member.getUserId(), None)
-            # we must change the users password trough grufs changepassword
+            # we must change the users password through grufs changepassword
             # to keep her  group settings
             if hasattr(user, "changePassword"):
                 user.changePassword(password)
