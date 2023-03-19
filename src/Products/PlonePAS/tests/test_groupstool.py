@@ -16,10 +16,10 @@ from zope.component import getGlobalSiteManager
 import unittest
 
 
-def sortTuple(t):
-    l = list(t)
-    l.sort()
-    return tuple(l)
+def sortTuple(a_tuple):
+    a_list = list(a_tuple)
+    a_list.sort()
+    return tuple(a_list)
 
 
 class TestGroupsTool(unittest.TestCase):

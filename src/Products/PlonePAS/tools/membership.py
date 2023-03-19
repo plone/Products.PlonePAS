@@ -707,7 +707,7 @@ class MembershipTool(BaseTool):
             pas = getToolByName(self, "acl_users")
             try:
                 pas.logout(REQUEST)
-            except Exception as e:
+            except Exception:
                 logger.error("Error in PAS logout()", exc_info=True)
 
             # Expire the skin cookie if it is not configured to persist
@@ -768,7 +768,7 @@ class MembershipTool(BaseTool):
                 PIL.Image.open(BytesIO(portrait_data))
             except ConflictError:
                 pass
-            except:
+            except Exception:
                 # Anything else we have a bad bad image and we destroy it
                 # and ask questions later.
                 portraits._delObject(member_id)

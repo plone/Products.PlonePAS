@@ -432,7 +432,7 @@ class GroupsTool(UniqueObject, SimpleItem):
                 return portal_group
             except ConflictError:
                 raise
-            except:
+            except Exception:
                 logger.exception("Error during wrapGroup")
         # Failed.
         return g

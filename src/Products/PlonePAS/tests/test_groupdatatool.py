@@ -9,10 +9,10 @@ from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 import unittest
 
 
-def sortTuple(t):
-    l = list(t)
-    l.sort()
-    return tuple(l)
+def sortTuple(a_tuple):
+    a_list = list(a_tuple)
+    a_list.sort()
+    return tuple(a_list)
 
 
 class TestGroupDataTool(unittest.TestCase):

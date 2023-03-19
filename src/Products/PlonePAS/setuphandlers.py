@@ -21,7 +21,6 @@ from Products.PluggableAuthService.plugins import CookieAuthHelper
 from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin import (
     addRecursiveGroupsPlugin,
 )
-from zope import component
 
 import logging
 

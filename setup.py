@@ -1,8 +1,6 @@
 from setuptools import find_packages
 from setuptools import setup
 
-import sys
-
 
 version = "7.0.1.dev0"
 
