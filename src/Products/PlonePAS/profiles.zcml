@@ -1,20 +1,22 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="plonepas">
+    i18n_domain="plonepas"
+    >
 
   <genericsetup:registerProfile
       name="PlonePAS"
       title="PlonePAS"
-      directory="profiles/default"
       description="Extension profile for default PlonePAS setup."
       provides="Products.GenericSetup.interfaces.EXTENSION"
+      directory="profiles/default"
       />
   <genericsetup:importStep
+      name="plonepas"
+      title="PlonePAS setup"
       description="Configure PlonePas"
       handler="Products.PlonePAS.setuphandlers.setupPlonePAS"
-      name="plonepas"
-      title="PlonePAS setup">
+      >
     <depends name="componentregistry" />
     <depends name="controlpanel" />
     <depends name="memberdata-properties" />
@@ -25,14 +27,15 @@
       profile="Products.PlonePAS:PlonePAS"
       source="4"
       destination="5"
-      handler=".upgrades.from4to5_fix_zope_root" />
+      handler=".upgrades.from4to5_fix_zope_root"
+      />
 
   <genericsetup:registerProfile
       name="root-cookie"
       title="Zope Root Cookie Login"
-      description="Change the Zope root `/acl_users` to use a simple cookie login form
-		   instead of HTTP `Basic ...` for authentication."
+      description="Change the Zope root `/acl_users` to use a simple cookie login form      instead of HTTP `Basic ...` for authentication."
       provides="Products.GenericSetup.interfaces.EXTENSION"
-      post_handler=".setuphandlers.set_up_zope_root_cookie_auth" />
+      post_handler=".setuphandlers.set_up_zope_root_cookie_auth"
+      />
 
 </configure>
