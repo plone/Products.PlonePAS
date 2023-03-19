@@ -75,7 +75,6 @@ def registerPluginType(pas, plugin_type, plugin_info):
 
 
 def registerPluginTypes(pas):
-
     PluginInfo = {
         "id": "IUserManagement",
         "title": "user_management",

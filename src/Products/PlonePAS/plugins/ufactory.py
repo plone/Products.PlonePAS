@@ -33,7 +33,6 @@ def manage_addPloneUserFactory(self, id, title="", RESPONSE=None):
 
 @implementer(IUserFactoryPlugin)
 class PloneUserFactory(BasePlugin):
-
     security = ClassSecurityInfo()
     meta_type = "Plone User Factory"
 
@@ -50,7 +49,6 @@ InitializeClass(PloneUserFactory)
 
 
 class PloneUser(PropertiedUser):
-
     security = ClassSecurityInfo()
 
     #################################
@@ -205,7 +203,7 @@ class PloneUser(PropertiedUser):
                 continue
 
             update = {}
-            for (key, value) in list(properties.items()):
+            for key, value in list(properties.items()):
                 if sheet.hasProperty(key):
                     update[key] = value
                     del properties[key]

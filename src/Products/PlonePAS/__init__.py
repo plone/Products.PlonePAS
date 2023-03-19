@@ -44,7 +44,6 @@ except RuntimeError:
 
 
 def initialize(context):
-
     tools = (GroupsTool, GroupDataTool, MembershipTool, MemberDataTool)
 
     ToolInit(

@@ -33,7 +33,6 @@ import unittest
 
 
 class MembershipToolTest(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -135,7 +134,6 @@ class MembershipToolTest(unittest.TestCase):
 
 
 class MemberAreaTest(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -182,7 +180,6 @@ class MemberAreaTest(unittest.TestCase):
 
 
 class TestMembershipTool(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -696,7 +693,6 @@ class TestMembershipTool(unittest.TestCase):
 
 
 class TestCreateMemberarea(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -779,7 +775,6 @@ class TestCreateMemberarea(unittest.TestCase):
 
 
 class TestMemberareaSetup(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -823,7 +818,6 @@ class TestMemberareaSetup(unittest.TestCase):
 
 
 class TestSearchForMembers(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -967,7 +961,6 @@ class TestMethodProtection(unittest.TestCase):
 
 
 class TestMemberInfoView(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):

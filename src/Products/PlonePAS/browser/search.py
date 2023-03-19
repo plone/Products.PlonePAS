@@ -16,7 +16,7 @@ class PASSearchView(BrowserView):
             if key in criteria:
                 del criteria[key]
 
-        for (key, value) in criteria.items():
+        for key, value in criteria.items():
             if not value:
                 del criteria[key]
 

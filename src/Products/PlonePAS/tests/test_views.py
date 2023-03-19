@@ -4,7 +4,6 @@ import unittest
 
 
 class TestPASSearchView(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def test_sort(self):

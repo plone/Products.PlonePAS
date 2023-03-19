@@ -102,7 +102,6 @@ registerToolInterface("portal_groupdata", IGroupDataTool)
 
 @implementer(IGroupData, IManageCapabilities)
 class GroupData(SimpleItem):
-
     security = ClassSecurityInfo()
 
     id = None

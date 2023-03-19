@@ -10,7 +10,6 @@ import unittest
 
 
 class PropertiesTest(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -204,7 +203,6 @@ class PropertiesTest(unittest.TestCase):
 
 
 class PropertySearchTest(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):

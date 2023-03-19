@@ -23,7 +23,6 @@ def sortTuple(t):
 
 
 class TestGroupsTool(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
@@ -119,7 +118,6 @@ class TestMethodProtection(unittest.TestCase):
 
 
 class TestGroupsToolIntegration(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):
