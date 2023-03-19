@@ -4,6 +4,7 @@ from ZPublisher.HTTPRequest import FileUpload
 
 import typing
 
+
 TEXT = b"file data"
 
 
