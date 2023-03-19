@@ -400,7 +400,7 @@ class GroupsTool(UniqueObject, SimpleItem):
         For GRUF this is easy. Others may have to re-implement."""
         user = group.getGroup()
         if user is None:
-            raise ValueError("Invalid group: '{}'.".format(group))
+            raise ValueError(f"Invalid group: '{group}'.")
         object.changeOwnership(user)
         object.manage_setLocalRoles(user.getId(), ["Owner"])
 
