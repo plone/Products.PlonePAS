@@ -22,9 +22,9 @@ class ProductsPlonepasLayer(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         applyProfile(portal, "Products.PlonePAS:PlonePAS")
         # setRoles(portal, TEST_USER_ID, ['Manager'])
-        from Products.CMFPlone.utils import _createObjectByType
+        from plone.base.utils import unrestricted_construct_instance
 
-        _createObjectByType("Folder", portal, id="Members")
+        unrestricted_construct_instance("Folder", portal, id="Members")
         mtool = portal.portal_membership
         if not mtool.getMemberareaCreationFlag():
             mtool.setMemberareaCreationFlag()
@@ -32,7 +32,7 @@ class ProductsPlonepasLayer(PloneSandboxLayer):
         if mtool.getMemberareaCreationFlag():
             mtool.setMemberareaCreationFlag()
 
-        _createObjectByType("Folder", portal, id="folder")
+        unrestricted_construct_instance("Folder", portal, id="folder")
 
 
 PRODUCTS_PLONEPAS_FIXTURE = ProductsPlonepasLayer()
