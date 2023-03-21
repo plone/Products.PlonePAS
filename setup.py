@@ -16,6 +16,7 @@ install_requires = [
     "plone.base",
     "plone.i18n",
     "plone.memoize",
+    "plone.openid",
     "plone.protect>=2.0.3",
     "plone.registry",
     "plone.session",
