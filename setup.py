@@ -10,10 +10,14 @@ longdescription += "\n"
 longdescription += open("CHANGES.rst").read()
 
 install_requires = [
+    "AuthEncoding",
+    "BTrees",
+    "Pillow",
     "plone.base",
     "plone.i18n",
     "plone.memoize",
     "plone.protect>=2.0.3",
+    "plone.registry",
     "plone.session",
     "Products.GenericSetup",
     "Products.PluggableAuthService>=2.0",
@@ -54,8 +58,9 @@ setup(
     extras_require=dict(
         test=[
             "plone.app.testing",
+            "plone.app.contenttypes[test]",
             "plone.testing",
-            "plone.app.robotframework",
+            "Products.PluginRegistry",
         ],
     ),
 )
