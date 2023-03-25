@@ -57,7 +57,7 @@ Chad, Gautham, Joel, Kapil, Michel, Micheal ]
 Post-sprint work: J Cameron Cooper, Leo, Sidnei, Mark at `Enfold
 Systems <http://enfoldsystems.com>`_
 
-Basic setAuthCookie support (to mimick CookieCrumbler):
+Basic setAuthCookie support (to mimic CookieCrumbler):
 Rocky Burt at `ServerZen Software <http://www.serverzen.com>`_
 
 Synced login process with Plone:
@@ -69,7 +69,7 @@ Wichert Akkerman at Simplon
 Bugfixes, improvements to membership and property lookups:
 Eric Steele and Erik Rose
 
-Review, cleanup, modernize code, adressing Plone 5:
+Review, cleanup, modernize code, addressing Plone 5:
 Jens Klein, BlueDynamics Alliance - `Klein & Partner KG <http://kleinundpartner.at>`_
 
 Source Code

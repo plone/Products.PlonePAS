@@ -21,18 +21,16 @@ class FauxGroupsPlugin(BasePlugin):
 
 
 class GroupAwareRoleManagerTests(unittest.TestCase):
-    """Roles manager that takes care of goup of principal"""
+    """Roles manager that takes care of group of principal"""
 
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def _getTargetClass(self):
-
         from Products.PlonePAS.plugins.role import GroupAwareRoleManager
 
         return GroupAwareRoleManager
 
     def _makeOne(self, id="test", *args, **kw):
-
         plugin = self._getTargetClass()(id=id, *args, **kw)
         # We need to bind a fake request to this plugin
         request, dummy_response = makeRequestAndResponse()

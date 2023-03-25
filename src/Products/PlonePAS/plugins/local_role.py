@@ -99,7 +99,6 @@ class LocalRolesManager(LocalRolePlugin):
         principal_ids.insert(0, user_id)
 
         while 1:
-
             local_roles = getattr(inner_obj, "__ac_local_roles__", None)
 
             if local_roles and callable(local_roles):
@@ -147,14 +146,12 @@ class LocalRolesManager(LocalRolePlugin):
         object = aq_inner(context)
 
         while True:
-
             local_roles = getattr(object, "__ac_local_roles__", None)
 
             if local_roles and callable(local_roles):
                 local_roles = local_roles()
 
             if local_roles:
-
                 dict = local_roles
 
                 for principal, localroles in dict.items():

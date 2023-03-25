@@ -44,7 +44,6 @@ def manage_addGroupManager(self, id, title="", RESPONSE=None):
 
 @implementer(IGroupManagement, IGroupIntrospection, IGroupCapability, IDeleteCapability)
 class GroupManager(ZODBGroupManager):
-
     meta_type = "Group Manager"
     security = ClassSecurityInfo()
 
@@ -109,7 +108,7 @@ class GroupManager(ZODBGroupManager):
         return tuple(self._group_principal_map.get(group_id, ()))
 
     #################################
-    # capabilties interface impls.
+    # capabilities interface impls.
 
     @security.public
     def allowDeletePrincipal(self, principal_id):
@@ -170,7 +169,6 @@ class GroupManager(ZODBGroupManager):
 
         propfinders = plugins.listPlugins(IPropertiesPlugin)
         for propfinder_id, propfinder in propfinders:
-
             data = propfinder.getPropertiesForUser(group, request)
             if data:
                 group.addPropertysheet(propfinder_id, data)
@@ -191,7 +189,6 @@ class GroupManager(ZODBGroupManager):
 
     @security.private
     def _verifyGroup(self, plugins, group_id=None, title=None):
-
         """group_id -> boolean
         This method based on PluggableAuthService._verifyUser
         """

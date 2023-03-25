@@ -1,4 +1,4 @@
-# pas alterations and monkies
+# pas alterations and monkeys
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from AccessControl.PermissionRole import PermissionRole
@@ -41,7 +41,7 @@ registerToolInterface("acl_users", IPluggableAuthService)
 
 
 def _userSetGroups(pas, user_id, groupnames):
-    """method was used at GRUF level, but is used inside this monkies at several
+    """method was used at GRUF level, but is used inside this monkeys at several
     places too.
 
     We no longer provide it on PAS to clean up patches
@@ -83,7 +83,7 @@ def _userSetGroups(pas, user_id, groupnames):
 
 
 #################################
-# pas folder monkies - standard zope user folder api or GRUF
+# pas folder monkeys - standard zope user folder api or GRUF
 
 
 def _doAddUser(self, login, password, roles, domains, groups=None, **kw):

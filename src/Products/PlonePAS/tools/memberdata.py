@@ -145,7 +145,6 @@ class MemberDataTool(BaseTool):
 
                 if searched is not None:
                     if searched.strip().lower().find(search_term) != -1:
-
                         res.append(
                             {
                                 "username": memberProperty("id"),
@@ -227,7 +226,6 @@ InitializeClass(MemberDataTool)
 @implementer(IManageCapabilities, IMember)
 @adapter(IUser, IMemberDataTool)
 class MemberData(BaseMemberAdapter):
-
     security = ClassSecurityInfo()
 
     def __init__(self, user, tool):

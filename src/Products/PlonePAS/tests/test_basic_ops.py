@@ -14,7 +14,6 @@ import unittest
 
 
 class BasicOpsTestCase(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):

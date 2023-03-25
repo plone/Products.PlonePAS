@@ -47,7 +47,7 @@ def scale_image(image_file, max_size=None, default_format=None):
         >>> from PIL import Image
 
     Let's make a couple test images and see how it works (all are
-    100x100), the gif is palletted mode::
+    100x100), the gif is paletted mode::
 
         >>> pas_path = os.path.dirname(config.__file__)
         >>> pjoin = os.path.join
@@ -149,8 +149,8 @@ def scale_image(image_file, max_size=None, default_format=None):
     # consider image mode when scaling
     # source images can be mode '1','L,','P','RGB(A)'
     # convert to greyscale or RGBA before scaling
-    # preserve palletted mode (but not pallette)
-    # for palletted-only image formats, e.g. GIF
+    # preserve paletted mode (but not palette)
+    # for paletted-only image formats, e.g. GIF
     # PNG compression is OK for RGBA thumbnails
     original_mode = image.mode
     if original_mode == "1":
@@ -160,7 +160,7 @@ def scale_image(image_file, max_size=None, default_format=None):
     # Rescale in place with an method that will not alter the aspect ratio
     # and will only shrink the image not enlarge it.
     image.thumbnail(size, resample=IMAGE_SCALE_PARAMS["algorithm"])
-    # preserve palletted mode for GIF and PNG
+    # preserve paletted mode for GIF and PNG
     if original_mode == "P" and format in ("GIF", "PNG"):
         image = image.convert("P")
     # Save

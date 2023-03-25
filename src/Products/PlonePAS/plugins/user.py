@@ -48,7 +48,7 @@ class UserManager(BasePlugin):
     @security.protected(ManageUsers)
     def addUser(self, user_id, login_name, password):
         """Original ZODBUserManager.addUser, modified to check if
-        incoming password is already encypted.
+        incoming password is already encrypted.
 
         This support clean migration from default user source.
         Should go into PAS.

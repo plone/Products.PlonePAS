@@ -21,7 +21,7 @@ for attrs in GROUP_PROPERTY_MAP.values():
 
 
 def getPropertiesForUser(self, user, request=None):
-    """Fullfill PropertiesPlugin requirements"""
+    """Fulfill PropertiesPlugin requirements"""
 
     if not isinstance(user, PloneGroup):
         # It's not a PloneGroup, continue as usual

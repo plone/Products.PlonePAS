@@ -102,7 +102,6 @@ registerToolInterface("portal_groupdata", IGroupDataTool)
 
 @implementer(IGroupData, IManageCapabilities)
 class GroupData(SimpleItem):
-
     security = ClassSecurityInfo()
 
     id = None
@@ -229,7 +228,7 @@ class GroupData(SimpleItem):
         if user.getId() in managers:
             return True
 
-        # Belongs to a group which is explicitly mentionned as a group
+        # Belongs to a group which is explicitly mentioned as a group
         # administrator
         meth = getattr(user, "getAllGroupNames", None)
         if meth:

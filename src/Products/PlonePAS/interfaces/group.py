@@ -6,7 +6,7 @@ class IGroupManagement(Interface):
     def addGroup(id, **kw):
         """
         Create a group with the supplied id, roles, and groups.
-        return True if the operation suceeded
+        return True if the operation succeeded
         """
 
     def addPrincipalToGroup(principal_id, group_id):

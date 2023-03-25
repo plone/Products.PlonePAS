@@ -13,7 +13,6 @@ import unittest
 
 
 class TestMemberDataTool(unittest.TestCase):
-
     layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 
     def setUp(self):

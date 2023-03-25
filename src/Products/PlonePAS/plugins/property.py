@@ -212,7 +212,7 @@ class ZODBMutablePropertyProvider(BasePlugin):
     @security.private
     def testMemberData(self, memberdata, criteria, exact_match=False):
         """Test if a memberdata matches the search criteria."""
-        for (key, value) in criteria.items():
+        for key, value in criteria.items():
             testvalue = memberdata.get(key, None)
             if testvalue is None:
                 return False

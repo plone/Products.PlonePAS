@@ -4,9 +4,9 @@ Custom GenericSetup import steps for PAS in Plone.
 
 from Acquisition import aq_base
 from Acquisition import aq_parent
+from plone.base.interfaces.siteroot import IPloneSiteRoot
 from plone.session.plugins.session import manage_addSessionPlugin
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import interfaces as plone_ifaces
 from Products.PlonePAS import config
 from Products.PlonePAS.interfaces import group as igroup
 from Products.PlonePAS.interfaces.plugins import ILocalRolesPlugin
@@ -21,7 +21,6 @@ from Products.PluggableAuthService.plugins import CookieAuthHelper
 from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin import (
     addRecursiveGroupsPlugin,
 )
-from zope import component
 
 import logging
 
@@ -75,7 +74,6 @@ def registerPluginType(pas, plugin_type, plugin_info):
 
 
 def registerPluginTypes(pas):
-
     PluginInfo = {
         "id": "IUserManagement",
         "title": "user_management",
@@ -219,7 +217,7 @@ def setupAuthPlugins(
         login_path = crumbler.auto_login_page
         cookie_name = crumbler.auth_cookie
 
-    is_plone_site = plone_ifaces.IPloneSiteRoot.providedBy(portal)
+    is_plone_site = IPloneSiteRoot.providedBy(portal)
     if is_plone_site:
         cookie_meta_type = cookie_handler.ExtendedCookieAuthHelper.meta_type
         add_cookie_plugin = plone_pas.manage_addExtendedCookieAuthHelper

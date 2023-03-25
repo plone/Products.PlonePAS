@@ -1,8 +1,8 @@
 <configure xmlns="http://namespaces.zope.org/zope">
 
   <adapter
-      provides="Products.CMFCore.interfaces.IMember"
       factory=".memberdata.MemberData"
+      provides="Products.CMFCore.interfaces.IMember"
       />
 
 </configure>

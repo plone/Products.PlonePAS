@@ -36,7 +36,6 @@ manage_addGroupAwareRoleManagerForm = DTMLFile(
 
 @implementer(IAssignRoleCapability)
 class GroupAwareRoleManager(ZODBRoleManager):
-
     meta_type = "Group Aware Role Manager"
     security = ClassSecurityInfo()
 
