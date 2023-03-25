@@ -1,0 +1,3 @@
+Remove `ldapmp` module. It is not being tested in Plone 6.
+See https://github.com/plone/Products.PlonePAS/pull/71#pullrequestreview-1351349950
+[gforcada]
