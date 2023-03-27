@@ -61,7 +61,7 @@ Zope = [
 ]
 python-dateutil = ['dateutil']
 Pillow = ['PIL']
-ignore-packages = ['Products.LDAPMultiPlugins', 'plone.openid']
+ignore-packages = ['plone.openid']
 
 [tool.pylint.'MESSAGES CONTROL']
 disable = [
