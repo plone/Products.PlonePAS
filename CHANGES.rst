@@ -8,6 +8,24 @@ Changelog
 
 .. towncrier release notes start
 
+8.0.0 (2023-04-06)
+------------------
+
+Breaking changes:
+
+
+- Remove `ldapmp` module. It is not being tested in Plone 6.
+  See https://github.com/plone/Products.PlonePAS/pull/71#pullrequestreview-1351349950
+  [gforcada] (#1)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (80cf330f)
+
+
 7.0.0 (2022-12-02)
 ------------------
 
