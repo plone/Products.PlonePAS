@@ -62,10 +62,12 @@ class PasswordPolicyPlugin(BasePlugin):
             return [
                 {
                     "id": "password",
-                    "error": translate(_(
-                        "Your password must contain at least ${min_chars} characters.",
-                        mapping={"min_chars": str(self.min_chars)},
-                    )),
+                    "error": translate(
+                        _(
+                            "Your password must contain at least ${min_chars} characters.",
+                            mapping={"min_chars": str(self.min_chars)},
+                        )
+                    ),
                 }
             ]
         else:
