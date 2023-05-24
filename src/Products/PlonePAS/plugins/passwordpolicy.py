@@ -7,6 +7,8 @@ from AccessControl.class_init import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from zope.globalrequest import getRequest
+from zope.i18n import translate
 from zope.i18nmessageid import MessageFactory
 from zope.interface import implementer
 
@@ -57,23 +59,16 @@ class PasswordPolicyPlugin(BasePlugin):
         password = set_info.get("password", None)
         if password is None:
             return []
-        elif password == "":
-            return [
-                {
-                    "id": "password",
-                    "error": _(
-                        "Minimum ${min_chars} characters.",
-                        mapping={"min_chars": str(self.min_chars)},
-                    ),
-                }
-            ]
         elif len(password) < self.min_chars:
             return [
                 {
                     "id": "password",
-                    "error": _(
-                        "Your password must contain at least ${min_chars} characters.",
-                        mapping={"min_chars": str(self.min_chars)},
+                    "error": translate(
+                        _(
+                            "Your password must contain at least ${min_chars} characters.",
+                            mapping={"min_chars": str(self.min_chars)},
+                        ),
+                        context=getRequest(),
                     ),
                 }
             ]
