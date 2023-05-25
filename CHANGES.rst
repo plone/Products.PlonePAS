@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+8.0.1 (2023-05-25)
+------------------
+
+Bug fixes:
+
+
+- Translate error message, simplify error handling. [tschorr] (#75)
+
+
 8.0.0 (2023-04-06)
 ------------------
 

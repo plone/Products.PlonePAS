@@ -2,7 +2,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = "8.0.1.dev0"
+version = "8.0.1"
 
 
 longdescription = open("README.rst").read()
