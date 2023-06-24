@@ -19,6 +19,7 @@ install_requires = [
     "plone.protect>=2.0.3",
     "plone.registry",
     "plone.session",
+    "Products.BTreeFolder2",
     "Products.GenericSetup",
     "Products.PluggableAuthService>=2.0",
     "setuptools",
