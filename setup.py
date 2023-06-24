@@ -1,13 +1,13 @@
+from pathlib import Path
 from setuptools import find_packages
 from setuptools import setup
 
 
 version = "8.0.2.dev0"
 
-
-longdescription = open("README.rst").read()
-longdescription += "\n"
-longdescription += open("CHANGES.rst").read()
+long_description = (
+    f"{Path('README.rst').read_text()}\n{Path('CHANGES.rst').read_text()}"
+)
 
 install_requires = [
     "AuthEncoding",
@@ -28,7 +28,10 @@ setup(
     name="Products.PlonePAS",
     version=version,
     description="PlonePAS modifies the PluggableAuthService for use by Plone.",
-    long_description=longdescription,
+    long_description=long_description,
+    long_description_content_type="text/x-rst",
+    # Get more strings from
+    # https://pypi.org/classifiers/
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Framework :: Plone",
