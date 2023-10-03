@@ -130,7 +130,7 @@ class TestGroupsToolIntegration(unittest.TestCase):
         if "auto_group" in self.acl_users:
             self.acl_users.manage_delObjects(["auto_group"])
 
-        # Nuke Administators and Reviewers groups added in 2.1a2 migrations
+        # Nuke Administrators and Reviewers groups added in 2.1a2 migrations
         # (and any other migrated-in groups) to avoid test confusion
         self.groups.removeGroups(self.groups.listGroupIds())
 
