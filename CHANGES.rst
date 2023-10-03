@@ -134,7 +134,7 @@ Bug fixes:
 Bug fixes:
 
 
-- Fixes deprection message: `AccessControl.User has moved to AccessControl.users`.
+- Fixes deprecation message: `AccessControl.User has moved to AccessControl.users`.
   [jensens] (#59)
 
 
