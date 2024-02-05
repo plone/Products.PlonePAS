@@ -5,6 +5,7 @@ ie. containers/objects which denote that they do not wish to acquire local
 roles from their containment structure.
 
 """
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from Acquisition import aq_inner

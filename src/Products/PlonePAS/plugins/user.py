@@ -1,6 +1,7 @@
 """
 ZODB based user manager with introspection and management interfaces.
 """
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from AccessControl.Permissions import manage_users as ManageUsers

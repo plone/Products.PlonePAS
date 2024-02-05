@@ -4,6 +4,7 @@ Add Mutable Property Sheets and Schema Mutable Property Sheets to PAS
 also a property schema type registry which is extensible.
 
 """
+
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.PlonePAS.interfaces.propertysheets import IMutablePropertySheet
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
