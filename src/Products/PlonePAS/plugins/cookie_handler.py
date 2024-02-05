@@ -5,6 +5,7 @@ PluggableAuthService but overrides the updateCookie mechanism to
 provide similar functionality as CookieCrumbler does... by giving
 the portal the ability to provide a setAuthCookie method.
 """
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from AccessControl.SecurityManagement import getSecurityManager

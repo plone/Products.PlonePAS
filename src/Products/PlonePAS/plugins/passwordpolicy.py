@@ -2,6 +2,7 @@
 Password Validation plugin (IValidationPlugin)
 Mutable Property Provider
 """
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from Products.PageTemplates.PageTemplateFile import PageTemplateFile

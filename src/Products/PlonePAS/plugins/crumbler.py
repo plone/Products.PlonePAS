@@ -4,6 +4,7 @@ Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
 
 """
+
 from AccessControl.class_init import InitializeClass
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base

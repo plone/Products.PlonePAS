@@ -122,9 +122,9 @@ class PortalSetupTest(unittest.TestCase):
         # Submit the login form in the browser
         login_form = browser.getForm()
         login_form.getControl(name="__ac_name").value = pa_testing.SITE_OWNER_NAME
-        login_form.getControl(
-            name="__ac_password"
-        ).value = pa_testing.SITE_OWNER_PASSWORD
+        login_form.getControl(name="__ac_password").value = (
+            pa_testing.SITE_OWNER_PASSWORD
+        )
         login_form.controls[-1].click()
         self.assertEqual(
             browser.headers["Status"].lower(),

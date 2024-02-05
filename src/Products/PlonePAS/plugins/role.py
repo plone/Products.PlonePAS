@@ -4,6 +4,7 @@ is a member of, in addition to the explicit roles assigned directly
 to the principal.
 
 """
+
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from AccessControl.requestmethod import postonly

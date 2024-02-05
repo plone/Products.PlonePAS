@@ -3,6 +3,7 @@ ZODB Group Implementation with basic introspection and
 management (ie. rw) capabilities.
 
 """
+
 from .ufactory import PloneUser
 from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
