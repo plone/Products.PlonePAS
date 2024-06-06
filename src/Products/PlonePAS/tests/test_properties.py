@@ -211,6 +211,10 @@ class PropertySearchTest(unittest.TestCase):
         self.md = getToolByName(self.portal, "portal_memberdata")
         self.gt = getToolByName(self.portal, "portal_groups")
 
+        # All existing boolean properties might get removed at some point,
+        # so add a new one for testing.
+        self.md.manage_addProperty("fluffy", False, "boolean")
+
         # Create a new Member
         self.mt.addMember(
             "member1",
@@ -273,11 +277,11 @@ class PropertySearchTest(unittest.TestCase):
         self.assertEqual(results, [])
 
     def testBooleanSearch(self):
-        results = self.pas.searchUsers(visible_ids=True)
+        results = self.pas.searchUsers(fluffy=True)
         results = [info["userid"] for info in results]
         self.assertEqual(results, [])
 
-        results = self.pas.searchUsers(visible_ids=False)
+        results = self.pas.searchUsers(fluffy=False)
         results = [info["userid"] for info in results]
         self.assertEqual(results, ["member1", "member2"])
 
