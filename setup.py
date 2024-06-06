@@ -10,8 +10,6 @@ long_description = (
 )
 
 install_requires = [
-    "AuthEncoding",
-    "BTrees",
     "Pillow",
     "plone.base",
     "plone.i18n",
@@ -23,6 +21,7 @@ install_requires = [
     "Products.GenericSetup",
     "Products.PluggableAuthService>=2.0",
     "setuptools",
+    "Zope",
 ]
 
 setup(
