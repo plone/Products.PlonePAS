@@ -1235,7 +1235,7 @@ Fixes:
 2.4 - 2007-04-15
 ----------------
 
-- Optomise the local roles plugin for the common case where
+- Optimise the local roles plugin for the common case where
   local_roles is empty
   [dreamcatcher]
 
