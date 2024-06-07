@@ -1,0 +1,2 @@
+Do not test with ``visible_ids`` boolean property, as this may get removed.
+[maurits]
