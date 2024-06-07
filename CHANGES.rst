@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+8.0.3 (2024-06-07)
+------------------
+
+Tests
+
+
+- Do not test with ``visible_ids`` boolean property, as this may get removed.
+  [maurits] (#125)
+
+
 8.0.2 (2023-07-13)
 ------------------
 
