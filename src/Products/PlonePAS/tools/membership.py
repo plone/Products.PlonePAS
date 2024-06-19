@@ -43,21 +43,6 @@ default_portrait = "defaultUser.png"
 logger = logging.getLogger("PlonePAS")
 
 
-def _unicodify_structure(value, charset="utf-8"):
-    """Convert value to unicode."""
-    if isinstance(value, str):
-        return charset and safe_unicode(value, charset) or safe_unicode(value)
-    if isinstance(value, list):
-        return [_unicodify_structure(val, charset) for val in value]
-    if isinstance(value, tuple):
-        return tuple(_unicodify_structure(entry, charset) for entry in value)
-    if isinstance(value, dict):
-        for key, val in value.items():
-            value[key] = _unicodify_structure(val, charset)
-        return value
-    return value
-
-
 @implementer(membership.IMembershipTool)
 class MembershipTool(BaseTool):
     """PAS-based customization of MembershipTool."""
@@ -182,7 +167,7 @@ class MembershipTool(BaseTool):
             searchmap = REQUEST
             for key, value in searchmap.items():
                 if isinstance(value, str):
-                    searchmap[key] = _unicodify_structure(value)
+                    searchmap[key] = safe_unicode(value)
         else:
             searchmap = kw
 
