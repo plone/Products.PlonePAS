@@ -12,7 +12,6 @@ from DateTime import DateTime
 from io import BytesIO
 from OFS.Image import Image
 from plone.protect.interfaces import IDisableCSRFProtection
-from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.permissions import ManagePortal
@@ -32,7 +31,6 @@ from Products.PlonePAS.utils import scale_image
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 from zope import event
-from zope.component import getUtility
 from zope.interface import alsoProvides
 from zope.interface import implementer
 
@@ -44,15 +42,9 @@ import transaction
 default_portrait = "defaultUser.png"
 logger = logging.getLogger("PlonePAS")
 
-_marker = dict()  # type: ignore
 
-
-def _unicodify_structure(value, charset=_marker):
+def _unicodify_structure(value, charset="utf-8"):
     """Convert value to unicode."""
-    if charset is _marker:
-        ptool = getUtility(IPropertiesTool)
-        charset = ptool.getProperty("default_charset", None)
-
     if isinstance(value, str):
         return charset and safe_unicode(value, charset) or safe_unicode(value)
     if isinstance(value, list):
