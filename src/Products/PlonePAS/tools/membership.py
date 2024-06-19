@@ -166,7 +166,7 @@ class MembershipTool(BaseTool):
         if REQUEST is not None:
             searchmap = REQUEST
             for key, value in searchmap.items():
-                if isinstance(value, str):
+                if isinstance(value, bytes):
                     searchmap[key] = safe_unicode(value)
         else:
             searchmap = kw
