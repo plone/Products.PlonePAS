@@ -3,6 +3,14 @@ from Products.PlonePAS.config import IMAGE_SCALE_PARAMS
 from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 
 import urllib
+import zope.deferredimport
+
+
+zope.deferredimport.deprecated(
+    "You should use plone.base.utils.safe_text instead. "
+    "This alias will be removed in Plone 7.0",
+    safe_unicode="plone.base.utils:safe_text",
+)
 
 
 def unique(iterable):
@@ -176,18 +184,6 @@ def getGroupsForPrincipal(principal, plugins, request=None):
     for iid, plugin in plugins.listPlugins(IGroupsPlugin):
         groups.update(plugin.getGroupsForPrincipal(principal, request))
     return list(groups)
-
-
-def safe_unicode(value, encoding="utf-8"):
-    """Converts a value to unicode, even it is already a unicode string."""
-    if isinstance(value, str):
-        return value
-    elif isinstance(value, str):
-        try:
-            value = str(value, encoding)
-        except UnicodeDecodeError:
-            value = value.decode("utf-8", "replace")
-    return value
 
 
 # Imported from Products.CMFCore.MemberdataTool as it has now been removed.
