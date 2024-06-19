@@ -11,6 +11,7 @@ from App.special_dtml import DTMLFile
 from DateTime import DateTime
 from io import BytesIO
 from OFS.Image import Image
+from plone.base.utils import safe_text
 from plone.protect.interfaces import IDisableCSRFProtection
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.permissions import ListPortalMembers
@@ -26,7 +27,6 @@ from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
-from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
@@ -167,7 +167,7 @@ class MembershipTool(BaseTool):
             searchmap = REQUEST
             for key, value in searchmap.items():
                 if isinstance(value, bytes):
-                    searchmap[key] = safe_unicode(value)
+                    searchmap[key] = safe_text(value)
         else:
             searchmap = kw
 
