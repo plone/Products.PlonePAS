@@ -904,7 +904,7 @@ class TestSearchForMembers(unittest.TestCase):
 
         self.assertEqual(len(search(REQUEST=dict(name="jürgen"))), 1)
 
-        self.assertEqual(len(search(REQUEST=dict(name="jürgen"))), 1)
+        self.assertEqual(len(search(REQUEST=dict(name="jürgen".encode()))), 1)
 
 
 class TestDefaultUserAndPasswordNotChanged(unittest.TestCase):

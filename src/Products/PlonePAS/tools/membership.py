@@ -11,8 +11,8 @@ from App.special_dtml import DTMLFile
 from DateTime import DateTime
 from io import BytesIO
 from OFS.Image import Image
+from plone.base.utils import safe_text
 from plone.protect.interfaces import IDisableCSRFProtection
-from Products.CMFCore.interfaces import IPropertiesTool
 from Products.CMFCore.MembershipTool import MembershipTool as BaseTool
 from Products.CMFCore.permissions import ListPortalMembers
 from Products.CMFCore.permissions import ManagePortal
@@ -27,12 +27,10 @@ from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
 from Products.PlonePAS.utils import cleanId
-from Products.PlonePAS.utils import safe_unicode
 from Products.PlonePAS.utils import scale_image
 from zExceptions import BadRequest
 from ZODB.POSException import ConflictError
 from zope import event
-from zope.component import getUtility
 from zope.interface import alsoProvides
 from zope.interface import implementer
 
@@ -43,27 +41,6 @@ import transaction
 
 default_portrait = "defaultUser.png"
 logger = logging.getLogger("PlonePAS")
-
-_marker = dict()  # type: ignore
-
-
-def _unicodify_structure(value, charset=_marker):
-    """Convert value to unicode."""
-    if charset is _marker:
-        ptool = getUtility(IPropertiesTool)
-        charset = ptool.getProperty("default_charset", None)
-
-    if isinstance(value, str):
-        return charset and safe_unicode(value, charset) or safe_unicode(value)
-    if isinstance(value, list):
-        return [_unicodify_structure(val, charset) for val in value]
-    if isinstance(value, tuple):
-        return tuple(_unicodify_structure(entry, charset) for entry in value)
-    if isinstance(value, dict):
-        for key, val in value.items():
-            value[key] = _unicodify_structure(val, charset)
-        return value
-    return value
 
 
 @implementer(membership.IMembershipTool)
@@ -189,8 +166,8 @@ class MembershipTool(BaseTool):
         if REQUEST is not None:
             searchmap = REQUEST
             for key, value in searchmap.items():
-                if isinstance(value, str):
-                    searchmap[key] = _unicodify_structure(value)
+                if isinstance(value, bytes):
+                    searchmap[key] = safe_text(value)
         else:
             searchmap = kw
 

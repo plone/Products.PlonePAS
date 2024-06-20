@@ -6,11 +6,11 @@ from AccessControl import ClassSecurityInfo
 from AccessControl.class_init import InitializeClass
 from App.special_dtml import DTMLFile
 from BTrees.OOBTree import OOBTree
+from plone.base.utils import safe_text
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces.plugins import IMutablePropertiesPlugin
 from Products.PlonePAS.sheet import MutablePropertySheet
 from Products.PlonePAS.sheet import validateValue
-from Products.PlonePAS.utils import safe_unicode
 from Products.PluggableAuthService.interfaces.plugins import IPropertiesPlugin
 from Products.PluggableAuthService.interfaces.plugins import IUserEnumerationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
@@ -219,9 +219,9 @@ class ZODBMutablePropertyProvider(BasePlugin):
                 return False
 
             if isStringType(testvalue):
-                testvalue = safe_unicode(testvalue.lower())
+                testvalue = safe_text(testvalue.lower())
             if isStringType(value):
-                value = safe_unicode(value.lower())
+                value = safe_text(value.lower())
 
             if exact_match:
                 if value != testvalue:
