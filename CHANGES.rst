@@ -8,6 +8,19 @@ Changelog
 
 .. towncrier release notes start
 
+8.0.4 (2024-06-26)
+------------------
+
+Bug fixes:
+
+
+- Restore searching for member when query uses bytes instead of text.
+  [maurits] (#125)
+- searchForMembers: always use utf-8 instead of checking default_charset.
+  This code was still getting the ``IPropertiesTool`` utility.
+  [maurits] (#125)
+
+
 8.0.3 (2024-06-07)
 ------------------
 
