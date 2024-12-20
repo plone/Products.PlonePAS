@@ -7,6 +7,7 @@ from Products.PluggableAuthService.interfaces.plugins import IExtractionPlugin
 from Products.PluggableAuthService.interfaces.plugins import (  # noqa: E501
     ILoginPasswordExtractionPlugin,
 )
+from zExceptions import HTTPImATeapot
 from zope.interface import implementer
 
 
@@ -38,3 +39,6 @@ class PASInfoView(BrowserView):
     def hasOpenIDdExtractor(self):
         # BBB Keeping method name with typo for backwards compatibility.
         return self.hasOpenIDExtractor()
+
+    def __call__(self):
+        raise HTTPImATeapot("View not callable")

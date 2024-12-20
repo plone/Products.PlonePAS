@@ -14,7 +14,6 @@
       name="pas_info"
       for="*"
       class=".info.PASInfoView"
-      allowed_interface="Products.PlonePAS.interfaces.browser.IPASInfoView"
       permission="zope2.View"
       />
 
@@ -22,7 +21,6 @@
       name="pas_member"
       for="*"
       class=".member.PASMemberView"
-      allowed_interface="Products.PlonePAS.interfaces.browser.IPASMemberView"
       permission="zope2.View"
       />
 
@@ -30,7 +28,6 @@
       name="pas_search"
       for="*"
       class=".search.PASSearchView"
-      allowed_interface="Products.PlonePAS.interfaces.browser.IPASSearchView"
       permission="zope2.View"
       />
 
