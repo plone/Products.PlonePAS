@@ -31,7 +31,7 @@
       for="*"
       class=".search.PASSearchView"
       allowed_interface="Products.PlonePAS.interfaces.browser.IPASSearchView"
-      permission="zope2.View"
+      permission="cmf.ListPortalMembers"
       />
 
 </configure>

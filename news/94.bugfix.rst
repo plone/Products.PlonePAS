@@ -1,0 +1,1 @@
+Protect the pas_search view with the ``cmf.ListPortalMembers`` permission [ale-rt]
