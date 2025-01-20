@@ -2,6 +2,7 @@ from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.CMFCore.utils import getToolByName
 from Products.Five import BrowserView
 from Products.PlonePAS.interfaces.browser import IPASSearchView
+from zExceptions import HTTPImATeapot
 from zope.component import queryUtility
 from zope.interface import implementer
 
@@ -73,3 +74,6 @@ class PASSearchView(BrowserView):
         # persistent object. So we fake things and return the physical path
         # for our context.
         return self.context.getPhysicalPath()
+
+    def __call__(self):
+        raise HTTPImATeapot("View not callable")

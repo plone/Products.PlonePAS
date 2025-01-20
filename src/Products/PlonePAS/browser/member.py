@@ -1,6 +1,7 @@
 from plone.memoize.instance import memoize
 from Products.CMFCore.utils import getToolByName
 from Products.PlonePAS.interfaces.browser import IPASMemberView
+from zExceptions import HTTPImATeapot
 from zope.interface import implementer
 from zope.publisher.browser import BrowserView
 
@@ -26,3 +27,6 @@ class PASMemberView(BrowserView):
             result.get("fullname") or result.get("username") or userid
         )
         return result
+
+    def __call__(self):
+        raise HTTPImATeapot("View not callable")
