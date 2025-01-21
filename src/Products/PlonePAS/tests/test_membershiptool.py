@@ -1,11 +1,12 @@
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
-from AccessControl.User import nobody
+from AccessControl.users import nobody
 from Acquisition import aq_base
 from Acquisition import aq_parent
 from DateTime import DateTime
 from io import BytesIO
 from OFS.Image import Image
+from pathlib import Path
 from plone.app.testing import login
 from plone.app.testing import logout
 from plone.app.testing import PLONE_SITE_ID
@@ -28,7 +29,6 @@ from zExceptions import BadRequest
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
 
-import os
 import unittest
 
 
@@ -205,10 +205,10 @@ class TestMembershipTool(unittest.TestCase):
         )
 
     def makeRealImage(self):
+        # Note: the caller is responsible for calling 'close' in this image after use.
         import Products.PlonePAS as ppas
 
-        pas_path = os.path.dirname(ppas.__file__)
-        path = os.path.join(pas_path, "tool.gif")
+        path = Path(ppas.__file__).parent / "tool.gif"
         image = open(path, "rb")
         image_upload = dummy.FileUpload(dummy.FieldStorage(image))
         return image_upload
@@ -242,6 +242,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertEqual(
             self.membership.getPersonalPortrait(TEST_USER_ID).meta_type, "Image"
         )
+        image.close()
 
     def testChangeOwnMemberPortraitWithEmailUsers(self):
         member_id = "member2@host.com"
@@ -264,6 +265,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertEqual(
             self.membership.getPersonalPortrait(member_id).meta_type, "Image"
         )
+        image.close()
 
     def testCannotChangeOtherMemberPortrait(self):
         # A normal member should not be able to change the portrait of
@@ -274,6 +276,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertRaises(
             Unauthorized, self.membership.changeMemberPortrait, image, "joe"
         )
+        image.close()
 
     def testChangeMemberPortraitAsManager(self):
         # Managers should be able to change the portrait of another
@@ -285,6 +288,7 @@ class TestMembershipTool(unittest.TestCase):
         self.membership.changeMemberPortrait(image, "joe")
         self.assertEqual(self.membership.getPersonalPortrait("joe").getId(), "joe")
         self.assertEqual(self.membership.getPersonalPortrait("joe").meta_type, "Image")
+        image.close()
 
     def testDeleteOwnPersonalPortrait(self):
         # Should delete the portrait image
@@ -297,6 +301,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertEqual(
             self.membership.getPersonalPortrait(TEST_USER_ID).getId(), "defaultUser.png"
         )
+        image.close()
 
     def testCannotDeleteOtherPersonalPortrait(self):
         # A normal member should not be able to delete the portrait of
@@ -307,6 +312,7 @@ class TestMembershipTool(unittest.TestCase):
         self.membership.changeMemberPortrait(image, "joe")
         setRoles(self.portal, TEST_USER_ID, ["Member"])
         self.assertRaises(Unauthorized, self.membership.deletePersonalPortrait, "joe")
+        image.close()
 
     def testDeleteOtherPersonalPortraitAsManager(self):
         # Managers should be able to change the portrait of another
@@ -319,6 +325,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertEqual(
             self.membership.getPersonalPortrait("joe").getId(), "defaultUser.png"
         )
+        image.close()
 
     def testGetPersonalPortraitWithoutPassingId(self):
         # Should return the logged in users portrait if no id is given
@@ -326,6 +333,7 @@ class TestMembershipTool(unittest.TestCase):
         self.membership.changeMemberPortrait(image, TEST_USER_ID)
         self.assertEqual(self.membership.getPersonalPortrait().getId(), TEST_USER_ID)
         self.assertEqual(self.membership.getPersonalPortrait().meta_type, "Image")
+        image.close()
 
     def testPortraitForNonStandardUserId(self):
         # Some characters in a user id can give problems for getting
@@ -346,6 +354,7 @@ class TestMembershipTool(unittest.TestCase):
         self.membership.changeMemberPortrait(image, user_id)
         self.assertEqual(self.membership.getPersonalPortrait().getId(), safe_id)
         self.assertEqual(self.membership.getPersonalPortrait().meta_type, "Image")
+        image.close()
 
         # Other users should be able to see your portrait.
         login(self.portal, TEST_USER_NAME)
@@ -372,6 +381,7 @@ class TestMembershipTool(unittest.TestCase):
         self.assertEqual(
             self.membership.getPersonalPortrait(user_id).getId(), "defaultUser.png"
         )
+        manager_image.close()
 
     def testListMembers(self):
         # Should return the members list
@@ -670,8 +680,10 @@ class TestMembershipTool(unittest.TestCase):
         self.portal.portal_memberdata._setPortrait(empty_file, TEST_USER_ID)
         self.assertEqual(self.membership.getBadMembers(), [])
         # And a good image
-        self.membership.changeMemberPortrait(self.makeRealImage(), TEST_USER_ID)
+        image = self.makeRealImage()
+        self.membership.changeMemberPortrait(image, TEST_USER_ID)
         self.assertEqual(self.membership.getBadMembers(), [])
+        image.close()
 
     def test_credentials_updated_event(self):
         events_fired = []

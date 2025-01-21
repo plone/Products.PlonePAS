@@ -405,7 +405,7 @@ def _getAllLocalRoles(self, context):
 
 
 def authenticate(self, name, password, request):
-    """See AccessControl.User.BasicUserFolder.authenticate
+    """See AccessControl.userfolder:BasicUserFolder.authenticate
 
     Products.PluggableAuthService.PluggableAuthService does not provide this
     method, BasicUserFolder documents it as "Private UserFolder object

@@ -42,7 +42,7 @@ class ILocalRolesPlugin(Interface):
         o Include *both* local roles assigned directly to us *and* those
           assigned to our groups.
 
-        o Ripped off from AccessControl.User.BasicUser, which provides
+        o Ripped off from AccessControl.users.BasicUser, which provides
           no other extension mechanism. :(
         """
 
