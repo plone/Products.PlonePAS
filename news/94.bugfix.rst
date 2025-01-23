@@ -1,1 +1,0 @@
-Return an error when trying to access the pas views from the web [ale-rt]

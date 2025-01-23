@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+8.0.5 (2025-01-23)
+------------------
+
+Bug fixes:
+
+
+- Return an error when trying to access the pas views from the web [ale-rt] (#94)
+- Fix ResourceWarnings for unclosed files and fix DeprecationWarnings. [maurits] (#4090)
+
+
 8.0.4 (2024-06-26)
 ------------------
 
