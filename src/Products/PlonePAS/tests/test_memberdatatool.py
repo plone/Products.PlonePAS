@@ -67,7 +67,7 @@ class TestMemberDataTool(unittest.TestCase):
         self.assertEqual(self.memberdata._getPortrait(default_user), None)
 
     def testPruneMemberDataContents(self):
-        # Only test what is not already tested elswhere
+        # Only test what is not already tested elsewhere
         self.memberdata._setPortrait(
             Image(id=default_user, file=dummy.File(), title=""), default_user
         )

@@ -1,4 +1,4 @@
-""" Class: ExtendedCookieAuthHelper
+"""Class: ExtendedCookieAuthHelper
 
 Simply extends the standard CookieAuthHelper provided via regular
 PluggableAuthService but overrides the updateCookie mechanism to

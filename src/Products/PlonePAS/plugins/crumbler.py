@@ -1,4 +1,4 @@
-""" Class: CookieCrumblingPlugin
+"""Class: CookieCrumblingPlugin
 
 Acts as auth plugin, but injects cookie form credentials as HTTPBasicAuth.
 This allows form logins to fall through to parent user folders.
