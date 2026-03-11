@@ -25,7 +25,6 @@ from zope.interface import implementer
 
 import logging
 
-
 manage_addGroupManagerForm = DTMLFile("../zmi/GroupManagerForm", globals())
 logger = logging.getLogger("PlonePAS")
 

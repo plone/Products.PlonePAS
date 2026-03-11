@@ -17,7 +17,6 @@ from zope.interface import implementer
 
 import logging
 
-
 logger = logging.getLogger("PlonePAS")
 
 CC_ID = "cookie_auth"

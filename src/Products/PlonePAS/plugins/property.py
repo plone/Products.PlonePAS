@@ -21,7 +21,6 @@ from zope.interface import implementer
 
 import copy
 
-
 _ = MessageFactory("plone")
 
 
