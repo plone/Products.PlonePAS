@@ -30,7 +30,6 @@ from zope.event import notify
 
 import logging
 
-
 logger = logging.getLogger("PlonePAS")
 
 registerToolInterface("acl_users", IPluggableAuthService)

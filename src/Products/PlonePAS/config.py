@@ -1,6 +1,5 @@
 from PIL import Image
 
-
 PROJECTNAME = "PlonePAS"
 GLOBALS = globals()
 

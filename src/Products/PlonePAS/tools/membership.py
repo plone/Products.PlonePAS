@@ -38,7 +38,6 @@ import logging
 import PIL
 import transaction
 
-
 default_portrait = "defaultUser.png"
 logger = logging.getLogger("PlonePAS")
 

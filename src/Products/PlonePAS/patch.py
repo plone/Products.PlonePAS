@@ -2,7 +2,6 @@ from zope.deprecation import deprecation
 
 import logging
 
-
 logger = logging.getLogger("PlonePAS")
 
 PATTERN = "__PlonePAS_%s__"

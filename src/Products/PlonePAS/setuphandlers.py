@@ -24,7 +24,6 @@ from Products.PluggableAuthService.plugins.RecursiveGroupsPlugin import (
 
 import logging
 
-
 logger = logging.getLogger("PlonePAS setup")
 
 

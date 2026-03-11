@@ -19,7 +19,6 @@ from Products.PluggableAuthService.utils import createViewName
 from zope.event import notify
 from zope.interface import implementer
 
-
 manage_addUserManagerForm = DTMLFile("../zmi/UserManagerForm", globals())
 
 

@@ -5,7 +5,6 @@ from Products.PluggableAuthService.interfaces.plugins import IGroupsPlugin
 import urllib
 import zope.deferredimport
 
-
 zope.deferredimport.deprecated(
     "You should use plone.base.utils.safe_text instead. "
     "This alias will be removed in Plone 7.0",

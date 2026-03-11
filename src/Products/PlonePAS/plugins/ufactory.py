@@ -13,7 +13,6 @@ from Products.PluggableAuthService.PropertiedUser import PropertiedUser
 from Products.PluggableAuthService.UserPropertySheet import UserPropertySheet
 from zope.interface import implementer
 
-
 manage_addPloneUserFactoryForm = DTMLFile("../zmi/PloneUserFactoryForm", globals())
 
 _marker = object()

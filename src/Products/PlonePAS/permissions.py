@@ -1,6 +1,5 @@
 from AccessControl.Permission import addPermission
 
-
 AddGroups = "Add Groups"
 addPermission(AddGroups, default_roles=("Manager",))
 

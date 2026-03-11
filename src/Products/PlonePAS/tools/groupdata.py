@@ -30,7 +30,6 @@ from ZPublisher.Converters import type_converters
 
 import logging
 
-
 logger = logging.getLogger("PlonePAS")
 _marker = object()
 
