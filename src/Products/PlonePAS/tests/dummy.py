@@ -26,7 +26,7 @@ class File(FileUpload):
     __allow_access_to_unprotected_subobjects__ = 1
     filename = "dummy.txt"
     data = TEXT
-    headers: typing.Dict = {}
+    headers: dict = {}
 
     def __init__(self, filename=None, data=None, headers=None):
         if filename is not None:
