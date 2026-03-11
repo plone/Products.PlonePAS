@@ -2,8 +2,6 @@ from io import BytesIO
 from OFS.SimpleItem import SimpleItem
 from ZPublisher.HTTPRequest import FileUpload
 
-import typing
-
 TEXT = b"file data"
 
 
