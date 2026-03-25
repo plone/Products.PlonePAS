@@ -530,7 +530,7 @@ class MembershipTool(BaseTool):
         replaced with a set of methods for querying pieces of the
         list rather than the entire list at once.
         """
-        return self.acl_users.getUserIds()
+        return [user.getId() for user in self.acl_users.getUsers()]
 
     @security.protected(SetOwnPassword)
     def testCurrentPassword(self, password):
@@ -574,12 +574,10 @@ class MembershipTool(BaseTool):
             if domains is None:
                 domains = []
             user = acl_users.getUserById(member.getUserId(), None)
-            # we must change the users password through grufs changepassword
-            # to keep her  group settings
             if hasattr(user, "changePassword"):
                 user.changePassword(password)
             else:
-                acl_users._doChangeUser(
+                acl_users.userFolderEditUser(
                     member.getUserId(), password, member.getRoles(), domains
                 )
             if REQUEST is None:

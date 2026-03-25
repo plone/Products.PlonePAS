@@ -21,7 +21,7 @@ class TestMemberDataTool(unittest.TestCase):
         self.membership = self.portal.portal_membership
         self.membership.memberareaCreationFlag = 0
         # Don't let default_user disturb results
-        self.portal.acl_users._doDelUsers([default_user])
+        self.portal.acl_users.userFolderDelUsers([default_user])
         # Add some members
         self.addMember(
             "fred",

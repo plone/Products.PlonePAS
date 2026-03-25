@@ -1,0 +1,7 @@
+Remove 15 unused GRUF backward-compatibility methods from PAS monkey-patches:
+``_doChangeGroup``, ``_doChangeUser``, ``_doDelGroups``, ``_doDelUsers``,
+``_updateGroup``, ``addRole``, ``getAllLocalRoles``, ``getGroupByName``,
+``getGroupIds``, ``getGroupNames``, ``getGroups``, ``getPureUsers``,
+``getUserIds``, ``userFolderEditGroup``, ``userFolderDelGroups``.
+These methods had zero callers in the Plone 6 codebase.
+See `Products.PlonePAS#4 <https://github.com/plone/Products.PlonePAS/issues/4>`_.
