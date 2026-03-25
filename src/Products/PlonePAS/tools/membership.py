@@ -26,6 +26,7 @@ from Products.PlonePAS.events import UserInitialLoginInEvent
 from Products.PlonePAS.events import UserLoggedInEvent
 from Products.PlonePAS.events import UserLoggedOutEvent
 from Products.PlonePAS.interfaces import membership
+from Products.PlonePAS.interfaces.plugins import IUserIntrospection
 from Products.PlonePAS.utils import cleanId
 from Products.PlonePAS.utils import scale_image
 from zExceptions import BadRequest
@@ -530,7 +531,12 @@ class MembershipTool(BaseTool):
         replaced with a set of methods for querying pieces of the
         list rather than the entire list at once.
         """
-        return [user.getId() for user in self.acl_users.getUsers()]
+        results = []
+        for _iid, introspector in self.acl_users.plugins.listPlugins(
+            IUserIntrospection
+        ):
+            results.extend(introspector.getUserIds())
+        return results
 
     @security.protected(SetOwnPassword)
     def testCurrentPassword(self, password):
