@@ -160,6 +160,11 @@ def _doAddGroup(self, id, roles, groups=None, **kw):
     return gtool.addGroup(id, roles, groups, **kw)
 
 
+def getGroups(self):
+    gtool = getToolByName(self, "portal_groups")
+    return gtool.listGroups()
+
+
 def getGroup(self, group_id):
     """Like getGroupById in groups tool, but doesn't wrap."""
     group = None
@@ -440,6 +445,14 @@ def patch_pas():
         "credentialsChanged",
         credentialsChanged,
         add=True,
+        roles=PermissionRole(ManageUsers, ("Manager",)),
+    )
+    wrap_method(
+        PluggableAuthService,
+        "getGroups",
+        getGroups,
+        add=True,
+        deprecated="GRUF compatibility method, use portal_groups.listGroups() instead.",
         roles=PermissionRole(ManageUsers, ("Manager",)),
     )
     wrap_method(
