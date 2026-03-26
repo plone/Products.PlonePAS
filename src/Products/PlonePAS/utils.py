@@ -180,12 +180,7 @@ def scale_image(image_file, max_size=None, default_format=None):
 def getGroupsForPrincipal(principal, plugins, request=None):
     groups = set()
     for iid, plugin in plugins.listPlugins(IGroupsPlugin):
-        try:
-            groups.update(plugin.getGroupsForPrincipal(principal, request))
-        except AttributeError:
-            # Some principals (e.g. anonymous SpecialUser) lack getGroups(),
-            # which plugins like RecursiveGroupsPlugin assume exists.
-            pass
+        groups.update(plugin.getGroupsForPrincipal(principal, request))
     return list(groups)
 
 
