@@ -837,7 +837,7 @@ class TestSearchForMembers(unittest.TestCase):
         self.memberdata = self.portal.portal_memberdata
         self.membership = self.portal.portal_membership
         # Don't let default_user disturb results
-        self.portal.acl_users._doDelUsers([TEST_USER_ID])
+        self.portal.acl_users.userFolderDelUsers([TEST_USER_ID])
         # Add some members
         self.addMember(
             "fred",
