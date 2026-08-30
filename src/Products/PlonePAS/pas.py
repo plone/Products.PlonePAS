@@ -2,7 +2,6 @@
 from AccessControl import getSecurityManager
 from AccessControl import Unauthorized
 from AccessControl.PermissionRole import PermissionRole
-from AccessControl.Permissions import change_permissions
 from AccessControl.Permissions import manage_properties
 from AccessControl.Permissions import manage_users as ManageUsers
 from AccessControl.requestmethod import postonly
@@ -82,7 +81,7 @@ def _userSetGroups(pas, user_id, groupnames):
 
 
 #################################
-# pas folder monkeys - standard zope user folder api or GRUF
+# pas folder monkeys - standard zope user folder api
 
 
 def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
@@ -92,15 +91,6 @@ def _doAddUser(self, login, password, roles, domains, groups=None, **kw):
     if groups is not None:
         _userSetGroups(self, login, groups)
     return retval
-
-
-def _doDelUsers(self, names, REQUEST=None):
-    """
-    Delete users given by a list of user ids.
-    Has no return value, like the original (GRUF).
-    """
-    for name in names:
-        self._doDelUser(name)
 
 
 def _doDelUser(self, id):
@@ -159,54 +149,20 @@ def userFolderAddUser(
         _userSetGroups(self, login, groups)
 
 
+def userFolderDelUsers(self, names, REQUEST=None):
+    """Delete users given by a list of user ids."""
+    for name in names:
+        self._doDelUser(name)
+
+
 def _doAddGroup(self, id, roles, groups=None, **kw):
     gtool = getToolByName(self, "portal_groups")
     return gtool.addGroup(id, roles, groups, **kw)
 
 
-# for prefs_group_manage compatibility. really should be using tool.
-def _doDelGroups(self, names, REQUEST=None):
-    gtool = getToolByName(self, "portal_groups")
-    for group_id in names:
-        gtool.removeGroup(group_id)
-
-
-def _doChangeGroup(self, principal_id, roles, groups=None, REQUEST=None, **kw):
-    """
-    Given a group's id, change its roles, domains, if respective
-    plugins for such exist. Domains are currently ignored.
-
-    See also _doChangeUser
-    """
-    gtool = getToolByName(self, "portal_groups")
-    gtool.editGroup(principal_id, roles, groups, **kw)
-    return True
-
-
-def _updateGroup(self, principal_id, roles=None, groups=None, **kw):
-    """
-    Given a group's id, change its roles, groups, if respective
-    plugins for such exist. Domains are ignored.
-
-    This is not an alias to _doChangeGroup because its params are different
-    (slightly).
-    """
-    return self._doChangeGroup(principal_id, roles, groups, **kw)
-
-
 def getGroups(self):
     gtool = getToolByName(self, "portal_groups")
     return gtool.listGroups()
-
-
-def getGroupNames(self):
-    gtool = getToolByName(self, "portal_groups")
-    return gtool.getGroupIds()
-
-
-def getGroupIds(self):
-    gtool = getToolByName(self, "portal_groups")
-    return gtool.getGroupIds()
 
 
 def getGroup(self, group_id):
@@ -221,13 +177,6 @@ def getGroup(self, group_id):
         if group is not None:
             break
     return group
-
-
-def getGroupByName(self, name, default=None):
-    ret = self.getGroup(name)
-    if ret is None:
-        return default
-    return ret
 
 
 def getGroupById(self, id, default=None):
@@ -369,25 +318,6 @@ def _delOb(self, id):
     Folder._delOb(self, id)
 
 
-def addRole(self, role):
-    plugins = self._getOb("plugins")
-    roles = plugins.listPlugins(IRoleAssignerPlugin)
-
-    for plugin_id, plugin in roles:
-        try:
-            plugin.addRole(role)
-            break
-        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            pass
-
-
-def getAllLocalRoles(self, context):
-    # Perform security check on destination object
-    if not getSecurityManager().checkPermission(change_permissions, context):
-        raise Unauthorized(name="getAllLocalRoles")
-    return self._getAllLocalRoles(context)
-
-
 def _getAllLocalRoles(self, context):
     plugins = self._getOb("plugins")
     lrmanagers = plugins.listPlugins(ILocalRolesPlugin)
@@ -445,32 +375,6 @@ def authenticate(self, name, password, request):
     return self._findUser(plugins, user_id, name, request)
 
 
-def getUserIds(self):
-    """method was used at GRUF and is here for bbb. Not good for many users!
-    DEPRECATED
-    """
-    plugins = self.plugins
-
-    try:
-        introspectors = plugins.listPlugins(IUserIntrospection)
-    except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-        logger.info("PluggableAuthService: Plugin listing error", exc_info=1)
-        introspectors = ()
-
-    results = []
-    for introspector_id, introspector in introspectors:
-        try:
-            results.extend(introspector.getUserIds())
-        except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
-            logger.info(
-                "PluggableAuthService: UserIntrospection %s error",
-                introspector_id,
-                exc_info=1,
-            )
-
-    return results
-
-
 def getUserNames(self):
     """method was used at GRUF and is here for bbb. Not good for many users!
     DEPRECATED
@@ -508,30 +412,12 @@ def patch_pas():
     )
     wrap_method(PluggableAuthService, "_doAddGroup", _doAddGroup, add=True)
     wrap_method(PluggableAuthService, "_doAddUser", _doAddUser)
-    wrap_method(PluggableAuthService, "_doChangeGroup", _doChangeGroup, add=True)
-    wrap_method(PluggableAuthService, "_doChangeUser", _doChangeUser, add=True)
-    wrap_method(PluggableAuthService, "_doDelGroups", _doDelGroups, add=True)
     wrap_method(PluggableAuthService, "_doDelUser", _doDelUser, add=True)
-    wrap_method(
-        PluggableAuthService,
-        "_doDelUsers",
-        _doDelUsers,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
     wrap_method(
         PluggableAuthService,
         "_getLocalRolesForDisplay",
         _getLocalRolesForDisplay,
         add=True,
-    )
-    wrap_method(PluggableAuthService, "_updateGroup", _updateGroup, add=True)
-    wrap_method(
-        PluggableAuthService,
-        "addRole",
-        addRole,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
     )
     wrap_method(
         PluggableAuthService,
@@ -563,9 +449,11 @@ def patch_pas():
     )
     wrap_method(
         PluggableAuthService,
-        "getAllLocalRoles",
-        getAllLocalRoles,
+        "getGroups",
+        getGroups,
         add=True,
+        deprecated="GRUF compatibility method, use portal_groups.listGroups() instead.",
+        roles=PermissionRole(ManageUsers, ("Manager",)),
     )
     wrap_method(
         PluggableAuthService,
@@ -583,44 +471,9 @@ def patch_pas():
     )
     wrap_method(
         PluggableAuthService,
-        "getGroupByName",
-        getGroupByName,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
-        "getGroupIds",
-        getGroupIds,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
-        "getGroupNames",
-        getGroupNames,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
-        "getGroups",
-        getGroups,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
         "getLocalRolesForDisplay",
         getLocalRolesForDisplay,
         add=True,
-    )
-    wrap_method(
-        PluggableAuthService,
-        "getUserIds",
-        getUserIds,
-        add=True,
-        deprecated="Inefficient GRUF wrapper, use IUserIntrospection instead.",
     )
     wrap_method(
         PluggableAuthService,
@@ -638,13 +491,6 @@ def patch_pas():
     )
     wrap_method(
         PluggableAuthService,
-        "getPureUsers",
-        getUsers,
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
         "userFolderAddUser",
         postonly(userFolderAddUser),
         add=True,
@@ -653,14 +499,7 @@ def patch_pas():
     wrap_method(
         PluggableAuthService,
         "userFolderDelUsers",
-        postonly(_doDelUsers),
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
-        "userFolderEditGroup",
-        postonly(_doChangeGroup),
+        postonly(userFolderDelUsers),
         add=True,
         roles=PermissionRole(ManageUsers, ("Manager",)),
     )
@@ -668,13 +507,6 @@ def patch_pas():
         PluggableAuthService,
         "userFolderEditUser",
         postonly(_doChangeUser),
-        add=True,
-        roles=PermissionRole(ManageUsers, ("Manager",)),
-    )
-    wrap_method(
-        PluggableAuthService,
-        "userFolderDelGroups",
-        postonly(_doDelGroups),
         add=True,
         roles=PermissionRole(ManageUsers, ("Manager",)),
     )

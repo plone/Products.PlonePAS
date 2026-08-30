@@ -378,7 +378,7 @@ class GroupsTool(UniqueObject, SimpleItem):
     def listGroupNames(self):
         """Return a list of the available groups' ids as entered
         (without group prefixes)."""
-        return self.acl_users.getGroupNames()
+        return self.getGroupIds()
 
     @security.public
     def isGroup(self, u):
