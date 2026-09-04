@@ -1,0 +1,14 @@
+``GroupsTool.removeGroup`` now treats a group management plugin that declines by
+raising the same as one that declines by returning a false value.  The tool asks
+every ``IGroupManagement`` plugin, because a group id is not owned by one plugin
+and the tool cannot know which one holds it; but asking a plugin about a group it
+does not have is exactly the case ``ZODBGroupManager.removeGroup`` documents as
+``KeyError``.  That exception escaped the loop, so on a site with a second group
+management plugin the request errored with a 503 and the transaction aborted --
+rolling back the removal a plugin had already performed -- and on any site
+``removeGroups()`` took the whole batch down if one id was unknown.  The call is
+now wrapped in ``_SWALLOWABLE_PLUGIN_EXCEPTIONS``, the idiom already used in
+``addGroup`` fifteen lines above.  Removing a group no plugin has returns
+``False`` instead of raising.  ``NotSupported`` still propagates when the site
+has no group management plugin at all.
+[kunalKumar-13]
