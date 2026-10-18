@@ -6,12 +6,16 @@ from plone.app.testing import logout
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
 from Products.CMFCore.utils import getToolByName
+from Products.PlonePAS.interfaces.group import IGroupManagement
 from Products.PlonePAS.plugins.group import PloneGroup
 from Products.PlonePAS.testing import PRODUCTS_PLONEPAS_INTEGRATION_TESTING
 from Products.PlonePAS.tools.groupdata import GroupData
+from Products.PlonePAS.tools.groups import NotSupported
 from Products.PluggableAuthService.interfaces.events import IGroupDeletedEvent
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from zope.component import adapter
 from zope.component import getGlobalSiteManager
+from zope.interface import implementer
 
 import unittest
 
@@ -262,3 +266,114 @@ class TestGroupsToolIntegration(unittest.TestCase):
     def testGetBadGroupInfo(self):
         info = self.groups.getGroupInfo("foo")
         self.assertEqual(info, None)
+
+
+@implementer(IGroupManagement)
+class OwnGroupsManager(BasePlugin):
+    """A second group management plugin that owns its own group ids.
+
+    It declines groups it does not own by raising ``KeyError``, which is
+    what ``ZODBGroupManager.removeGroup`` documents that it does.
+    """
+
+    meta_type = "Own Groups Manager"
+
+    def __init__(self, id, owned=()):
+        self.id = id
+        self._owned = list(owned)
+        self.removed = []
+
+    def addGroup(self, group_id, *args, **kw):
+        self._owned.append(group_id)
+        return True
+
+    def removeGroup(self, group_id):
+        if group_id not in self._owned:
+            raise KeyError(group_id)
+        self._owned.remove(group_id)
+        self.removed.append(group_id)
+        return True
+
+    def addPrincipalToGroup(self, principal_id, group_id):
+        return False
+
+    def removePrincipalFromGroup(self, principal_id, group_id):
+        return False
+
+    def updateGroup(self, group_id, *args, **kw):
+        return False
+
+
+class TestRemoveGroupDecliningPlugins(unittest.TestCase):
+    """A plugin that declines by raising must not abort the removal."""
+
+    layer = PRODUCTS_PLONEPAS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer["portal"]
+        setRoles(self.portal, TEST_USER_ID, ["Manager"])
+        self.acl_users = self.portal.acl_users
+        self.groups = getToolByName(self.portal, "portal_groups")
+
+    def _addOwnGroupsManager(self, owned=(), move_to_top=False):
+        plugin = OwnGroupsManager("own_groups", owned=owned)
+        self.acl_users._setObject("own_groups", plugin)
+        self.acl_users.plugins.activatePlugin(IGroupManagement, "own_groups")
+        if move_to_top:
+            # Prove the outcome does not depend on which plugin is asked
+            # first: whichever runs first, the other one still raises.
+            self.acl_users.plugins.movePluginsTop(IGroupManagement, ["own_groups"])
+        return self.acl_users["own_groups"]
+
+    def testRemoveUnknownGroupReturnsFalse(self):
+        # source_groups raises KeyError for a group it does not have.
+        # That is a declined answer, not an error.
+        self.assertFalse(self.groups.removeGroup("no-such-group"))
+
+    def testRemoveUnknownGroupFiresNoEvent(self):
+        events_fired = []
+
+        @adapter(IGroupDeletedEvent)
+        def gotDeletion(event):
+            events_fired.append(event)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerHandler(gotDeletion)
+        try:
+            self.groups.removeGroup("no-such-group")
+        finally:
+            gsm.unregisterHandler(gotDeletion)
+        self.assertEqual(events_fired, [])
+
+    def testRemoveGroupOwnedByOtherPlugin(self):
+        plugin = self._addOwnGroupsManager(owned=["editors"])
+        # source_groups has never heard of "editors" and raises.
+        self.assertTrue(self.groups.removeGroup("editors"))
+        self.assertEqual(plugin.removed, ["editors"])
+
+    def testRemoveGroupOwnedByOtherPluginAskedFirst(self):
+        plugin = self._addOwnGroupsManager(owned=["editors"], move_to_top=True)
+        self.assertTrue(self.groups.removeGroup("editors"))
+        self.assertEqual(plugin.removed, ["editors"])
+
+    def testRemoveGroupOwnedBySourceGroupsWithOtherPluginPresent(self):
+        # The mirror case: our own plugin is the one that declines.
+        self._addOwnGroupsManager(owned=[])
+        self.groups.addGroup("foo", [], [])
+        self.assertTrue(self.groups.removeGroup("foo"))
+        self.assertNotIn("foo", self.groups.listGroupIds())
+
+    def testRemoveGroupsSkipsUnknownIds(self):
+        # One unknown id in a batch used to take the whole batch down.
+        self.groups.addGroup("foo", [], [])
+        self.groups.addGroup("bar", [], [])
+        self.groups.removeGroups(["foo", "no-such-group", "bar"])
+        group_ids = self.groups.listGroupIds()
+        self.assertNotIn("foo", group_ids)
+        self.assertNotIn("bar", group_ids)
+
+    def testNoGroupManagementPluginStillRaises(self):
+        # A site with no group management plugin at all is misconfigured;
+        # that is a different answer from "no plugin has this group".
+        self.acl_users.plugins.deactivatePlugin(IGroupManagement, "source_groups")
+        self.assertRaises(NotSupported, self.groups.removeGroup, "foo")

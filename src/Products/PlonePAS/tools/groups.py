@@ -153,14 +153,31 @@ class GroupsTool(UniqueObject, SimpleItem):
     @security.protected(DeleteGroups)
     @postonly
     def removeGroup(self, group_id, REQUEST=None):
-        """Remove a single group."""
+        """Remove a single group.
+
+        Every group management plugin is asked, because a group id is not
+        owned by one plugin and the tool cannot know which one holds it.
+        A plugin that does not have the group may decline by returning a
+        false value or by raising -- ``ZODBGroupManager.removeGroup`` is
+        documented to raise ``KeyError`` -- and the two are treated alike,
+        so one plugin declining does not undo another plugin's removal.
+        """
         retval = False
         managers = self._getGroupManagers()
         if not managers:
             raise NotSupported("No plugins allow for group management")
 
         for mid, manager in managers:
-            if manager.removeGroup(group_id):
+            try:
+                removed = manager.removeGroup(group_id)
+            except _SWALLOWABLE_PLUGIN_EXCEPTIONS:
+                logger.debug(
+                    "GroupManagement plugin %s declined to remove group %r",
+                    mid,
+                    group_id,
+                )
+                continue
+            if removed:
                 notify(GroupDeleted(group_id))
                 retval = True
 
